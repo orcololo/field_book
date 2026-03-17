@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle with gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3D7A52;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2D5A42;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#bg-gradient)"/>
+  
+  <!-- Simplified leaf icon (similar to Material Icons.eco) -->
+  <g transform="translate(256, 256)">
+    <!-- Main leaf shape -->
+    <path d="M -80,-120 C -100,-80 -120,-40 -120,0 C -120,60 -80,100 -20,110 
+             C 20,120 60,100 80,60 C 100,20 100,-40 80,-80 
+             C 60,-120 20,-140 -20,-140 C -50,-140 -70,-130 -80,-120 Z" 
+          fill="white" opacity="0.95"/>
+    
+    <!-- Center vein -->
+    <line x1="0" y1="-130" x2="0" y2="110" 
+          stroke="#3D7A52" stroke-width="8" stroke-linecap="round"/>
+    
+    <!-- Side veins -->
+    <line x1="-10" y1="-80" x2="-60" y2="-60" 
+          stroke="#3D7A52" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+    <line x1="-10" y1="-40" x2="-80" y2="-20" 
+          stroke="#3D7A52" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+    <line x1="-10" y1="0" x2="-90" y2="20" 
+          stroke="#3D7A52" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+    <line x1="-10" y1="40" x2="-80" y2="60" 
+          stroke="#3D7A52" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+    
+    <line x1="10" y1="-80" x2="60" y2="-60" 
+          stroke="#3D7A52" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+    <line x1="10" y1="-40" x2="80" y2="-20" 
+          stroke="#3D7A52" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+    <line x1="10" y1="0" x2="70" y2="20" 
+          stroke="#3D7A52" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+  </g>
+</svg>

@@ -1,0 +1,2172 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
+import 'dart:io';
+import 'dart:async';
+import '../../../models/plant_record.dart';
+import '../../../models/plant_category.dart';
+import '../../../models/measurement.dart';
+import '../../../core/repositories/plant_repository.dart';
+import '../../../core/repositories/session_repository.dart';
+import '../../../core/services/audio_transcription_service.dart';
+import '../../../core/services/registry_identifier_service.dart';
+import '../../../core/services/settings_service.dart';
+import '../../../core/services/location_service.dart';
+import '../../../core/services/photo_service.dart';
+import '../../../core/utils/botanical_validator.dart';
+import '../../../shared/widgets/map_widget.dart';
+import '../../../shared/widgets/audio/audio_recorder_widget.dart';
+import '../../../shared/widgets/audio/audio_player_widget.dart';
+import '../../../l10n/app_localizations.dart';
+
+const _uuid = Uuid();
+
+class PlantFormScreen extends ConsumerStatefulWidget {
+  final PlantRecord? plant; // null for new plant, populated for edit
+
+  const PlantFormScreen({super.key, this.plant});
+
+  @override
+  ConsumerState<PlantFormScreen> createState() => _PlantFormScreenState();
+}
+
+class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  final _formKey = GlobalKey<FormState>();
+
+  // Form fields
+  late TextEditingController _scientificNameController;
+  late TextEditingController _commonNameController;
+  late TextEditingController _familyController;
+  late TextEditingController _genusController;
+  late TextEditingController _speciesController;
+  late TextEditingController _habitatController;
+  late TextEditingController _notesController;
+  late TextEditingController _identifierController;
+
+  // Morphology controllers
+  late TextEditingController _raizController;
+  late TextEditingController _cauleController;
+  late TextEditingController _cauleTipoCascaController;
+  late TextEditingController _cauleCorController;
+  late TextEditingController _cauleTamanhoController;
+  String _cauleTamanhoUnidade = 'cm';
+  late TextEditingController _cauleCircunferenciaController;
+  String _cauleCircunferenciaUnidade = 'cm';
+  bool _cauleTemSeiva = false;
+  late TextEditingController _cauleDescricaoSeivaController;
+  late TextEditingController _folhaDescricaoController;
+  late TextEditingController _folhaBainhaController;
+  late TextEditingController _folhaPecioloController;
+  late TextEditingController _folhaLaminaController;
+  // Flor sub-field controllers
+  late TextEditingController _florDescricaoController;
+  late TextEditingController _florInflorescenciaController;
+  late TextEditingController _florCorController;
+  late TextEditingController _florTamanhoController;
+  String _florTamanhoUnidade = 'cm';
+  // Fruto sub-field controllers
+  late TextEditingController _frutoDescricaoController;
+  late TextEditingController _frutoCorController;
+  late TextEditingController _frutoFormatoController;
+  late TextEditingController _frutoTamanhoController;
+  String _frutoTamanhoUnidade = 'cm';
+  // Semente sub-field controllers
+  late TextEditingController _sementeDescricaoController;
+  late TextEditingController _sementeCorController;
+  late TextEditingController _sementeFormatoController;
+  late TextEditingController _sementeTamanhoController;
+  String _sementeTamanhoUnidade = 'mm';
+
+  PlantCategory? _selectedCategory;
+  String? _selectedSessionId;
+  DateTime _dateCollected = DateTime.now();
+  double? _latitude;
+  double? _longitude;
+  bool _fetchingLocation = false;
+  List<String> _photoPaths = [];
+  List<Measurement> _measurements = [];
+  List<String> _audioNotePaths = [];
+  List<String> _audioTranscripts = [];
+
+  List<String> _duplicateWarnings = [];
+  String? _suggestedFamily;
+  Timer? _debounceTimer;
+
+  final _locationService = LocationService();
+  final _photoService = PhotoService();
+  final _audioTranscriptionService = AudioTranscriptionService();
+  late final BotanicalValidator _validator;
+  late final RegistryIdentifierService _identifierService;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 6, vsync: this);
+    final plantRepo = ref.read(plantRepositoryProvider);
+    _validator = BotanicalValidator(plantRepo);
+    _identifierService = RegistryIdentifierService(plantRepository: plantRepo);
+
+    // Initialize controllers
+    final plant = widget.plant;
+    _scientificNameController = TextEditingController(
+      text: plant?.scientificName ?? '',
+    );
+    _commonNameController = TextEditingController(
+      text: plant?.commonName ?? '',
+    );
+    _familyController = TextEditingController(text: plant?.family ?? '');
+    _genusController = TextEditingController(text: plant?.genus ?? '');
+    _speciesController = TextEditingController(text: plant?.species ?? '');
+    _habitatController = TextEditingController(text: plant?.habitat ?? '');
+    _notesController = TextEditingController(text: plant?.notes ?? '');
+    _identifierController = TextEditingController(
+      text: plant?.registryIdentifier ?? '',
+    );
+
+    // Morphology controllers
+    _raizController = TextEditingController(text: plant?.raiz ?? '');
+    _cauleController = TextEditingController(text: plant?.caule ?? '');
+    _cauleTipoCascaController = TextEditingController(
+      text: plant?.cauleTipoCasca ?? '',
+    );
+    _cauleCorController = TextEditingController(text: plant?.cauleCor ?? '');
+    _cauleTamanhoController = TextEditingController(
+      text: plant?.cauleTamanho != null ? plant!.cauleTamanho.toString() : '',
+    );
+    _cauleTamanhoUnidade = plant?.cauleTamanhoUnidade ?? 'cm';
+    _cauleCircunferenciaController = TextEditingController(
+      text: plant?.cauleCircunferencia != null
+          ? plant!.cauleCircunferencia.toString()
+          : '',
+    );
+    _cauleCircunferenciaUnidade = plant?.cauleCircunferenciaUnidade ?? 'cm';
+    _cauleTemSeiva = plant?.cauleTemSeiva ?? false;
+    _cauleDescricaoSeivaController = TextEditingController(
+      text: plant?.cauleDescricaoSeiva ?? '',
+    );
+    _folhaDescricaoController = TextEditingController(
+      text: plant?.folhaDescricao ?? '',
+    );
+    _folhaBainhaController = TextEditingController(
+      text: plant?.folhaBainha ?? '',
+    );
+    _folhaPecioloController = TextEditingController(
+      text: plant?.folhaPeciolo ?? '',
+    );
+    _folhaLaminaController = TextEditingController(
+      text: plant?.folhaLamina ?? '',
+    );
+    // Flor
+    _florDescricaoController = TextEditingController(
+      text: plant?.florDescricao ?? '',
+    );
+    _florInflorescenciaController = TextEditingController(
+      text: plant?.florInflorescencia ?? '',
+    );
+    _florCorController = TextEditingController(text: plant?.florCor ?? '');
+    _florTamanhoController = TextEditingController(
+      text: plant?.florTamanho != null ? plant!.florTamanho.toString() : '',
+    );
+    _florTamanhoUnidade = plant?.florTamanhoUnidade ?? 'cm';
+    // Fruto
+    _frutoDescricaoController = TextEditingController(
+      text: plant?.frutoDescricao ?? '',
+    );
+    _frutoCorController = TextEditingController(text: plant?.frutoCor ?? '');
+    _frutoFormatoController = TextEditingController(
+      text: plant?.frutoFormato ?? '',
+    );
+    _frutoTamanhoController = TextEditingController(
+      text: plant?.frutoTamanho != null ? plant!.frutoTamanho.toString() : '',
+    );
+    _frutoTamanhoUnidade = plant?.frutoTamanhoUnidade ?? 'cm';
+    // Semente
+    _sementeDescricaoController = TextEditingController(
+      text: plant?.sementeDescricao ?? '',
+    );
+    _sementeCorController = TextEditingController(
+      text: plant?.sementeCor ?? '',
+    );
+    _sementeFormatoController = TextEditingController(
+      text: plant?.sementeFormato ?? '',
+    );
+    _sementeTamanhoController = TextEditingController(
+      text: plant?.sementeTamanho != null
+          ? plant!.sementeTamanho.toString()
+          : '',
+    );
+    _sementeTamanhoUnidade = plant?.sementeTamanhoUnidade ?? 'mm';
+
+    // Add listeners for auto-suggestions
+    _scientificNameController.addListener(_onScientificNameChanged);
+    _genusController.addListener(_onGenusChanged);
+
+    // Initialize values
+    if (plant != null) {
+      _selectedCategory = plant.category;
+      _selectedSessionId = plant.sessionId;
+      _dateCollected = plant.dateCollected;
+      _latitude = plant.latitude;
+      _longitude = plant.longitude;
+      _photoPaths = List.from(plant.photoPaths);
+      _audioNotePaths = List.from(plant.audioNotePaths);
+      _audioTranscripts = List.from(plant.audioTranscripts);
+      _measurements = plant.measurements.map((m) {
+        return Measurement()
+          ..label = m.label
+          ..value = m.value
+          ..unit = m.unit;
+      }).toList();
+    }
+  }
+
+  void _onScientificNameChanged() {
+    final name = _scientificNameController.text;
+    if (name.isEmpty) return;
+
+    // Parse genus and species
+    final parsed = _validator.parseScientificName(name);
+    if (parsed['genus'] != null && _genusController.text != parsed['genus']) {
+      _genusController.text = parsed['genus']!;
+    }
+    if (parsed['species'] != null &&
+        _speciesController.text != parsed['species']) {
+      _speciesController.text = parsed['species']!;
+    }
+
+    // Check for duplicates with debounce to avoid excessive DB queries
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      _checkDuplicates();
+    });
+  }
+
+  void _onGenusChanged() {
+    final genus = _genusController.text;
+    if (genus.isEmpty) {
+      setState(() => _suggestedFamily = null);
+      return;
+    }
+
+    // Suggest family
+    final suggestedFamily = _validator.suggestFamily(genus);
+    if (suggestedFamily != null && suggestedFamily != _familyController.text) {
+      setState(() => _suggestedFamily = suggestedFamily);
+    } else {
+      setState(() => _suggestedFamily = null);
+    }
+  }
+
+  Future<void> _checkDuplicates() async {
+    final duplicates = await _validator.checkForDuplicates(
+      _scientificNameController.text,
+      excludeId: widget.plant?.uuid,
+    );
+
+    setState(() {
+      _duplicateWarnings = duplicates;
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    _tabController.dispose();
+    _scientificNameController.dispose();
+    _commonNameController.dispose();
+    _familyController.dispose();
+    _genusController.dispose();
+    _speciesController.dispose();
+    _habitatController.dispose();
+    _notesController.dispose();
+    _identifierController.dispose();
+    _raizController.dispose();
+    _cauleController.dispose();
+    _cauleTipoCascaController.dispose();
+    _cauleCorController.dispose();
+    _cauleTamanhoController.dispose();
+    _cauleCircunferenciaController.dispose();
+    _cauleDescricaoSeivaController.dispose();
+    _folhaDescricaoController.dispose();
+    _folhaBainhaController.dispose();
+    _folhaPecioloController.dispose();
+    _folhaLaminaController.dispose();
+    _florDescricaoController.dispose();
+    _florInflorescenciaController.dispose();
+    _florCorController.dispose();
+    _florTamanhoController.dispose();
+    _frutoDescricaoController.dispose();
+    _frutoCorController.dispose();
+    _frutoFormatoController.dispose();
+    _frutoTamanhoController.dispose();
+    _sementeDescricaoController.dispose();
+    _sementeCorController.dispose();
+    _sementeFormatoController.dispose();
+    _sementeTamanhoController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _generateIdentifier() async {
+    try {
+      final identifier = await _identifierService.generateNextIdentifier();
+      setState(() {
+        _identifierController.text = identifier;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Identificador gerado: $identifier'),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao gerar identificador: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _savePlant({required bool asDraft}) async {
+    if (!asDraft && !_formKey.currentState!.validate()) {
+      final l10n = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.fillRequiredFields),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final settings = await ref.read(settingsNotifierProvider.future);
+    final plantRepo = ref.read(plantRepositoryProvider);
+
+    // Handle registry identifier
+    String? registryIdentifier = _identifierController.text.trim();
+    final bool isEditing = widget.plant != null;
+    final String? existingIdentifier = widget.plant?.registryIdentifier;
+
+    if (registryIdentifier.isEmpty &&
+        settings.autoGenerateIdentifier &&
+        !asDraft &&
+        !isEditing) {
+      // Auto-generate identifier for NEW non-draft plants only
+      try {
+        registryIdentifier = await _identifierService.generateNextIdentifier();
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erro ao gerar identificador: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return;
+      }
+    } else if (registryIdentifier.isNotEmpty) {
+      // Only validate if identifier has changed or it's a new plant
+      if (!isEditing || registryIdentifier != existingIdentifier) {
+        final validationError = await _identifierService
+            .validateCustomIdentifier(
+              registryIdentifier,
+              excludePlantUuid: widget.plant?.uuid,
+            );
+
+        if (validationError != null) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(validationError),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+          return;
+        }
+      }
+    } else {
+      // Empty identifier for drafts is acceptable
+      registryIdentifier = null;
+    }
+
+    final isNewPlant = widget.plant == null;
+    final plant = widget.plant ?? PlantRecord();
+
+    // Update all fields
+    plant
+      ..uuid = isNewPlant ? _uuid.v4() : plant.uuid
+      ..scientificName = _scientificNameController.text.trim()
+      ..commonName = _commonNameController.text.trim()
+      ..family = _familyController.text.trim().isEmpty
+          ? null
+          : _familyController.text.trim()
+      ..genus = _genusController.text.trim().isEmpty
+          ? null
+          : _genusController.text.trim()
+      ..species = _speciesController.text.trim().isEmpty
+          ? null
+          : _speciesController.text.trim()
+      ..habitat = _habitatController.text.trim().isEmpty
+          ? null
+          : _habitatController.text.trim()
+      ..notes = _notesController.text.trim().isEmpty
+          ? null
+          : _notesController.text.trim()
+      ..raiz = _raizController.text.trim().isEmpty
+          ? null
+          : _raizController.text.trim()
+      ..caule = _cauleController.text.trim().isEmpty
+          ? null
+          : _cauleController.text.trim()
+      ..cauleTipoCasca = _cauleTipoCascaController.text.trim().isEmpty
+          ? null
+          : _cauleTipoCascaController.text.trim()
+      ..cauleCor = _cauleCorController.text.trim().isEmpty
+          ? null
+          : _cauleCorController.text.trim()
+      ..cauleTamanho = _cauleTamanhoController.text.trim().isNotEmpty
+          ? double.tryParse(_cauleTamanhoController.text.trim())
+          : null
+      ..cauleTamanhoUnidade = _cauleTamanhoController.text.trim().isNotEmpty
+          ? _cauleTamanhoUnidade
+          : null
+      ..cauleCircunferencia =
+          _cauleCircunferenciaController.text.trim().isNotEmpty
+          ? double.tryParse(_cauleCircunferenciaController.text.trim())
+          : null
+      ..cauleCircunferenciaUnidade =
+          _cauleCircunferenciaController.text.trim().isNotEmpty
+          ? _cauleCircunferenciaUnidade
+          : null
+      ..cauleTemSeiva = _cauleTemSeiva
+      ..cauleDescricaoSeiva =
+          _cauleDescricaoSeivaController.text.trim().isEmpty
+          ? null
+          : _cauleDescricaoSeivaController.text.trim()
+      ..folhaDescricao = _folhaDescricaoController.text.trim().isEmpty
+          ? null
+          : _folhaDescricaoController.text.trim()
+      ..folhaBainha = _folhaBainhaController.text.trim().isEmpty
+          ? null
+          : _folhaBainhaController.text.trim()
+      ..folhaPeciolo = _folhaPecioloController.text.trim().isEmpty
+          ? null
+          : _folhaPecioloController.text.trim()
+      ..folhaLamina = _folhaLaminaController.text.trim().isEmpty
+          ? null
+          : _folhaLaminaController.text.trim()
+      ..florDescricao = _florDescricaoController.text.trim().isEmpty
+          ? null
+          : _florDescricaoController.text.trim()
+      ..florInflorescencia = _florInflorescenciaController.text.trim().isEmpty
+          ? null
+          : _florInflorescenciaController.text.trim()
+      ..florCor = _florCorController.text.trim().isEmpty
+          ? null
+          : _florCorController.text.trim()
+      ..florTamanho = _florTamanhoController.text.trim().isNotEmpty
+          ? double.tryParse(_florTamanhoController.text.trim())
+          : null
+      ..florTamanhoUnidade = _florTamanhoController.text.trim().isNotEmpty
+          ? _florTamanhoUnidade
+          : null
+      ..frutoDescricao = _frutoDescricaoController.text.trim().isEmpty
+          ? null
+          : _frutoDescricaoController.text.trim()
+      ..frutoCor = _frutoCorController.text.trim().isEmpty
+          ? null
+          : _frutoCorController.text.trim()
+      ..frutoFormato = _frutoFormatoController.text.trim().isEmpty
+          ? null
+          : _frutoFormatoController.text.trim()
+      ..frutoTamanho = _frutoTamanhoController.text.trim().isNotEmpty
+          ? double.tryParse(_frutoTamanhoController.text.trim())
+          : null
+      ..frutoTamanhoUnidade = _frutoTamanhoController.text.trim().isNotEmpty
+          ? _frutoTamanhoUnidade
+          : null
+      ..sementeDescricao = _sementeDescricaoController.text.trim().isEmpty
+          ? null
+          : _sementeDescricaoController.text.trim()
+      ..sementeCor = _sementeCorController.text.trim().isEmpty
+          ? null
+          : _sementeCorController.text.trim()
+      ..sementeFormato = _sementeFormatoController.text.trim().isEmpty
+          ? null
+          : _sementeFormatoController.text.trim()
+      ..sementeTamanho = _sementeTamanhoController.text.trim().isNotEmpty
+          ? double.tryParse(_sementeTamanhoController.text.trim())
+          : null
+      ..sementeTamanhoUnidade = _sementeTamanhoController.text.trim().isNotEmpty
+          ? _sementeTamanhoUnidade
+          : null
+      ..category = _selectedCategory ?? PlantCategory.herbs
+      ..dateCollected = _dateCollected
+      ..latitude = _latitude
+      ..longitude = _longitude
+      ..sessionId = _selectedSessionId
+      ..isDraft = asDraft
+      ..photoPaths = _photoPaths
+      ..audioNotePaths = _audioNotePaths
+      ..audioTranscripts = _audioTranscripts
+      ..measurements = _measurements
+      ..deviceId = settings.deviceId
+      ..contributorName = settings.deviceName
+      ..registryIdentifier = registryIdentifier
+      ..createdAt = isNewPlant ? DateTime.now() : plant.createdAt
+      ..updatedAt = DateTime.now();
+
+    plant.updateFtsFields();
+
+    try {
+      await plantRepo.save(plant);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              asDraft ? 'Salvo como rascunho' : 'Registro de planta salvo',
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.of(context).pop(true);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao salvar planta: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isEditing = widget.plant != null;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(isEditing ? l10n.editPlant : l10n.newPlant),
+        bottom: TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          tabs: [
+            Tab(text: l10n.basicInfo),
+            Tab(text: l10n.locationInfo),
+            Tab(text: l10n.habitatInfo),
+            Tab(text: l10n.measurementsInfo),
+            Tab(text: l10n.photosInfo),
+            const Tab(text: 'Audio'),
+          ],
+        ),
+      ),
+      body: Form(
+        key: _formKey,
+        child: TabBarView(
+          controller: _tabController,
+          children: [
+            _buildBasicInfoTab(l10n),
+            _buildLocationTab(l10n),
+            _buildHabitatTab(l10n),
+            _buildMeasurementsTab(l10n),
+            _buildPhotosTab(l10n),
+            _buildAudioTab(l10n),
+          ],
+        ),
+      ),
+      bottomNavigationBar: _buildBottomBar(l10n),
+    );
+  }
+
+  Widget _buildBasicInfoTab(AppLocalizations l10n) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        // Registry Identifier Field
+        Consumer(
+          builder: (context, ref, child) {
+            final settings = ref.watch(settingsNotifierProvider).valueOrNull;
+            final autoGenerate = settings?.autoGenerateIdentifier ?? true;
+
+            return TextFormField(
+              controller: _identifierController,
+              decoration: InputDecoration(
+                labelText: 'Identificador',
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.tag),
+                hintText: 'Ex: RC000001',
+                suffixIcon: autoGenerate
+                    ? IconButton(
+                        icon: const Icon(Icons.auto_fix_high),
+                        tooltip: 'Gerar identificador',
+                        onPressed: _generateIdentifier,
+                      )
+                    : null,
+              ),
+              readOnly: autoGenerate,
+              validator: (value) {
+                final trimmed = value?.trim() ?? '';
+                // If empty and auto-generate is off, it's optional
+                if (trimmed.isEmpty) {
+                  return null;
+                }
+                // Validate format on trimmed value
+                if (!_identifierService.isValidIdentifier(trimmed)) {
+                  return 'Formato inválido (Ex: RC000001)';
+                }
+                return null;
+              },
+              textCapitalization: TextCapitalization.characters,
+            );
+          },
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _scientificNameController,
+          decoration: InputDecoration(
+            labelText: l10n.scientificName,
+            border: const OutlineInputBorder(),
+            prefixIcon: const Icon(Icons.science),
+            hintText: 'Genus species',
+          ),
+          validator: (value) {
+            if (value == null || value.trim().isEmpty) {
+              return 'Scientific name is required';
+            }
+            return _validator.validateScientificName(value);
+          },
+          textCapitalization: TextCapitalization.words,
+        ),
+
+        // Duplicate warnings
+        if (_duplicateWarnings.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Card(
+            color: Colors.orange.shade50,
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Row(
+                    children: [
+                      Icon(Icons.warning, color: Colors.orange, size: 20),
+                      SizedBox(width: 8),
+                      Text(
+                        'Possíveis duplicatas:',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  ..._duplicateWarnings.map(
+                    (warning) => Padding(
+                      padding: const EdgeInsets.only(left: 28, bottom: 4),
+                      child: Text(
+                        warning,
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _commonNameController,
+          decoration: InputDecoration(
+            labelText: l10n.commonName,
+            border: const OutlineInputBorder(),
+            prefixIcon: const Icon(Icons.local_florist),
+          ),
+          textCapitalization: TextCapitalization.words,
+        ),
+        const SizedBox(height: 16),
+        DropdownButtonFormField<PlantCategory>(
+          initialValue: _selectedCategory,
+          decoration: InputDecoration(
+            labelText: l10n.category,
+            border: const OutlineInputBorder(),
+            prefixIcon: const Icon(Icons.category),
+          ),
+          items: PlantCategory.values.map((category) {
+            return DropdownMenuItem(
+              value: category,
+              child: Text(_getCategoryName(l10n, category)),
+            );
+          }).toList(),
+          onChanged: (value) {
+            setState(() {
+              _selectedCategory = value;
+            });
+          },
+          validator: (value) {
+            if (value == null) {
+              return 'Category is required';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 16),
+        const Divider(),
+        const SizedBox(height: 8),
+        Text(l10n.taxonomyInfo, style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _genusController,
+          decoration: InputDecoration(
+            labelText: l10n.genus,
+            border: const OutlineInputBorder(),
+            prefixIcon: const Icon(Icons.category),
+          ),
+          textCapitalization: TextCapitalization.words,
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _speciesController,
+          decoration: InputDecoration(
+            labelText: l10n.species,
+            border: const OutlineInputBorder(),
+            prefixIcon: const Icon(Icons.grain),
+          ),
+          textCapitalization: TextCapitalization.words,
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _familyController,
+          decoration: InputDecoration(
+            labelText: l10n.family,
+            border: const OutlineInputBorder(),
+            prefixIcon: const Icon(Icons.account_tree),
+            suffixIcon:
+                _suggestedFamily != null &&
+                    _familyController.text != _suggestedFamily
+                ? IconButton(
+                    icon: const Icon(Icons.lightbulb, color: Colors.amber),
+                    tooltip: 'Sugestão: $_suggestedFamily',
+                    onPressed: () {
+                      setState(() {
+                        _familyController.text = _suggestedFamily!;
+                        _suggestedFamily = null;
+                      });
+                    },
+                  )
+                : null,
+          ),
+          textCapitalization: TextCapitalization.words,
+        ),
+
+        // Family suggestion card
+        if (_suggestedFamily != null &&
+            _familyController.text != _suggestedFamily) ...[
+          const SizedBox(height: 8),
+          Card(
+            color: Colors.amber.shade50,
+            child: ListTile(
+              leading: const Icon(Icons.lightbulb, color: Colors.amber),
+              title: Text('Sugestão: $_suggestedFamily'),
+              subtitle: const Text('Baseado no gênero informado'),
+              trailing: TextButton(
+                onPressed: () {
+                  setState(() {
+                    _familyController.text = _suggestedFamily!;
+                    _suggestedFamily = null;
+                  });
+                },
+                child: const Text('Aplicar'),
+              ),
+            ),
+          ),
+        ],
+
+        const SizedBox(height: 16),
+        const Divider(),
+        const SizedBox(height: 8),
+        ListTile(
+          leading: const Icon(Icons.calendar_today),
+          title: Text(l10n.collectionDate),
+          subtitle: Text(
+            '${_dateCollected.day}/${_dateCollected.month}/${_dateCollected.year}',
+          ),
+          trailing: const Icon(Icons.edit),
+          onTap: () async {
+            final date = await showDatePicker(
+              context: context,
+              initialDate: _dateCollected,
+              firstDate: DateTime(2000),
+              lastDate: DateTime.now(),
+            );
+            if (date != null) {
+              setState(() {
+                _dateCollected = date;
+              });
+            }
+          },
+        ),
+        const SizedBox(height: 16),
+        _buildSessionSelector(l10n),
+        const SizedBox(height: 24),
+
+        // Morphology section
+        Text(
+          'Morfologia',
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const Divider(),
+        const SizedBox(height: 4),
+
+        // Raiz
+        _buildOrganSection(
+          title: 'Raiz',
+          icon: Icons.grass,
+          children: [
+            _buildMorphTextField(
+              controller: _raizController,
+              label: 'Descrição',
+              hint: 'Descreva a raiz...',
+              icon: Icons.description,
+            ),
+          ],
+        ),
+
+        // Caule
+        _buildOrganSection(
+          title: 'Caule',
+          icon: Icons.park,
+          children: [
+            _buildMorphTextField(
+              controller: _cauleController,
+              label: 'Descrição',
+              hint: 'Descreva o caule...',
+              icon: Icons.description,
+            ),
+            const SizedBox(height: 12),
+            _buildMorphTextField(
+              controller: _cauleTipoCascaController,
+              label: 'Tipo de casca',
+              hint: 'Ex: lisa, rugosa, fissurada...',
+              icon: Icons.texture,
+            ),
+            const SizedBox(height: 12),
+            _buildMorphTextField(
+              controller: _cauleCorController,
+              label: 'Cor',
+              hint: 'Ex: marrom, cinza, verde...',
+              icon: Icons.color_lens,
+            ),
+            const SizedBox(height: 12),
+            _buildInlineMeasurement(
+              label: 'Tamanho (altura)',
+              controller: _cauleTamanhoController,
+              selectedUnit: _cauleTamanhoUnidade,
+              onUnitChanged: (v) => setState(() => _cauleTamanhoUnidade = v),
+            ),
+            const SizedBox(height: 12),
+            _buildInlineMeasurement(
+              label: 'Circunferência',
+              controller: _cauleCircunferenciaController,
+              selectedUnit: _cauleCircunferenciaUnidade,
+              onUnitChanged: (v) =>
+                  setState(() => _cauleCircunferenciaUnidade = v),
+            ),
+            const SizedBox(height: 12),
+            SwitchListTile(
+              title: const Text('Presença de seiva'),
+              subtitle: const Text('A planta apresenta exsudação de seiva?'),
+              value: _cauleTemSeiva,
+              onChanged: (v) => setState(() => _cauleTemSeiva = v),
+              secondary: const Icon(Icons.water_drop),
+              dense: true,
+              contentPadding: EdgeInsets.zero,
+            ),
+            if (_cauleTemSeiva) ...[
+              const SizedBox(height: 12),
+              _buildMorphTextField(
+                controller: _cauleDescricaoSeivaController,
+                label: 'Descrição da seiva',
+                hint: 'Descreva a seiva (cor, consistência, odor...)',
+                icon: Icons.water_drop,
+              ),
+            ],
+          ],
+        ),
+
+        // Folha
+        _buildOrganSection(
+          title: 'Folha',
+          icon: Icons.eco,
+          children: [
+            _buildMorphTextField(
+              controller: _folhaDescricaoController,
+              label: 'Descrição',
+              hint: 'Descrição geral da folha...',
+              icon: Icons.description,
+            ),
+            const SizedBox(height: 12),
+            _buildMorphTextField(
+              controller: _folhaBainhaController,
+              label: 'Bainha',
+              hint: 'Descreva a bainha...',
+              icon: Icons.eco,
+            ),
+            const SizedBox(height: 12),
+            _buildMorphTextField(
+              controller: _folhaPecioloController,
+              label: 'Pecíolo',
+              hint: 'Descreva o pecíolo...',
+              icon: Icons.eco,
+            ),
+            const SizedBox(height: 12),
+            _buildMorphTextField(
+              controller: _folhaLaminaController,
+              label: 'Lâmina',
+              hint: 'Descreva a lâmina...',
+              icon: Icons.eco,
+            ),
+          ],
+        ),
+
+        // Flor
+        _buildOrganSection(
+          title: 'Flor',
+          icon: Icons.local_florist,
+          children: [
+            _buildMorphTextField(
+              controller: _florDescricaoController,
+              label: 'Descrição',
+              hint: 'Descrição geral da flor...',
+              icon: Icons.description,
+            ),
+            const SizedBox(height: 12),
+            _buildMorphTextField(
+              controller: _florInflorescenciaController,
+              label: 'Inflorescência',
+              hint: 'Descreva a inflorescência...',
+              icon: Icons.filter_vintage,
+            ),
+            const SizedBox(height: 12),
+            _buildMorphTextField(
+              controller: _florCorController,
+              label: 'Cor',
+              hint: 'Ex: branca, amarela, rosa...',
+              icon: Icons.color_lens,
+            ),
+            const SizedBox(height: 12),
+            _buildInlineMeasurement(
+              label: 'Tamanho',
+              controller: _florTamanhoController,
+              selectedUnit: _florTamanhoUnidade,
+              onUnitChanged: (v) => setState(() => _florTamanhoUnidade = v),
+            ),
+          ],
+        ),
+
+        // Fruto
+        _buildOrganSection(
+          title: 'Fruto',
+          icon: Icons.spa,
+          children: [
+            _buildMorphTextField(
+              controller: _frutoDescricaoController,
+              label: 'Descrição',
+              hint: 'Descrição geral do fruto...',
+              icon: Icons.description,
+            ),
+            const SizedBox(height: 12),
+            _buildMorphTextField(
+              controller: _frutoCorController,
+              label: 'Cor',
+              hint: 'Ex: verde, vermelho, amarelo...',
+              icon: Icons.color_lens,
+            ),
+            const SizedBox(height: 12),
+            _buildMorphTextField(
+              controller: _frutoFormatoController,
+              label: 'Formato',
+              hint: 'Ex: esférico, alongado, achatado...',
+              icon: Icons.category,
+            ),
+            const SizedBox(height: 12),
+            _buildInlineMeasurement(
+              label: 'Tamanho',
+              controller: _frutoTamanhoController,
+              selectedUnit: _frutoTamanhoUnidade,
+              onUnitChanged: (v) => setState(() => _frutoTamanhoUnidade = v),
+            ),
+          ],
+        ),
+
+        // Semente
+        _buildOrganSection(
+          title: 'Semente',
+          icon: Icons.grain,
+          children: [
+            _buildMorphTextField(
+              controller: _sementeDescricaoController,
+              label: 'Descrição',
+              hint: 'Descrição geral da semente...',
+              icon: Icons.description,
+            ),
+            const SizedBox(height: 12),
+            _buildMorphTextField(
+              controller: _sementeCorController,
+              label: 'Cor',
+              hint: 'Ex: marrom, preta, branca...',
+              icon: Icons.color_lens,
+            ),
+            const SizedBox(height: 12),
+            _buildMorphTextField(
+              controller: _sementeFormatoController,
+              label: 'Formato',
+              hint: 'Ex: oval, arredondada, alada...',
+              icon: Icons.category,
+            ),
+            const SizedBox(height: 12),
+            _buildInlineMeasurement(
+              label: 'Tamanho',
+              controller: _sementeTamanhoController,
+              selectedUnit: _sementeTamanhoUnidade,
+              onUnitChanged: (v) => setState(() => _sementeTamanhoUnidade = v),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSessionSelector(AppLocalizations l10n) {
+    final sessionRepo = ref.watch(sessionRepositoryProvider);
+
+    return FutureBuilder(
+      future: sessionRepo.getAll(isArchived: false),
+      builder: (context, snapshot) {
+        final sessions = snapshot.data ?? [];
+
+        return DropdownButtonFormField<String>(
+          initialValue: _selectedSessionId,
+          decoration: InputDecoration(
+            labelText: l10n.sessionName,
+            border: const OutlineInputBorder(),
+            prefixIcon: const Icon(Icons.folder),
+          ),
+          items: [
+            DropdownMenuItem(value: null, child: Text(l10n.noSession)),
+            ...sessions.map((session) {
+              return DropdownMenuItem(
+                value: session.uuid,
+                child: Text(session.tripName),
+              );
+            }),
+          ],
+          onChanged: (value) {
+            setState(() {
+              _selectedSessionId = value;
+            });
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildLocationTab(AppLocalizations l10n) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.gpsCoordinates,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 16),
+                if (_latitude != null && _longitude != null)
+                  Column(
+                    children: [
+                      ListTile(
+                        leading: const Icon(Icons.location_on),
+                        title: Text(l10n.latitude),
+                        subtitle: Text(_latitude!.toStringAsFixed(6)),
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.location_on),
+                        title: Text(l10n.longitude),
+                        subtitle: Text(_longitude!.toStringAsFixed(6)),
+                      ),
+                    ],
+                  )
+                else
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Text(l10n.noLocationSet),
+                    ),
+                  ),
+                const SizedBox(height: 8),
+                ElevatedButton.icon(
+                  onPressed: _fetchingLocation ? null : _getCurrentLocation,
+                  icon: _fetchingLocation
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.my_location),
+                  label: Text(
+                    _fetchingLocation
+                        ? 'Obtendo localização...'
+                        : 'Obter Localização Atual',
+                  ),
+                ),
+                if (_latitude != null && _longitude != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextButton.icon(
+                            onPressed: () {
+                              setState(() {
+                                _latitude = null;
+                                _longitude = null;
+                              });
+                            },
+                            icon: const Icon(Icons.clear),
+                            label: const Text('Limpar Localização'),
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.red,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Card(
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.map, size: 20),
+                    const SizedBox(width: 8),
+                    const Text('Mapa de Localização'),
+                    const Spacer(),
+                    if (_latitude != null && _longitude != null)
+                      TextButton.icon(
+                        onPressed: () {
+                          // Center map on current location
+                          setState(() {});
+                        },
+                        icon: const Icon(Icons.my_location, size: 16),
+                        label: Text(l10n.recenter),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 250,
+                child: _latitude != null && _longitude != null
+                    ? MapWidget(
+                        latitude: _latitude,
+                        longitude: _longitude,
+                        zoom: 15.0,
+                        interactive: true,
+                        showMarker: true,
+                        onLocationSelected: (latLng) {
+                          setState(() {
+                            _latitude = latLng.latitude;
+                            _longitude = latLng.longitude;
+                          });
+                        },
+                      )
+                    : Container(
+                        color: Colors.grey.shade200,
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.map_outlined,
+                              size: 64,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              'Toque em "Obter Localização Atual" para mostrar o mapa',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+              ),
+              if (_latitude != null && _longitude != null)
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(12),
+                      bottomRight: Radius.circular(12),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.info_outline, size: 16),
+                      const SizedBox(width: 8),
+                      const Expanded(
+                        child: Text(
+                          'Toque no mapa para ajustar a posição do marcador',
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHabitatTab(AppLocalizations l10n) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        TextFormField(
+          controller: _habitatController,
+          decoration: InputDecoration(
+            labelText: l10n.habitat,
+            border: const OutlineInputBorder(),
+            hintText: 'Describe the habitat where the plant was found...',
+            prefixIcon: const Icon(Icons.landscape),
+          ),
+          maxLines: 5,
+          maxLength: 500,
+          textCapitalization: TextCapitalization.sentences,
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _notesController,
+          decoration: InputDecoration(
+            labelText: l10n.notes,
+            border: const OutlineInputBorder(),
+            hintText: 'Additional observations or notes...',
+            prefixIcon: const Icon(Icons.notes),
+          ),
+          maxLines: 5,
+          textCapitalization: TextCapitalization.sentences,
+        ),
+      ],
+    );
+  }
+
+  // --- Morphology helper widgets ---
+
+  Widget _buildOrganSection({
+    required String title,
+    required IconData icon,
+    required List<Widget> children,
+  }) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      clipBehavior: Clip.antiAlias,
+      child: ExpansionTile(
+        leading: Icon(icon, size: 22),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+        ),
+        tilePadding: const EdgeInsets.symmetric(horizontal: 12),
+        childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        children: children,
+      ),
+    );
+  }
+
+  Widget _buildMorphTextField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    required IconData icon,
+    int maxLines = 2,
+  }) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+        hintText: hint,
+        prefixIcon: Icon(icon, size: 20),
+        isDense: true,
+      ),
+      maxLines: maxLines,
+      textCapitalization: TextCapitalization.sentences,
+    );
+  }
+
+  Widget _buildInlineMeasurement({
+    required String label,
+    required TextEditingController controller,
+    required String selectedUnit,
+    required ValueChanged<String> onUnitChanged,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 3,
+          child: TextFormField(
+            controller: controller,
+            decoration: InputDecoration(
+              labelText: label,
+              border: const OutlineInputBorder(),
+              hintText: 'Ex: 2.5',
+              prefixIcon: const Icon(Icons.straighten, size: 20),
+              isDense: true,
+            ),
+            keyboardType: const TextInputType.numberWithOptions(
+              decimal: true,
+              signed: false,
+            ),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          flex: 2,
+          child: DropdownButtonFormField<String>(
+            initialValue: selectedUnit,
+            decoration: const InputDecoration(
+              labelText: 'Unidade',
+              border: OutlineInputBorder(),
+              isDense: true,
+            ),
+            items: const [
+              DropdownMenuItem(value: 'mm', child: Text('mm')),
+              DropdownMenuItem(value: 'cm', child: Text('cm')),
+              DropdownMenuItem(value: 'm', child: Text('m')),
+            ],
+            onChanged: (v) {
+              if (v != null) onUnitChanged(v);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMeasurementsTab(AppLocalizations l10n) {
+    return Column(
+      children: [
+        Expanded(
+          child: _measurements.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.straighten,
+                        size: 64,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Nenhuma medição ainda',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Toque no botão + abaixo para adicionar medições',
+                      ),
+                    ],
+                  ),
+                )
+              : ReorderableListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: _measurements.length,
+                  onReorder: (oldIndex, newIndex) {
+                    setState(() {
+                      if (newIndex > oldIndex) {
+                        newIndex -= 1;
+                      }
+                      final item = _measurements.removeAt(oldIndex);
+                      _measurements.insert(newIndex, item);
+                    });
+                  },
+                  itemBuilder: (context, index) {
+                    final measurement = _measurements[index];
+                    return Card(
+                      key: ValueKey('measurement_$index'),
+                      margin: const EdgeInsets.only(bottom: 8),
+                      child: ListTile(
+                        leading: const Icon(Icons.straighten),
+                        title: Text(measurement.label),
+                        subtitle: Text(
+                          '${measurement.value} ${measurement.unit}',
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit, size: 20),
+                              onPressed: () => _editMeasurement(index),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete, size: 20),
+                              color: Colors.red,
+                              onPressed: () => _removeMeasurement(index),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+        ),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 4,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
+          child: SafeArea(
+            child: FilledButton.icon(
+              onPressed: _addMeasurement,
+              icon: const Icon(Icons.add),
+              label: const Text('Adicionar Medição'),
+              style: FilledButton.styleFrom(
+                minimumSize: const Size.fromHeight(48),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _addMeasurement() async {
+    final result = await _showMeasurementDialog();
+    if (result != null && mounted) {
+      setState(() {
+        _measurements.add(result);
+      });
+    }
+  }
+
+  Future<void> _editMeasurement(int index) async {
+    final result = await _showMeasurementDialog(
+      initialMeasurement: _measurements[index],
+    );
+    if (result != null && mounted) {
+      setState(() {
+        _measurements[index] = result;
+      });
+    }
+  }
+
+  void _removeMeasurement(int index) {
+    setState(() {
+      _measurements.removeAt(index);
+    });
+  }
+
+  Future<Measurement?> _showMeasurementDialog({
+    Measurement? initialMeasurement,
+  }) async {
+    final labelController = TextEditingController(
+      text: initialMeasurement?.label ?? '',
+    );
+    final valueController = TextEditingController(
+      text: initialMeasurement?.value.toString() ?? '',
+    );
+    String selectedUnit = initialMeasurement?.unit ?? 'cm';
+
+    return showDialog<Measurement>(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: Text(
+            initialMeasurement == null ? 'Adicionar Medição' : 'Editar Medição',
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: labelController,
+                  decoration: const InputDecoration(
+                    labelText: 'Descrição *',
+                    hintText: 'ex: Altura, Largura, Diâmetro',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.label),
+                  ),
+                  textCapitalization: TextCapitalization.words,
+                  autofocus: initialMeasurement == null,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: valueController,
+                  decoration: const InputDecoration(
+                    labelText: 'Valor *',
+                    hintText: 'Ex: 15.5',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.numbers),
+                  ),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                    signed: false,
+                  ),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  initialValue: selectedUnit,
+                  decoration: const InputDecoration(
+                    labelText: 'Unidade',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.straighten),
+                  ),
+                  items: const [
+                    DropdownMenuItem(
+                      value: 'mm',
+                      child: Text('Milímetros (mm)'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'cm',
+                      child: Text('Centímetros (cm)'),
+                    ),
+                    DropdownMenuItem(value: 'm', child: Text('Metros (m)')),
+                    DropdownMenuItem(
+                      value: 'in',
+                      child: Text('Polegadas (in)'),
+                    ),
+                    DropdownMenuItem(value: 'ft', child: Text('Pés (ft)')),
+                    DropdownMenuItem(
+                      value: 'mg',
+                      child: Text('Miligramas (mg)'),
+                    ),
+                    DropdownMenuItem(value: 'g', child: Text('Gramas (g)')),
+                    DropdownMenuItem(
+                      value: 'kg',
+                      child: Text('Quilogramas (kg)'),
+                    ),
+                    DropdownMenuItem(value: 'oz', child: Text('Onças (oz)')),
+                    DropdownMenuItem(value: 'lb', child: Text('Libras (lb)')),
+                    DropdownMenuItem(value: '°C', child: Text('Celsius (°C)')),
+                    DropdownMenuItem(
+                      value: '°F',
+                      child: Text('Fahrenheit (°F)'),
+                    ),
+                    DropdownMenuItem(
+                      value: '%',
+                      child: Text('Porcentagem (%)'),
+                    ),
+                    DropdownMenuItem(value: 'count', child: Text('Contagem')),
+                  ],
+                  onChanged: (value) {
+                    setDialogState(() {
+                      selectedUnit = value!;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
+            FilledButton(
+              onPressed: () {
+                final label = labelController.text.trim();
+                if (label.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Por favor, insira uma descrição'),
+                      backgroundColor: Colors.orange,
+                    ),
+                  );
+                  return;
+                }
+
+                final valueText = valueController.text.trim();
+                if (valueText.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Por favor, insira um valor'),
+                      backgroundColor: Colors.orange,
+                    ),
+                  );
+                  return;
+                }
+
+                final value = double.tryParse(valueText);
+                if (value == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Por favor, insira um número válido'),
+                      backgroundColor: Colors.orange,
+                    ),
+                  );
+                  return;
+                }
+
+                if (value < 0) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Valor não pode ser negativo'),
+                      backgroundColor: Colors.orange,
+                    ),
+                  );
+                  return;
+                }
+
+                if (value > 999999) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Valor muito grande (máximo: 999999)'),
+                      backgroundColor: Colors.orange,
+                    ),
+                  );
+                  return;
+                }
+
+                final measurement = Measurement()
+                  ..label = label
+                  ..value = value
+                  ..unit = selectedUnit;
+
+                Navigator.of(context).pop(measurement);
+              },
+              child: const Text('Salvar'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPhotosTab(AppLocalizations l10n) {
+    return Column(
+      children: [
+        Expanded(
+          child: _photoPaths.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.photo_camera,
+                        size: 64,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Nenhuma foto adicionada',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Toque nos botões abaixo para adicionar fotos',
+                      ),
+                    ],
+                  ),
+                )
+              : GridView.builder(
+                  padding: const EdgeInsets.all(16),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                  ),
+                  itemCount: _photoPaths.length,
+                  itemBuilder: (context, index) {
+                    return Stack(
+                      children: [
+                        Positioned.fill(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.file(
+                              File(_photoPaths[index]),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 4,
+                          right: 4,
+                          child: CircleAvatar(
+                            radius: 16,
+                            backgroundColor: Colors.black54,
+                            child: IconButton(
+                              padding: EdgeInsets.zero,
+                              iconSize: 20,
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.white,
+                              ),
+                              onPressed: () => _removePhoto(index),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+        ),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 4,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: _takePhoto,
+                  icon: const Icon(Icons.camera_alt),
+                  label: Text(l10n.takePhoto),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: _pickFromGallery,
+                  icon: const Icon(Icons.photo_library),
+                  label: Text(l10n.chooseFromGallery),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAudioTab(AppLocalizations l10n) {
+    final transcriptionEnabled =
+        ref.watch(settingsNotifierProvider).valueOrNull?.transcriptionEnabled ??
+        false;
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Text(l10n.audioNotes, style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: 8),
+        Text(
+          'Grave notas de voz durante a coleta',
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade600),
+        ),
+        const SizedBox(height: 24),
+
+        // Audio recorder
+        AudioRecorderWidget(
+          resolveQuality: () async {
+            final settings = await ref.read(settingsNotifierProvider.future);
+            return settings.audioQuality;
+          },
+          onRecordingComplete: (audioPath) {
+            setState(() {
+              _audioNotePaths.add(audioPath);
+              _audioTranscripts.add(''); // Empty transcript initially
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Nota de áudio salva')),
+            );
+          },
+        ),
+
+        const SizedBox(height: 24),
+
+        // Audio notes list
+        if (_audioNotePaths.isEmpty)
+          Center(
+            child: Column(
+              children: [
+                Icon(Icons.audiotrack, size: 48, color: Colors.grey.shade400),
+                const SizedBox(height: 8),
+                Text(
+                  'Nenhuma nota de áudio gravada',
+                  style: TextStyle(color: Colors.grey.shade600),
+                ),
+              ],
+            ),
+          )
+        else
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Notas gravadas (${_audioNotePaths.length})',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 12),
+              ..._audioNotePaths.asMap().entries.map((entry) {
+                final index = entry.key;
+                final audioPath = entry.value;
+                final transcript = index < _audioTranscripts.length
+                    ? _audioTranscripts[index]
+                    : '';
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: AudioPlayerWidget(
+                    audioPath: audioPath,
+                    transcript: transcript.isNotEmpty ? transcript : null,
+                    onDelete: () {
+                      setState(() {
+                        _audioNotePaths.removeAt(index);
+                        if (index < _audioTranscripts.length) {
+                          _audioTranscripts.removeAt(index);
+                        }
+                      });
+                      // Delete the file
+                      final file = File(audioPath);
+                      if (file.existsSync()) {
+                        file.delete();
+                      }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Nota de áudio excluída')),
+                      );
+                    },
+                    onTranscribe: (path) async {
+                      if (transcriptionEnabled) {
+                        await _transcribeAudio(index, path);
+                      }
+                    },
+                  ),
+                );
+              }),
+            ],
+          ),
+      ],
+    );
+  }
+
+  Future<void> _transcribeAudio(int index, String audioPath) async {
+    try {
+      final settings = await ref.read(settingsNotifierProvider.future);
+      if (!settings.transcriptionEnabled) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Transcrição desativada nas configurações'),
+            ),
+          );
+        }
+        return;
+      }
+
+      final audioFile = File(audioPath);
+      if (!audioFile.existsSync()) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Arquivo de áudio não encontrado')),
+          );
+        }
+        return;
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Transcrevendo áudio... Isso pode levar alguns minutos.',
+            ),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+
+      // Use the new file-based transcription
+      final transcript = await _audioTranscriptionService.transcribeFile(
+        audioPath: audioPath,
+        localeId: settings.transcriptionLocale,
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        while (_audioTranscripts.length <= index) {
+          _audioTranscripts.add('');
+        }
+        _audioTranscripts[index] = transcript;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            transcript.isEmpty
+                ? 'Nenhuma fala detectada'
+                : 'Transcrição concluída com sucesso!',
+          ),
+          backgroundColor: transcript.isEmpty ? Colors.orange : Colors.green,
+        ),
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao transcrever: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
+    }
+  }
+
+  Widget _buildBottomBar(AppLocalizations l10n) {
+    return BottomAppBar(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextButton.icon(
+                onPressed: () => _savePlant(asDraft: true),
+                icon: const Icon(Icons.save, size: 18),
+                label: Text(l10n.saveDraft, overflow: TextOverflow.ellipsis),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: FilledButton.icon(
+                onPressed: () => _savePlant(asDraft: false),
+                icon: const Icon(Icons.check, size: 18),
+                label: Text(l10n.markComplete, overflow: TextOverflow.ellipsis),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getCategoryName(AppLocalizations l10n, PlantCategory category) {
+    switch (category) {
+      case PlantCategory.trees:
+        return l10n.categoryTrees;
+      case PlantCategory.shrubs:
+        return l10n.categoryShrubs;
+      case PlantCategory.herbs:
+        return l10n.categoryHerbs;
+      case PlantCategory.ferns:
+        return l10n.categoryFerns;
+      case PlantCategory.grasses:
+        return l10n.categoryGrasses;
+      case PlantCategory.vines:
+        return l10n.categoryVines;
+      case PlantCategory.cacti:
+        return l10n.categoryCacti;
+      case PlantCategory.aquatic:
+        return l10n.categoryAquatic;
+    }
+  }
+
+  Future<void> _getCurrentLocation() async {
+    setState(() {
+      _fetchingLocation = true;
+    });
+
+    try {
+      final position = await _locationService.getCurrentLocation();
+      if (position != null && mounted) {
+        setState(() {
+          _latitude = position.latitude;
+          _longitude = position.longitude;
+          _fetchingLocation = false;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Localização obtida com sucesso'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _fetchingLocation = false;
+        });
+
+        // Check if error message suggests service disabled or permission issue
+        final errorMessage = e.toString().toLowerCase();
+        final isServiceDisabled = errorMessage.contains('disabled');
+        final isPermissionDenied = errorMessage.contains('permission');
+        final isPermanentlyDenied = errorMessage.contains('forever');
+
+        if (isServiceDisabled) {
+          final result = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Serviços de Localização Desativados'),
+              content: const Text(
+                'Por favor, ative os serviços de localização para registrar localizações de plantas',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('Cancelar'),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('Abrir Configurações'),
+                ),
+              ],
+            ),
+          );
+
+          if (result == true) {
+            await _locationService.openLocationSettings();
+          }
+        } else if (isPermissionDenied) {
+          final result = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Permissão de Localização Necessária'),
+              content: Text(e.toString()),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('Cancelar'),
+                ),
+                if (isPermanentlyDenied)
+                  FilledButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: const Text('Abrir Configurações'),
+                  ),
+              ],
+            ),
+          );
+
+          if (result == true) {
+            await _locationService.openAppSettings();
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erro ao obter localização: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  Future<void> _takePhoto() async {
+    try {
+      final photo = await _photoService.takePhoto();
+      if (photo != null && mounted) {
+        setState(() {
+          _photoPaths.add(photo.path);
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao tirar foto: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _pickFromGallery() async {
+    try {
+      final photos = await _photoService.pickMultipleFromGallery();
+      if (photos.isNotEmpty && mounted) {
+        setState(() {
+          _photoPaths.addAll(photos.map((f) => f.path));
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao escolher fotos: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void _removePhoto(int index) {
+    final path = _photoPaths[index];
+    setState(() {
+      _photoPaths.removeAt(index);
+    });
+    // Delete file if not from original plant (editing mode)
+    if (widget.plant == null || !widget.plant!.photoPaths.contains(path)) {
+      _photoService.deletePhoto(path);
+    }
+  }
+}

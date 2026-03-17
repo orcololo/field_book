@@ -1,0 +1,11 @@
+flutter_native_splash:
+  color: "#3D7A52"
+  image: leaf_icon.png
+  android: true
+  ios: false
+  web: false
+  
+  android_12:
+    image: leaf_icon.png
+    color: "#3D7A52"
+    icon_background_color: "#3D7A52"
