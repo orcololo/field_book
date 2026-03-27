@@ -33,9 +33,7 @@ class SettingsScreen extends ConsumerWidget {
             right: FoliumTheme.space16,
           ),
           itemBuilder: (context, index) {
-            return ShimmerLoading(
-              child: ShimmerPlaceholders.listItem(),
-            );
+            return ShimmerLoading(child: ShimmerPlaceholders.listItem());
           },
         ),
         error: (error, stack) {
@@ -44,24 +42,20 @@ class SettingsScreen extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 64,
-                  color: colorScheme.error,
-                ),
+                Icon(Icons.error_outline, size: 64, color: colorScheme.error),
                 const SizedBox(height: FoliumTheme.space16),
                 Text(
                   l10n.errorLoadingSettings,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: colorScheme.onSurface,
-                      ),
+                    color: colorScheme.onSurface,
+                  ),
                 ),
                 const SizedBox(height: FoliumTheme.space8),
                 Text(
                   error.toString(),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -75,7 +69,8 @@ class SettingsScreen extends ConsumerWidget {
                 left: FoliumTheme.space16,
                 right: FoliumTheme.space16,
                 top: 96, // Account for glass app bar
-                bottom: 140, // Extra bottom padding for navigation bar + safe area + overflow fix
+                bottom:
+                    140, // Extra bottom padding for navigation bar + safe area + overflow fix
               ),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
@@ -83,11 +78,9 @@ class SettingsScreen extends ConsumerWidget {
                   const SizedBox(height: FoliumTheme.space8),
                   _buildModernCard(
                     context,
-                    children: [
-                      _LanguageTile(settings: settings),
-                    ],
+                    children: [_LanguageTile(settings: settings)],
                   ),
-                  
+
                   const SizedBox(height: FoliumTheme.space24),
                   _buildSectionHeader(context, l10n.registryIdentification),
                   const SizedBox(height: FoliumTheme.space8),
@@ -103,7 +96,7 @@ class SettingsScreen extends ConsumerWidget {
                       _AutoGenerateIdentifierTile(settings: settings),
                     ],
                   ),
-                  
+
                   const SizedBox(height: FoliumTheme.space24),
                   _buildSectionHeader(context, l10n.map),
                   const SizedBox(height: FoliumTheme.space8),
@@ -117,17 +110,15 @@ class SettingsScreen extends ConsumerWidget {
                       _AutoCacheTile(settings: settings),
                     ],
                   ),
-                  
+
                   const SizedBox(height: FoliumTheme.space24),
                   _buildSectionHeader(context, l10n.formSection),
                   const SizedBox(height: FoliumTheme.space8),
                   _buildModernCard(
                     context,
-                    children: [
-                      _AutoSaveTile(settings: settings),
-                    ],
+                    children: [_AutoSaveTile(settings: settings)],
                   ),
-                  
+
                   const SizedBox(height: FoliumTheme.space24),
                   _buildSectionHeader(context, l10n.photos),
                   const SizedBox(height: FoliumTheme.space8),
@@ -139,7 +130,7 @@ class SettingsScreen extends ConsumerWidget {
                       _PreserveExifTile(settings: settings),
                     ],
                   ),
-                  
+
                   const SizedBox(height: FoliumTheme.space24),
                   _buildSectionHeader(context, l10n.audioSection),
                   const SizedBox(height: FoliumTheme.space8),
@@ -153,7 +144,7 @@ class SettingsScreen extends ConsumerWidget {
                       _AudioQualityTile(settings: settings),
                     ],
                   ),
-                  
+
                   const SizedBox(height: FoliumTheme.space24),
                   _buildSectionHeader(context, l10n.backupAndData),
                   const SizedBox(height: FoliumTheme.space8),
@@ -164,8 +155,12 @@ class SettingsScreen extends ConsumerWidget {
                         leading: Container(
                           padding: const EdgeInsets.all(FoliumTheme.space8),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.tertiaryContainer,
-                            borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.tertiaryContainer,
+                            borderRadius: BorderRadius.circular(
+                              FoliumTheme.radiusSmall,
+                            ),
                           ),
                           child: Icon(
                             Icons.import_export,
@@ -174,7 +169,10 @@ class SettingsScreen extends ConsumerWidget {
                         ),
                         title: Text(l10n.exportAndImport),
                         subtitle: Text(l10n.localDataBackup),
-                        trailing: Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -191,7 +189,9 @@ class SettingsScreen extends ConsumerWidget {
                       const Divider(height: 1),
                       _CloudBackupWifiOnlyTile(settings: settings),
                       if (settings.cloudBackupEnabled &&
-                          settings.cloudBackupProvider == CloudBackupProvider.googleDrive) ...[                        const Divider(height: 1),
+                          settings.cloudBackupProvider ==
+                              CloudBackupProvider.googleDrive) ...[
+                        const Divider(height: 1),
                         _BackupActionButtons(settings: settings),
                       ],
                       if (settings.lastCloudBackup != null) ...[
@@ -200,8 +200,13 @@ class SettingsScreen extends ConsumerWidget {
                           leading: Container(
                             padding: const EdgeInsets.all(FoliumTheme.space8),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
-                              borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer
+                                  .withValues(alpha: 0.5),
+                              borderRadius: BorderRadius.circular(
+                                FoliumTheme.radiusSmall,
+                              ),
                             ),
                             child: Icon(
                               Icons.access_time,
@@ -209,12 +214,14 @@ class SettingsScreen extends ConsumerWidget {
                             ),
                           ),
                           title: Text(l10n.lastBackupLabel),
-                          subtitle: Text(_formatDateTime(settings.lastCloudBackup!)),
+                          subtitle: Text(
+                            _formatDateTime(settings.lastCloudBackup!),
+                          ),
                         ),
                       ],
                     ],
                   ),
-                  
+
                   const SizedBox(height: FoliumTheme.space24),
                   _buildSectionHeader(context, l10n.account),
                   const SizedBox(height: FoliumTheme.space8),
@@ -224,7 +231,7 @@ class SettingsScreen extends ConsumerWidget {
                   _buildSectionHeader(context, l10n.syncSection),
                   const SizedBox(height: FoliumTheme.space8),
                   _SyncSection(settings: settings),
-                  
+
                   const SizedBox(height: FoliumTheme.space24),
                   _buildSectionHeader(context, l10n.performance),
                   const SizedBox(height: FoliumTheme.space8),
@@ -236,7 +243,7 @@ class SettingsScreen extends ConsumerWidget {
                       _ThumbnailCacheTile(settings: settings),
                     ],
                   ),
-                  
+
                   const SizedBox(height: FoliumTheme.space24),
                   _buildSectionHeader(context, l10n.about),
                   const SizedBox(height: FoliumTheme.space8),
@@ -247,8 +254,12 @@ class SettingsScreen extends ConsumerWidget {
                         leading: Container(
                           padding: const EdgeInsets.all(FoliumTheme.space8),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.tertiaryContainer,
-                            borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.tertiaryContainer,
+                            borderRadius: BorderRadius.circular(
+                              FoliumTheme.radiusSmall,
+                            ),
                           ),
                           child: Icon(
                             Icons.school_outlined,
@@ -257,13 +268,19 @@ class SettingsScreen extends ConsumerWidget {
                         ),
                         title: Text(l10n.showTutorial),
                         subtitle: Text(l10n.showTutorialSubtitle),
-                        trailing: Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                         onTap: () async {
-                          await ref.read(settingsNotifierProvider.notifier)
+                          await ref
+                              .read(settingsNotifierProvider.notifier)
                               .setHasCompletedOnboarding(false);
                           if (context.mounted) {
                             Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (_) => const OnboardingScreen()),
+                              MaterialPageRoute(
+                                builder: (_) => const OnboardingScreen(),
+                              ),
                               (route) => false,
                             );
                           }
@@ -274,8 +291,12 @@ class SettingsScreen extends ConsumerWidget {
                         leading: Container(
                           padding: const EdgeInsets.all(FoliumTheme.space8),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(
+                              FoliumTheme.radiusSmall,
+                            ),
                           ),
                           child: Icon(
                             Icons.info_outline,
@@ -283,7 +304,10 @@ class SettingsScreen extends ConsumerWidget {
                           ),
                         ),
                         title: Text(l10n.aboutApp),
-                        trailing: Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                         onTap: () {
                           showAboutDialog(
                             context: context,
@@ -304,12 +328,18 @@ class SettingsScreen extends ConsumerWidget {
                         leading: Container(
                           padding: const EdgeInsets.all(FoliumTheme.space8),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                            borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
+                            borderRadius: BorderRadius.circular(
+                              FoliumTheme.radiusSmall,
+                            ),
                           ),
                           child: Icon(
                             Icons.devices,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                         title: Text(l10n.deviceId),
@@ -318,7 +348,9 @@ class SettingsScreen extends ConsumerWidget {
                           style: TextStyle(
                             fontFamily: 'monospace',
                             fontSize: 12,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ),
@@ -337,20 +369,21 @@ class SettingsScreen extends ConsumerWidget {
     return Text(
       title,
       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.primary,
-            letterSpacing: 0.5,
-          ),
+        fontWeight: FontWeight.w600,
+        color: Theme.of(context).colorScheme.primary,
+        letterSpacing: 0.5,
+      ),
     );
   }
 
-  Widget _buildModernCard(BuildContext context, {required List<Widget> children}) {
+  Widget _buildModernCard(
+    BuildContext context, {
+    required List<Widget> children,
+  }) {
     return Container(
       decoration: FoliumTheme.cardDecoration(),
       clipBehavior: Clip.antiAlias,
-      child: Column(
-        children: children,
-      ),
+      child: Column(children: children),
     );
   }
 
@@ -367,7 +400,7 @@ class _LanguageTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(settingsNotifierProvider.notifier);
-    
+
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(FoliumTheme.space8),
@@ -375,14 +408,14 @@ class _LanguageTile extends ConsumerWidget {
           color: FoliumTheme.tertiaryContainer,
           borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
         ),
-        child: const Icon(
-          Icons.language,
-          color: FoliumTheme.tertiaryMain,
-        ),
+        child: const Icon(Icons.language, color: FoliumTheme.tertiaryMain),
       ),
       title: const Text('Idioma'),
       subtitle: Text(_getLanguageName(settings.localeCode)),
-      trailing: Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurfaceVariant),
+      trailing: Icon(
+        Icons.chevron_right,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
       onTap: () async {
         final selected = await showDialog<String>(
           context: context,
@@ -413,7 +446,7 @@ class _LanguageTile extends ConsumerWidget {
             ],
           ),
         );
-        
+
         if (selected != null && selected != settings.localeCode) {
           await notifier.setLocale(selected);
         }
@@ -443,7 +476,7 @@ class _MapProviderTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(settingsNotifierProvider.notifier);
-    
+
     return ListTile(
       leading: const Icon(Icons.map),
       title: const Text('Provedor de Mapas'),
@@ -465,7 +498,7 @@ class _MapProviderTile extends ConsumerWidget {
             }).toList(),
           ),
         );
-        
+
         if (selected != null && selected != settings.mapProvider) {
           await notifier.setMapProvider(selected);
         }
@@ -493,7 +526,7 @@ class _MapCacheTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(settingsNotifierProvider.notifier);
-    
+
     return ListTile(
       leading: const Icon(Icons.sd_storage),
       title: const Text('Raio do Cache do Mapa'),
@@ -507,8 +540,7 @@ class _MapCacheTile extends ConsumerWidget {
           divisions: 49,
           label: '${settings.mapCacheRadius.toStringAsFixed(1)} km',
           onChanged: (value) async {
-            final updatedSettings = settings
-              ..mapCacheRadius = value;
+            final updatedSettings = settings..mapCacheRadius = value;
             await notifier.updateSettings(updatedSettings);
           },
         ),
@@ -525,7 +557,7 @@ class _AutoCacheTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(settingsNotifierProvider.notifier);
-    
+
     return SwitchListTile(
       secondary: const Icon(Icons.cached),
       title: const Text('Cache Automático'),
@@ -547,13 +579,15 @@ class _AutoSaveTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(settingsNotifierProvider.notifier);
-    
+
     return ListTile(
       leading: const Icon(Icons.save),
       title: const Text('Intervalo de Auto-salvamento'),
-      subtitle: Text(settings.autoSaveInterval == 0 
-          ? 'Desativado' 
-          : '${settings.autoSaveInterval} segundos'),
+      subtitle: Text(
+        settings.autoSaveInterval == 0
+            ? 'Desativado'
+            : '${settings.autoSaveInterval} segundos',
+      ),
       trailing: const Icon(Icons.chevron_right),
       onTap: () async {
         final selected = await showDialog<int>(
@@ -599,7 +633,7 @@ class _AutoSaveTile extends ConsumerWidget {
             ],
           ),
         );
-        
+
         if (selected != null && selected != settings.autoSaveInterval) {
           await notifier.setAutoSaveInterval(selected);
         }
@@ -616,7 +650,7 @@ class _PhotoQualityTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(settingsNotifierProvider.notifier);
-    
+
     return ListTile(
       leading: const Icon(Icons.high_quality),
       title: const Text('Qualidade de Compressão'),
@@ -646,7 +680,7 @@ class _PreserveExifTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(settingsNotifierProvider.notifier);
-    
+
     return SwitchListTile(
       secondary: const Icon(Icons.info),
       title: const Text('Preservar Metadados EXIF'),
@@ -668,7 +702,7 @@ class _TranscriptionTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(settingsNotifierProvider.notifier);
-    
+
     return SwitchListTile(
       secondary: const Icon(Icons.mic),
       title: const Text('Transcrição de Áudio'),
@@ -690,49 +724,53 @@ class _TranscriptionLocaleTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(settingsNotifierProvider.notifier);
-    
+
     return ListTile(
       leading: const Icon(Icons.record_voice_over),
       title: const Text('Idioma da Transcrição'),
       subtitle: Text(_getLanguageName(settings.transcriptionLocale)),
       trailing: const Icon(Icons.chevron_right),
       enabled: settings.transcriptionEnabled,
-      onTap: settings.transcriptionEnabled ? () async {
-        final selected = await showDialog<String>(
-          context: context,
-          builder: (context) => SimpleDialog(
-            title: const Text('Idioma da Transcrição'),
-            children: [
-              SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, 'pt'),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text('Português (BR)'),
+      onTap: settings.transcriptionEnabled
+          ? () async {
+              final selected = await showDialog<String>(
+                context: context,
+                builder: (context) => SimpleDialog(
+                  title: const Text('Idioma da Transcrição'),
+                  children: [
+                    SimpleDialogOption(
+                      onPressed: () => Navigator.pop(context, 'pt'),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text('Português (BR)'),
+                      ),
+                    ),
+                    SimpleDialogOption(
+                      onPressed: () => Navigator.pop(context, 'en'),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text('English'),
+                      ),
+                    ),
+                    SimpleDialogOption(
+                      onPressed: () => Navigator.pop(context, 'es'),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text('Español'),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, 'en'),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text('English'),
-                ),
-              ),
-              SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, 'es'),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text('Español'),
-                ),
-              ),
-            ],
-          ),
-        );
-        
-        if (selected != null && selected != settings.transcriptionLocale) {
-          final updatedSettings = settings..transcriptionLocale = selected;
-          await notifier.updateSettings(updatedSettings);
-        }
-      } : null,
+              );
+
+              if (selected != null &&
+                  selected != settings.transcriptionLocale) {
+                final updatedSettings = settings
+                  ..transcriptionLocale = selected;
+                await notifier.updateSettings(updatedSettings);
+              }
+            }
+          : null,
     );
   }
 
@@ -758,7 +796,7 @@ class _AudioQualityTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(settingsNotifierProvider.notifier);
-    
+
     return ListTile(
       leading: const Icon(Icons.audiotrack),
       title: const Text('Qualidade de Áudio'),
@@ -794,7 +832,7 @@ class _AudioQualityTile extends ConsumerWidget {
             ],
           ),
         );
-        
+
         if (selected != null && selected != settings.audioQuality) {
           final updatedSettings = settings..audioQuality = selected;
           await notifier.updateSettings(updatedSettings);
@@ -826,7 +864,7 @@ class _CloudBackupEnabledTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsNotifierProvider.notifier);
-    
+
     return SwitchListTile(
       secondary: const Icon(Icons.cloud_upload),
       title: Text(l10n.cloudBackup),
@@ -848,34 +886,37 @@ class _CloudBackupProviderTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsNotifierProvider.notifier);
-    
+
     return ListTile(
       leading: const Icon(Icons.cloud_queue),
       title: Text(l10n.backupProvider),
       subtitle: Text(_getProviderName(settings.cloudBackupProvider, l10n)),
       trailing: const Icon(Icons.chevron_right),
       enabled: settings.cloudBackupEnabled,
-      onTap: settings.cloudBackupEnabled ? () async {
-        final selected = await showDialog<CloudBackupProvider>(
-          context: context,
-          builder: (context) => SimpleDialog(
-            title: Text(l10n.backupProvider),
-            children: CloudBackupProvider.values.map((provider) {
-              return SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, provider),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(_getProviderName(provider, l10n)),
+      onTap: settings.cloudBackupEnabled
+          ? () async {
+              final selected = await showDialog<CloudBackupProvider>(
+                context: context,
+                builder: (context) => SimpleDialog(
+                  title: Text(l10n.backupProvider),
+                  children: CloudBackupProvider.values.map((provider) {
+                    return SimpleDialogOption(
+                      onPressed: () => Navigator.pop(context, provider),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(_getProviderName(provider, l10n)),
+                      ),
+                    );
+                  }).toList(),
                 ),
               );
-            }).toList(),
-          ),
-        );
-        
-        if (selected != null && selected != settings.cloudBackupProvider) {
-          await notifier.setCloudBackupProvider(selected);
-        }
-      } : null,
+
+              if (selected != null &&
+                  selected != settings.cloudBackupProvider) {
+                await notifier.setCloudBackupProvider(selected);
+              }
+            }
+          : null,
     );
   }
 
@@ -900,7 +941,7 @@ class _CloudBackupWifiOnlyTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsNotifierProvider.notifier);
-    
+
     return Opacity(
       opacity: settings.cloudBackupEnabled ? 1.0 : 0.5,
       child: SwitchListTile(
@@ -908,10 +949,12 @@ class _CloudBackupWifiOnlyTile extends ConsumerWidget {
         title: Text(l10n.wifiOnly),
         subtitle: Text(l10n.backupOnlyWifi),
         value: settings.cloudBackupWifiOnly,
-        onChanged: settings.cloudBackupEnabled ? (value) async {
-          final updatedSettings = settings..cloudBackupWifiOnly = value;
-          await notifier.updateSettings(updatedSettings);
-        } : null,
+        onChanged: settings.cloudBackupEnabled
+            ? (value) async {
+                final updatedSettings = settings..cloudBackupWifiOnly = value;
+                await notifier.updateSettings(updatedSettings);
+              }
+            : null,
       ),
     );
   }
@@ -941,7 +984,10 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
         // Signed-in status
         if (backupService.isSignedIn && backupService.currentUserEmail != null)
           ListTile(
-            leading: const Icon(Icons.account_circle, color: FoliumTheme.primaryMain),
+            leading: const Icon(
+              Icons.account_circle,
+              color: FoliumTheme.primaryMain,
+            ),
             title: Text(l10n.signedInAs(backupService.currentUserEmail!)),
             trailing: TextButton(
               onPressed: () async {
@@ -1007,7 +1053,9 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: FoliumTheme.primaryMain,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: FoliumTheme.space12),
+                padding: const EdgeInsets.symmetric(
+                  vertical: FoliumTheme.space12,
+                ),
               ),
             ),
           ),
@@ -1015,9 +1063,7 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
 
         // Restore button
         Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: FoliumTheme.space16,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: FoliumTheme.space16),
           child: SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
@@ -1032,14 +1078,14 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
                     )
                   : const Icon(Icons.cloud_download),
               label: Text(
-                _isRestoring
-                    ? l10n.restoreInProgress
-                    : l10n.restoreFromCloud,
+                _isRestoring ? l10n.restoreInProgress : l10n.restoreFromCloud,
               ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: FoliumTheme.primaryMain,
                 side: const BorderSide(color: FoliumTheme.primaryMain),
-                padding: const EdgeInsets.symmetric(vertical: FoliumTheme.space12),
+                padding: const EdgeInsets.symmetric(
+                  vertical: FoliumTheme.space12,
+                ),
               ),
             ),
           ),
@@ -1084,11 +1130,13 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.restoreResult(
-              result.imported,
-              result.updated,
-              result.skipped,
-            )),
+            content: Text(
+              l10n.restoreResult(
+                result.imported,
+                result.updated,
+                result.skipped,
+              ),
+            ),
             backgroundColor: FoliumTheme.success,
             duration: const Duration(seconds: 4),
           ),
@@ -1098,10 +1146,7 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
       if (mounted) {
         final errorMsg = _localizeError(e.toString(), l10n);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMsg),
-            backgroundColor: FoliumTheme.error,
-          ),
+          SnackBar(content: Text(errorMsg), backgroundColor: FoliumTheme.error),
         );
       }
     } finally {
@@ -1110,7 +1155,8 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
   }
 
   String _localizeError(String error, AppLocalizations l10n) {
-    if (error.contains('noInternetConnection')) return l10n.noInternetConnection;
+    if (error.contains('noInternetConnection'))
+      return l10n.noInternetConnection;
     if (error.contains('wifiRequired')) return l10n.wifiRequired;
     if (error.contains('noBackupFound')) return l10n.noBackupFound;
     return error;
@@ -1125,7 +1171,7 @@ class _PaginationSizeTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(settingsNotifierProvider.notifier);
-    
+
     return ListTile(
       leading: const Icon(Icons.view_list),
       title: const Text('Itens por Página'),
@@ -1147,7 +1193,7 @@ class _PaginationSizeTile extends ConsumerWidget {
             }).toList(),
           ),
         );
-        
+
         if (selected != null && selected != settings.paginationSize) {
           final updatedSettings = settings..paginationSize = selected;
           await notifier.updateSettings(updatedSettings);
@@ -1165,7 +1211,7 @@ class _ThumbnailCacheTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(settingsNotifierProvider.notifier);
-    
+
     return SwitchListTile(
       secondary: const Icon(Icons.image),
       title: const Text('Cache de Miniaturas'),
@@ -1195,20 +1241,21 @@ class _UserInitialsTile extends ConsumerWidget {
           color: FoliumTheme.primaryContainer,
           borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
         ),
-        child: const Icon(
-          Icons.person,
-          color: FoliumTheme.primaryMain,
-        ),
+        child: const Icon(Icons.person, color: FoliumTheme.primaryMain),
       ),
       title: const Text('Iniciais do Usuário'),
       subtitle: Text(settings.userInitials),
-      trailing: const Icon(Icons.chevron_right, color: FoliumTheme.onSurfaceVariant),
+      trailing: const Icon(
+        Icons.chevron_right,
+        color: FoliumTheme.onSurfaceVariant,
+      ),
       onTap: () async {
         final result = await showDialog<String>(
           context: context,
-          builder: (context) => _InitialsDialog(currentInitials: settings.userInitials),
+          builder: (context) =>
+              _InitialsDialog(currentInitials: settings.userInitials),
         );
-        
+
         if (result != null && result != settings.userInitials) {
           final updatedSettings = settings..userInitials = result;
           await notifier.updateSettings(updatedSettings);
@@ -1226,7 +1273,8 @@ class _LastRegistryNumberTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(settingsNotifierProvider.notifier);
     final nextNumber = settings.lastRegistryNumber + 1;
-    final nextId = '${settings.userInitials}${nextNumber.toString().padLeft(6, '0')}';
+    final nextId =
+        '${settings.userInitials}${nextNumber.toString().padLeft(6, '0')}';
 
     return ListTile(
       leading: Container(
@@ -1235,20 +1283,21 @@ class _LastRegistryNumberTile extends ConsumerWidget {
           color: FoliumTheme.secondaryContainer,
           borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
         ),
-        child: const Icon(
-          Icons.tag,
-          color: FoliumTheme.secondaryMain,
-        ),
+        child: const Icon(Icons.tag, color: FoliumTheme.secondaryMain),
       ),
       title: const Text('Último Número de Registro'),
       subtitle: Text('${settings.lastRegistryNumber} • Próximo: $nextId'),
-      trailing: const Icon(Icons.chevron_right, color: FoliumTheme.onSurfaceVariant),
+      trailing: const Icon(
+        Icons.chevron_right,
+        color: FoliumTheme.onSurfaceVariant,
+      ),
       onTap: () async {
         final result = await showDialog<int>(
           context: context,
-          builder: (context) => _RegistryNumberDialog(currentNumber: settings.lastRegistryNumber),
+          builder: (context) =>
+              _RegistryNumberDialog(currentNumber: settings.lastRegistryNumber),
         );
-        
+
         if (result != null && result != settings.lastRegistryNumber) {
           final updatedSettings = settings..lastRegistryNumber = result;
           await notifier.updateSettings(updatedSettings);
@@ -1273,10 +1322,7 @@ class _AutoGenerateIdentifierTile extends ConsumerWidget {
           color: FoliumTheme.warningContainer,
           borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
         ),
-        child: const Icon(
-          Icons.auto_awesome,
-          color: FoliumTheme.warning,
-        ),
+        child: const Icon(Icons.auto_awesome, color: FoliumTheme.warning),
       ),
       title: const Text('Gerar Automaticamente'),
       subtitle: const Text('Criar identificador ao salvar registro'),
@@ -1413,16 +1459,16 @@ class _RegistryNumberDialogState extends State<_RegistryNumberDialog> {
     if (value.isEmpty) {
       return 'Digite o último número de registro';
     }
-    
+
     final number = int.tryParse(value);
     if (number == null) {
       return 'Digite apenas números';
     }
-    
+
     if (number < 0 || number > 999999) {
       return 'Número deve estar entre 0 e 999999';
     }
-    
+
     try {
       return 'Próximo registro usará: ${number + 1}';
     } catch (e) {
@@ -1447,9 +1493,7 @@ class _RegistryNumberDialogState extends State<_RegistryNumberDialog> {
             ),
             keyboardType: TextInputType.number,
             maxLength: 6,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-            ],
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             onChanged: (_) {
               if (_errorText != null) _validate();
               setState(() {}); // Update helper text
@@ -1500,7 +1544,10 @@ class _IdentifierManagementTile extends StatelessWidget {
       ),
       title: const Text('Gerenciar Identificadores'),
       subtitle: const Text('Atribuir identificadores a plantas existentes'),
-      trailing: const Icon(Icons.chevron_right, color: FoliumTheme.onSurfaceVariant),
+      trailing: const Icon(
+        Icons.chevron_right,
+        color: FoliumTheme.onSurfaceVariant,
+      ),
       onTap: () {
         Navigator.push(
           context,
@@ -1536,12 +1583,16 @@ class _AccountSection extends ConsumerWidget {
                 ),
                 child: const Icon(Icons.person, color: FoliumTheme.success),
               ),
-              title: Text(authState.user.name.isNotEmpty
-                  ? authState.user.name
-                  : authState.user.email),
-              subtitle: Text(authState.user.email.isNotEmpty
-                  ? authState.user.email
-                  : 'Conectado'),
+              title: Text(
+                authState.user.name.isNotEmpty
+                    ? authState.user.name
+                    : authState.user.email,
+              ),
+              subtitle: Text(
+                authState.user.email.isNotEmpty
+                    ? authState.user.email
+                    : 'Conectado',
+              ),
             ),
             const Divider(height: 1),
             ListTile(
@@ -1570,13 +1621,14 @@ class _AccountSection extends ConsumerWidget {
               ),
               title: const Text('Entrar na conta'),
               subtitle: const Text('Sincronize seus dados na nuvem'),
-              trailing: const Icon(Icons.chevron_right, color: FoliumTheme.onSurfaceVariant),
+              trailing: const Icon(
+                Icons.chevron_right,
+                color: FoliumTheme.onSurfaceVariant,
+              ),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginScreen(),
-                  ),
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
                 );
               },
             ),
@@ -1609,8 +1661,8 @@ class _SyncSection extends ConsumerWidget {
                 color: syncState.isSyncing
                     ? FoliumTheme.primaryContainer
                     : isAuthenticated
-                        ? FoliumTheme.successContainer
-                        : FoliumTheme.surfaceVariant,
+                    ? FoliumTheme.successContainer
+                    : FoliumTheme.surfaceVariant,
                 borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
               ),
               child: syncState.isSyncing
@@ -1626,24 +1678,27 @@ class _SyncSection extends ConsumerWidget {
                           : FoliumTheme.onSurfaceVariant,
                     ),
             ),
-            title: Text(syncState.isSyncing
-                ? 'Sincronizando...'
-                : 'Sincronizar agora'),
+            title: Text(
+              syncState.isSyncing ? 'Sincronizando...' : 'Sincronizar agora',
+            ),
             subtitle: Text(
               !isAuthenticated
                   ? 'Faça login para sincronizar'
                   : syncState.lastSyncAt != null
-                      ? 'Última: ${_formatDateTime(syncState.lastSyncAt!)}'
-                      : 'Nunca sincronizado',
+                  ? 'Última: ${_formatDateTime(syncState.lastSyncAt!)}'
+                  : 'Nunca sincronizado',
             ),
             trailing: isAuthenticated && !syncState.isSyncing
-                ? const Icon(Icons.chevron_right, color: FoliumTheme.onSurfaceVariant)
+                ? const Icon(
+                    Icons.chevron_right,
+                    color: FoliumTheme.onSurfaceVariant,
+                  )
                 : null,
             onTap: isAuthenticated && !syncState.isSyncing
                 ? () {
-                    ref.read(syncNotifierProvider.notifier).sync(
-                          deviceId: settings.deviceId,
-                        );
+                    ref
+                        .read(syncNotifierProvider.notifier)
+                        .sync(deviceId: settings.deviceId);
                   }
                 : null,
           ),
@@ -1675,7 +1730,10 @@ class _SyncSection extends ConsumerWidget {
                   color: FoliumTheme.primaryContainer,
                   borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
                 ),
-                child: const Icon(Icons.info_outline, color: FoliumTheme.primaryMain),
+                child: const Icon(
+                  Icons.info_outline,
+                  color: FoliumTheme.primaryMain,
+                ),
               ),
               title: const Text('Último resultado'),
               subtitle: Text(

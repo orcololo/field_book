@@ -470,8 +470,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
           ? _cauleCircunferenciaUnidade
           : null
       ..cauleTemSeiva = _cauleTemSeiva
-      ..cauleDescricaoSeiva =
-          _cauleDescricaoSeivaController.text.trim().isEmpty
+      ..cauleDescricaoSeiva = _cauleDescricaoSeivaController.text.trim().isEmpty
           ? null
           : _cauleDescricaoSeivaController.text.trim()
       ..folhaDescricao = _folhaDescricaoController.text.trim().isEmpty
@@ -568,9 +567,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              asDraft ? l10n.savedAsDraft : l10n.plantRecordSaved,
-            ),
+            content: Text(asDraft ? l10n.savedAsDraft : l10n.plantRecordSaved),
           ),
         );
         Navigator.of(context).pop(true);
@@ -698,7 +695,11 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.warning, color: Theme.of(context).colorScheme.error, size: 20),
+                      Icon(
+                        Icons.warning,
+                        color: Theme.of(context).colorScheme.error,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         l10n.possibleDuplicates,
@@ -793,7 +794,10 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                 _suggestedFamily != null &&
                     _familyController.text != _suggestedFamily
                 ? IconButton(
-                    icon: Icon(Icons.lightbulb, color: Theme.of(context).colorScheme.tertiary),
+                    icon: Icon(
+                      Icons.lightbulb,
+                      color: Theme.of(context).colorScheme.tertiary,
+                    ),
                     tooltip: l10n.suggestionWithName(_suggestedFamily!),
                     onPressed: () {
                       setState(() {
@@ -814,7 +818,10 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
           Card(
             color: Theme.of(context).colorScheme.tertiaryContainer,
             child: ListTile(
-              leading: Icon(Icons.lightbulb, color: Theme.of(context).colorScheme.tertiary),
+              leading: Icon(
+                Icons.lightbulb,
+                color: Theme.of(context).colorScheme.tertiary,
+              ),
               title: Text(l10n.suggestionWithName(_suggestedFamily!)),
               subtitle: Text(l10n.basedOnGenus),
               trailing: TextButton(
@@ -1190,7 +1197,9 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                             icon: const Icon(Icons.clear),
                             label: const Text('Limpar Localização'),
                             style: TextButton.styleFrom(
-                              foregroundColor: Theme.of(context).colorScheme.error,
+                              foregroundColor: Theme.of(
+                                context,
+                              ).colorScheme.error,
                             ),
                           ),
                         ),
@@ -1252,19 +1261,27 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                         },
                       )
                     : Container(
-                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.map_outlined,
                               size: 64,
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
                             SizedBox(height: 8),
                             Text(
                               'Toque em "Obter Localização Atual" para mostrar o mapa',
-                              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                              style: TextStyle(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                             ),
                           ],
                         ),
@@ -1344,14 +1361,16 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         // Environmental Data Section
         Text(
           l10n.environmentalData,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 12),
         // Weather condition chips
-        Text(l10n.weatherCondition,
-            style: Theme.of(context).textTheme.bodyMedium),
+        Text(
+          l10n.weatherCondition,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
@@ -1682,7 +1701,9 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           title: Text(
-            initialMeasurement == null ? l10n.addMeasurement : l10n.editMeasurement,
+            initialMeasurement == null
+                ? l10n.addMeasurement
+                : l10n.editMeasurement,
           ),
           content: SingleChildScrollView(
             child: Column(
@@ -1780,48 +1801,38 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                 final label = labelController.text.trim();
                 if (label.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.enterDescription),
-                    ),
+                    SnackBar(content: Text(l10n.enterDescription)),
                   );
                   return;
                 }
 
                 final valueText = valueController.text.trim();
                 if (valueText.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.enterValue),
-                    ),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(l10n.enterValue)));
                   return;
                 }
 
                 final value = double.tryParse(valueText);
                 if (value == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.enterValidNumber),
-                    ),
+                    SnackBar(content: Text(l10n.enterValidNumber)),
                   );
                   return;
                 }
 
                 if (value < 0) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.negativeValue),
-                    ),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(l10n.negativeValue)));
                   return;
                 }
 
                 if (value > 999999) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.valueTooBig),
-                    ),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(l10n.valueTooBig)));
                   return;
                 }
 
@@ -2103,7 +2114,9 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                 ? 'Nenhuma fala detectada'
                 : 'Transcrição concluída com sucesso!',
           ),
-          backgroundColor: transcript.isEmpty ? Theme.of(context).colorScheme.tertiary : null,
+          backgroundColor: transcript.isEmpty
+              ? Theme.of(context).colorScheme.tertiary
+              : null,
         ),
       );
     } catch (e) {
@@ -2182,9 +2195,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Localização obtida com sucesso'),
-          ),
+          const SnackBar(content: Text('Localização obtida com sucesso')),
         );
       }
     } catch (e) {

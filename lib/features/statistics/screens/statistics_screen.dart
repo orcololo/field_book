@@ -243,7 +243,9 @@ class StatisticsScreen extends ConsumerWidget {
                           sideTitles: SideTitles(
                             showTitles: true,
                             getTitlesWidget: (value, meta) {
-                              final locale = Localizations.localeOf(context).languageCode;
+                              final locale = Localizations.localeOf(
+                                context,
+                              ).languageCode;
                               if (value.toInt() >= 1 && value.toInt() <= 12) {
                                 final date = DateTime(2024, value.toInt());
                                 return Padding(

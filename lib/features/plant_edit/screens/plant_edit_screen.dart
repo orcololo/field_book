@@ -434,20 +434,16 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
 
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.plantUpdatedSuccessfully),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.plantUpdatedSuccessfully)));
         Navigator.pop(context, true);
       }
     } catch (e) {
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.errorUpdatingPlant(e.toString())),
-          ),
+          SnackBar(content: Text(l10n.errorUpdatingPlant(e.toString()))),
         );
       }
     } finally {
@@ -511,7 +507,11 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.warning, color: colorScheme.error, size: 20),
+                          Icon(
+                            Icons.warning,
+                            color: colorScheme.error,
+                            size: 20,
+                          ),
                           const SizedBox(width: 8),
                           Text(
                             l10n.possibleDuplicates,
@@ -593,7 +593,10 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
                     _suggestedFamily != null &&
                         _familyController.text != _suggestedFamily
                     ? IconButton(
-                        icon: Icon(Icons.lightbulb, color: colorScheme.tertiary),
+                        icon: Icon(
+                          Icons.lightbulb,
+                          color: colorScheme.tertiary,
+                        ),
                         tooltip: l10n.suggestionWithName(_suggestedFamily!),
                         onPressed: () {
                           _familyController.text = _suggestedFamily!;
@@ -683,32 +686,35 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
             ),
             const Divider(),
             const SizedBox(height: 8),
-            Text(l10n.weatherCondition,
-                style: Theme.of(context).textTheme.bodyMedium),
+            Text(
+              l10n.weatherCondition,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: <MapEntry<String, String>>[
-                MapEntry('sunny', l10n.weatherSunny),
-                MapEntry('cloudy', l10n.weatherCloudy),
-                MapEntry('overcast', l10n.weatherOvercast),
-                MapEntry('rainy', l10n.weatherRainy),
-                MapEntry('stormy', l10n.weatherStormy),
-                MapEntry('foggy', l10n.weatherFoggy),
-                MapEntry('windy', l10n.weatherWindy),
-              ].map((entry) {
-                final isSelected = _weatherCondition == entry.key;
-                return ChoiceChip(
-                  label: Text(entry.value),
-                  selected: isSelected,
-                  onSelected: (selected) {
-                    setState(() {
-                      _weatherCondition = selected ? entry.key : null;
-                    });
-                  },
-                );
-              }).toList(),
+              children:
+                  <MapEntry<String, String>>[
+                    MapEntry('sunny', l10n.weatherSunny),
+                    MapEntry('cloudy', l10n.weatherCloudy),
+                    MapEntry('overcast', l10n.weatherOvercast),
+                    MapEntry('rainy', l10n.weatherRainy),
+                    MapEntry('stormy', l10n.weatherStormy),
+                    MapEntry('foggy', l10n.weatherFoggy),
+                    MapEntry('windy', l10n.weatherWindy),
+                  ].map((entry) {
+                    final isSelected = _weatherCondition == entry.key;
+                    return ChoiceChip(
+                      label: Text(entry.value),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        setState(() {
+                          _weatherCondition = selected ? entry.key : null;
+                        });
+                      },
+                    );
+                  }).toList(),
             ),
             const SizedBox(height: 16),
             Row(
@@ -853,9 +859,7 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
                 const SizedBox(height: 12),
                 SwitchListTile(
                   title: Text(l10n.sapPresence),
-                  subtitle: Text(
-                    l10n.sapPresenceSubtitle,
-                  ),
+                  subtitle: Text(l10n.sapPresenceSubtitle),
                   value: _cauleTemSeiva,
                   onChanged: (v) => setState(() => _cauleTemSeiva = v),
                   secondary: const Icon(Icons.water_drop),

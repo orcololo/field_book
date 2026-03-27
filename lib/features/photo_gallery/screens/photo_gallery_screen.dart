@@ -31,21 +31,18 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
 
   Future<void> _loadPhotos() async {
     setState(() => _isLoading = true);
-    
+
     try {
       final plantRepo = ref.read(plantRepositoryProvider);
       final plants = await plantRepo.getPaginated(limit: 10000);
-      
+
       final photos = <PhotoItem>[];
       for (final plant in plants) {
         for (final photoPath in plant.photoPaths) {
-          photos.add(PhotoItem(
-            path: photoPath,
-            plant: plant,
-          ));
+          photos.add(PhotoItem(path: photoPath, plant: plant));
         }
       }
-      
+
       setState(() {
         _allPhotos = photos;
         _applyFiltersAndSort();
@@ -55,7 +52,11 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
       setState(() => _isLoading = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.errorLoadingPhotos(e.toString()))),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.errorLoadingPhotos(e.toString()),
+            ),
+          ),
         );
       }
     }
@@ -63,36 +64,50 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
 
   void _applyFiltersAndSort() {
     var filtered = List<PhotoItem>.from(_allPhotos);
-    
+
     if (_filterByCategory != null) {
-      filtered = filtered.where((p) => p.plant.category.name == _filterByCategory).toList();
+      filtered = filtered
+          .where((p) => p.plant.category.name == _filterByCategory)
+          .toList();
     }
-    
+
     if (_filterStartDate != null) {
-      filtered = filtered.where((p) => 
-        p.plant.dateCollected.isAfter(_filterStartDate!) ||
-        p.plant.dateCollected.isAtSameMomentAs(_filterStartDate!)
-      ).toList();
+      filtered = filtered
+          .where(
+            (p) =>
+                p.plant.dateCollected.isAfter(_filterStartDate!) ||
+                p.plant.dateCollected.isAtSameMomentAs(_filterStartDate!),
+          )
+          .toList();
     }
     if (_filterEndDate != null) {
-      filtered = filtered.where((p) => 
-        p.plant.dateCollected.isBefore(_filterEndDate!) ||
-        p.plant.dateCollected.isAtSameMomentAs(_filterEndDate!)
-      ).toList();
+      filtered = filtered
+          .where(
+            (p) =>
+                p.plant.dateCollected.isBefore(_filterEndDate!) ||
+                p.plant.dateCollected.isAtSameMomentAs(_filterEndDate!),
+          )
+          .toList();
     }
-    
+
     switch (_sortBy) {
       case 'date_desc':
-        filtered.sort((a, b) => b.plant.dateCollected.compareTo(a.plant.dateCollected));
+        filtered.sort(
+          (a, b) => b.plant.dateCollected.compareTo(a.plant.dateCollected),
+        );
         break;
       case 'date_asc':
-        filtered.sort((a, b) => a.plant.dateCollected.compareTo(b.plant.dateCollected));
+        filtered.sort(
+          (a, b) => a.plant.dateCollected.compareTo(b.plant.dateCollected),
+        );
         break;
       case 'plant_name':
-        filtered.sort((a, b) => a.plant.scientificName.compareTo(b.plant.scientificName));
+        filtered.sort(
+          (a, b) => a.plant.scientificName.compareTo(b.plant.scientificName),
+        );
         break;
     }
-    
+
     setState(() => _filteredPhotos = filtered);
   }
 
@@ -119,7 +134,10 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
             itemBuilder: (context) => [
               PopupMenuItem(value: 'date_desc', child: Text(l10n.sortDateDesc)),
               PopupMenuItem(value: 'date_asc', child: Text(l10n.sortDateAsc)),
-              PopupMenuItem(value: 'plant_name', child: Text(l10n.sortByPlantName)),
+              PopupMenuItem(
+                value: 'plant_name',
+                child: Text(l10n.sortByPlantName),
+              ),
             ],
           ),
         ],
@@ -127,76 +145,97 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _filteredPhotos.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.photo_library, size: 64, color: colorScheme.onSurfaceVariant),
-                      const SizedBox(height: 16),
-                      Text(l10n.noPhotosFound,
-                          style: TextStyle(fontSize: 16, color: colorScheme.onSurfaceVariant)),
-                    ],
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.photo_library,
+                    size: 64,
+                    color: colorScheme.onSurfaceVariant,
                   ),
-                )
-              : Column(
-                  children: [
-                    if (_filterByCategory != null || _filterStartDate != null || _filterEndDate != null)
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        color: colorScheme.tertiaryContainer,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(l10n.activeFilters(_getActiveFiltersText(context)),
-                                  style: TextStyle(fontSize: 12, color: colorScheme.onTertiaryContainer)),
+                  const SizedBox(height: 16),
+                  Text(
+                    l10n.noPhotosFound,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Column(
+              children: [
+                if (_filterByCategory != null ||
+                    _filterStartDate != null ||
+                    _filterEndDate != null)
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    color: colorScheme.tertiaryContainer,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            l10n.activeFilters(_getActiveFiltersText(context)),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: colorScheme.onTertiaryContainer,
                             ),
-                            TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  _filterByCategory = null;
-                                  _filterStartDate = null;
-                                  _filterEndDate = null;
-                                  _applyFiltersAndSort();
-                                });
-                              },
-                              child: Text(l10n.clearFilters),
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
-                    Expanded(
-                      child: GridView.builder(
-                        padding: const EdgeInsets.all(4),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _filterByCategory = null;
+                              _filterStartDate = null;
+                              _filterEndDate = null;
+                              _applyFiltersAndSort();
+                            });
+                          },
+                          child: Text(l10n.clearFilters),
+                        ),
+                      ],
+                    ),
+                  ),
+                Expanded(
+                  child: GridView.builder(
+                    padding: const EdgeInsets.all(4),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
                           crossAxisSpacing: 4,
                           mainAxisSpacing: 4,
                         ),
-                        itemCount: _filteredPhotos.length,
-                        itemBuilder: (context, index) => _buildPhotoTile(_filteredPhotos[index], index),
-                      ),
-                    ),
-                  ],
+                    itemCount: _filteredPhotos.length,
+                    itemBuilder: (context, index) =>
+                        _buildPhotoTile(_filteredPhotos[index], index),
+                  ),
                 ),
+              ],
+            ),
     );
   }
 
   Widget _buildPhotoTile(PhotoItem photoItem, int index) {
     final file = File(photoItem.path);
-    
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PhotoViewerScreen(photos: _filteredPhotos, initialIndex: index),
+            builder: (context) =>
+                PhotoViewerScreen(photos: _filteredPhotos, initialIndex: index),
           ),
         );
       },
       onLongPress: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => PlantDetailScreen(plant: photoItem.plant)),
+          MaterialPageRoute(
+            builder: (context) => PlantDetailScreen(plant: photoItem.plant),
+          ),
         );
       },
       child: Stack(
@@ -204,7 +243,13 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
         children: [
           file.existsSync()
               ? Image.file(file, fit: BoxFit.cover)
-              : Container(color: Theme.of(context).colorScheme.surfaceContainerHighest, child: Icon(Icons.broken_image, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+              : Container(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  child: Icon(
+                    Icons.broken_image,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
           Positioned(
             bottom: 0,
             left: 0,
@@ -215,12 +260,19 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, Colors.black.withValues(alpha: 0.7)],
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.7),
+                  ],
                 ),
               ),
               child: Text(
                 photoItem.plant.scientificName,
-                style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -235,7 +287,8 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
     final l10n = AppLocalizations.of(context)!;
     final filters = <String>[];
     if (_filterByCategory != null) filters.add(l10n.category);
-    if (_filterStartDate != null || _filterEndDate != null) filters.add(l10n.dateFilter);
+    if (_filterStartDate != null || _filterEndDate != null)
+      filters.add(l10n.dateFilter);
     return filters.join(', ');
   }
 
@@ -251,26 +304,54 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.category, style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  l10n.category,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
                 DropdownButton<String?>(
                   value: _filterByCategory,
                   isExpanded: true,
                   items: [
-                    DropdownMenuItem(value: null, child: Text(l10n.allCategories)),
-                    DropdownMenuItem(value: 'tree', child: Text(l10n.categoryTrees)),
-                    DropdownMenuItem(value: 'shrub', child: Text(l10n.categoryShrubs)),
-                    DropdownMenuItem(value: 'herb', child: Text(l10n.categoryHerbs)),
-                    DropdownMenuItem(value: 'vine', child: Text(l10n.categoryVines)),
-                    DropdownMenuItem(value: 'fern', child: Text(l10n.categoryFerns)),
-                    DropdownMenuItem(value: 'aquatic', child: Text(l10n.categoryAquatic)),
+                    DropdownMenuItem(
+                      value: null,
+                      child: Text(l10n.allCategories),
+                    ),
+                    DropdownMenuItem(
+                      value: 'tree',
+                      child: Text(l10n.categoryTrees),
+                    ),
+                    DropdownMenuItem(
+                      value: 'shrub',
+                      child: Text(l10n.categoryShrubs),
+                    ),
+                    DropdownMenuItem(
+                      value: 'herb',
+                      child: Text(l10n.categoryHerbs),
+                    ),
+                    DropdownMenuItem(
+                      value: 'vine',
+                      child: Text(l10n.categoryVines),
+                    ),
+                    DropdownMenuItem(
+                      value: 'fern',
+                      child: Text(l10n.categoryFerns),
+                    ),
+                    DropdownMenuItem(
+                      value: 'aquatic',
+                      child: Text(l10n.categoryAquatic),
+                    ),
                   ],
-                  onChanged: (value) => setState(() => _filterByCategory = value),
+                  onChanged: (value) =>
+                      setState(() => _filterByCategory = value),
                 ),
               ],
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(l10n.cancel),
+            ),
             FilledButton(
               onPressed: () {
                 _applyFiltersAndSort();

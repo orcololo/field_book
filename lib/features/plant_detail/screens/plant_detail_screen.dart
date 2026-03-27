@@ -274,11 +274,7 @@ class PlantDetailScreen extends ConsumerWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.tag,
-                    size: 16,
-                    color: colorScheme.primary,
-                  ),
+                  Icon(Icons.tag, size: 16, color: colorScheme.primary),
                   const SizedBox(width: FoliumTheme.space4),
                   Text(
                     plant.registryIdentifier!,
@@ -339,7 +335,9 @@ class PlantDetailScreen extends ConsumerWidget {
               ),
               const SizedBox(width: FoliumTheme.space8),
               Text(
-                l10n.collectedOn('${plant.dateCollected.day}/${plant.dateCollected.month}/${plant.dateCollected.year}'),
+                l10n.collectedOn(
+                  '${plant.dateCollected.day}/${plant.dateCollected.month}/${plant.dateCollected.year}',
+                ),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                 ),
@@ -536,11 +534,18 @@ class PlantDetailScreen extends ConsumerWidget {
                           return Container(
                             width: 120,
                             height: 120,
-                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.broken_image, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                Icon(
+                                  Icons.broken_image,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
                                 const SizedBox(height: 4),
                                 Text(
                                   l10n.imageNotFound,
@@ -639,9 +644,7 @@ class PlantDetailScreen extends ConsumerWidget {
                     ClipboardData(text: plant.latitude!.toStringAsFixed(6)),
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.copiedToClipboard),
-                    ),
+                    SnackBar(content: Text(l10n.copiedToClipboard)),
                   );
                 },
               ),
@@ -657,9 +660,7 @@ class PlantDetailScreen extends ConsumerWidget {
                     ClipboardData(text: plant.longitude!.toStringAsFixed(6)),
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.copiedToClipboard),
-                    ),
+                    SnackBar(content: Text(l10n.copiedToClipboard)),
                   );
                 },
               ),
@@ -821,9 +822,13 @@ class PlantDetailScreen extends ConsumerWidget {
                     l10n.circumference,
                     '${plant.cauleCircunferencia} ${plant.cauleCircunferenciaUnidade ?? 'cm'}',
                   ),
-                if (plant.cauleTemSeiva) _buildInfoRow(l10n.sapPresence, l10n.yes),
+                if (plant.cauleTemSeiva)
+                  _buildInfoRow(l10n.sapPresence, l10n.yes),
                 if (plant.cauleDescricaoSeiva != null)
-                  _buildInfoRow(l10n.sapDescription, plant.cauleDescricaoSeiva!),
+                  _buildInfoRow(
+                    l10n.sapDescription,
+                    plant.cauleDescricaoSeiva!,
+                  ),
               ],
               if (plant.folhaDescricao != null ||
                   plant.folhaBainha != null ||
@@ -859,8 +864,12 @@ class PlantDetailScreen extends ConsumerWidget {
                 if (plant.florDescricao != null)
                   _buildInfoRow(l10n.descriptionLabel, plant.florDescricao!),
                 if (plant.florInflorescencia != null)
-                  _buildInfoRow(l10n.inflorescenceLabel, plant.florInflorescencia!),
-                if (plant.florCor != null) _buildInfoRow(l10n.colorLabel, plant.florCor!),
+                  _buildInfoRow(
+                    l10n.inflorescenceLabel,
+                    plant.florInflorescencia!,
+                  ),
+                if (plant.florCor != null)
+                  _buildInfoRow(l10n.colorLabel, plant.florCor!),
                 if (plant.florTamanho != null)
                   _buildInfoRow(
                     l10n.sizeLabel,
@@ -1012,7 +1021,9 @@ class PlantDetailScreen extends ConsumerWidget {
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
             child: Text(l10n.delete),
           ),
         ],
@@ -1078,7 +1089,10 @@ class PlantDetailScreen extends ConsumerWidget {
                 const SizedBox(height: 4),
                 Text(
                   l10n.sameGenusOrNearbyLocation,
-                  style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 ...relatedPlants.map(

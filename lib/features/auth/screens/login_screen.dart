@@ -33,7 +33,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     setState(() => _isLoading = true);
     try {
-      await ref.read(authNotifierProvider.notifier).login(
+      await ref
+          .read(authNotifierProvider.notifier)
+          .login(
             email: _emailController.text.trim(),
             password: _passwordController.text,
           );
@@ -41,14 +43,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (!mounted) return;
       final l10n = AppLocalizations.of(context)!;
       final message = e.response?.data?['message'] ?? l10n.loginError;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message.toString())),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message.toString())));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -80,33 +82,31 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: FoliumTheme.space24),
+            padding: const EdgeInsets.symmetric(
+              horizontal: FoliumTheme.space24,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Logo
-                Icon(
-                  Icons.eco,
-                  size: 80,
-                  color: colorScheme.primary,
-                ),
+                Icon(Icons.eco, size: 80, color: colorScheme.primary),
                 const SizedBox(height: FoliumTheme.space16),
                 Text(
                   'Folium',
                   textAlign: TextAlign.center,
                   style: theme.textTheme.headlineLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.primary,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.primary,
+                  ),
                 ),
                 const SizedBox(height: FoliumTheme.space8),
                 Text(
                   l10n.botanicalFieldBook,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                 ),
                 const SizedBox(height: FoliumTheme.space48),
 
@@ -123,14 +123,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           labelText: l10n.email,
                           prefixIcon: const Icon(Icons.email_outlined),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                            borderRadius: BorderRadius.circular(
+                              FoliumTheme.radiusSmall,
+                            ),
                           ),
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
                             return l10n.enterEmail;
                           }
-                          if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value.trim())) {
+                          if (!RegExp(
+                            r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+                          ).hasMatch(value.trim())) {
                             return l10n.invalidEmail;
                           }
                           return null;
@@ -151,11 +155,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   ? Icons.visibility_off_outlined
                                   : Icons.visibility_outlined,
                             ),
-                            onPressed: () =>
-                                setState(() => _obscurePassword = !_obscurePassword),
+                            onPressed: () => setState(
+                              () => _obscurePassword = !_obscurePassword,
+                            ),
                           ),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                            borderRadius: BorderRadius.circular(
+                              FoliumTheme.radiusSmall,
+                            ),
                           ),
                         ),
                         validator: (value) {
@@ -174,9 +181,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 FilledButton(
                   onPressed: _isLoading ? null : _handleLogin,
                   style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: FoliumTheme.space16),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: FoliumTheme.space16,
+                    ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                      borderRadius: BorderRadius.circular(
+                        FoliumTheme.radiusSmall,
+                      ),
                     ),
                   ),
                   child: _isLoading
@@ -197,12 +208,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   children: [
                     const Expanded(child: Divider()),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: FoliumTheme.space16),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: FoliumTheme.space16,
+                      ),
                       child: Text(
                         l10n.or,
                         style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                            ),
+                          color: colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ),
                     const Expanded(child: Divider()),
@@ -216,9 +229,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   icon: const Icon(Icons.g_mobiledata, size: 24),
                   label: Text(l10n.signInWithGoogle),
                   style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: FoliumTheme.space12),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: FoliumTheme.space12,
+                    ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                      borderRadius: BorderRadius.circular(
+                        FoliumTheme.radiusSmall,
+                      ),
                     ),
                   ),
                 ),
@@ -231,8 +248,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     Text(
                       l10n.noAccount,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                          ),
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
                     TextButton(
                       onPressed: () {
@@ -254,8 +271,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: Text(
                     l10n.continueOffline,
                     style: theme.textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
+                      color: colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ),
               ],

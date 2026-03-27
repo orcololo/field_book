@@ -55,9 +55,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 onPressed: _exitSelectMode,
               )
             : null,
-        title: _isSelectMode
-            ? l10n.nSelected(_selectedIds.length)
-            : null,
+        title: _isSelectMode ? l10n.nSelected(_selectedIds.length) : null,
         actions: [
           if (_selectedIndex == 0 && !_isSelectMode) ...[
             IconButton(
@@ -88,17 +86,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   color: colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
                 ),
-                child: Icon(
-                  Icons.search,
-                  color: colorScheme.primary,
-                  size: 20,
-                ),
+                child: Icon(Icons.search, color: colorScheme.primary, size: 20),
               ),
               onPressed: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const SearchScreen(),
-                  ),
+                  MaterialPageRoute(builder: (context) => const SearchScreen()),
                 );
               },
             ),
@@ -114,12 +106,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             IconButton(
               tooltip: l10n.deleteSelected,
               icon: Icon(Icons.delete_outline, color: colorScheme.error),
-              onPressed: _selectedIds.isEmpty ? null : () => _bulkDelete(context, l10n),
+              onPressed: _selectedIds.isEmpty
+                  ? null
+                  : () => _bulkDelete(context, l10n),
             ),
             IconButton(
               tooltip: l10n.exportSelected,
               icon: const Icon(Icons.ios_share),
-              onPressed: _selectedIds.isEmpty ? null : () => _bulkExport(context),
+              onPressed: _selectedIds.isEmpty
+                  ? null
+                  : () => _bulkExport(context),
             ),
           ],
         ],
@@ -196,21 +192,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               label: Text(l10n.newPlant),
             )
           : _selectedIndex == 1
-              ? FloatingActionButton.extended(
-                  onPressed: () async {
-                    final result = await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const SessionFormScreen(),
-                      ),
-                    );
-                    if (result == true) {
-                      setState(() {}); // Refresh the list
-                    }
-                  },
-                  icon: const Icon(Icons.add),
-                  label: Text(l10n.newSession),
-                )
-              : null,
+          ? FloatingActionButton.extended(
+              onPressed: () async {
+                final result = await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const SessionFormScreen(),
+                  ),
+                );
+                if (result == true) {
+                  setState(() {}); // Refresh the list
+                }
+              },
+              icon: const Icon(Icons.add),
+              label: Text(l10n.newSession),
+            )
+          : null,
     );
   }
 
@@ -250,9 +246,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     await plantRepo.bulkDelete(_selectedIds.toList());
     if (!mounted) return;
     final count = _selectedIds.length;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.nPlantsDeleted(count))),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.nPlantsDeleted(count))));
     _exitSelectMode();
   }
 
@@ -262,9 +258,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final plants = await plantRepo.getByIds(_selectedIds.toList());
     if (!mounted || plants.isEmpty) return;
     // Navigate to export with pre-selected plants
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.exportSelected)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.exportSelected)));
     _exitSelectMode();
   }
 
@@ -273,7 +269,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(FoliumTheme.radiusMedium)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(FoliumTheme.radiusMedium),
+        ),
       ),
       builder: (ctx) => SafeArea(
         child: Padding(
@@ -286,7 +284,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                    borderRadius: BorderRadius.circular(
+                      FoliumTheme.radiusSmall,
+                    ),
                   ),
                   child: Icon(Icons.eco, color: colorScheme.primary),
                 ),
@@ -295,9 +295,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 onTap: () async {
                   Navigator.pop(ctx);
                   final result = await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const PlantFormScreen(),
-                    ),
+                    MaterialPageRoute(builder: (_) => const PlantFormScreen()),
                   );
                   if (result == true) setState(() {});
                 },
@@ -307,7 +305,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: colorScheme.tertiaryContainer,
-                    borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                    borderRadius: BorderRadius.circular(
+                      FoliumTheme.radiusSmall,
+                    ),
                   ),
                   child: Icon(Icons.flash_on, color: colorScheme.tertiary),
                 ),
@@ -336,7 +336,7 @@ class _PlantsTab extends ConsumerStatefulWidget {
   final Set<int> selectedIds;
   final ValueChanged<int>? onToggleSelect;
   final ValueChanged<List<int>>? onPlantsLoaded;
-  
+
   const _PlantsTab({
     super.key,
     this.isSelectMode = false,
@@ -377,9 +377,7 @@ class _PlantsTabState extends ConsumerState<_PlantsTab> {
               bottom: 100, // Account for bottom navigation bar
             ),
             itemBuilder: (context, index) {
-              return ShimmerLoading(
-                child: ShimmerPlaceholders.plantCard(),
-              );
+              return ShimmerLoading(child: ShimmerPlaceholders.plantCard());
             },
           );
         }
@@ -424,7 +422,8 @@ class _PlantsTabState extends ConsumerState<_PlantsTab> {
             ),
             itemBuilder: (context, index) {
               final plant = plants[index];
-              final isSelected = widget.isSelectMode && widget.selectedIds.contains(plant.id);
+              final isSelected =
+                  widget.isSelectMode && widget.selectedIds.contains(plant.id);
               return Stack(
                 children: [
                   ModernPlantCard(
@@ -520,9 +519,7 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
               bottom: 100, // Account for bottom navigation bar
             ),
             itemBuilder: (context, index) {
-              return ShimmerLoading(
-                child: ShimmerPlaceholders.listItem(),
-              );
+              return ShimmerLoading(child: ShimmerPlaceholders.listItem());
             },
           );
         }
@@ -558,7 +555,8 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
                   onTap: () async {
                     final result = await Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => SessionDetailScreen(session: session),
+                        builder: (context) =>
+                            SessionDetailScreen(session: session),
                       ),
                     );
                     if (result == true && mounted) {
@@ -576,7 +574,9 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
                           height: 56,
                           decoration: BoxDecoration(
                             color: FoliumTheme.tertiaryContainer,
-                            borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                            borderRadius: BorderRadius.circular(
+                              FoliumTheme.radiusSmall,
+                            ),
                           ),
                           child: const Icon(
                             Icons.folder,
@@ -592,7 +592,8 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
                             children: [
                               Text(
                                 session.tripName,
-                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                style: Theme.of(context).textTheme.titleMedium
+                                    ?.copyWith(
                                       fontWeight: FontWeight.w600,
                                       color: FoliumTheme.onSurface,
                                     ),
@@ -600,7 +601,8 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
                               const SizedBox(height: FoliumTheme.space4),
                               Text(
                                 '${session.startDate.day}/${session.startDate.month}/${session.startDate.year}',
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
                                       color: FoliumTheme.onSurfaceVariant,
                                     ),
                               ),
@@ -617,8 +619,12 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
                                     Expanded(
                                       child: Text(
                                         session.location!,
-                                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                              color: FoliumTheme.onSurfaceVariant,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              color:
+                                                  FoliumTheme.onSurfaceVariant,
                                             ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
@@ -627,7 +633,8 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
                                   ],
                                 ),
                               ],
-                              if (session.teamMembers.isNotEmpty || session.sharedWith.isNotEmpty) ...[
+                              if (session.teamMembers.isNotEmpty ||
+                                  session.sharedWith.isNotEmpty) ...[
                                 const SizedBox(height: FoliumTheme.space8),
                                 Wrap(
                                   spacing: FoliumTheme.space8,
@@ -640,7 +647,9 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
                                         ),
                                         decoration: BoxDecoration(
                                           color: colorScheme.primaryContainer,
-                                          borderRadius: BorderRadius.circular(FoliumTheme.radiusFull),
+                                          borderRadius: BorderRadius.circular(
+                                            FoliumTheme.radiusFull,
+                                          ),
                                         ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
@@ -650,10 +659,13 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
                                               size: 12,
                                               color: colorScheme.primary,
                                             ),
-                                            const SizedBox(width: FoliumTheme.space4),
+                                            const SizedBox(
+                                              width: FoliumTheme.space4,
+                                            ),
                                             Text(
                                               '${session.teamMembers.length}',
-                                              style: theme.textTheme.labelSmall?.copyWith(
+                                              style: theme.textTheme.labelSmall
+                                                  ?.copyWith(
                                                     color: colorScheme.primary,
                                                     fontWeight: FontWeight.w600,
                                                   ),
@@ -669,7 +681,9 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
                                         ),
                                         decoration: BoxDecoration(
                                           color: colorScheme.tertiaryContainer,
-                                          borderRadius: BorderRadius.circular(FoliumTheme.radiusFull),
+                                          borderRadius: BorderRadius.circular(
+                                            FoliumTheme.radiusFull,
+                                          ),
                                         ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,

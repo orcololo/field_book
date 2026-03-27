@@ -98,9 +98,9 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
       }
     }
   }
@@ -141,9 +141,9 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
 
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.savedAsDraftSuccess)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.savedAsDraftSuccess)));
         Navigator.of(context).pop(true);
       }
     } catch (e) {
@@ -195,8 +195,9 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
                 ),
                 textCapitalization: TextCapitalization.words,
                 autofocus: true,
-                validator: (v) =>
-                    v == null || v.trim().isEmpty ? l10n.fillRequiredFields : null,
+                validator: (v) => v == null || v.trim().isEmpty
+                    ? l10n.fillRequiredFields
+                    : null,
               ),
               const SizedBox(height: FoliumTheme.space12),
 
@@ -327,41 +328,43 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
             ),
           ),
           // Existing photos
-          ..._photoPaths.map((path) => Padding(
-                padding: const EdgeInsets.only(left: 8),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(FoliumTheme.radiusMedium),
-                  child: Stack(
-                    children: [
-                      Image.file(
-                        File(path),
-                        width: 120,
-                        height: 120,
-                        fit: BoxFit.cover,
-                      ),
-                      Positioned(
-                        top: 4,
-                        right: 4,
-                        child: GestureDetector(
-                          onTap: () => setState(() => _photoPaths.remove(path)),
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.5),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.close,
-                              size: 16,
-                              color: Colors.white,
-                            ),
+          ..._photoPaths.map(
+            (path) => Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(FoliumTheme.radiusMedium),
+                child: Stack(
+                  children: [
+                    Image.file(
+                      File(path),
+                      width: 120,
+                      height: 120,
+                      fit: BoxFit.cover,
+                    ),
+                    Positioned(
+                      top: 4,
+                      right: 4,
+                      child: GestureDetector(
+                        onTap: () => setState(() => _photoPaths.remove(path)),
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.5),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.close,
+                            size: 16,
+                            color: Colors.white,
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              )),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -401,7 +404,9 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
 
   // ── Environmental data ──
   Widget _buildEnvironmentalSection(
-      AppLocalizations l10n, ColorScheme colorScheme) {
+    AppLocalizations l10n,
+    ColorScheme colorScheme,
+  ) {
     final weatherOptions = {
       'sunny': l10n.weatherSunny,
       'cloudy': l10n.weatherCloudy,
@@ -441,8 +446,9 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
                   return ChoiceChip(
                     label: Text(e.value),
                     selected: selected,
-                    onSelected: (_) =>
-                        setState(() => _weatherCondition = selected ? null : e.key),
+                    onSelected: (_) => setState(
+                      () => _weatherCondition = selected ? null : e.key,
+                    ),
                   );
                 }).toList(),
               ),
@@ -458,8 +464,9 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
                         hintText: l10n.altitudeHint,
                         isDense: true,
                       ),
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -471,8 +478,10 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
                         hintText: l10n.temperatureHint,
                         isDense: true,
                       ),
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true, signed: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                        signed: true,
+                      ),
                     ),
                   ),
                 ],
@@ -485,8 +494,9 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
                   hintText: l10n.humidityHint,
                   isDense: true,
                 ),
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
               ),
               const SizedBox(height: FoliumTheme.space8),
             ],

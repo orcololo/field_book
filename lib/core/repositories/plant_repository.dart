@@ -25,7 +25,7 @@ class PlantRepository {
       final isar = await _isar;
       plant.updatedAt = DateTime.now();
       plant.updateFtsFields();
-      
+
       await isar.writeTxn(() async {
         await isar.plantRecords.put(plant);
       });
@@ -79,43 +79,47 @@ class PlantRepository {
   }) async {
     try {
       final isar = await _isar;
-    
-    if (category != null && isDraft != null) {
-      return await isar.plantRecords
-          .filter()
-          .categoryEqualTo(category)
-          .and()
-          .isDraftEqualTo(isDraft)
-          .sortByDateCollectedDesc()
-          .offset(offset)
-          .limit(limit)
-          .findAll();
-    } else if (category != null) {
-      return await isar.plantRecords
-          .filter()
-          .categoryEqualTo(category)
-          .sortByDateCollectedDesc()
-          .offset(offset)
-          .limit(limit)
-          .findAll();
-    } else if (isDraft != null) {
-      return await isar.plantRecords
-          .filter()
-          .isDraftEqualTo(isDraft)
-          .sortByDateCollectedDesc()
-          .offset(offset)
-          .limit(limit)
-          .findAll();
-    } else {
-      return await isar.plantRecords
-          .where()
-          .sortByDateCollectedDesc()
-          .offset(offset)
-          .limit(limit)
-          .findAll();
-    }
+
+      if (category != null && isDraft != null) {
+        return await isar.plantRecords
+            .filter()
+            .categoryEqualTo(category)
+            .and()
+            .isDraftEqualTo(isDraft)
+            .sortByDateCollectedDesc()
+            .offset(offset)
+            .limit(limit)
+            .findAll();
+      } else if (category != null) {
+        return await isar.plantRecords
+            .filter()
+            .categoryEqualTo(category)
+            .sortByDateCollectedDesc()
+            .offset(offset)
+            .limit(limit)
+            .findAll();
+      } else if (isDraft != null) {
+        return await isar.plantRecords
+            .filter()
+            .isDraftEqualTo(isDraft)
+            .sortByDateCollectedDesc()
+            .offset(offset)
+            .limit(limit)
+            .findAll();
+      } else {
+        return await isar.plantRecords
+            .where()
+            .sortByDateCollectedDesc()
+            .offset(offset)
+            .limit(limit)
+            .findAll();
+      }
     } catch (e, stackTrace) {
-      _log.e('Error getting paginated plants', error: e, stackTrace: stackTrace);
+      _log.e(
+        'Error getting paginated plants',
+        error: e,
+        stackTrace: stackTrace,
+      );
       rethrow;
     }
   }
@@ -218,14 +222,14 @@ class PlantRepository {
     // Precise distance filtering on the reduced candidate set
     final nearby = candidates.where((plant) {
       if (plant.latitude == null || plant.longitude == null) return false;
-      
+
       final distance = GeoUtils.calculateDistance(
         lat1: latitude,
         lon1: longitude,
         lat2: plant.latitude!,
         lon2: plant.longitude!,
       );
-      
+
       return distance <= radiusKm;
     }).toList();
 
@@ -235,7 +239,7 @@ class PlantRepository {
     // Apply pagination
     final start = offset.clamp(0, nearby.length);
     final end = (offset + limit).clamp(0, nearby.length);
-    
+
     return nearby.sublist(start, end);
   }
 
@@ -269,7 +273,7 @@ class PlantRepository {
   // Get count
   Future<int> count({PlantCategory? category, bool? isDraft}) async {
     final isar = await _isar;
-    
+
     if (category != null && isDraft != null) {
       return await isar.plantRecords
           .filter()
@@ -278,15 +282,9 @@ class PlantRepository {
           .isDraftEqualTo(isDraft)
           .count();
     } else if (category != null) {
-      return await isar.plantRecords
-          .filter()
-          .categoryEqualTo(category)
-          .count();
+      return await isar.plantRecords.filter().categoryEqualTo(category).count();
     } else if (isDraft != null) {
-      return await isar.plantRecords
-          .filter()
-          .isDraftEqualTo(isDraft)
-          .count();
+      return await isar.plantRecords.filter().isDraftEqualTo(isDraft).count();
     } else {
       return await isar.plantRecords.count();
     }
@@ -308,9 +306,12 @@ class PlantRepository {
   }
 
   // Check if registry identifier exists
-  Future<bool> identifierExists(String identifier, {String? excludeUuid}) async {
+  Future<bool> identifierExists(
+    String identifier, {
+    String? excludeUuid,
+  }) async {
     final isar = await _isar;
-    
+
     if (excludeUuid != null) {
       // Exclude specific plant (for editing)
       final plant = await isar.plantRecords
@@ -346,11 +347,8 @@ class PlantRepository {
         .filter()
         .registryIdentifierIsNotNull()
         .findAll();
-    
-    return plants
-        .map((p) => p.registryIdentifier!)
-        .toList()
-      ..sort();
+
+    return plants.map((p) => p.registryIdentifier!).toList()..sort();
   }
 
   // Get all unique families using Isar distinctBy + property query
@@ -364,7 +362,7 @@ class PlantRepository {
         .distinctByFamily()
         .familyProperty()
         .findAll();
-    
+
     final nonNull = families.whereType<String>().toList()..sort();
     return nonNull;
   }
@@ -380,7 +378,7 @@ class PlantRepository {
         .distinctByGenus()
         .genusProperty()
         .findAll();
-    
+
     final nonNull = genera.whereType<String>().toList()..sort();
     return nonNull;
   }

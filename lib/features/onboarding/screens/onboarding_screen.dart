@@ -60,10 +60,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           title: l10n.onboardingWelcomeTitle,
           body: l10n.onboardingWelcomeBody,
           icon: Icons.eco_outlined,
-          gradientColors: [
-            FoliumTheme.primaryMain,
-            FoliumTheme.success,
-          ],
+          gradientColors: [FoliumTheme.primaryMain, FoliumTheme.success],
           context: context,
         ),
         _buildPage(
@@ -164,9 +161,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         child: Text(
           l10n.onboardingSetupTitle,
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: FoliumTheme.onSurface,
-                fontWeight: FontWeight.w700,
-              ),
+            color: FoliumTheme.onSurface,
+            fontWeight: FontWeight.w700,
+          ),
           textAlign: TextAlign.center,
         ),
       ),
@@ -177,9 +174,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             Text(
               l10n.onboardingSetupBody,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: FoliumTheme.onSurfaceVariant,
-                    height: 1.6,
-                  ),
+                color: FoliumTheme.onSurfaceVariant,
+                height: 1.6,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: FoliumTheme.space32),
@@ -197,12 +194,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 hintText: l10n.onboardingInitialsHint,
                 prefixIcon: const Icon(Icons.badge_outlined),
                 border: OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(FoliumTheme.radiusMedium),
+                  borderRadius: BorderRadius.circular(FoliumTheme.radiusMedium),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(FoliumTheme.radiusMedium),
+                  borderRadius: BorderRadius.circular(FoliumTheme.radiusMedium),
                   borderSide: const BorderSide(
                     color: FoliumTheme.primaryMain,
                     width: 2,
@@ -228,12 +223,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 hintText: l10n.onboardingLastNumberHint,
                 prefixIcon: const Icon(Icons.tag),
                 border: OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(FoliumTheme.radiusMedium),
+                  borderRadius: BorderRadius.circular(FoliumTheme.radiusMedium),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(FoliumTheme.radiusMedium),
+                  borderRadius: BorderRadius.circular(FoliumTheme.radiusMedium),
                   borderSide: const BorderSide(
                     color: FoliumTheme.primaryMain,
                     width: 2,
@@ -254,16 +247,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               ),
               decoration: BoxDecoration(
                 color: FoliumTheme.primaryContainer,
-                borderRadius:
-                    BorderRadius.circular(FoliumTheme.radiusFull),
+                borderRadius: BorderRadius.circular(FoliumTheme.radiusFull),
               ),
               child: Text(
                 l10n.onboardingIdentifierPreview(_previewIdentifier),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: FoliumTheme.primaryMain,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1.2,
-                    ),
+                  color: FoliumTheme.primaryMain,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1.2,
+                ),
               ),
             ),
           ],
@@ -278,10 +270,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                FoliumTheme.secondaryMain,
-                FoliumTheme.primaryMain,
-              ],
+              colors: [FoliumTheme.secondaryMain, FoliumTheme.primaryMain],
             ),
             boxShadow: [
               BoxShadow(
@@ -321,9 +310,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         child: Text(
           title,
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: FoliumTheme.onSurface,
-                fontWeight: FontWeight.w700,
-              ),
+            color: FoliumTheme.onSurface,
+            fontWeight: FontWeight.w700,
+          ),
           textAlign: TextAlign.center,
         ),
       ),
@@ -332,9 +321,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         child: Text(
           body,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: FoliumTheme.onSurfaceVariant,
-                height: 1.6,
-              ),
+            color: FoliumTheme.onSurfaceVariant,
+            height: 1.6,
+          ),
           textAlign: TextAlign.center,
         ),
       ),
@@ -357,11 +346,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               ),
             ],
           ),
-          child: Icon(
-            icon,
-            size: 80,
-            color: Colors.white,
-          ),
+          child: Icon(icon, size: 80, color: Colors.white),
         ),
       ),
       decoration: PageDecoration(
@@ -380,8 +365,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
     if (settings != null) {
       final initials = _initialsController.text.trim().toUpperCase();
-      final lastNumber =
-          int.tryParse(_lastNumberController.text.trim()) ?? 0;
+      final lastNumber = int.tryParse(_lastNumberController.text.trim()) ?? 0;
 
       settings
         ..userInitials = initials.isNotEmpty ? initials : 'RC'
@@ -393,9 +377,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     }
 
     if (context.mounted) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
     }
   }
 }

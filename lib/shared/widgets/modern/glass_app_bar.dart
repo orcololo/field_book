@@ -62,9 +62,9 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
                     )
                   else
                     _buildLogo(context),
-                  
+
                   const Spacer(),
-                  
+
                   // Actions
                   if (actions != null) ...actions!,
                 ],
@@ -116,10 +116,10 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
           child: Text(
             'Folium',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
-                  color: Colors.white,
-                ),
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.5,
+              color: Colors.white,
+            ),
           ),
         ),
       ],
@@ -128,7 +128,8 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
 }
 
 /// Alternative glass app bar with more prominent frosted effect
-class GlassAppBarFrosted extends StatelessWidget implements PreferredSizeWidget {
+class GlassAppBarFrosted extends StatelessWidget
+    implements PreferredSizeWidget {
   final List<Widget>? actions;
   final String? title;
   final Widget? leading;
@@ -191,7 +192,9 @@ class GlassAppBarFrosted extends StatelessWidget implements PreferredSizeWidget 
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: FoliumTheme.primaryMain.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                          borderRadius: BorderRadius.circular(
+                            FoliumTheme.radiusSmall,
+                          ),
                         ),
                         child: const Icon(
                           Icons.arrow_back_ios_new,
@@ -201,21 +204,22 @@ class GlassAppBarFrosted extends StatelessWidget implements PreferredSizeWidget 
                       ),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
-                  
+
                   if (title != null) ...[
-                    if (showBackButton) const SizedBox(width: FoliumTheme.space8),
+                    if (showBackButton)
+                      const SizedBox(width: FoliumTheme.space8),
                     Text(
                       title!,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: FoliumTheme.onSurface,
-                          ),
+                        fontWeight: FontWeight.w600,
+                        color: FoliumTheme.onSurface,
+                      ),
                     ),
                   ] else
                     _buildBranding(context),
-                  
+
                   const Spacer(),
-                  
+
                   if (actions != null) ...actions!,
                 ],
               ),
@@ -259,17 +263,17 @@ class GlassAppBarFrosted extends StatelessWidget implements PreferredSizeWidget 
         Text(
           'Folium',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.8,
-                color: FoliumTheme.primaryMain,
-                shadows: [
-                  Shadow(
-                    color: FoliumTheme.primaryMain.withValues(alpha: 0.1),
-                    offset: const Offset(0, 2),
-                    blurRadius: 4,
-                  ),
-                ],
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.8,
+            color: FoliumTheme.primaryMain,
+            shadows: [
+              Shadow(
+                color: FoliumTheme.primaryMain.withValues(alpha: 0.1),
+                offset: const Offset(0, 2),
+                blurRadius: 4,
               ),
+            ],
+          ),
         ),
       ],
     );

@@ -37,7 +37,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     setState(() => _isLoading = true);
     try {
-      await ref.read(authNotifierProvider.notifier).register(
+      await ref
+          .read(authNotifierProvider.notifier)
+          .register(
             name: _nameController.text.trim(),
             email: _emailController.text.trim(),
             password: _passwordController.text,
@@ -47,14 +49,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     } on DioException catch (e) {
       if (!mounted) return;
       final message = e.response?.data?['message'] ?? l10n.registerError;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message.toString())),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message.toString())));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -90,7 +92,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     labelText: l10n.nameLabel,
                     prefixIcon: const Icon(Icons.person_outline),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                      borderRadius: BorderRadius.circular(
+                        FoliumTheme.radiusSmall,
+                      ),
                     ),
                   ),
                   validator: (v) =>
@@ -105,14 +109,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     labelText: l10n.email,
                     prefixIcon: const Icon(Icons.email_outlined),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                      borderRadius: BorderRadius.circular(
+                        FoliumTheme.radiusSmall,
+                      ),
                     ),
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return l10n.enterEmail;
                     }
-                    if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value.trim())) {
+                    if (!RegExp(
+                      r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+                    ).hasMatch(value.trim())) {
                       return l10n.invalidEmail;
                     }
                     return null;
@@ -136,11 +144,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           setState(() => _obscurePassword = !_obscurePassword),
                     ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                      borderRadius: BorderRadius.circular(
+                        FoliumTheme.radiusSmall,
+                      ),
                     ),
                   ),
                   validator: (value) {
-                    if (value == null || value.isEmpty) return l10n.enterPassword;
+                    if (value == null || value.isEmpty)
+                      return l10n.enterPassword;
                     if (value.length < 8) return l10n.passwordMinLength;
                     return null;
                   },
@@ -164,7 +175,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           setState(() => _obscureConfirm = !_obscureConfirm),
                     ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                      borderRadius: BorderRadius.circular(
+                        FoliumTheme.radiusSmall,
+                      ),
                     ),
                   ),
                   validator: (value) {
@@ -178,9 +191,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 FilledButton(
                   onPressed: _isLoading ? null : _handleRegister,
                   style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: FoliumTheme.space16),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: FoliumTheme.space16,
+                    ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                      borderRadius: BorderRadius.circular(
+                        FoliumTheme.radiusSmall,
+                      ),
                     ),
                   ),
                   child: _isLoading

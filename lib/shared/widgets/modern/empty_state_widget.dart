@@ -36,9 +36,10 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
       duration: const Duration(seconds: 2),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 0.95, end: 1.05).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.95,
+      end: 1.05,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
     _controller.repeat(reverse: true);
   }
 
@@ -70,13 +71,17 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  color: (widget.iconColor ?? colorScheme.primary).withValues(alpha: 0.1),
+                  color: (widget.iconColor ?? colorScheme.primary).withValues(
+                    alpha: 0.1,
+                  ),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   widget.icon,
                   size: 64,
-                  color: (widget.iconColor ?? colorScheme.primary).withValues(alpha: 0.4),
+                  color: (widget.iconColor ?? colorScheme.primary).withValues(
+                    alpha: 0.4,
+                  ),
                 ),
               ),
             ),
@@ -87,9 +92,9 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
             Text(
               widget.title,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: colorScheme.onSurface,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: colorScheme.onSurface,
+                fontWeight: FontWeight.w600,
+              ),
               textAlign: TextAlign.center,
             ),
 
@@ -99,8 +104,8 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
             Text(
               widget.message,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                  ),
+                color: colorScheme.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
@@ -180,10 +185,7 @@ class EmptyStates {
     );
   }
 
-  static Widget error({
-    required String message,
-    VoidCallback? onRetry,
-  }) {
+  static Widget error({required String message, VoidCallback? onRetry}) {
     return EmptyStateWidget(
       icon: Icons.error_outline,
       title: 'Ops! Algo deu errado',
