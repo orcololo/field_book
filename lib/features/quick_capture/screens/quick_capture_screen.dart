@@ -1,0 +1,498 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
+
+import '../../../core/repositories/plant_repository.dart';
+import '../../../core/services/location_service.dart';
+import '../../../core/services/photo_service.dart';
+import '../../../core/services/settings_service.dart';
+import '../../../core/theme/folium_theme.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../models/plant_category.dart';
+import '../../../models/plant_record.dart';
+
+const _uuid = Uuid();
+
+/// Minimal quick-capture screen optimised for field conditions.
+/// Auto-acquires GPS, offers one-tap photo, and saves as draft.
+class QuickCaptureScreen extends ConsumerStatefulWidget {
+  const QuickCaptureScreen({super.key});
+
+  @override
+  ConsumerState<QuickCaptureScreen> createState() => _QuickCaptureScreenState();
+}
+
+class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _scientificNameController = TextEditingController();
+  final _commonNameController = TextEditingController();
+  final _notesController = TextEditingController();
+  final _altitudeController = TextEditingController();
+  final _temperatureController = TextEditingController();
+  final _humidityController = TextEditingController();
+
+  PlantCategory _category = PlantCategory.herbs;
+  String? _weatherCondition;
+
+  // GPS
+  double? _latitude;
+  double? _longitude;
+  bool _fetchingGps = false;
+
+  // Photo
+  final List<String> _photoPaths = [];
+  final _photoService = PhotoService();
+  final _locationService = LocationService();
+
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _acquireGps();
+  }
+
+  @override
+  void dispose() {
+    _scientificNameController.dispose();
+    _commonNameController.dispose();
+    _notesController.dispose();
+    _altitudeController.dispose();
+    _temperatureController.dispose();
+    _humidityController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _acquireGps() async {
+    setState(() {
+      _fetchingGps = true;
+    });
+    try {
+      final position = await _locationService.getCurrentLocation();
+      if (position != null && mounted) {
+        setState(() {
+          _latitude = position.latitude;
+          _longitude = position.longitude;
+          if (_altitudeController.text.isEmpty && position.altitude != 0) {
+            _altitudeController.text = position.altitude.toStringAsFixed(1);
+          }
+          _fetchingGps = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _fetchingGps = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _takePhoto() async {
+    try {
+      final file = await _photoService.takePhoto();
+      if (file != null && mounted) {
+        setState(() => _photoPaths.add(file.path));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
+    }
+  }
+
+  Future<void> _save() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _saving = true);
+
+    try {
+      final settings = await ref.read(settingsNotifierProvider.future);
+      final plantRepo = ref.read(plantRepositoryProvider);
+
+      final plant = PlantRecord()
+        ..uuid = _uuid.v4()
+        ..scientificName = _scientificNameController.text.trim()
+        ..commonName = _commonNameController.text.trim()
+        ..category = _category
+        ..dateCollected = DateTime.now()
+        ..latitude = _latitude
+        ..longitude = _longitude
+        ..altitude = double.tryParse(_altitudeController.text.trim())
+        ..temperature = double.tryParse(_temperatureController.text.trim())
+        ..humidity = double.tryParse(_humidityController.text.trim())
+        ..weatherCondition = _weatherCondition
+        ..notes = _notesController.text.trim().isEmpty
+            ? null
+            : _notesController.text.trim()
+        ..photoPaths = _photoPaths
+        ..isDraft = true
+        ..deviceId = settings.deviceId
+        ..contributorName = settings.deviceName
+        ..createdAt = DateTime.now()
+        ..updatedAt = DateTime.now();
+
+      plant.updateFtsFields();
+      await plantRepo.save(plant);
+
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.savedAsDraftSuccess)),
+        );
+        Navigator.of(context).pop(true);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+        setState(() => _saving = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.quickCapture),
+        actions: [
+          // GPS indicator in app bar
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: _buildGpsChip(l10n, colorScheme),
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.all(FoliumTheme.space16),
+            children: [
+              // ── Photo strip ──
+              _buildPhotoSection(l10n, colorScheme),
+              const SizedBox(height: FoliumTheme.space16),
+
+              // ── Scientific name (required) ──
+              TextFormField(
+                controller: _scientificNameController,
+                decoration: InputDecoration(
+                  labelText: '${l10n.scientificName} *',
+                  hintText: 'Genus species',
+                  prefixIcon: const Icon(Icons.eco),
+                ),
+                textCapitalization: TextCapitalization.words,
+                autofocus: true,
+                validator: (v) =>
+                    v == null || v.trim().isEmpty ? l10n.fillRequiredFields : null,
+              ),
+              const SizedBox(height: FoliumTheme.space12),
+
+              // ── Common name ──
+              TextFormField(
+                controller: _commonNameController,
+                decoration: InputDecoration(
+                  labelText: l10n.commonName,
+                  prefixIcon: const Icon(Icons.local_florist),
+                ),
+                textCapitalization: TextCapitalization.words,
+              ),
+              const SizedBox(height: FoliumTheme.space12),
+
+              // ── Category chips ──
+              _buildCategoryChips(l10n, colorScheme),
+              const SizedBox(height: FoliumTheme.space16),
+
+              // ── Quick notes ──
+              TextFormField(
+                controller: _notesController,
+                decoration: InputDecoration(
+                  labelText: l10n.quickNotes,
+                  hintText: l10n.quickNotesHint,
+                  prefixIcon: const Icon(Icons.notes),
+                ),
+                maxLines: 3,
+              ),
+              const SizedBox(height: FoliumTheme.space16),
+
+              // ── Environmental data (collapsible) ──
+              _buildEnvironmentalSection(l10n, colorScheme),
+
+              const SizedBox(height: FoliumTheme.space24),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(FoliumTheme.space16),
+          child: FilledButton.icon(
+            onPressed: _saving ? null : _save,
+            icon: _saving
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.save),
+            label: Text(_saving ? l10n.saving : l10n.save),
+            style: FilledButton.styleFrom(
+              minimumSize: const Size.fromHeight(52),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ── GPS chip ──
+  Widget _buildGpsChip(AppLocalizations l10n, ColorScheme colorScheme) {
+    if (_fetchingGps) {
+      return Chip(
+        avatar: SizedBox(
+          width: 14,
+          height: 14,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: colorScheme.primary,
+          ),
+        ),
+        label: Text(l10n.gpsAcquiring, style: const TextStyle(fontSize: 12)),
+      );
+    }
+    if (_latitude != null) {
+      return ActionChip(
+        avatar: Icon(Icons.gps_fixed, size: 16, color: colorScheme.secondary),
+        label: Text(l10n.gpsAcquired, style: const TextStyle(fontSize: 12)),
+        backgroundColor: colorScheme.secondaryContainer,
+        onPressed: _acquireGps,
+      );
+    }
+    return ActionChip(
+      avatar: Icon(Icons.gps_off, size: 16, color: colorScheme.error),
+      label: Text(l10n.gpsFailed, style: const TextStyle(fontSize: 12)),
+      onPressed: _acquireGps,
+    );
+  }
+
+  // ── Photo strip ──
+  Widget _buildPhotoSection(AppLocalizations l10n, ColorScheme colorScheme) {
+    return SizedBox(
+      height: 120,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          // Add photo button
+          GestureDetector(
+            onTap: _takePhoto,
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(FoliumTheme.radiusMedium),
+                border: Border.all(
+                  color: colorScheme.primary.withValues(alpha: 0.3),
+                  width: 2,
+                  strokeAlign: BorderSide.strokeAlignInside,
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.camera_alt, size: 36, color: colorScheme.primary),
+                  const SizedBox(height: 4),
+                  Text(
+                    l10n.takePhoto,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: colorScheme.primary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // Existing photos
+          ..._photoPaths.map((path) => Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(FoliumTheme.radiusMedium),
+                  child: Stack(
+                    children: [
+                      Image.file(
+                        File(path),
+                        width: 120,
+                        height: 120,
+                        fit: BoxFit.cover,
+                      ),
+                      Positioned(
+                        top: 4,
+                        right: 4,
+                        child: GestureDetector(
+                          onTap: () => setState(() => _photoPaths.remove(path)),
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.5),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.close,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )),
+        ],
+      ),
+    );
+  }
+
+  // ── Category chips ──
+  Widget _buildCategoryChips(AppLocalizations l10n, ColorScheme colorScheme) {
+    final categories = {
+      PlantCategory.trees: l10n.categoryTrees,
+      PlantCategory.shrubs: l10n.categoryShrubs,
+      PlantCategory.herbs: l10n.categoryHerbs,
+      PlantCategory.ferns: l10n.categoryFerns,
+      PlantCategory.grasses: l10n.categoryGrasses,
+      PlantCategory.vines: l10n.categoryVines,
+      PlantCategory.cacti: l10n.categoryCacti,
+      PlantCategory.aquatic: l10n.categoryAquatic,
+    };
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 4,
+      children: categories.entries.map((e) {
+        final selected = _category == e.key;
+        return ChoiceChip(
+          label: Text(e.value),
+          selected: selected,
+          onSelected: (_) => setState(() => _category = e.key),
+          selectedColor: colorScheme.primaryContainer,
+          labelStyle: TextStyle(
+            color: selected ? colorScheme.primary : colorScheme.onSurface,
+            fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  // ── Environmental data ──
+  Widget _buildEnvironmentalSection(
+      AppLocalizations l10n, ColorScheme colorScheme) {
+    final weatherOptions = {
+      'sunny': l10n.weatherSunny,
+      'cloudy': l10n.weatherCloudy,
+      'overcast': l10n.weatherOvercast,
+      'rainy': l10n.weatherRainy,
+      'stormy': l10n.weatherStormy,
+      'foggy': l10n.weatherFoggy,
+      'windy': l10n.weatherWindy,
+    };
+
+    return ExpansionTile(
+      leading: const Icon(Icons.thermostat),
+      title: Text(l10n.environmentalData),
+      initiallyExpanded: false,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: FoliumTheme.space16,
+            vertical: FoliumTheme.space8,
+          ),
+          child: Column(
+            children: [
+              // Weather condition chips
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  l10n.weatherCondition,
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                children: weatherOptions.entries.map((e) {
+                  final selected = _weatherCondition == e.key;
+                  return ChoiceChip(
+                    label: Text(e.value),
+                    selected: selected,
+                    onSelected: (_) =>
+                        setState(() => _weatherCondition = selected ? null : e.key),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: FoliumTheme.space12),
+              // Numeric fields row
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _altitudeController,
+                      decoration: InputDecoration(
+                        labelText: l10n.altitude,
+                        hintText: l10n.altitudeHint,
+                        isDense: true,
+                      ),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _temperatureController,
+                      decoration: InputDecoration(
+                        labelText: l10n.temperatureLabel,
+                        hintText: l10n.temperatureHint,
+                        isDense: true,
+                      ),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true, signed: true),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: FoliumTheme.space12),
+              TextFormField(
+                controller: _humidityController,
+                decoration: InputDecoration(
+                  labelText: l10n.humidityLabel,
+                  hintText: l10n.humidityHint,
+                  isDense: true,
+                ),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+              ),
+              const SizedBox(height: FoliumTheme.space8),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}

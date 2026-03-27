@@ -91,6 +91,13 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
   List<String> _audioNotePaths = [];
   List<String> _audioTranscripts = [];
 
+  // Environmental data
+  final _altitudeController = TextEditingController();
+  final _temperatureController = TextEditingController();
+  final _humidityController = TextEditingController();
+  final _windSpeedController = TextEditingController();
+  String? _weatherCondition;
+
   List<String> _duplicateWarnings = [];
   String? _suggestedFamily;
   Timer? _debounceTimer;
@@ -220,6 +227,12 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
           ..value = m.value
           ..unit = m.unit;
       }).toList();
+      // Environmental data
+      _altitudeController.text = plant.altitude?.toString() ?? '';
+      _temperatureController.text = plant.temperature?.toString() ?? '';
+      _humidityController.text = plant.humidity?.toString() ?? '';
+      _windSpeedController.text = plant.windSpeed?.toString() ?? '';
+      _weatherCondition = plant.weatherCondition;
     }
   }
 
@@ -306,10 +319,16 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     _sementeCorController.dispose();
     _sementeFormatoController.dispose();
     _sementeTamanhoController.dispose();
+    _altitudeController.dispose();
+    _temperatureController.dispose();
+    _humidityController.dispose();
+    _windSpeedController.dispose();
     super.dispose();
   }
 
   Future<void> _generateIdentifier() async {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
     try {
       final identifier = await _identifierService.generateNextIdentifier();
       setState(() {
@@ -319,8 +338,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Identificador gerado: $identifier'),
-            backgroundColor: Colors.green,
+            content: Text(l10n.identifierGenerated(identifier)),
             duration: const Duration(seconds: 2),
           ),
         );
@@ -329,8 +347,8 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erro ao gerar identificador: $e'),
-            backgroundColor: Colors.red,
+            content: Text(l10n.errorGeneratingIdentifier(e.toString())),
+            backgroundColor: colorScheme.error,
           ),
         );
       }
@@ -338,12 +356,13 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
   }
 
   Future<void> _savePlant({required bool asDraft}) async {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
     if (!asDraft && !_formKey.currentState!.validate()) {
-      final l10n = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.fillRequiredFields),
-          backgroundColor: Colors.red,
+          backgroundColor: colorScheme.error,
         ),
       );
       return;
@@ -368,8 +387,8 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Erro ao gerar identificador: $e'),
-              backgroundColor: Colors.red,
+              content: Text(l10n.errorGeneratingIdentifier(e.toString())),
+              backgroundColor: colorScheme.error,
             ),
           );
         }
@@ -389,7 +408,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(validationError),
-                backgroundColor: Colors.red,
+                backgroundColor: colorScheme.error,
               ),
             );
           }
@@ -516,6 +535,19 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
       ..dateCollected = _dateCollected
       ..latitude = _latitude
       ..longitude = _longitude
+      ..altitude = _altitudeController.text.trim().isNotEmpty
+          ? double.tryParse(_altitudeController.text.trim())
+          : null
+      ..temperature = _temperatureController.text.trim().isNotEmpty
+          ? double.tryParse(_temperatureController.text.trim())
+          : null
+      ..humidity = _humidityController.text.trim().isNotEmpty
+          ? double.tryParse(_humidityController.text.trim())
+          : null
+      ..windSpeed = _windSpeedController.text.trim().isNotEmpty
+          ? double.tryParse(_windSpeedController.text.trim())
+          : null
+      ..weatherCondition = _weatherCondition
       ..sessionId = _selectedSessionId
       ..isDraft = asDraft
       ..photoPaths = _photoPaths
@@ -537,9 +569,8 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              asDraft ? 'Salvo como rascunho' : 'Registro de planta salvo',
+              asDraft ? l10n.savedAsDraft : l10n.plantRecordSaved,
             ),
-            backgroundColor: Colors.green,
           ),
         );
         Navigator.of(context).pop(true);
@@ -548,8 +579,8 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erro ao salvar planta: $e'),
-            backgroundColor: Colors.red,
+            content: Text(l10n.errorSavingPlant(e.toString())),
+            backgroundColor: colorScheme.error,
           ),
         );
       }
@@ -573,7 +604,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
             Tab(text: l10n.habitatInfo),
             Tab(text: l10n.measurementsInfo),
             Tab(text: l10n.photosInfo),
-            const Tab(text: 'Audio'),
+            Tab(text: l10n.audioSection),
           ],
         ),
       ),
@@ -608,14 +639,14 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
             return TextFormField(
               controller: _identifierController,
               decoration: InputDecoration(
-                labelText: 'Identificador',
+                labelText: l10n.identifierLabel,
                 border: const OutlineInputBorder(),
                 prefixIcon: const Icon(Icons.tag),
-                hintText: 'Ex: RC000001',
+                hintText: l10n.identifierHint,
                 suffixIcon: autoGenerate
                     ? IconButton(
                         icon: const Icon(Icons.auto_fix_high),
-                        tooltip: 'Gerar identificador',
+                        tooltip: l10n.generateIdentifierTooltip,
                         onPressed: _generateIdentifier,
                       )
                     : null,
@@ -629,7 +660,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                 }
                 // Validate format on trimmed value
                 if (!_identifierService.isValidIdentifier(trimmed)) {
-                  return 'Formato inválido (Ex: RC000001)';
+                  return l10n.invalidIdentifierFormat;
                 }
                 return null;
               },
@@ -648,7 +679,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
           ),
           validator: (value) {
             if (value == null || value.trim().isEmpty) {
-              return 'Scientific name is required';
+              return l10n.scientificNameRequired;
             }
             return _validator.validateScientificName(value);
           },
@@ -659,19 +690,19 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         if (_duplicateWarnings.isNotEmpty) ...[
           const SizedBox(height: 8),
           Card(
-            color: Colors.orange.shade50,
+            color: Theme.of(context).colorScheme.errorContainer,
             child: Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
+                  Row(
                     children: [
-                      Icon(Icons.warning, color: Colors.orange, size: 20),
-                      SizedBox(width: 8),
+                      Icon(Icons.warning, color: Theme.of(context).colorScheme.error, size: 20),
+                      const SizedBox(width: 8),
                       Text(
-                        'Possíveis duplicatas:',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        l10n.possibleDuplicates,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -722,7 +753,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
           },
           validator: (value) {
             if (value == null) {
-              return 'Category is required';
+              return l10n.categoryRequired;
             }
             return null;
           },
@@ -762,8 +793,8 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                 _suggestedFamily != null &&
                     _familyController.text != _suggestedFamily
                 ? IconButton(
-                    icon: const Icon(Icons.lightbulb, color: Colors.amber),
-                    tooltip: 'Sugestão: $_suggestedFamily',
+                    icon: Icon(Icons.lightbulb, color: Theme.of(context).colorScheme.tertiary),
+                    tooltip: l10n.suggestionWithName(_suggestedFamily!),
                     onPressed: () {
                       setState(() {
                         _familyController.text = _suggestedFamily!;
@@ -781,11 +812,11 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
             _familyController.text != _suggestedFamily) ...[
           const SizedBox(height: 8),
           Card(
-            color: Colors.amber.shade50,
+            color: Theme.of(context).colorScheme.tertiaryContainer,
             child: ListTile(
-              leading: const Icon(Icons.lightbulb, color: Colors.amber),
-              title: Text('Sugestão: $_suggestedFamily'),
-              subtitle: const Text('Baseado no gênero informado'),
+              leading: Icon(Icons.lightbulb, color: Theme.of(context).colorScheme.tertiary),
+              title: Text(l10n.suggestionWithName(_suggestedFamily!)),
+              subtitle: Text(l10n.basedOnGenus),
               trailing: TextButton(
                 onPressed: () {
                   setState(() {
@@ -793,7 +824,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                     _suggestedFamily = null;
                   });
                 },
-                child: const Text('Aplicar'),
+                child: Text(l10n.apply),
               ),
             ),
           ),
@@ -829,7 +860,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
 
         // Morphology section
         Text(
-          'Morfologia',
+          l10n.morphology,
           style: Theme.of(
             context,
           ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -839,13 +870,13 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
 
         // Raiz
         _buildOrganSection(
-          title: 'Raiz',
+          title: l10n.root,
           icon: Icons.grass,
           children: [
             _buildMorphTextField(
               controller: _raizController,
-              label: 'Descrição',
-              hint: 'Descreva a raiz...',
+              label: l10n.descriptionLabel,
+              hint: l10n.rootDescriptionHint,
               icon: Icons.description,
             ),
           ],
@@ -853,39 +884,39 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
 
         // Caule
         _buildOrganSection(
-          title: 'Caule',
+          title: l10n.stem,
           icon: Icons.park,
           children: [
             _buildMorphTextField(
               controller: _cauleController,
-              label: 'Descrição',
-              hint: 'Descreva o caule...',
+              label: l10n.descriptionLabel,
+              hint: l10n.stemDescriptionHint,
               icon: Icons.description,
             ),
             const SizedBox(height: 12),
             _buildMorphTextField(
               controller: _cauleTipoCascaController,
-              label: 'Tipo de casca',
-              hint: 'Ex: lisa, rugosa, fissurada...',
+              label: l10n.stemBarkType,
+              hint: l10n.stemBarkTypeHint,
               icon: Icons.texture,
             ),
             const SizedBox(height: 12),
             _buildMorphTextField(
               controller: _cauleCorController,
-              label: 'Cor',
-              hint: 'Ex: marrom, cinza, verde...',
+              label: l10n.colorLabel,
+              hint: l10n.stemColorHint,
               icon: Icons.color_lens,
             ),
             const SizedBox(height: 12),
             _buildInlineMeasurement(
-              label: 'Tamanho (altura)',
+              label: l10n.sizeHeight,
               controller: _cauleTamanhoController,
               selectedUnit: _cauleTamanhoUnidade,
               onUnitChanged: (v) => setState(() => _cauleTamanhoUnidade = v),
             ),
             const SizedBox(height: 12),
             _buildInlineMeasurement(
-              label: 'Circunferência',
+              label: l10n.circumference,
               controller: _cauleCircunferenciaController,
               selectedUnit: _cauleCircunferenciaUnidade,
               onUnitChanged: (v) =>
@@ -893,8 +924,8 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
             ),
             const SizedBox(height: 12),
             SwitchListTile(
-              title: const Text('Presença de seiva'),
-              subtitle: const Text('A planta apresenta exsudação de seiva?'),
+              title: Text(l10n.sapPresence),
+              subtitle: Text(l10n.sapPresenceSubtitle),
               value: _cauleTemSeiva,
               onChanged: (v) => setState(() => _cauleTemSeiva = v),
               secondary: const Icon(Icons.water_drop),
@@ -905,8 +936,8 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
               const SizedBox(height: 12),
               _buildMorphTextField(
                 controller: _cauleDescricaoSeivaController,
-                label: 'Descrição da seiva',
-                hint: 'Descreva a seiva (cor, consistência, odor...)',
+                label: l10n.sapDescription,
+                hint: l10n.sapDescriptionHint,
                 icon: Icons.water_drop,
               ),
             ],
@@ -915,34 +946,34 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
 
         // Folha
         _buildOrganSection(
-          title: 'Folha',
+          title: l10n.leaf,
           icon: Icons.eco,
           children: [
             _buildMorphTextField(
               controller: _folhaDescricaoController,
-              label: 'Descrição',
-              hint: 'Descrição geral da folha...',
+              label: l10n.descriptionLabel,
+              hint: l10n.leafDescriptionHint,
               icon: Icons.description,
             ),
             const SizedBox(height: 12),
             _buildMorphTextField(
               controller: _folhaBainhaController,
-              label: 'Bainha',
-              hint: 'Descreva a bainha...',
+              label: l10n.sheathLabel,
+              hint: l10n.sheathHint,
               icon: Icons.eco,
             ),
             const SizedBox(height: 12),
             _buildMorphTextField(
               controller: _folhaPecioloController,
-              label: 'Pecíolo',
-              hint: 'Descreva o pecíolo...',
+              label: l10n.petioleLabel,
+              hint: l10n.petioleHint,
               icon: Icons.eco,
             ),
             const SizedBox(height: 12),
             _buildMorphTextField(
               controller: _folhaLaminaController,
-              label: 'Lâmina',
-              hint: 'Descreva a lâmina...',
+              label: l10n.bladeLabel,
+              hint: l10n.bladeHint,
               icon: Icons.eco,
             ),
           ],
@@ -950,32 +981,32 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
 
         // Flor
         _buildOrganSection(
-          title: 'Flor',
+          title: l10n.flower,
           icon: Icons.local_florist,
           children: [
             _buildMorphTextField(
               controller: _florDescricaoController,
-              label: 'Descrição',
-              hint: 'Descrição geral da flor...',
+              label: l10n.descriptionLabel,
+              hint: l10n.flowerDescriptionHint,
               icon: Icons.description,
             ),
             const SizedBox(height: 12),
             _buildMorphTextField(
               controller: _florInflorescenciaController,
-              label: 'Inflorescência',
-              hint: 'Descreva a inflorescência...',
+              label: l10n.inflorescenceLabel,
+              hint: l10n.inflorescenceHint,
               icon: Icons.filter_vintage,
             ),
             const SizedBox(height: 12),
             _buildMorphTextField(
               controller: _florCorController,
-              label: 'Cor',
-              hint: 'Ex: branca, amarela, rosa...',
+              label: l10n.colorLabel,
+              hint: l10n.flowerColorHint,
               icon: Icons.color_lens,
             ),
             const SizedBox(height: 12),
             _buildInlineMeasurement(
-              label: 'Tamanho',
+              label: l10n.sizeLabel,
               controller: _florTamanhoController,
               selectedUnit: _florTamanhoUnidade,
               onUnitChanged: (v) => setState(() => _florTamanhoUnidade = v),
@@ -985,32 +1016,32 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
 
         // Fruto
         _buildOrganSection(
-          title: 'Fruto',
+          title: l10n.fruitLabel,
           icon: Icons.spa,
           children: [
             _buildMorphTextField(
               controller: _frutoDescricaoController,
-              label: 'Descrição',
-              hint: 'Descrição geral do fruto...',
+              label: l10n.descriptionLabel,
+              hint: l10n.fruitDescriptionHint,
               icon: Icons.description,
             ),
             const SizedBox(height: 12),
             _buildMorphTextField(
               controller: _frutoCorController,
-              label: 'Cor',
-              hint: 'Ex: verde, vermelho, amarelo...',
+              label: l10n.colorLabel,
+              hint: l10n.fruitColorHint,
               icon: Icons.color_lens,
             ),
             const SizedBox(height: 12),
             _buildMorphTextField(
               controller: _frutoFormatoController,
-              label: 'Formato',
-              hint: 'Ex: esférico, alongado, achatado...',
+              label: l10n.shapeLabel,
+              hint: l10n.fruitShapeHint,
               icon: Icons.category,
             ),
             const SizedBox(height: 12),
             _buildInlineMeasurement(
-              label: 'Tamanho',
+              label: l10n.sizeLabel,
               controller: _frutoTamanhoController,
               selectedUnit: _frutoTamanhoUnidade,
               onUnitChanged: (v) => setState(() => _frutoTamanhoUnidade = v),
@@ -1020,32 +1051,32 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
 
         // Semente
         _buildOrganSection(
-          title: 'Semente',
+          title: l10n.seedLabel,
           icon: Icons.grain,
           children: [
             _buildMorphTextField(
               controller: _sementeDescricaoController,
-              label: 'Descrição',
-              hint: 'Descrição geral da semente...',
+              label: l10n.descriptionLabel,
+              hint: l10n.seedDescriptionHint,
               icon: Icons.description,
             ),
             const SizedBox(height: 12),
             _buildMorphTextField(
               controller: _sementeCorController,
-              label: 'Cor',
-              hint: 'Ex: marrom, preta, branca...',
+              label: l10n.colorLabel,
+              hint: l10n.seedColorHint,
               icon: Icons.color_lens,
             ),
             const SizedBox(height: 12),
             _buildMorphTextField(
               controller: _sementeFormatoController,
-              label: 'Formato',
-              hint: 'Ex: oval, arredondada, alada...',
+              label: l10n.shapeLabel,
+              hint: l10n.seedShapeHint,
               icon: Icons.category,
             ),
             const SizedBox(height: 12),
             _buildInlineMeasurement(
-              label: 'Tamanho',
+              label: l10n.sizeLabel,
               controller: _sementeTamanhoController,
               selectedUnit: _sementeTamanhoUnidade,
               onUnitChanged: (v) => setState(() => _sementeTamanhoUnidade = v),
@@ -1159,7 +1190,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                             icon: const Icon(Icons.clear),
                             label: const Text('Limpar Localização'),
                             style: TextButton.styleFrom(
-                              foregroundColor: Colors.red,
+                              foregroundColor: Theme.of(context).colorScheme.error,
                             ),
                           ),
                         ),
@@ -1221,19 +1252,19 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                         },
                       )
                     : Container(
-                        color: Colors.grey.shade200,
-                        child: const Column(
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.map_outlined,
                               size: 64,
-                              color: Colors.grey,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
                             SizedBox(height: 8),
                             Text(
                               'Toque em "Obter Localização Atual" para mostrar o mapa',
-                              style: TextStyle(color: Colors.grey),
+                              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                             ),
                           ],
                         ),
@@ -1272,6 +1303,16 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
   }
 
   Widget _buildHabitatTab(AppLocalizations l10n) {
+    final weatherOptions = <String, String>{
+      'sunny': l10n.weatherSunny,
+      'cloudy': l10n.weatherCloudy,
+      'overcast': l10n.weatherOvercast,
+      'rainy': l10n.weatherRainy,
+      'stormy': l10n.weatherStormy,
+      'foggy': l10n.weatherFoggy,
+      'windy': l10n.weatherWindy,
+    };
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -1280,7 +1321,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
           decoration: InputDecoration(
             labelText: l10n.habitat,
             border: const OutlineInputBorder(),
-            hintText: 'Describe the habitat where the plant was found...',
+            hintText: l10n.habitatHint,
             prefixIcon: const Icon(Icons.landscape),
           ),
           maxLines: 5,
@@ -1293,11 +1334,114 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
           decoration: InputDecoration(
             labelText: l10n.notes,
             border: const OutlineInputBorder(),
-            hintText: 'Additional observations or notes...',
+            hintText: l10n.notesHint,
             prefixIcon: const Icon(Icons.notes),
           ),
           maxLines: 5,
           textCapitalization: TextCapitalization.sentences,
+        ),
+        const SizedBox(height: 24),
+        // Environmental Data Section
+        Text(
+          l10n.environmentalData,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+        ),
+        const SizedBox(height: 12),
+        // Weather condition chips
+        Text(l10n.weatherCondition,
+            style: Theme.of(context).textTheme.bodyMedium),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: weatherOptions.entries.map((entry) {
+            final isSelected = _weatherCondition == entry.key;
+            return ChoiceChip(
+              label: Text(entry.value),
+              selected: isSelected,
+              onSelected: (selected) {
+                setState(() {
+                  _weatherCondition = selected ? entry.key : null;
+                });
+              },
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _altitudeController,
+                decoration: InputDecoration(
+                  labelText: l10n.altitude,
+                  border: const OutlineInputBorder(),
+                  hintText: l10n.altitudeHint,
+                  prefixIcon: const Icon(Icons.terrain, size: 20),
+                  isDense: true,
+                ),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                  signed: true,
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: TextFormField(
+                controller: _temperatureController,
+                decoration: InputDecoration(
+                  labelText: l10n.temperatureLabel,
+                  border: const OutlineInputBorder(),
+                  hintText: l10n.temperatureHint,
+                  prefixIcon: const Icon(Icons.thermostat, size: 20),
+                  isDense: true,
+                ),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                  signed: true,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _humidityController,
+                decoration: InputDecoration(
+                  labelText: l10n.humidityLabel,
+                  border: const OutlineInputBorder(),
+                  hintText: l10n.humidityHint,
+                  prefixIcon: const Icon(Icons.water_drop, size: 20),
+                  isDense: true,
+                ),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: TextFormField(
+                controller: _windSpeedController,
+                decoration: InputDecoration(
+                  labelText: l10n.windSpeed,
+                  border: const OutlineInputBorder(),
+                  hintText: l10n.windSpeedHint,
+                  prefixIcon: const Icon(Icons.air, size: 20),
+                  isDense: true,
+                ),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -1363,7 +1507,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
             decoration: InputDecoration(
               labelText: label,
               border: const OutlineInputBorder(),
-              hintText: 'Ex: 2.5',
+              hintText: AppLocalizations.of(context)!.measurementHint,
               prefixIcon: const Icon(Icons.straighten, size: 20),
               isDense: true,
             ),
@@ -1381,9 +1525,9 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
           flex: 2,
           child: DropdownButtonFormField<String>(
             initialValue: selectedUnit,
-            decoration: const InputDecoration(
-              labelText: 'Unidade',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.unitLabel,
+              border: const OutlineInputBorder(),
               isDense: true,
             ),
             items: const [
@@ -1458,7 +1602,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                             ),
                             IconButton(
                               icon: const Icon(Icons.delete, size: 20),
-                              color: Colors.red,
+                              color: Theme.of(context).colorScheme.error,
                               onPressed: () => _removeMeasurement(index),
                             ),
                           ],
@@ -1524,6 +1668,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
   Future<Measurement?> _showMeasurementDialog({
     Measurement? initialMeasurement,
   }) async {
+    final l10n = AppLocalizations.of(context)!;
     final labelController = TextEditingController(
       text: initialMeasurement?.label ?? '',
     );
@@ -1537,7 +1682,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           title: Text(
-            initialMeasurement == null ? 'Adicionar Medição' : 'Editar Medição',
+            initialMeasurement == null ? l10n.addMeasurement : l10n.editMeasurement,
           ),
           content: SingleChildScrollView(
             child: Column(
@@ -1545,11 +1690,11 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
               children: [
                 TextField(
                   controller: labelController,
-                  decoration: const InputDecoration(
-                    labelText: 'Descrição *',
-                    hintText: 'ex: Altura, Largura, Diâmetro',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.label),
+                  decoration: InputDecoration(
+                    labelText: l10n.measurementDescriptionRequired,
+                    hintText: l10n.measurementDescriptionHint,
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.label),
                   ),
                   textCapitalization: TextCapitalization.words,
                   autofocus: initialMeasurement == null,
@@ -1557,11 +1702,11 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                 const SizedBox(height: 16),
                 TextField(
                   controller: valueController,
-                  decoration: const InputDecoration(
-                    labelText: 'Valor *',
-                    hintText: 'Ex: 15.5',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.numbers),
+                  decoration: InputDecoration(
+                    labelText: l10n.measurementValueRequired,
+                    hintText: l10n.measurementValueHint,
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.numbers),
                   ),
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
@@ -1574,10 +1719,10 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
                   initialValue: selectedUnit,
-                  decoration: const InputDecoration(
-                    labelText: 'Unidade',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.straighten),
+                  decoration: InputDecoration(
+                    labelText: l10n.unitLabel,
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.straighten),
                   ),
                   items: const [
                     DropdownMenuItem(
@@ -1628,16 +1773,15 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () {
                 final label = labelController.text.trim();
                 if (label.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Por favor, insira uma descrição'),
-                      backgroundColor: Colors.orange,
+                    SnackBar(
+                      content: Text(l10n.enterDescription),
                     ),
                   );
                   return;
@@ -1646,9 +1790,8 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                 final valueText = valueController.text.trim();
                 if (valueText.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Por favor, insira um valor'),
-                      backgroundColor: Colors.orange,
+                    SnackBar(
+                      content: Text(l10n.enterValue),
                     ),
                   );
                   return;
@@ -1657,9 +1800,8 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                 final value = double.tryParse(valueText);
                 if (value == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Por favor, insira um número válido'),
-                      backgroundColor: Colors.orange,
+                    SnackBar(
+                      content: Text(l10n.enterValidNumber),
                     ),
                   );
                   return;
@@ -1667,9 +1809,8 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
 
                 if (value < 0) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Valor não pode ser negativo'),
-                      backgroundColor: Colors.orange,
+                    SnackBar(
+                      content: Text(l10n.negativeValue),
                     ),
                   );
                   return;
@@ -1677,9 +1818,8 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
 
                 if (value > 999999) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Valor muito grande (máximo: 999999)'),
-                      backgroundColor: Colors.orange,
+                    SnackBar(
+                      content: Text(l10n.valueTooBig),
                     ),
                   );
                   return;
@@ -1692,7 +1832,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
 
                 Navigator.of(context).pop(measurement);
               },
-              child: const Text('Salvar'),
+              child: Text(l10n.save),
             ),
           ],
         ),
@@ -1963,7 +2103,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                 ? 'Nenhuma fala detectada'
                 : 'Transcrição concluída com sucesso!',
           ),
-          backgroundColor: transcript.isEmpty ? Colors.orange : Colors.green,
+          backgroundColor: transcript.isEmpty ? Theme.of(context).colorScheme.tertiary : null,
         ),
       );
     } catch (e) {
@@ -1971,7 +2111,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Erro ao transcrever: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
             duration: const Duration(seconds: 5),
           ),
         );
@@ -2044,7 +2184,6 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Localização obtida com sucesso'),
-            backgroundColor: Colors.green,
           ),
         );
       }
@@ -2111,7 +2250,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Erro ao obter localização: $e'),
-              backgroundColor: Colors.red,
+              backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
         }
@@ -2132,7 +2271,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Erro ao tirar foto: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -2152,7 +2291,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Erro ao escolher fotos: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }

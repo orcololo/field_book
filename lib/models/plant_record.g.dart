@@ -17,289 +17,314 @@ const PlantRecordSchema = CollectionSchema(
   name: r'PlantRecord',
   id: -3237636575448876276,
   properties: {
-    r'audioNotePaths': PropertySchema(
+    r'altitude': PropertySchema(
       id: 0,
+      name: r'altitude',
+      type: IsarType.double,
+    ),
+    r'audioNotePaths': PropertySchema(
+      id: 1,
       name: r'audioNotePaths',
       type: IsarType.stringList,
     ),
     r'audioTranscripts': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'audioTranscripts',
       type: IsarType.stringList,
     ),
     r'category': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'category',
       type: IsarType.string,
       enumMap: _PlantRecordcategoryEnumValueMap,
     ),
     r'caule': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'caule',
       type: IsarType.string,
     ),
     r'cauleCircunferencia': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'cauleCircunferencia',
       type: IsarType.double,
     ),
     r'cauleCircunferenciaUnidade': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'cauleCircunferenciaUnidade',
       type: IsarType.string,
     ),
     r'cauleCor': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'cauleCor',
       type: IsarType.string,
     ),
     r'cauleDescricaoSeiva': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'cauleDescricaoSeiva',
       type: IsarType.string,
     ),
     r'cauleTamanho': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'cauleTamanho',
       type: IsarType.double,
     ),
     r'cauleTamanhoUnidade': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'cauleTamanhoUnidade',
       type: IsarType.string,
     ),
     r'cauleTemSeiva': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'cauleTemSeiva',
       type: IsarType.bool,
     ),
     r'cauleTipoCasca': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'cauleTipoCasca',
       type: IsarType.string,
     ),
     r'commonName': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'commonName',
       type: IsarType.string,
     ),
     r'commonNameFts': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'commonNameFts',
       type: IsarType.string,
     ),
     r'contributorName': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'contributorName',
       type: IsarType.string,
     ),
     r'createdAt': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'createdAt',
       type: IsarType.dateTime,
     ),
     r'dateCollected': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'dateCollected',
       type: IsarType.dateTime,
     ),
     r'deviceId': PropertySchema(
-      id: 17,
+      id: 18,
       name: r'deviceId',
       type: IsarType.string,
     ),
     r'family': PropertySchema(
-      id: 18,
+      id: 19,
       name: r'family',
       type: IsarType.string,
     ),
     r'florCor': PropertySchema(
-      id: 19,
+      id: 20,
       name: r'florCor',
       type: IsarType.string,
     ),
     r'florDescricao': PropertySchema(
-      id: 20,
+      id: 21,
       name: r'florDescricao',
       type: IsarType.string,
     ),
     r'florInflorescencia': PropertySchema(
-      id: 21,
+      id: 22,
       name: r'florInflorescencia',
       type: IsarType.string,
     ),
     r'florTamanho': PropertySchema(
-      id: 22,
+      id: 23,
       name: r'florTamanho',
       type: IsarType.double,
     ),
     r'florTamanhoUnidade': PropertySchema(
-      id: 23,
+      id: 24,
       name: r'florTamanhoUnidade',
       type: IsarType.string,
     ),
     r'folhaBainha': PropertySchema(
-      id: 24,
+      id: 25,
       name: r'folhaBainha',
       type: IsarType.string,
     ),
     r'folhaDescricao': PropertySchema(
-      id: 25,
+      id: 26,
       name: r'folhaDescricao',
       type: IsarType.string,
     ),
     r'folhaLamina': PropertySchema(
-      id: 26,
+      id: 27,
       name: r'folhaLamina',
       type: IsarType.string,
     ),
     r'folhaPeciolo': PropertySchema(
-      id: 27,
+      id: 28,
       name: r'folhaPeciolo',
       type: IsarType.string,
     ),
     r'frutoCor': PropertySchema(
-      id: 28,
+      id: 29,
       name: r'frutoCor',
       type: IsarType.string,
     ),
     r'frutoDescricao': PropertySchema(
-      id: 29,
+      id: 30,
       name: r'frutoDescricao',
       type: IsarType.string,
     ),
     r'frutoFormato': PropertySchema(
-      id: 30,
+      id: 31,
       name: r'frutoFormato',
       type: IsarType.string,
     ),
     r'frutoTamanho': PropertySchema(
-      id: 31,
+      id: 32,
       name: r'frutoTamanho',
       type: IsarType.double,
     ),
     r'frutoTamanhoUnidade': PropertySchema(
-      id: 32,
+      id: 33,
       name: r'frutoTamanhoUnidade',
       type: IsarType.string,
     ),
     r'genus': PropertySchema(
-      id: 33,
+      id: 34,
       name: r'genus',
       type: IsarType.string,
     ),
     r'habitat': PropertySchema(
-      id: 34,
+      id: 35,
       name: r'habitat',
       type: IsarType.string,
     ),
+    r'humidity': PropertySchema(
+      id: 36,
+      name: r'humidity',
+      type: IsarType.double,
+    ),
     r'isDraft': PropertySchema(
-      id: 35,
+      id: 37,
       name: r'isDraft',
       type: IsarType.bool,
     ),
     r'latitude': PropertySchema(
-      id: 36,
+      id: 38,
       name: r'latitude',
       type: IsarType.double,
     ),
     r'longitude': PropertySchema(
-      id: 37,
+      id: 39,
       name: r'longitude',
       type: IsarType.double,
     ),
     r'measurements': PropertySchema(
-      id: 38,
+      id: 40,
       name: r'measurements',
       type: IsarType.objectList,
       target: r'Measurement',
     ),
     r'notes': PropertySchema(
-      id: 39,
+      id: 41,
       name: r'notes',
       type: IsarType.string,
     ),
     r'photoMetadata': PropertySchema(
-      id: 40,
+      id: 42,
       name: r'photoMetadata',
       type: IsarType.objectList,
       target: r'PhotoMetadata',
     ),
     r'photoPaths': PropertySchema(
-      id: 41,
+      id: 43,
       name: r'photoPaths',
       type: IsarType.stringList,
     ),
     r'raiz': PropertySchema(
-      id: 42,
+      id: 44,
       name: r'raiz',
       type: IsarType.string,
     ),
     r'registryIdentifier': PropertySchema(
-      id: 43,
+      id: 45,
       name: r'registryIdentifier',
       type: IsarType.string,
     ),
     r'scientificName': PropertySchema(
-      id: 44,
+      id: 46,
       name: r'scientificName',
       type: IsarType.string,
     ),
     r'scientificNameFts': PropertySchema(
-      id: 45,
+      id: 47,
       name: r'scientificNameFts',
       type: IsarType.string,
     ),
     r'sementeCor': PropertySchema(
-      id: 46,
+      id: 48,
       name: r'sementeCor',
       type: IsarType.string,
     ),
     r'sementeDescricao': PropertySchema(
-      id: 47,
+      id: 49,
       name: r'sementeDescricao',
       type: IsarType.string,
     ),
     r'sementeFormato': PropertySchema(
-      id: 48,
+      id: 50,
       name: r'sementeFormato',
       type: IsarType.string,
     ),
     r'sementeTamanho': PropertySchema(
-      id: 49,
+      id: 51,
       name: r'sementeTamanho',
       type: IsarType.double,
     ),
     r'sementeTamanhoUnidade': PropertySchema(
-      id: 50,
+      id: 52,
       name: r'sementeTamanhoUnidade',
       type: IsarType.string,
     ),
     r'sessionId': PropertySchema(
-      id: 51,
+      id: 53,
       name: r'sessionId',
       type: IsarType.string,
     ),
     r'species': PropertySchema(
-      id: 52,
+      id: 54,
       name: r'species',
       type: IsarType.string,
     ),
     r'syncMetadata': PropertySchema(
-      id: 53,
+      id: 55,
       name: r'syncMetadata',
       type: IsarType.object,
       target: r'SyncMetadata',
     ),
+    r'temperature': PropertySchema(
+      id: 56,
+      name: r'temperature',
+      type: IsarType.double,
+    ),
     r'updatedAt': PropertySchema(
-      id: 54,
+      id: 57,
       name: r'updatedAt',
       type: IsarType.dateTime,
     ),
     r'uuid': PropertySchema(
-      id: 55,
+      id: 58,
       name: r'uuid',
       type: IsarType.string,
+    ),
+    r'weatherCondition': PropertySchema(
+      id: 59,
+      name: r'weatherCondition',
+      type: IsarType.string,
+    ),
+    r'windSpeed': PropertySchema(
+      id: 60,
+      name: r'windSpeed',
+      type: IsarType.double,
     )
   },
   estimateSize: _plantRecordEstimateSize,
@@ -724,6 +749,12 @@ int _plantRecordEstimateSize(
       SyncMetadataSchema.estimateSize(
           object.syncMetadata, allOffsets[SyncMetadata]!, allOffsets);
   bytesCount += 3 + object.uuid.length * 3;
+  {
+    final value = object.weatherCondition;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -733,77 +764,82 @@ void _plantRecordSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeStringList(offsets[0], object.audioNotePaths);
-  writer.writeStringList(offsets[1], object.audioTranscripts);
-  writer.writeString(offsets[2], object.category.name);
-  writer.writeString(offsets[3], object.caule);
-  writer.writeDouble(offsets[4], object.cauleCircunferencia);
-  writer.writeString(offsets[5], object.cauleCircunferenciaUnidade);
-  writer.writeString(offsets[6], object.cauleCor);
-  writer.writeString(offsets[7], object.cauleDescricaoSeiva);
-  writer.writeDouble(offsets[8], object.cauleTamanho);
-  writer.writeString(offsets[9], object.cauleTamanhoUnidade);
-  writer.writeBool(offsets[10], object.cauleTemSeiva);
-  writer.writeString(offsets[11], object.cauleTipoCasca);
-  writer.writeString(offsets[12], object.commonName);
-  writer.writeString(offsets[13], object.commonNameFts);
-  writer.writeString(offsets[14], object.contributorName);
-  writer.writeDateTime(offsets[15], object.createdAt);
-  writer.writeDateTime(offsets[16], object.dateCollected);
-  writer.writeString(offsets[17], object.deviceId);
-  writer.writeString(offsets[18], object.family);
-  writer.writeString(offsets[19], object.florCor);
-  writer.writeString(offsets[20], object.florDescricao);
-  writer.writeString(offsets[21], object.florInflorescencia);
-  writer.writeDouble(offsets[22], object.florTamanho);
-  writer.writeString(offsets[23], object.florTamanhoUnidade);
-  writer.writeString(offsets[24], object.folhaBainha);
-  writer.writeString(offsets[25], object.folhaDescricao);
-  writer.writeString(offsets[26], object.folhaLamina);
-  writer.writeString(offsets[27], object.folhaPeciolo);
-  writer.writeString(offsets[28], object.frutoCor);
-  writer.writeString(offsets[29], object.frutoDescricao);
-  writer.writeString(offsets[30], object.frutoFormato);
-  writer.writeDouble(offsets[31], object.frutoTamanho);
-  writer.writeString(offsets[32], object.frutoTamanhoUnidade);
-  writer.writeString(offsets[33], object.genus);
-  writer.writeString(offsets[34], object.habitat);
-  writer.writeBool(offsets[35], object.isDraft);
-  writer.writeDouble(offsets[36], object.latitude);
-  writer.writeDouble(offsets[37], object.longitude);
+  writer.writeDouble(offsets[0], object.altitude);
+  writer.writeStringList(offsets[1], object.audioNotePaths);
+  writer.writeStringList(offsets[2], object.audioTranscripts);
+  writer.writeString(offsets[3], object.category.name);
+  writer.writeString(offsets[4], object.caule);
+  writer.writeDouble(offsets[5], object.cauleCircunferencia);
+  writer.writeString(offsets[6], object.cauleCircunferenciaUnidade);
+  writer.writeString(offsets[7], object.cauleCor);
+  writer.writeString(offsets[8], object.cauleDescricaoSeiva);
+  writer.writeDouble(offsets[9], object.cauleTamanho);
+  writer.writeString(offsets[10], object.cauleTamanhoUnidade);
+  writer.writeBool(offsets[11], object.cauleTemSeiva);
+  writer.writeString(offsets[12], object.cauleTipoCasca);
+  writer.writeString(offsets[13], object.commonName);
+  writer.writeString(offsets[14], object.commonNameFts);
+  writer.writeString(offsets[15], object.contributorName);
+  writer.writeDateTime(offsets[16], object.createdAt);
+  writer.writeDateTime(offsets[17], object.dateCollected);
+  writer.writeString(offsets[18], object.deviceId);
+  writer.writeString(offsets[19], object.family);
+  writer.writeString(offsets[20], object.florCor);
+  writer.writeString(offsets[21], object.florDescricao);
+  writer.writeString(offsets[22], object.florInflorescencia);
+  writer.writeDouble(offsets[23], object.florTamanho);
+  writer.writeString(offsets[24], object.florTamanhoUnidade);
+  writer.writeString(offsets[25], object.folhaBainha);
+  writer.writeString(offsets[26], object.folhaDescricao);
+  writer.writeString(offsets[27], object.folhaLamina);
+  writer.writeString(offsets[28], object.folhaPeciolo);
+  writer.writeString(offsets[29], object.frutoCor);
+  writer.writeString(offsets[30], object.frutoDescricao);
+  writer.writeString(offsets[31], object.frutoFormato);
+  writer.writeDouble(offsets[32], object.frutoTamanho);
+  writer.writeString(offsets[33], object.frutoTamanhoUnidade);
+  writer.writeString(offsets[34], object.genus);
+  writer.writeString(offsets[35], object.habitat);
+  writer.writeDouble(offsets[36], object.humidity);
+  writer.writeBool(offsets[37], object.isDraft);
+  writer.writeDouble(offsets[38], object.latitude);
+  writer.writeDouble(offsets[39], object.longitude);
   writer.writeObjectList<Measurement>(
-    offsets[38],
+    offsets[40],
     allOffsets,
     MeasurementSchema.serialize,
     object.measurements,
   );
-  writer.writeString(offsets[39], object.notes);
+  writer.writeString(offsets[41], object.notes);
   writer.writeObjectList<PhotoMetadata>(
-    offsets[40],
+    offsets[42],
     allOffsets,
     PhotoMetadataSchema.serialize,
     object.photoMetadata,
   );
-  writer.writeStringList(offsets[41], object.photoPaths);
-  writer.writeString(offsets[42], object.raiz);
-  writer.writeString(offsets[43], object.registryIdentifier);
-  writer.writeString(offsets[44], object.scientificName);
-  writer.writeString(offsets[45], object.scientificNameFts);
-  writer.writeString(offsets[46], object.sementeCor);
-  writer.writeString(offsets[47], object.sementeDescricao);
-  writer.writeString(offsets[48], object.sementeFormato);
-  writer.writeDouble(offsets[49], object.sementeTamanho);
-  writer.writeString(offsets[50], object.sementeTamanhoUnidade);
-  writer.writeString(offsets[51], object.sessionId);
-  writer.writeString(offsets[52], object.species);
+  writer.writeStringList(offsets[43], object.photoPaths);
+  writer.writeString(offsets[44], object.raiz);
+  writer.writeString(offsets[45], object.registryIdentifier);
+  writer.writeString(offsets[46], object.scientificName);
+  writer.writeString(offsets[47], object.scientificNameFts);
+  writer.writeString(offsets[48], object.sementeCor);
+  writer.writeString(offsets[49], object.sementeDescricao);
+  writer.writeString(offsets[50], object.sementeFormato);
+  writer.writeDouble(offsets[51], object.sementeTamanho);
+  writer.writeString(offsets[52], object.sementeTamanhoUnidade);
+  writer.writeString(offsets[53], object.sessionId);
+  writer.writeString(offsets[54], object.species);
   writer.writeObject<SyncMetadata>(
-    offsets[53],
+    offsets[55],
     allOffsets,
     SyncMetadataSchema.serialize,
     object.syncMetadata,
   );
-  writer.writeDateTime(offsets[54], object.updatedAt);
-  writer.writeString(offsets[55], object.uuid);
+  writer.writeDouble(offsets[56], object.temperature);
+  writer.writeDateTime(offsets[57], object.updatedAt);
+  writer.writeString(offsets[58], object.uuid);
+  writer.writeString(offsets[59], object.weatherCondition);
+  writer.writeDouble(offsets[60], object.windSpeed);
 }
 
 PlantRecord _plantRecordDeserialize(
@@ -813,82 +849,87 @@ PlantRecord _plantRecordDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = PlantRecord();
-  object.audioNotePaths = reader.readStringList(offsets[0]) ?? [];
-  object.audioTranscripts = reader.readStringList(offsets[1]) ?? [];
+  object.altitude = reader.readDoubleOrNull(offsets[0]);
+  object.audioNotePaths = reader.readStringList(offsets[1]) ?? [];
+  object.audioTranscripts = reader.readStringList(offsets[2]) ?? [];
   object.category =
-      _PlantRecordcategoryValueEnumMap[reader.readStringOrNull(offsets[2])] ??
+      _PlantRecordcategoryValueEnumMap[reader.readStringOrNull(offsets[3])] ??
           PlantCategory.trees;
-  object.caule = reader.readStringOrNull(offsets[3]);
-  object.cauleCircunferencia = reader.readDoubleOrNull(offsets[4]);
-  object.cauleCircunferenciaUnidade = reader.readStringOrNull(offsets[5]);
-  object.cauleCor = reader.readStringOrNull(offsets[6]);
-  object.cauleDescricaoSeiva = reader.readStringOrNull(offsets[7]);
-  object.cauleTamanho = reader.readDoubleOrNull(offsets[8]);
-  object.cauleTamanhoUnidade = reader.readStringOrNull(offsets[9]);
-  object.cauleTemSeiva = reader.readBool(offsets[10]);
-  object.cauleTipoCasca = reader.readStringOrNull(offsets[11]);
-  object.commonName = reader.readString(offsets[12]);
-  object.commonNameFts = reader.readString(offsets[13]);
-  object.contributorName = reader.readStringOrNull(offsets[14]);
-  object.createdAt = reader.readDateTime(offsets[15]);
-  object.dateCollected = reader.readDateTime(offsets[16]);
-  object.deviceId = reader.readString(offsets[17]);
-  object.family = reader.readStringOrNull(offsets[18]);
-  object.florCor = reader.readStringOrNull(offsets[19]);
-  object.florDescricao = reader.readStringOrNull(offsets[20]);
-  object.florInflorescencia = reader.readStringOrNull(offsets[21]);
-  object.florTamanho = reader.readDoubleOrNull(offsets[22]);
-  object.florTamanhoUnidade = reader.readStringOrNull(offsets[23]);
-  object.folhaBainha = reader.readStringOrNull(offsets[24]);
-  object.folhaDescricao = reader.readStringOrNull(offsets[25]);
-  object.folhaLamina = reader.readStringOrNull(offsets[26]);
-  object.folhaPeciolo = reader.readStringOrNull(offsets[27]);
-  object.frutoCor = reader.readStringOrNull(offsets[28]);
-  object.frutoDescricao = reader.readStringOrNull(offsets[29]);
-  object.frutoFormato = reader.readStringOrNull(offsets[30]);
-  object.frutoTamanho = reader.readDoubleOrNull(offsets[31]);
-  object.frutoTamanhoUnidade = reader.readStringOrNull(offsets[32]);
-  object.genus = reader.readStringOrNull(offsets[33]);
-  object.habitat = reader.readStringOrNull(offsets[34]);
+  object.caule = reader.readStringOrNull(offsets[4]);
+  object.cauleCircunferencia = reader.readDoubleOrNull(offsets[5]);
+  object.cauleCircunferenciaUnidade = reader.readStringOrNull(offsets[6]);
+  object.cauleCor = reader.readStringOrNull(offsets[7]);
+  object.cauleDescricaoSeiva = reader.readStringOrNull(offsets[8]);
+  object.cauleTamanho = reader.readDoubleOrNull(offsets[9]);
+  object.cauleTamanhoUnidade = reader.readStringOrNull(offsets[10]);
+  object.cauleTemSeiva = reader.readBool(offsets[11]);
+  object.cauleTipoCasca = reader.readStringOrNull(offsets[12]);
+  object.commonName = reader.readString(offsets[13]);
+  object.commonNameFts = reader.readString(offsets[14]);
+  object.contributorName = reader.readStringOrNull(offsets[15]);
+  object.createdAt = reader.readDateTime(offsets[16]);
+  object.dateCollected = reader.readDateTime(offsets[17]);
+  object.deviceId = reader.readString(offsets[18]);
+  object.family = reader.readStringOrNull(offsets[19]);
+  object.florCor = reader.readStringOrNull(offsets[20]);
+  object.florDescricao = reader.readStringOrNull(offsets[21]);
+  object.florInflorescencia = reader.readStringOrNull(offsets[22]);
+  object.florTamanho = reader.readDoubleOrNull(offsets[23]);
+  object.florTamanhoUnidade = reader.readStringOrNull(offsets[24]);
+  object.folhaBainha = reader.readStringOrNull(offsets[25]);
+  object.folhaDescricao = reader.readStringOrNull(offsets[26]);
+  object.folhaLamina = reader.readStringOrNull(offsets[27]);
+  object.folhaPeciolo = reader.readStringOrNull(offsets[28]);
+  object.frutoCor = reader.readStringOrNull(offsets[29]);
+  object.frutoDescricao = reader.readStringOrNull(offsets[30]);
+  object.frutoFormato = reader.readStringOrNull(offsets[31]);
+  object.frutoTamanho = reader.readDoubleOrNull(offsets[32]);
+  object.frutoTamanhoUnidade = reader.readStringOrNull(offsets[33]);
+  object.genus = reader.readStringOrNull(offsets[34]);
+  object.habitat = reader.readStringOrNull(offsets[35]);
+  object.humidity = reader.readDoubleOrNull(offsets[36]);
   object.id = id;
-  object.isDraft = reader.readBool(offsets[35]);
-  object.latitude = reader.readDoubleOrNull(offsets[36]);
-  object.longitude = reader.readDoubleOrNull(offsets[37]);
+  object.isDraft = reader.readBool(offsets[37]);
+  object.latitude = reader.readDoubleOrNull(offsets[38]);
+  object.longitude = reader.readDoubleOrNull(offsets[39]);
   object.measurements = reader.readObjectList<Measurement>(
-        offsets[38],
+        offsets[40],
         MeasurementSchema.deserialize,
         allOffsets,
         Measurement(),
       ) ??
       [];
-  object.notes = reader.readStringOrNull(offsets[39]);
+  object.notes = reader.readStringOrNull(offsets[41]);
   object.photoMetadata = reader.readObjectList<PhotoMetadata>(
-        offsets[40],
+        offsets[42],
         PhotoMetadataSchema.deserialize,
         allOffsets,
         PhotoMetadata(),
       ) ??
       [];
-  object.photoPaths = reader.readStringList(offsets[41]) ?? [];
-  object.raiz = reader.readStringOrNull(offsets[42]);
-  object.registryIdentifier = reader.readStringOrNull(offsets[43]);
-  object.scientificName = reader.readString(offsets[44]);
-  object.scientificNameFts = reader.readString(offsets[45]);
-  object.sementeCor = reader.readStringOrNull(offsets[46]);
-  object.sementeDescricao = reader.readStringOrNull(offsets[47]);
-  object.sementeFormato = reader.readStringOrNull(offsets[48]);
-  object.sementeTamanho = reader.readDoubleOrNull(offsets[49]);
-  object.sementeTamanhoUnidade = reader.readStringOrNull(offsets[50]);
-  object.sessionId = reader.readStringOrNull(offsets[51]);
-  object.species = reader.readStringOrNull(offsets[52]);
+  object.photoPaths = reader.readStringList(offsets[43]) ?? [];
+  object.raiz = reader.readStringOrNull(offsets[44]);
+  object.registryIdentifier = reader.readStringOrNull(offsets[45]);
+  object.scientificName = reader.readString(offsets[46]);
+  object.scientificNameFts = reader.readString(offsets[47]);
+  object.sementeCor = reader.readStringOrNull(offsets[48]);
+  object.sementeDescricao = reader.readStringOrNull(offsets[49]);
+  object.sementeFormato = reader.readStringOrNull(offsets[50]);
+  object.sementeTamanho = reader.readDoubleOrNull(offsets[51]);
+  object.sementeTamanhoUnidade = reader.readStringOrNull(offsets[52]);
+  object.sessionId = reader.readStringOrNull(offsets[53]);
+  object.species = reader.readStringOrNull(offsets[54]);
   object.syncMetadata = reader.readObjectOrNull<SyncMetadata>(
-        offsets[53],
+        offsets[55],
         SyncMetadataSchema.deserialize,
         allOffsets,
       ) ??
       SyncMetadata();
-  object.updatedAt = reader.readDateTime(offsets[54]);
-  object.uuid = reader.readString(offsets[55]);
+  object.temperature = reader.readDoubleOrNull(offsets[56]);
+  object.updatedAt = reader.readDateTime(offsets[57]);
+  object.uuid = reader.readString(offsets[58]);
+  object.weatherCondition = reader.readStringOrNull(offsets[59]);
+  object.windSpeed = reader.readDoubleOrNull(offsets[60]);
   return object;
 }
 
@@ -900,45 +941,45 @@ P _plantRecordDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readStringList(offset) ?? []) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 1:
       return (reader.readStringList(offset) ?? []) as P;
     case 2:
+      return (reader.readStringList(offset) ?? []) as P;
+    case 3:
       return (_PlantRecordcategoryValueEnumMap[
               reader.readStringOrNull(offset)] ??
           PlantCategory.trees) as P;
-    case 3:
-      return (reader.readStringOrNull(offset)) as P;
     case 4:
-      return (reader.readDoubleOrNull(offset)) as P;
-    case 5:
       return (reader.readStringOrNull(offset)) as P;
+    case 5:
+      return (reader.readDoubleOrNull(offset)) as P;
     case 6:
       return (reader.readStringOrNull(offset)) as P;
     case 7:
       return (reader.readStringOrNull(offset)) as P;
     case 8:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 9:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 10:
-      return (reader.readBool(offset)) as P;
-    case 11:
       return (reader.readStringOrNull(offset)) as P;
+    case 11:
+      return (reader.readBool(offset)) as P;
     case 12:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 13:
       return (reader.readString(offset)) as P;
     case 14:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 15:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 16:
       return (reader.readDateTime(offset)) as P;
     case 17:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 18:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 19:
       return (reader.readStringOrNull(offset)) as P;
     case 20:
@@ -946,9 +987,9 @@ P _plantRecordDeserializeProp<P>(
     case 21:
       return (reader.readStringOrNull(offset)) as P;
     case 22:
-      return (reader.readDoubleOrNull(offset)) as P;
-    case 23:
       return (reader.readStringOrNull(offset)) as P;
+    case 23:
+      return (reader.readDoubleOrNull(offset)) as P;
     case 24:
       return (reader.readStringOrNull(offset)) as P;
     case 25:
@@ -964,20 +1005,24 @@ P _plantRecordDeserializeProp<P>(
     case 30:
       return (reader.readStringOrNull(offset)) as P;
     case 31:
-      return (reader.readDoubleOrNull(offset)) as P;
-    case 32:
       return (reader.readStringOrNull(offset)) as P;
+    case 32:
+      return (reader.readDoubleOrNull(offset)) as P;
     case 33:
       return (reader.readStringOrNull(offset)) as P;
     case 34:
       return (reader.readStringOrNull(offset)) as P;
     case 35:
-      return (reader.readBool(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 36:
       return (reader.readDoubleOrNull(offset)) as P;
     case 37:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 38:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 39:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 40:
       return (reader.readObjectList<Measurement>(
             offset,
             MeasurementSchema.deserialize,
@@ -985,9 +1030,9 @@ P _plantRecordDeserializeProp<P>(
             Measurement(),
           ) ??
           []) as P;
-    case 39:
+    case 41:
       return (reader.readStringOrNull(offset)) as P;
-    case 40:
+    case 42:
       return (reader.readObjectList<PhotoMetadata>(
             offset,
             PhotoMetadataSchema.deserialize,
@@ -995,41 +1040,47 @@ P _plantRecordDeserializeProp<P>(
             PhotoMetadata(),
           ) ??
           []) as P;
-    case 41:
-      return (reader.readStringList(offset) ?? []) as P;
-    case 42:
-      return (reader.readStringOrNull(offset)) as P;
     case 43:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readStringList(offset) ?? []) as P;
     case 44:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 45:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 46:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 47:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 48:
       return (reader.readStringOrNull(offset)) as P;
     case 49:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 50:
       return (reader.readStringOrNull(offset)) as P;
     case 51:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 52:
       return (reader.readStringOrNull(offset)) as P;
     case 53:
+      return (reader.readStringOrNull(offset)) as P;
+    case 54:
+      return (reader.readStringOrNull(offset)) as P;
+    case 55:
       return (reader.readObjectOrNull<SyncMetadata>(
             offset,
             SyncMetadataSchema.deserialize,
             allOffsets,
           ) ??
           SyncMetadata()) as P;
-    case 54:
+    case 56:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 57:
       return (reader.readDateTime(offset)) as P;
-    case 55:
+    case 58:
       return (reader.readString(offset)) as P;
+    case 59:
+      return (reader.readStringOrNull(offset)) as P;
+    case 60:
+      return (reader.readDoubleOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -2115,6 +2166,88 @@ extension PlantRecordQueryWhere
 
 extension PlantRecordQueryFilter
     on QueryBuilder<PlantRecord, PlantRecord, QFilterCondition> {
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      altitudeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'altitude',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      altitudeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'altitude',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> altitudeEqualTo(
+    double? value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'altitude',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      altitudeGreaterThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'altitude',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      altitudeLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'altitude',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> altitudeBetween(
+    double? lower,
+    double? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'altitude',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
       audioNotePathsElementEqualTo(
     String value, {
@@ -6939,6 +7072,88 @@ extension PlantRecordQueryFilter
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      humidityIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'humidity',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      humidityIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'humidity',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> humidityEqualTo(
+    double? value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'humidity',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      humidityGreaterThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'humidity',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      humidityLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'humidity',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> humidityBetween(
+    double? lower,
+    double? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'humidity',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -9302,6 +9517,90 @@ extension PlantRecordQueryFilter
   }
 
   QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      temperatureIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'temperature',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      temperatureIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'temperature',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      temperatureEqualTo(
+    double? value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'temperature',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      temperatureGreaterThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'temperature',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      temperatureLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'temperature',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      temperatureBetween(
+    double? lower,
+    double? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'temperature',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
       updatedAtEqualTo(DateTime value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -9487,6 +9786,244 @@ extension PlantRecordQueryFilter
       ));
     });
   }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherConditionIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'weatherCondition',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherConditionIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'weatherCondition',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherConditionEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'weatherCondition',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherConditionGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'weatherCondition',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherConditionLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'weatherCondition',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherConditionBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'weatherCondition',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherConditionStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'weatherCondition',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherConditionEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'weatherCondition',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherConditionContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'weatherCondition',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherConditionMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'weatherCondition',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherConditionIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'weatherCondition',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherConditionIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'weatherCondition',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      windSpeedIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'windSpeed',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      windSpeedIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'windSpeed',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      windSpeedEqualTo(
+    double? value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'windSpeed',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      windSpeedGreaterThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'windSpeed',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      windSpeedLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'windSpeed',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      windSpeedBetween(
+    double? lower,
+    double? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'windSpeed',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
 }
 
 extension PlantRecordQueryObject
@@ -9532,6 +10069,18 @@ extension PlantRecordQueryLinks
 
 extension PlantRecordQuerySortBy
     on QueryBuilder<PlantRecord, PlantRecord, QSortBy> {
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByAltitude() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'altitude', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByAltitudeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'altitude', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByCategory() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'category', Sort.asc);
@@ -9954,6 +10503,18 @@ extension PlantRecordQuerySortBy
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByHumidity() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'humidity', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByHumidityDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'humidity', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByIsDraft() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isDraft', Sort.asc);
@@ -10145,6 +10706,18 @@ extension PlantRecordQuerySortBy
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByTemperature() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'temperature', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByTemperatureDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'temperature', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.asc);
@@ -10168,10 +10741,48 @@ extension PlantRecordQuerySortBy
       return query.addSortBy(r'uuid', Sort.desc);
     });
   }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByWeatherCondition() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weatherCondition', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByWeatherConditionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weatherCondition', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByWindSpeed() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'windSpeed', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByWindSpeedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'windSpeed', Sort.desc);
+    });
+  }
 }
 
 extension PlantRecordQuerySortThenBy
     on QueryBuilder<PlantRecord, PlantRecord, QSortThenBy> {
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByAltitude() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'altitude', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByAltitudeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'altitude', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByCategory() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'category', Sort.asc);
@@ -10594,6 +11205,18 @@ extension PlantRecordQuerySortThenBy
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByHumidity() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'humidity', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByHumidityDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'humidity', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -10797,6 +11420,18 @@ extension PlantRecordQuerySortThenBy
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByTemperature() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'temperature', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByTemperatureDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'temperature', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.asc);
@@ -10820,10 +11455,42 @@ extension PlantRecordQuerySortThenBy
       return query.addSortBy(r'uuid', Sort.desc);
     });
   }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByWeatherCondition() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weatherCondition', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByWeatherConditionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weatherCondition', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByWindSpeed() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'windSpeed', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByWindSpeedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'windSpeed', Sort.desc);
+    });
+  }
 }
 
 extension PlantRecordQueryWhereDistinct
     on QueryBuilder<PlantRecord, PlantRecord, QDistinct> {
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByAltitude() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'altitude');
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByAudioNotePaths() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'audioNotePaths');
@@ -11074,6 +11741,12 @@ extension PlantRecordQueryWhereDistinct
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByHumidity() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'humidity');
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByIsDraft() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isDraft');
@@ -11187,6 +11860,12 @@ extension PlantRecordQueryWhereDistinct
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByTemperature() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'temperature');
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'updatedAt');
@@ -11199,6 +11878,20 @@ extension PlantRecordQueryWhereDistinct
       return query.addDistinctBy(r'uuid', caseSensitive: caseSensitive);
     });
   }
+
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByWeatherCondition(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'weatherCondition',
+          caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByWindSpeed() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'windSpeed');
+    });
+  }
 }
 
 extension PlantRecordQueryProperty
@@ -11206,6 +11899,12 @@ extension PlantRecordQueryProperty
   QueryBuilder<PlantRecord, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<PlantRecord, double?, QQueryOperations> altitudeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'altitude');
     });
   }
 
@@ -11434,6 +12133,12 @@ extension PlantRecordQueryProperty
     });
   }
 
+  QueryBuilder<PlantRecord, double?, QQueryOperations> humidityProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'humidity');
+    });
+  }
+
   QueryBuilder<PlantRecord, bool, QQueryOperations> isDraftProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isDraft');
@@ -11558,6 +12263,12 @@ extension PlantRecordQueryProperty
     });
   }
 
+  QueryBuilder<PlantRecord, double?, QQueryOperations> temperatureProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'temperature');
+    });
+  }
+
   QueryBuilder<PlantRecord, DateTime, QQueryOperations> updatedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'updatedAt');
@@ -11567,6 +12278,19 @@ extension PlantRecordQueryProperty
   QueryBuilder<PlantRecord, String, QQueryOperations> uuidProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'uuid');
+    });
+  }
+
+  QueryBuilder<PlantRecord, String?, QQueryOperations>
+      weatherConditionProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'weatherCondition');
+    });
+  }
+
+  QueryBuilder<PlantRecord, double?, QQueryOperations> windSpeedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'windSpeed');
     });
   }
 }

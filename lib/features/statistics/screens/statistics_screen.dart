@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
 import '../../../core/repositories/plant_repository.dart';
 import '../../../core/repositories/session_repository.dart';
 import '../../../models/plant_record.dart';
@@ -12,6 +13,7 @@ class StatisticsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final plantRepo = ref.watch(plantRepositoryProvider);
     final sessionRepo = ref.watch(sessionRepositoryProvider);
 
@@ -44,7 +46,7 @@ class StatisticsScreen extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: _StatCard(
-                        title: 'Total de Plantas',
+                        title: l10n.totalPlants,
                         value: '${stats['totalPlants'] ?? 0}',
                         icon: Icons.eco,
                         color: Colors.green,
@@ -53,7 +55,7 @@ class StatisticsScreen extends ConsumerWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: _StatCard(
-                        title: 'Sessões',
+                        title: l10n.sessions,
                         value: '${stats['totalSessions'] ?? 0}',
                         icon: Icons.folder,
                         color: Colors.blue,
@@ -66,7 +68,7 @@ class StatisticsScreen extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: _StatCard(
-                        title: 'Rascunhos',
+                        title: l10n.drafts,
                         value: '${stats['draftPlants'] ?? 0}',
                         icon: Icons.edit_note,
                         color: Colors.orange,
@@ -75,7 +77,7 @@ class StatisticsScreen extends ConsumerWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: _StatCard(
-                        title: 'Este Mês',
+                        title: l10n.thisMonth,
                         value: '${stats['thisMonth'] ?? 0}',
                         icon: Icons.calendar_today,
                         color: Colors.purple,
@@ -90,9 +92,9 @@ class StatisticsScreen extends ConsumerWidget {
         const SizedBox(height: 24),
 
         // Plants by Category Chart
-        const Text(
-          'Plantas por Categoria',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Text(
+          l10n.plantsByCategory,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         FutureBuilder<Map<PlantCategory, int>>(
@@ -122,7 +124,7 @@ class StatisticsScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Nenhuma planta registrada ainda',
+                        l10n.noPlantsYet,
                         style: TextStyle(color: Colors.grey.shade600),
                       ),
                     ],
@@ -192,9 +194,9 @@ class StatisticsScreen extends ConsumerWidget {
         const SizedBox(height: 24),
 
         // Monthly Activity Chart
-        const Text(
-          'Coletas por Mês',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Text(
+          l10n.collectionsByMonth,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         FutureBuilder<Map<int, int>>(
@@ -216,7 +218,7 @@ class StatisticsScreen extends ConsumerWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(32.0),
                   child: Text(
-                    'Nenhuma atividade registrada',
+                    l10n.noActivityRecorded,
                     style: TextStyle(color: Colors.grey.shade600),
                     textAlign: TextAlign.center,
                   ),
@@ -241,25 +243,13 @@ class StatisticsScreen extends ConsumerWidget {
                           sideTitles: SideTitles(
                             showTitles: true,
                             getTitlesWidget: (value, meta) {
-                              const months = [
-                                'Jan',
-                                'Fev',
-                                'Mar',
-                                'Abr',
-                                'Mai',
-                                'Jun',
-                                'Jul',
-                                'Ago',
-                                'Set',
-                                'Out',
-                                'Nov',
-                                'Dez',
-                              ];
+                              final locale = Localizations.localeOf(context).languageCode;
                               if (value.toInt() >= 1 && value.toInt() <= 12) {
+                                final date = DateTime(2024, value.toInt());
                                 return Padding(
                                   padding: const EdgeInsets.only(top: 8.0),
                                   child: Text(
-                                    months[value.toInt() - 1],
+                                    DateFormat.MMM(locale).format(date),
                                     style: const TextStyle(fontSize: 10),
                                   ),
                                 );
@@ -299,9 +289,9 @@ class StatisticsScreen extends ConsumerWidget {
         const SizedBox(height: 24),
 
         // Recent Activity
-        const Text(
-          'Atividade Recente',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Text(
+          l10n.recentActivity,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         FutureBuilder<List<PlantRecord>>(
@@ -318,7 +308,7 @@ class StatisticsScreen extends ConsumerWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(32.0),
                   child: Text(
-                    'Nenhuma atividade recente',
+                    l10n.noRecentActivity,
                     style: TextStyle(color: Colors.grey.shade600),
                     textAlign: TextAlign.center,
                   ),
@@ -347,9 +337,9 @@ class StatisticsScreen extends ConsumerWidget {
                       style: const TextStyle(fontSize: 12),
                     ),
                     trailing: plant.isDraft
-                        ? const Chip(
+                        ? Chip(
                             label: Text(
-                              'Rascunho',
+                              l10n.draft,
                               style: TextStyle(fontSize: 10),
                             ),
                             visualDensity: VisualDensity.compact,

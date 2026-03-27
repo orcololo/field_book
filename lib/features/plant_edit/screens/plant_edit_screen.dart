@@ -5,6 +5,7 @@ import '../../../models/plant_record.dart';
 import '../../../models/plant_category.dart';
 import '../../../core/repositories/plant_repository.dart';
 import '../../../core/utils/botanical_validator.dart';
+import '../../../l10n/app_localizations.dart';
 
 class PlantEditScreen extends ConsumerStatefulWidget {
   final PlantRecord plant;
@@ -61,6 +62,13 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
   late TextEditingController _sementeFormatoController;
   late TextEditingController _sementeTamanhoController;
   String _sementeTamanhoUnidade = 'mm';
+
+  // Environmental data
+  late TextEditingController _altitudeController;
+  late TextEditingController _temperatureController;
+  late TextEditingController _humidityController;
+  late TextEditingController _windSpeedController;
+  String? _weatherCondition;
 
   late PlantCategory _selectedCategory;
   bool _isSaving = false;
@@ -177,6 +185,21 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
     );
     _sementeTamanhoUnidade = widget.plant.sementeTamanhoUnidade ?? 'mm';
 
+    // Environmental data
+    _altitudeController = TextEditingController(
+      text: widget.plant.altitude?.toString() ?? '',
+    );
+    _temperatureController = TextEditingController(
+      text: widget.plant.temperature?.toString() ?? '',
+    );
+    _humidityController = TextEditingController(
+      text: widget.plant.humidity?.toString() ?? '',
+    );
+    _windSpeedController = TextEditingController(
+      text: widget.plant.windSpeed?.toString() ?? '',
+    );
+    _weatherCondition = widget.plant.weatherCondition;
+
     // Listen to scientific name changes for auto-suggestions
     _scientificNameController.addListener(_onScientificNameChanged);
     _genusController.addListener(_onGenusChanged);
@@ -214,6 +237,10 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
     _sementeCorController.dispose();
     _sementeFormatoController.dispose();
     _sementeTamanhoController.dispose();
+    _altitudeController.dispose();
+    _temperatureController.dispose();
+    _humidityController.dispose();
+    _windSpeedController.dispose();
     super.dispose();
   }
 
@@ -385,6 +412,20 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
           ? _sementeTamanhoUnidade
           : null;
       widget.plant.category = _selectedCategory;
+      // Environmental data
+      widget.plant.altitude = _altitudeController.text.trim().isNotEmpty
+          ? double.tryParse(_altitudeController.text.trim())
+          : null;
+      widget.plant.temperature = _temperatureController.text.trim().isNotEmpty
+          ? double.tryParse(_temperatureController.text.trim())
+          : null;
+      widget.plant.humidity = _humidityController.text.trim().isNotEmpty
+          ? double.tryParse(_humidityController.text.trim())
+          : null;
+      widget.plant.windSpeed = _windSpeedController.text.trim().isNotEmpty
+          ? double.tryParse(_windSpeedController.text.trim())
+          : null;
+      widget.plant.weatherCondition = _weatherCondition;
       widget.plant.updatedAt = DateTime.now();
 
       widget.plant.updateFtsFields();
@@ -392,20 +433,20 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
       await _plantRepo.save(widget.plant);
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Planta atualizada com sucesso'),
-            backgroundColor: Colors.green,
+          SnackBar(
+            content: Text(l10n.plantUpdatedSuccessfully),
           ),
         );
         Navigator.pop(context, true);
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erro ao atualizar planta: $e'),
-            backgroundColor: Colors.red,
+            content: Text(l10n.errorUpdatingPlant(e.toString())),
           ),
         );
       }
@@ -418,9 +459,12 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Editar Planta'),
+        title: Text(l10n.editPlant),
         actions: [
           if (_isSaving)
             const Center(
@@ -433,7 +477,7 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
             IconButton(
               icon: const Icon(Icons.check),
               onPressed: _savePlant,
-              tooltip: 'Salvar',
+              tooltip: l10n.save,
             ),
         ],
       ),
@@ -445,11 +489,11 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
             // Scientific Name
             TextFormField(
               controller: _scientificNameController,
-              decoration: const InputDecoration(
-                labelText: 'Nome Científico *',
+              decoration: InputDecoration(
+                labelText: '${l10n.scientificName} *',
                 hintText: 'Genus species',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.science),
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.science),
               ),
               textCapitalization: TextCapitalization.words,
               validator: _validator.validateScientificName,
@@ -459,19 +503,19 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
             if (_duplicateWarnings.isNotEmpty) ...[
               const SizedBox(height: 8),
               Card(
-                color: Colors.orange.shade50,
+                color: colorScheme.errorContainer,
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Row(
+                      Row(
                         children: [
-                          Icon(Icons.warning, color: Colors.orange, size: 20),
-                          SizedBox(width: 8),
+                          Icon(Icons.warning, color: colorScheme.error, size: 20),
+                          const SizedBox(width: 8),
                           Text(
-                            'Possíveis duplicatas:',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            l10n.possibleDuplicates,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -496,10 +540,10 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
             // Common Name
             TextFormField(
               controller: _commonNameController,
-              decoration: const InputDecoration(
-                labelText: 'Nome Popular',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.local_florist),
+              decoration: InputDecoration(
+                labelText: l10n.commonName,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.local_florist),
               ),
               textCapitalization: TextCapitalization.words,
             ),
@@ -507,19 +551,19 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
             const SizedBox(height: 16),
 
             // Taxonomy Section
-            const Text(
-              'Taxonomia',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              l10n.taxonomyInfo,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
 
             // Genus
             TextFormField(
               controller: _genusController,
-              decoration: const InputDecoration(
-                labelText: 'Gênero',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.category),
+              decoration: InputDecoration(
+                labelText: l10n.genus,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.category),
               ),
               textCapitalization: TextCapitalization.words,
             ),
@@ -529,10 +573,10 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
             // Species
             TextFormField(
               controller: _speciesController,
-              decoration: const InputDecoration(
-                labelText: 'Espécie',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.grain),
+              decoration: InputDecoration(
+                labelText: l10n.species,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.grain),
               ),
             ),
 
@@ -542,15 +586,15 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
             TextFormField(
               controller: _familyController,
               decoration: InputDecoration(
-                labelText: 'Família',
+                labelText: l10n.family,
                 border: const OutlineInputBorder(),
                 prefixIcon: const Icon(Icons.account_tree),
                 suffixIcon:
                     _suggestedFamily != null &&
                         _familyController.text != _suggestedFamily
                     ? IconButton(
-                        icon: const Icon(Icons.lightbulb, color: Colors.amber),
-                        tooltip: 'Sugestão: $_suggestedFamily',
+                        icon: Icon(Icons.lightbulb, color: colorScheme.tertiary),
+                        tooltip: l10n.suggestionWithName(_suggestedFamily!),
                         onPressed: () {
                           _familyController.text = _suggestedFamily!;
                           setState(() => _suggestedFamily = null);
@@ -565,17 +609,17 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
                 _familyController.text != _suggestedFamily) ...[
               const SizedBox(height: 8),
               Card(
-                color: Colors.amber.shade50,
+                color: colorScheme.tertiaryContainer,
                 child: ListTile(
-                  leading: const Icon(Icons.lightbulb, color: Colors.amber),
-                  title: Text('Sugestão: $_suggestedFamily'),
-                  subtitle: const Text('Baseado no gênero informado'),
+                  leading: Icon(Icons.lightbulb, color: colorScheme.tertiary),
+                  title: Text(l10n.suggestionWithName(_suggestedFamily!)),
+                  subtitle: Text(l10n.basedOnGenus),
                   trailing: TextButton(
                     onPressed: () {
                       _familyController.text = _suggestedFamily!;
                       setState(() => _suggestedFamily = null);
                     },
-                    child: const Text('Aplicar'),
+                    child: Text(l10n.apply),
                   ),
                 ),
               ),
@@ -586,10 +630,10 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
             // Category
             DropdownButtonFormField<PlantCategory>(
               initialValue: _selectedCategory,
-              decoration: const InputDecoration(
-                labelText: 'Categoria',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.category_outlined),
+              decoration: InputDecoration(
+                labelText: l10n.category,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.category_outlined),
               ),
               items: PlantCategory.values.map((category) {
                 return DropdownMenuItem(
@@ -607,10 +651,10 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
             // Habitat
             TextFormField(
               controller: _habitatController,
-              decoration: const InputDecoration(
-                labelText: 'Habitat',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.terrain),
+              decoration: InputDecoration(
+                labelText: l10n.habitat,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.terrain),
               ),
               maxLines: 2,
               textCapitalization: TextCapitalization.sentences,
@@ -621,10 +665,10 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
             // Notes
             TextFormField(
               controller: _notesController,
-              decoration: const InputDecoration(
-                labelText: 'Observações',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.notes),
+              decoration: InputDecoration(
+                labelText: l10n.observations,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.notes),
               ),
               maxLines: 4,
               textCapitalization: TextCapitalization.sentences,
@@ -632,23 +676,134 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
 
             const SizedBox(height: 24),
 
+            // Environmental Data Section
+            Text(
+              l10n.environmentalData,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const Divider(),
+            const SizedBox(height: 8),
+            Text(l10n.weatherCondition,
+                style: Theme.of(context).textTheme.bodyMedium),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: <MapEntry<String, String>>[
+                MapEntry('sunny', l10n.weatherSunny),
+                MapEntry('cloudy', l10n.weatherCloudy),
+                MapEntry('overcast', l10n.weatherOvercast),
+                MapEntry('rainy', l10n.weatherRainy),
+                MapEntry('stormy', l10n.weatherStormy),
+                MapEntry('foggy', l10n.weatherFoggy),
+                MapEntry('windy', l10n.weatherWindy),
+              ].map((entry) {
+                final isSelected = _weatherCondition == entry.key;
+                return ChoiceChip(
+                  label: Text(entry.value),
+                  selected: isSelected,
+                  onSelected: (selected) {
+                    setState(() {
+                      _weatherCondition = selected ? entry.key : null;
+                    });
+                  },
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _altitudeController,
+                    decoration: InputDecoration(
+                      labelText: l10n.altitude,
+                      border: const OutlineInputBorder(),
+                      hintText: l10n.altitudeHint,
+                      prefixIcon: const Icon(Icons.terrain, size: 20),
+                      isDense: true,
+                    ),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                      signed: true,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextFormField(
+                    controller: _temperatureController,
+                    decoration: InputDecoration(
+                      labelText: l10n.temperatureLabel,
+                      border: const OutlineInputBorder(),
+                      hintText: l10n.temperatureHint,
+                      prefixIcon: const Icon(Icons.thermostat, size: 20),
+                      isDense: true,
+                    ),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                      signed: true,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _humidityController,
+                    decoration: InputDecoration(
+                      labelText: l10n.humidityLabel,
+                      border: const OutlineInputBorder(),
+                      hintText: l10n.humidityHint,
+                      prefixIcon: const Icon(Icons.water_drop, size: 20),
+                      isDense: true,
+                    ),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextFormField(
+                    controller: _windSpeedController,
+                    decoration: InputDecoration(
+                      labelText: l10n.windSpeed,
+                      border: const OutlineInputBorder(),
+                      hintText: l10n.windSpeedHint,
+                      prefixIcon: const Icon(Icons.air, size: 20),
+                      isDense: true,
+                    ),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 24),
+
             // Morphology Section
-            const Text(
-              'Morfologia',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              l10n.morphology,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const Divider(),
             const SizedBox(height: 4),
 
             // Raiz
             _buildOrganSection(
-              title: 'Raiz',
+              title: l10n.root,
               icon: Icons.grass,
               children: [
                 _buildMorphTextField(
                   controller: _raizController,
-                  label: 'Descrição',
-                  hint: 'Descreva a raiz...',
+                  label: l10n.descriptionLabel,
+                  hint: l10n.rootDescriptionHint,
                   icon: Icons.description,
                 ),
               ],
@@ -656,32 +811,32 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
 
             // Caule
             _buildOrganSection(
-              title: 'Caule',
+              title: l10n.stem,
               icon: Icons.park,
               children: [
                 _buildMorphTextField(
                   controller: _cauleController,
-                  label: 'Descrição',
-                  hint: 'Descreva o caule...',
+                  label: l10n.descriptionLabel,
+                  hint: l10n.stemDescriptionHint,
                   icon: Icons.description,
                 ),
                 const SizedBox(height: 12),
                 _buildMorphTextField(
                   controller: _cauleTipoCascaController,
-                  label: 'Tipo de casca',
-                  hint: 'Ex: lisa, rugosa, fissurada...',
+                  label: l10n.stemBarkType,
+                  hint: l10n.stemBarkTypeHint,
                   icon: Icons.texture,
                 ),
                 const SizedBox(height: 12),
                 _buildMorphTextField(
                   controller: _cauleCorController,
-                  label: 'Cor',
-                  hint: 'Ex: marrom, cinza, verde...',
+                  label: l10n.colorLabel,
+                  hint: l10n.stemColorHint,
                   icon: Icons.color_lens,
                 ),
                 const SizedBox(height: 12),
                 _buildInlineMeasurement(
-                  label: 'Tamanho (altura)',
+                  label: l10n.sizeHeight,
                   controller: _cauleTamanhoController,
                   selectedUnit: _cauleTamanhoUnidade,
                   onUnitChanged: (v) =>
@@ -689,7 +844,7 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
                 ),
                 const SizedBox(height: 12),
                 _buildInlineMeasurement(
-                  label: 'Circunferência',
+                  label: l10n.circumference,
                   controller: _cauleCircunferenciaController,
                   selectedUnit: _cauleCircunferenciaUnidade,
                   onUnitChanged: (v) =>
@@ -697,9 +852,9 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
                 ),
                 const SizedBox(height: 12),
                 SwitchListTile(
-                  title: const Text('Presença de seiva'),
-                  subtitle: const Text(
-                    'A planta apresenta exsudação de seiva?',
+                  title: Text(l10n.sapPresence),
+                  subtitle: Text(
+                    l10n.sapPresenceSubtitle,
                   ),
                   value: _cauleTemSeiva,
                   onChanged: (v) => setState(() => _cauleTemSeiva = v),
@@ -711,8 +866,8 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
                   const SizedBox(height: 12),
                   _buildMorphTextField(
                     controller: _cauleDescricaoSeivaController,
-                    label: 'Descrição da seiva',
-                    hint: 'Descreva a seiva (cor, consistência, odor...)',
+                    label: l10n.sapDescription,
+                    hint: l10n.sapDescriptionHint,
                     icon: Icons.water_drop,
                   ),
                 ],
@@ -721,34 +876,34 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
 
             // Folha
             _buildOrganSection(
-              title: 'Folha',
+              title: l10n.leaf,
               icon: Icons.eco,
               children: [
                 _buildMorphTextField(
                   controller: _folhaDescricaoController,
-                  label: 'Descrição',
-                  hint: 'Descrição geral da folha...',
+                  label: l10n.descriptionLabel,
+                  hint: l10n.leafDescriptionHint,
                   icon: Icons.description,
                 ),
                 const SizedBox(height: 12),
                 _buildMorphTextField(
                   controller: _folhaBainhaController,
-                  label: 'Bainha',
-                  hint: 'Descreva a bainha...',
+                  label: l10n.sheathLabel,
+                  hint: l10n.sheathHint,
                   icon: Icons.eco,
                 ),
                 const SizedBox(height: 12),
                 _buildMorphTextField(
                   controller: _folhaPecioloController,
-                  label: 'Pecíolo',
-                  hint: 'Descreva o pecíolo...',
+                  label: l10n.petioleLabel,
+                  hint: l10n.petioleHint,
                   icon: Icons.eco,
                 ),
                 const SizedBox(height: 12),
                 _buildMorphTextField(
                   controller: _folhaLaminaController,
-                  label: 'Lâmina',
-                  hint: 'Descreva a lâmina...',
+                  label: l10n.bladeLabel,
+                  hint: l10n.bladeHint,
                   icon: Icons.eco,
                 ),
               ],
@@ -756,32 +911,32 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
 
             // Flor
             _buildOrganSection(
-              title: 'Flor',
+              title: l10n.flower,
               icon: Icons.local_florist,
               children: [
                 _buildMorphTextField(
                   controller: _florDescricaoController,
-                  label: 'Descrição',
-                  hint: 'Descrição geral da flor...',
+                  label: l10n.descriptionLabel,
+                  hint: l10n.flowerDescriptionHint,
                   icon: Icons.description,
                 ),
                 const SizedBox(height: 12),
                 _buildMorphTextField(
                   controller: _florInflorescenciaController,
-                  label: 'Inflorescência',
-                  hint: 'Descreva a inflorescência...',
+                  label: l10n.inflorescenceLabel,
+                  hint: l10n.inflorescenceHint,
                   icon: Icons.filter_vintage,
                 ),
                 const SizedBox(height: 12),
                 _buildMorphTextField(
                   controller: _florCorController,
-                  label: 'Cor',
-                  hint: 'Ex: branca, amarela, rosa...',
+                  label: l10n.colorLabel,
+                  hint: l10n.flowerColorHint,
                   icon: Icons.color_lens,
                 ),
                 const SizedBox(height: 12),
                 _buildInlineMeasurement(
-                  label: 'Tamanho',
+                  label: l10n.sizeLabel,
                   controller: _florTamanhoController,
                   selectedUnit: _florTamanhoUnidade,
                   onUnitChanged: (v) => setState(() => _florTamanhoUnidade = v),
@@ -791,32 +946,32 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
 
             // Fruto
             _buildOrganSection(
-              title: 'Fruto',
+              title: l10n.fruitLabel,
               icon: Icons.spa,
               children: [
                 _buildMorphTextField(
                   controller: _frutoDescricaoController,
-                  label: 'Descrição',
-                  hint: 'Descrição geral do fruto...',
+                  label: l10n.descriptionLabel,
+                  hint: l10n.fruitDescriptionHint,
                   icon: Icons.description,
                 ),
                 const SizedBox(height: 12),
                 _buildMorphTextField(
                   controller: _frutoCorController,
-                  label: 'Cor',
-                  hint: 'Ex: verde, vermelho, amarelo...',
+                  label: l10n.colorLabel,
+                  hint: l10n.fruitColorHint,
                   icon: Icons.color_lens,
                 ),
                 const SizedBox(height: 12),
                 _buildMorphTextField(
                   controller: _frutoFormatoController,
-                  label: 'Formato',
-                  hint: 'Ex: esférico, alongado, achatado...',
+                  label: l10n.shapeLabel,
+                  hint: l10n.fruitShapeHint,
                   icon: Icons.category,
                 ),
                 const SizedBox(height: 12),
                 _buildInlineMeasurement(
-                  label: 'Tamanho',
+                  label: l10n.sizeLabel,
                   controller: _frutoTamanhoController,
                   selectedUnit: _frutoTamanhoUnidade,
                   onUnitChanged: (v) =>
@@ -827,32 +982,32 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
 
             // Semente
             _buildOrganSection(
-              title: 'Semente',
+              title: l10n.seedLabel,
               icon: Icons.grain,
               children: [
                 _buildMorphTextField(
                   controller: _sementeDescricaoController,
-                  label: 'Descrição',
-                  hint: 'Descrição geral da semente...',
+                  label: l10n.descriptionLabel,
+                  hint: l10n.seedDescriptionHint,
                   icon: Icons.description,
                 ),
                 const SizedBox(height: 12),
                 _buildMorphTextField(
                   controller: _sementeCorController,
-                  label: 'Cor',
-                  hint: 'Ex: marrom, preta, branca...',
+                  label: l10n.colorLabel,
+                  hint: l10n.seedColorHint,
                   icon: Icons.color_lens,
                 ),
                 const SizedBox(height: 12),
                 _buildMorphTextField(
                   controller: _sementeFormatoController,
-                  label: 'Formato',
-                  hint: 'Ex: oval, arredondada, alada...',
+                  label: l10n.shapeLabel,
+                  hint: l10n.seedShapeHint,
                   icon: Icons.category,
                 ),
                 const SizedBox(height: 12),
                 _buildInlineMeasurement(
-                  label: 'Tamanho',
+                  label: l10n.sizeLabel,
                   controller: _sementeTamanhoController,
                   selectedUnit: _sementeTamanhoUnidade,
                   onUnitChanged: (v) =>
@@ -873,7 +1028,7 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.save),
-              label: Text(_isSaving ? 'Salvando...' : 'Salvar Alterações'),
+              label: Text(_isSaving ? l10n.saving : l10n.saveChanges),
             ),
           ],
         ),
@@ -941,7 +1096,7 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
             decoration: InputDecoration(
               labelText: label,
               border: const OutlineInputBorder(),
-              hintText: 'Ex: 2.5',
+              hintText: AppLocalizations.of(context)!.measurementHint,
               prefixIcon: const Icon(Icons.straighten, size: 20),
               isDense: true,
             ),
@@ -959,9 +1114,9 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
           flex: 2,
           child: DropdownButtonFormField<String>(
             initialValue: selectedUnit,
-            decoration: const InputDecoration(
-              labelText: 'Unidade',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.unitLabel,
+              border: const OutlineInputBorder(),
               isDense: true,
             ),
             items: const [
@@ -979,23 +1134,24 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
   }
 
   String _getCategoryName(PlantCategory category) {
+    final l10n = AppLocalizations.of(context)!;
     switch (category) {
       case PlantCategory.trees:
-        return 'Árvores';
+        return l10n.categoryTrees;
       case PlantCategory.shrubs:
-        return 'Arbustos';
+        return l10n.categoryShrubs;
       case PlantCategory.herbs:
-        return 'Ervas';
+        return l10n.categoryHerbs;
       case PlantCategory.vines:
-        return 'Trepadeiras';
+        return l10n.categoryVines;
       case PlantCategory.ferns:
-        return 'Samambaias';
+        return l10n.categoryFerns;
       case PlantCategory.grasses:
-        return 'Gramíneas';
+        return l10n.categoryGrasses;
       case PlantCategory.cacti:
-        return 'Cactos';
+        return l10n.categoryCacti;
       case PlantCategory.aquatic:
-        return 'Aquáticas';
+        return l10n.categoryAquatic;
     }
   }
 }

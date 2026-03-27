@@ -131,12 +131,14 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
 class GlassAppBarFrosted extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? actions;
   final String? title;
+  final Widget? leading;
   final bool showBackButton;
 
   const GlassAppBarFrosted({
     super.key,
     this.actions,
     this.title,
+    this.leading,
     this.showBackButton = false,
   });
 
@@ -181,7 +183,9 @@ class GlassAppBarFrosted extends StatelessWidget implements PreferredSizeWidget 
               ),
               child: Row(
                 children: [
-                  if (showBackButton)
+                  if (leading != null)
+                    leading!
+                  else if (showBackButton)
                     IconButton(
                       icon: Container(
                         padding: const EdgeInsets.all(8),

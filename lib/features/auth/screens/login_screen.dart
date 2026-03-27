@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/theme/folium_theme.dart';
+import '../../../l10n/app_localizations.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -38,7 +39,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           );
     } on DioException catch (e) {
       if (!mounted) return;
-      final message = e.response?.data?['message'] ?? 'Erro ao fazer login';
+      final l10n = AppLocalizations.of(context)!;
+      final message = e.response?.data?['message'] ?? l10n.loginError;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message.toString())),
       );
@@ -58,8 +60,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       await ref.read(authNotifierProvider.notifier).googleSignIn();
     } catch (e) {
       if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao entrar com Google: $e')),
+        SnackBar(content: Text(l10n.googleSignInError(e.toString()))),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -68,8 +71,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
-      backgroundColor: FoliumTheme.surface,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -82,23 +89,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 Icon(
                   Icons.eco,
                   size: 80,
-                  color: FoliumTheme.primaryMain,
+                  color: colorScheme.primary,
                 ),
                 const SizedBox(height: FoliumTheme.space16),
                 Text(
                   'Folium',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  style: theme.textTheme.headlineLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: FoliumTheme.primaryMain,
+                        color: colorScheme.primary,
                       ),
                 ),
                 const SizedBox(height: FoliumTheme.space8),
                 Text(
-                  'Caderno de campo botânico',
+                  l10n.botanicalFieldBook,
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: FoliumTheme.onSurfaceVariant,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
                       ),
                 ),
                 const SizedBox(height: FoliumTheme.space48),
@@ -113,7 +120,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
                         decoration: InputDecoration(
-                          labelText: 'Email',
+                          labelText: l10n.email,
                           prefixIcon: const Icon(Icons.email_outlined),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
@@ -121,10 +128,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Informe o email';
+                            return l10n.enterEmail;
                           }
                           if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value.trim())) {
-                            return 'Email inválido';
+                            return l10n.invalidEmail;
                           }
                           return null;
                         },
@@ -136,7 +143,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         textInputAction: TextInputAction.done,
                         onFieldSubmitted: (_) => _handleLogin(),
                         decoration: InputDecoration(
-                          labelText: 'Senha',
+                          labelText: l10n.password,
                           prefixIcon: const Icon(Icons.lock_outline),
                           suffixIcon: IconButton(
                             icon: Icon(
@@ -153,7 +160,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Informe a senha';
+                            return l10n.enterPassword;
                           }
                           return null;
                         },
@@ -181,7 +188,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             color: Colors.white,
                           ),
                         )
-                      : const Text('Entrar'),
+                      : Text(l10n.loginButton),
                 ),
                 const SizedBox(height: FoliumTheme.space16),
 
@@ -192,9 +199,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: FoliumTheme.space16),
                       child: Text(
-                        'ou',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: FoliumTheme.onSurfaceVariant,
+                        l10n.or,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
                             ),
                       ),
                     ),
@@ -207,7 +214,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 OutlinedButton.icon(
                   onPressed: _isLoading ? null : _handleGoogleSignIn,
                   icon: const Icon(Icons.g_mobiledata, size: 24),
-                  label: const Text('Entrar com Google'),
+                  label: Text(l10n.signInWithGoogle),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: FoliumTheme.space12),
                     shape: RoundedRectangleBorder(
@@ -222,9 +229,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Não tem conta? ',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: FoliumTheme.onSurfaceVariant,
+                      l10n.noAccount,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
                           ),
                     ),
                     TextButton(
@@ -236,7 +243,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                         );
                       },
-                      child: const Text('Cadastre-se'),
+                      child: Text(l10n.signUp),
                     ),
                   ],
                 ),
@@ -245,9 +252,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: Text(
-                    'Continuar offline',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: FoliumTheme.onSurfaceVariant,
+                    l10n.continueOffline,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
                         ),
                   ),
                 ),

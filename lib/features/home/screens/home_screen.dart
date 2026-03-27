@@ -17,6 +17,7 @@ import '../../sessions/screens/session_detail_screen.dart';
 import '../../statistics/screens/statistics_screen.dart';
 import '../../search/screens/search_screen.dart';
 import '../../map/screens/map_view_screen.dart';
+import '../../quick_capture/screens/quick_capture_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -27,27 +28,69 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _selectedIndex = 0;
+  bool _isSelectMode = false;
+  final Set<int> _selectedIds = {};
+
+  void _exitSelectMode() {
+    setState(() {
+      _isSelectMode = false;
+      _selectedIds.clear();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
-      backgroundColor: FoliumTheme.surface,
+      backgroundColor: colorScheme.surface,
       extendBodyBehindAppBar: true,
       appBar: GlassAppBarFrosted(
+        leading: _isSelectMode
+            ? IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: _exitSelectMode,
+              )
+            : null,
+        title: _isSelectMode
+            ? l10n.nSelected(_selectedIds.length)
+            : null,
         actions: [
-          if (_selectedIndex == 0)
+          if (_selectedIndex == 0 && !_isSelectMode) ...[
             IconButton(
+              tooltip: l10n.selectMode,
               icon: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: FoliumTheme.primaryMain.withValues(alpha: 0.1),
+                  color: colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
                 ),
-                child: const Icon(
+                child: Icon(
+                  Icons.checklist,
+                  color: colorScheme.primary,
+                  size: 20,
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  _isSelectMode = true;
+                });
+              },
+            ),
+            IconButton(
+              tooltip: l10n.searchTooltip,
+              icon: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: colorScheme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                ),
+                child: Icon(
                   Icons.search,
-                  color: FoliumTheme.primaryMain,
+                  color: colorScheme.primary,
                   size: 20,
                 ),
               ),
@@ -59,12 +102,48 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 );
               },
             ),
+          ],
+          if (_isSelectMode) ...[
+            IconButton(
+              tooltip: l10n.selectAll,
+              icon: const Icon(Icons.select_all),
+              onPressed: () => setState(() {
+                _selectAllPlants();
+              }),
+            ),
+            IconButton(
+              tooltip: l10n.deleteSelected,
+              icon: Icon(Icons.delete_outline, color: colorScheme.error),
+              onPressed: _selectedIds.isEmpty ? null : () => _bulkDelete(context, l10n),
+            ),
+            IconButton(
+              tooltip: l10n.exportSelected,
+              icon: const Icon(Icons.ios_share),
+              onPressed: _selectedIds.isEmpty ? null : () => _bulkExport(context),
+            ),
+          ],
         ],
       ),
       body: IndexedStack(
         index: _selectedIndex,
         children: [
-          _PlantsTab(key: ValueKey(_selectedIndex)),
+          _PlantsTab(
+            key: ValueKey('$_selectedIndex-$_isSelectMode'),
+            isSelectMode: _isSelectMode,
+            selectedIds: _selectedIds,
+            onToggleSelect: (id) {
+              setState(() {
+                if (_selectedIds.contains(id)) {
+                  _selectedIds.remove(id);
+                } else {
+                  _selectedIds.add(id);
+                }
+              });
+            },
+            onPlantsLoaded: (ids) {
+              _allPlantIds = ids;
+            },
+          ),
           const _SessionsTab(),
           const MapViewScreen(),
           const StatisticsScreen(),
@@ -78,7 +157,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             _selectedIndex = index;
           });
         },
-        backgroundColor: FoliumTheme.surface,
+        backgroundColor: colorScheme.surface,
         elevation: 8,
         destinations: [
           NavigationDestination(
@@ -94,7 +173,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           NavigationDestination(
             icon: const Icon(Icons.map_outlined),
             selectedIcon: const Icon(Icons.map),
-            label: 'Mapa',
+            label: l10n.map,
           ),
           NavigationDestination(
             icon: const Icon(Icons.bar_chart_outlined),
@@ -108,18 +187,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ],
       ),
-      floatingActionButton: _selectedIndex == 0
+      floatingActionButton: _isSelectMode
+          ? null
+          : _selectedIndex == 0
           ? FloatingActionButton.extended(
-              onPressed: () async {
-                final result = await Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const PlantFormScreen(),
-                  ),
-                );
-                if (result == true) {
-                  setState(() {}); // Refresh the list
-                }
-              },
+              onPressed: () => _showNewPlantOptions(context, l10n),
               icon: const Icon(Icons.add),
               label: Text(l10n.newPlant),
             )
@@ -141,10 +213,137 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               : null,
     );
   }
+
+  List<int> _allPlantIds = [];
+
+  void _selectAllPlants() {
+    if (_selectedIds.length == _allPlantIds.length) {
+      _selectedIds.clear();
+    } else {
+      _selectedIds.addAll(_allPlantIds);
+    }
+  }
+
+  Future<void> _bulkDelete(BuildContext context, AppLocalizations l10n) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.deleteSelected),
+        content: Text(l10n.confirmDeleteCount(_selectedIds.length)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
+            child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    final plantRepo = ref.read(plantRepositoryProvider);
+    await plantRepo.bulkDelete(_selectedIds.toList());
+    if (!mounted) return;
+    final count = _selectedIds.length;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.nPlantsDeleted(count))),
+    );
+    _exitSelectMode();
+  }
+
+  Future<void> _bulkExport(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final plantRepo = ref.read(plantRepositoryProvider);
+    final plants = await plantRepo.getByIds(_selectedIds.toList());
+    if (!mounted || plants.isEmpty) return;
+    // Navigate to export with pre-selected plants
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.exportSelected)),
+    );
+    _exitSelectMode();
+  }
+
+  void _showNewPlantOptions(BuildContext context, AppLocalizations l10n) {
+    final colorScheme = Theme.of(context).colorScheme;
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(FoliumTheme.radiusMedium)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: FoliumTheme.space16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                  ),
+                  child: Icon(Icons.eco, color: colorScheme.primary),
+                ),
+                title: Text(l10n.newPlant),
+                subtitle: Text(l10n.newPlantSubtitle),
+                onTap: () async {
+                  Navigator.pop(ctx);
+                  final result = await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const PlantFormScreen(),
+                    ),
+                  );
+                  if (result == true) setState(() {});
+                },
+              ),
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: colorScheme.tertiaryContainer,
+                    borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+                  ),
+                  child: Icon(Icons.flash_on, color: colorScheme.tertiary),
+                ),
+                title: Text(l10n.quickCapture),
+                subtitle: Text(l10n.quickCaptureSubtitle),
+                onTap: () async {
+                  Navigator.pop(ctx);
+                  final result = await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const QuickCaptureScreen(),
+                    ),
+                  );
+                  if (result == true) setState(() {});
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _PlantsTab extends ConsumerStatefulWidget {
-  const _PlantsTab({super.key});
+  final bool isSelectMode;
+  final Set<int> selectedIds;
+  final ValueChanged<int>? onToggleSelect;
+  final ValueChanged<List<int>>? onPlantsLoaded;
+  
+  const _PlantsTab({
+    super.key,
+    this.isSelectMode = false,
+    this.selectedIds = const {},
+    this.onToggleSelect,
+    this.onPlantsLoaded,
+  });
 
   @override
   ConsumerState<_PlantsTab> createState() => _PlantsTabState();
@@ -197,6 +396,12 @@ class _PlantsTabState extends ConsumerState<_PlantsTab> {
 
         final plants = snapshot.data ?? [];
 
+        if (plants.isNotEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            widget.onPlantsLoaded?.call(plants.map((p) => p.id).toList());
+          });
+        }
+
         if (plants.isEmpty) {
           return Padding(
             padding: const EdgeInsets.only(top: 80),
@@ -219,18 +424,57 @@ class _PlantsTabState extends ConsumerState<_PlantsTab> {
             ),
             itemBuilder: (context, index) {
               final plant = plants[index];
-              return ModernPlantCard(
-                plant: plant,
-                onTap: () async {
-                  final result = await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => PlantDetailScreen(plant: plant),
+              final isSelected = widget.isSelectMode && widget.selectedIds.contains(plant.id);
+              return Stack(
+                children: [
+                  ModernPlantCard(
+                    plant: plant,
+                    onTap: () async {
+                      if (widget.isSelectMode) {
+                        widget.onToggleSelect?.call(plant.id);
+                        return;
+                      }
+                      final result = await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => PlantDetailScreen(plant: plant),
+                        ),
+                      );
+                      if (result == true && mounted) {
+                        _refresh();
+                      }
+                    },
+                  ),
+                  if (widget.isSelectMode)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: GestureDetector(
+                        onTap: () => widget.onToggleSelect?.call(plant.id),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.surface,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: isSelected
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.outline,
+                              width: 2,
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(2),
+                          child: Icon(
+                            Icons.check,
+                            size: 16,
+                            color: isSelected
+                                ? Theme.of(context).colorScheme.onPrimary
+                                : Colors.transparent,
+                          ),
+                        ),
+                      ),
                     ),
-                  );
-                  if (result == true && mounted) {
-                    _refresh();
-                  }
-                },
+                ],
               );
             },
           ),
@@ -258,6 +502,8 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final sessionRepo = ref.watch(sessionRepositoryProvider);
 
     return FutureBuilder(
@@ -393,22 +639,22 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
                                           vertical: FoliumTheme.space4,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: FoliumTheme.primaryContainer,
+                                          color: colorScheme.primaryContainer,
                                           borderRadius: BorderRadius.circular(FoliumTheme.radiusFull),
                                         ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            const Icon(
+                                            Icon(
                                               Icons.people,
                                               size: 12,
-                                              color: FoliumTheme.primaryMain,
+                                              color: colorScheme.primary,
                                             ),
                                             const SizedBox(width: FoliumTheme.space4),
                                             Text(
                                               '${session.teamMembers.length}',
-                                              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                                    color: FoliumTheme.primaryMain,
+                                              style: theme.textTheme.labelSmall?.copyWith(
+                                                    color: colorScheme.primary,
                                                     fontWeight: FontWeight.w600,
                                                   ),
                                             ),
@@ -422,16 +668,16 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
                                           vertical: FoliumTheme.space4,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: FoliumTheme.tertiaryContainer,
+                                          color: colorScheme.tertiaryContainer,
                                           borderRadius: BorderRadius.circular(FoliumTheme.radiusFull),
                                         ),
-                                        child: const Row(
+                                        child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Icon(
                                               Icons.share,
                                               size: 12,
-                                              color: FoliumTheme.tertiaryMain,
+                                              color: colorScheme.tertiary,
                                             ),
                                           ],
                                         ),
@@ -443,10 +689,10 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
                           ),
                         ),
                         // Arrow
-                        const Icon(
+                        Icon(
                           Icons.arrow_forward_ios,
                           size: 16,
-                          color: FoliumTheme.onSurfaceVariant,
+                          color: colorScheme.onSurfaceVariant,
                         ),
                       ],
                     ),

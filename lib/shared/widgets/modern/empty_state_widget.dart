@@ -50,6 +50,7 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(FoliumTheme.space48),
@@ -69,13 +70,13 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  color: (widget.iconColor ?? FoliumTheme.primaryMain).withValues(alpha: 0.1),
+                  color: (widget.iconColor ?? colorScheme.primary).withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   widget.icon,
                   size: 64,
-                  color: (widget.iconColor ?? FoliumTheme.primaryMain).withValues(alpha: 0.4),
+                  color: (widget.iconColor ?? colorScheme.primary).withValues(alpha: 0.4),
                 ),
               ),
             ),
@@ -86,7 +87,7 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
             Text(
               widget.title,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: FoliumTheme.onSurface,
+                    color: colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
                   ),
               textAlign: TextAlign.center,
@@ -98,7 +99,7 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
             Text(
               widget.message,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: FoliumTheme.onSurfaceVariant,
+                    color: colorScheme.onSurfaceVariant,
                   ),
               textAlign: TextAlign.center,
               maxLines: 3,

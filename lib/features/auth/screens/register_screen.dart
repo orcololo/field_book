@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/theme/folium_theme.dart';
+import '../../../l10n/app_localizations.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -45,7 +46,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       Navigator.pop(context); // Back to login, auth state is now authenticated
     } on DioException catch (e) {
       if (!mounted) return;
-      final message = e.response?.data?['message'] ?? 'Erro ao cadastrar';
+      final message = e.response?.data?['message'] ?? l10n.registerError;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message.toString())),
       );
@@ -59,12 +60,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     }
   }
 
+  AppLocalizations get l10n => AppLocalizations.of(context)!;
+
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: FoliumTheme.surface,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Criar conta'),
+        title: Text(l10n.createAccount),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -82,14 +87,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   textInputAction: TextInputAction.next,
                   textCapitalization: TextCapitalization.words,
                   decoration: InputDecoration(
-                    labelText: 'Nome',
+                    labelText: l10n.nameLabel,
                     prefixIcon: const Icon(Icons.person_outline),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
                     ),
                   ),
                   validator: (v) =>
-                      (v == null || v.trim().isEmpty) ? 'Informe seu nome' : null,
+                      (v == null || v.trim().isEmpty) ? l10n.enterName : null,
                 ),
                 const SizedBox(height: FoliumTheme.space16),
                 TextFormField(
@@ -97,7 +102,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
-                    labelText: 'Email',
+                    labelText: l10n.email,
                     prefixIcon: const Icon(Icons.email_outlined),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
@@ -105,10 +110,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Informe o email';
+                      return l10n.enterEmail;
                     }
                     if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value.trim())) {
-                      return 'Email inválido';
+                      return l10n.invalidEmail;
                     }
                     return null;
                   },
@@ -119,7 +124,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   obscureText: _obscurePassword,
                   textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
-                    labelText: 'Senha',
+                    labelText: l10n.password,
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -135,8 +140,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ),
                   ),
                   validator: (value) {
-                    if (value == null || value.isEmpty) return 'Informe a senha';
-                    if (value.length < 8) return 'Mínimo 8 caracteres';
+                    if (value == null || value.isEmpty) return l10n.enterPassword;
+                    if (value.length < 8) return l10n.passwordMinLength;
                     return null;
                   },
                 ),
@@ -147,7 +152,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (_) => _handleRegister(),
                   decoration: InputDecoration(
-                    labelText: 'Confirmar senha',
+                    labelText: l10n.confirmPassword,
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -164,7 +169,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   ),
                   validator: (value) {
                     if (value != _passwordController.text) {
-                      return 'As senhas não coincidem';
+                      return l10n.passwordsDoNotMatch;
                     }
                     return null;
                   },
@@ -187,7 +192,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             color: Colors.white,
                           ),
                         )
-                      : const Text('Cadastrar'),
+                      : Text(l10n.registerButton),
                 ),
               ],
             ),

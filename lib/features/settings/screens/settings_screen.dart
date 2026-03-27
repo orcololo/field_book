@@ -23,7 +23,7 @@ class SettingsScreen extends ConsumerWidget {
     final settingsAsync = ref.watch(settingsNotifierProvider);
 
     return Scaffold(
-      backgroundColor: FoliumTheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: settingsAsync.when(
         loading: () => ListView.builder(
           itemCount: 5,
@@ -38,33 +38,36 @@ class SettingsScreen extends ConsumerWidget {
             );
           },
         ),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error_outline,
-                size: 64,
-                color: FoliumTheme.error,
-              ),
-              const SizedBox(height: FoliumTheme.space16),
-              Text(
-                'Erro ao carregar configurações',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: FoliumTheme.onSurface,
-                    ),
-              ),
-              const SizedBox(height: FoliumTheme.space8),
-              Text(
-                error.toString(),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: FoliumTheme.onSurfaceVariant,
-                    ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
+        error: (error, stack) {
+          final colorScheme = Theme.of(context).colorScheme;
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  size: 64,
+                  color: colorScheme.error,
+                ),
+                const SizedBox(height: FoliumTheme.space16),
+                Text(
+                  l10n.errorLoadingSettings,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: colorScheme.onSurface,
+                      ),
+                ),
+                const SizedBox(height: FoliumTheme.space8),
+                Text(
+                  error.toString(),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          );
+        },
         data: (settings) => CustomScrollView(
           slivers: [
             SliverPadding(
@@ -76,7 +79,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
-                  _buildSectionHeader(context, 'Geral'),
+                  _buildSectionHeader(context, l10n.general),
                   const SizedBox(height: FoliumTheme.space8),
                   _buildModernCard(
                     context,
@@ -86,7 +89,7 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   
                   const SizedBox(height: FoliumTheme.space24),
-                  _buildSectionHeader(context, 'Identificação de Registro'),
+                  _buildSectionHeader(context, l10n.registryIdentification),
                   const SizedBox(height: FoliumTheme.space8),
                   _buildModernCard(
                     context,
@@ -102,7 +105,7 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   
                   const SizedBox(height: FoliumTheme.space24),
-                  _buildSectionHeader(context, 'Mapa'),
+                  _buildSectionHeader(context, l10n.map),
                   const SizedBox(height: FoliumTheme.space8),
                   _buildModernCard(
                     context,
@@ -116,7 +119,7 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   
                   const SizedBox(height: FoliumTheme.space24),
-                  _buildSectionHeader(context, 'Formulário'),
+                  _buildSectionHeader(context, l10n.formSection),
                   const SizedBox(height: FoliumTheme.space8),
                   _buildModernCard(
                     context,
@@ -126,7 +129,7 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   
                   const SizedBox(height: FoliumTheme.space24),
-                  _buildSectionHeader(context, 'Fotos'),
+                  _buildSectionHeader(context, l10n.photos),
                   const SizedBox(height: FoliumTheme.space8),
                   _buildModernCard(
                     context,
@@ -138,7 +141,7 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   
                   const SizedBox(height: FoliumTheme.space24),
-                  _buildSectionHeader(context, 'Áudio'),
+                  _buildSectionHeader(context, l10n.audioSection),
                   const SizedBox(height: FoliumTheme.space8),
                   _buildModernCard(
                     context,
@@ -161,17 +164,17 @@ class SettingsScreen extends ConsumerWidget {
                         leading: Container(
                           padding: const EdgeInsets.all(FoliumTheme.space8),
                           decoration: BoxDecoration(
-                            color: FoliumTheme.tertiaryContainer,
+                            color: Theme.of(context).colorScheme.tertiaryContainer,
                             borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.import_export,
-                            color: FoliumTheme.tertiaryMain,
+                            color: Theme.of(context).colorScheme.tertiary,
                           ),
                         ),
                         title: Text(l10n.exportAndImport),
                         subtitle: Text(l10n.localDataBackup),
-                        trailing: const Icon(Icons.chevron_right, color: FoliumTheme.onSurfaceVariant),
+                        trailing: Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurfaceVariant),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -197,12 +200,12 @@ class SettingsScreen extends ConsumerWidget {
                           leading: Container(
                             padding: const EdgeInsets.all(FoliumTheme.space8),
                             decoration: BoxDecoration(
-                              color: FoliumTheme.successContainer,
+                              color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
                               borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.access_time,
-                              color: FoliumTheme.success,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
                           title: Text(l10n.lastBackupLabel),
@@ -213,12 +216,12 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   
                   const SizedBox(height: FoliumTheme.space24),
-                  _buildSectionHeader(context, 'Conta'),
+                  _buildSectionHeader(context, l10n.account),
                   const SizedBox(height: FoliumTheme.space8),
                   _AccountSection(settings: settings),
 
                   const SizedBox(height: FoliumTheme.space24),
-                  _buildSectionHeader(context, 'Sincronização'),
+                  _buildSectionHeader(context, l10n.syncSection),
                   const SizedBox(height: FoliumTheme.space8),
                   _SyncSection(settings: settings),
                   
@@ -244,17 +247,17 @@ class SettingsScreen extends ConsumerWidget {
                         leading: Container(
                           padding: const EdgeInsets.all(FoliumTheme.space8),
                           decoration: BoxDecoration(
-                            color: FoliumTheme.tertiaryContainer,
+                            color: Theme.of(context).colorScheme.tertiaryContainer,
                             borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.school_outlined,
-                            color: FoliumTheme.tertiaryMain,
+                            color: Theme.of(context).colorScheme.tertiary,
                           ),
                         ),
                         title: Text(l10n.showTutorial),
                         subtitle: Text(l10n.showTutorialSubtitle),
-                        trailing: const Icon(Icons.chevron_right, color: FoliumTheme.onSurfaceVariant),
+                        trailing: Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurfaceVariant),
                         onTap: () async {
                           await ref.read(settingsNotifierProvider.notifier)
                               .setHasCompletedOnboarding(false);
@@ -271,16 +274,16 @@ class SettingsScreen extends ConsumerWidget {
                         leading: Container(
                           padding: const EdgeInsets.all(FoliumTheme.space8),
                           decoration: BoxDecoration(
-                            color: FoliumTheme.primaryContainer,
+                            color: Theme.of(context).colorScheme.primaryContainer,
                             borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.info_outline,
-                            color: FoliumTheme.primaryMain,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
                         title: Text(l10n.aboutApp),
-                        trailing: const Icon(Icons.chevron_right, color: FoliumTheme.onSurfaceVariant),
+                        trailing: Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurfaceVariant),
                         onTap: () {
                           showAboutDialog(
                             context: context,
@@ -301,12 +304,12 @@ class SettingsScreen extends ConsumerWidget {
                         leading: Container(
                           padding: const EdgeInsets.all(FoliumTheme.space8),
                           decoration: BoxDecoration(
-                            color: FoliumTheme.surfaceVariant,
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.devices,
-                            color: FoliumTheme.onSurfaceVariant,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                         title: Text(l10n.deviceId),
@@ -315,7 +318,7 @@ class SettingsScreen extends ConsumerWidget {
                           style: TextStyle(
                             fontFamily: 'monospace',
                             fontSize: 12,
-                            color: FoliumTheme.onSurfaceVariant,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ),
@@ -335,7 +338,7 @@ class SettingsScreen extends ConsumerWidget {
       title,
       style: Theme.of(context).textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.w600,
-            color: FoliumTheme.primaryMain,
+            color: Theme.of(context).colorScheme.primary,
             letterSpacing: 0.5,
           ),
     );
@@ -379,7 +382,7 @@ class _LanguageTile extends ConsumerWidget {
       ),
       title: const Text('Idioma'),
       subtitle: Text(_getLanguageName(settings.localeCode)),
-      trailing: const Icon(Icons.chevron_right, color: FoliumTheme.onSurfaceVariant),
+      trailing: Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurfaceVariant),
       onTap: () async {
         final selected = await showDialog<String>(
           context: context,

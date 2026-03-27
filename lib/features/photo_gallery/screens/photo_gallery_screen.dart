@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:io';
 import '../../../models/plant_record.dart';
 import '../../../core/repositories/plant_repository.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../plant_detail/screens/plant_detail_screen.dart';
 import 'photo_viewer_screen.dart';
 
@@ -54,7 +55,7 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
       setState(() => _isLoading = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao carregar fotos: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.errorLoadingPhotos(e.toString()))),
         );
       }
     }
@@ -97,9 +98,11 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Galeria de Fotos'),
+        title: Text(l10n.photoGallery),
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list),
@@ -114,9 +117,9 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
               });
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 'date_desc', child: Text('Data (Mais recente)')),
-              const PopupMenuItem(value: 'date_asc', child: Text('Data (Mais antiga)')),
-              const PopupMenuItem(value: 'plant_name', child: Text('Nome da planta')),
+              PopupMenuItem(value: 'date_desc', child: Text(l10n.sortDateDesc)),
+              PopupMenuItem(value: 'date_asc', child: Text(l10n.sortDateAsc)),
+              PopupMenuItem(value: 'plant_name', child: Text(l10n.sortByPlantName)),
             ],
           ),
         ],
@@ -128,10 +131,10 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.photo_library, size: 64, color: Colors.grey.shade400),
+                      Icon(Icons.photo_library, size: 64, color: colorScheme.onSurfaceVariant),
                       const SizedBox(height: 16),
-                      Text('Nenhuma foto encontrada',
-                          style: TextStyle(fontSize: 16, color: Colors.grey.shade600)),
+                      Text(l10n.noPhotosFound,
+                          style: TextStyle(fontSize: 16, color: colorScheme.onSurfaceVariant)),
                     ],
                   ),
                 )
@@ -140,12 +143,12 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
                     if (_filterByCategory != null || _filterStartDate != null || _filterEndDate != null)
                       Container(
                         padding: const EdgeInsets.all(8),
-                        color: Colors.blue.shade50,
+                        color: colorScheme.tertiaryContainer,
                         child: Row(
                           children: [
                             Expanded(
-                              child: Text('Filtros ativos: ${_getActiveFiltersText()}',
-                                  style: TextStyle(fontSize: 12, color: Colors.blue.shade700)),
+                              child: Text(l10n.activeFilters(_getActiveFiltersText(context)),
+                                  style: TextStyle(fontSize: 12, color: colorScheme.onTertiaryContainer)),
                             ),
                             TextButton(
                               onPressed: () {
@@ -156,7 +159,7 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
                                   _applyFiltersAndSort();
                                 });
                               },
-                              child: const Text('Limpar'),
+                              child: Text(l10n.clearFilters),
                             ),
                           ],
                         ),
@@ -201,7 +204,7 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
         children: [
           file.existsSync()
               ? Image.file(file, fit: BoxFit.cover)
-              : Container(color: Colors.grey.shade300, child: const Icon(Icons.broken_image)),
+              : Container(color: Theme.of(context).colorScheme.surfaceContainerHighest, child: Icon(Icons.broken_image, color: Theme.of(context).colorScheme.onSurfaceVariant)),
           Positioned(
             bottom: 0,
             left: 0,
@@ -228,37 +231,38 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
     );
   }
 
-  String _getActiveFiltersText() {
+  String _getActiveFiltersText(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final filters = <String>[];
-    if (_filterByCategory != null) filters.add('Categoria');
-    if (_filterStartDate != null || _filterEndDate != null) filters.add('Data');
+    if (_filterByCategory != null) filters.add(l10n.category);
+    if (_filterStartDate != null || _filterEndDate != null) filters.add(l10n.dateFilter);
     return filters.join(', ');
   }
 
   void _showFilterDialog() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: const Text('Filtros'),
+          title: Text(l10n.filters),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Categoria', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(l10n.category, style: const TextStyle(fontWeight: FontWeight.bold)),
                 DropdownButton<String?>(
                   value: _filterByCategory,
                   isExpanded: true,
-                  items: const [
-                    DropdownMenuItem(value: null, child: Text('Todas')),
-                    DropdownMenuItem(value: 'tree', child: Text('Árvore')),
-                    DropdownMenuItem(value: 'shrub', child: Text('Arbusto')),
-                    DropdownMenuItem(value: 'herb', child: Text('Herbácea')),
-                    DropdownMenuItem(value: 'vine', child: Text('Trepadeira')),
-                    DropdownMenuItem(value: 'fern', child: Text('Samambaia')),
-                    DropdownMenuItem(value: 'moss', child: Text('Musgo')),
-                    DropdownMenuItem(value: 'aquatic', child: Text('Aquática')),
+                  items: [
+                    DropdownMenuItem(value: null, child: Text(l10n.allCategories)),
+                    DropdownMenuItem(value: 'tree', child: Text(l10n.categoryTrees)),
+                    DropdownMenuItem(value: 'shrub', child: Text(l10n.categoryShrubs)),
+                    DropdownMenuItem(value: 'herb', child: Text(l10n.categoryHerbs)),
+                    DropdownMenuItem(value: 'vine', child: Text(l10n.categoryVines)),
+                    DropdownMenuItem(value: 'fern', child: Text(l10n.categoryFerns)),
+                    DropdownMenuItem(value: 'aquatic', child: Text(l10n.categoryAquatic)),
                   ],
                   onChanged: (value) => setState(() => _filterByCategory = value),
                 ),
@@ -266,13 +270,13 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
             FilledButton(
               onPressed: () {
                 _applyFiltersAndSort();
                 Navigator.pop(context);
               },
-              child: const Text('Aplicar'),
+              child: Text(l10n.apply),
             ),
           ],
         ),

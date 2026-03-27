@@ -86,6 +86,13 @@ class PlantRecord {
   List<String> audioTranscripts = [];
   String? notes;
 
+  // Environmental / field conditions
+  double? altitude; // meters above sea level
+  double? temperature; // °C
+  double? humidity; // % relative humidity
+  String? weatherCondition; // e.g. sunny, cloudy, rainy, overcast
+  double? windSpeed; // km/h
+
   @Index()
   bool isDraft = true;
 

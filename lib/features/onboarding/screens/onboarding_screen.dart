@@ -144,9 +144,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       onDone: () => _completeOnboarding(context),
       onSkip: () => _completeOnboarding(context),
       dotsDecorator: DotsDecorator(
-        size: const Size(10.0, 10.0),
+        size: const Size(8.0, 8.0),
         color: FoliumTheme.primaryMain.withValues(alpha: 0.2),
-        activeSize: const Size(28.0, 10.0),
+        activeSize: const Size(22.0, 8.0),
         activeColor: FoliumTheme.primaryMain,
         activeShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(FoliumTheme.radiusFull),

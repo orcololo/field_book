@@ -300,6 +300,13 @@ class PlantRepository {
     });
   }
 
+  // Get multiple plants by IDs
+  Future<List<PlantRecord>> getByIds(List<int> ids) async {
+    final isar = await _isar;
+    final results = await isar.plantRecords.getAll(ids);
+    return results.whereType<PlantRecord>().toList();
+  }
+
   // Check if registry identifier exists
   Future<bool> identifierExists(String identifier, {String? excludeUuid}) async {
     final isar = await _isar;

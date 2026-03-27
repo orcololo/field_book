@@ -46,6 +46,7 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
       return widget.child;
     }
 
+    final colorScheme = Theme.of(context).colorScheme;
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {
@@ -56,9 +57,9 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                FoliumTheme.surfaceVariant,
-                FoliumTheme.surfaceContainer,
-                FoliumTheme.surfaceVariant,
+                colorScheme.surfaceContainerHighest,
+                colorScheme.surfaceContainer,
+                colorScheme.surfaceContainerHighest,
               ],
               stops: [
                 (_animation.value - 1).clamp(0.0, 1.0),

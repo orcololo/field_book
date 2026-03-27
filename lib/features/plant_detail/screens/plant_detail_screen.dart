@@ -20,8 +20,10 @@ class PlantDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: FoliumTheme.surface,
+      backgroundColor: colorScheme.surface,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -62,7 +64,7 @@ class PlantDetailScreen extends ConsumerWidget {
                 Navigator.of(context).pop(true);
               }
             },
-            tooltip: 'Editar',
+            tooltip: l10n.edit,
           ),
           IconButton(
             icon: Container(
@@ -74,7 +76,7 @@ class PlantDetailScreen extends ConsumerWidget {
               child: const Icon(Icons.delete, color: Colors.white),
             ),
             onPressed: () => _confirmDelete(context, ref, l10n),
-            tooltip: 'Excluir',
+            tooltip: l10n.delete,
           ),
         ],
       ),
@@ -154,8 +156,8 @@ class PlantDetailScreen extends ConsumerWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              FoliumTheme.primaryMain.withValues(alpha: 0.8),
-              FoliumTheme.primaryMain,
+              Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
+              Theme.of(context).colorScheme.primary,
             ],
           ),
         ),
@@ -250,6 +252,7 @@ class PlantDetailScreen extends ConsumerWidget {
   }
 
   Widget _buildBasicInfoCard(BuildContext context, AppLocalizations l10n) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       decoration: FoliumTheme.cardDecoration(),
       padding: const EdgeInsets.all(FoliumTheme.space20),
@@ -265,22 +268,22 @@ class PlantDetailScreen extends ConsumerWidget {
                 vertical: FoliumTheme.space8,
               ),
               decoration: BoxDecoration(
-                color: FoliumTheme.primaryContainer,
+                color: colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(FoliumTheme.radiusFull),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.tag,
                     size: 16,
-                    color: FoliumTheme.primaryMain,
+                    color: colorScheme.primary,
                   ),
                   const SizedBox(width: FoliumTheme.space4),
                   Text(
                     plant.registryIdentifier!,
                     style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: FoliumTheme.primaryMain,
+                      color: colorScheme.primary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -296,30 +299,30 @@ class PlantDetailScreen extends ConsumerWidget {
               _buildStatusChip(
                 context,
                 _getCategoryName(context, plant.category),
-                FoliumTheme.primaryContainer,
-                FoliumTheme.primaryMain,
+                colorScheme.primaryContainer,
+                colorScheme.primary,
               ),
               if (plant.isDraft)
                 _buildStatusChip(
                   context,
                   l10n.draft,
-                  FoliumTheme.warningContainer,
-                  FoliumTheme.warning,
+                  colorScheme.tertiaryContainer,
+                  colorScheme.tertiary,
                 ),
               if (plant.latitude != null && plant.longitude != null)
                 _buildStatusChip(
                   context,
                   'GPS',
-                  FoliumTheme.successContainer,
-                  FoliumTheme.success,
+                  colorScheme.secondaryContainer,
+                  colorScheme.secondary,
                   icon: Icons.location_on,
                 ),
               if (plant.photoPaths.isNotEmpty)
                 _buildStatusChip(
                   context,
                   '${plant.photoPaths.length}',
-                  FoliumTheme.tertiaryContainer,
-                  FoliumTheme.tertiaryMain,
+                  colorScheme.tertiaryContainer,
+                  colorScheme.tertiary,
                   icon: Icons.photo_camera,
                 ),
             ],
@@ -332,13 +335,13 @@ class PlantDetailScreen extends ConsumerWidget {
               Icon(
                 Icons.calendar_today,
                 size: 16,
-                color: FoliumTheme.onSurfaceVariant,
+                color: colorScheme.onSurfaceVariant,
               ),
               const SizedBox(width: FoliumTheme.space8),
               Text(
-                'Coletada em ${plant.dateCollected.day}/${plant.dateCollected.month}/${plant.dateCollected.year}',
+                l10n.collectedOn('${plant.dateCollected.day}/${plant.dateCollected.month}/${plant.dateCollected.year}'),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: FoliumTheme.onSurfaceVariant,
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -384,6 +387,7 @@ class PlantDetailScreen extends ConsumerWidget {
   }
 
   Widget _buildTaxonomyCard(BuildContext context, AppLocalizations l10n) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       decoration: FoliumTheme.cardDecoration(),
       padding: const EdgeInsets.all(FoliumTheme.space20),
@@ -395,12 +399,12 @@ class PlantDetailScreen extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(FoliumTheme.space8),
                 decoration: BoxDecoration(
-                  color: FoliumTheme.primaryContainer,
+                  color: colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.account_tree,
-                  color: FoliumTheme.primaryMain,
+                  color: colorScheme.primary,
                   size: 20,
                 ),
               ),
@@ -409,7 +413,7 @@ class PlantDetailScreen extends ConsumerWidget {
                 l10n.taxonomyInfo,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: FoliumTheme.onSurface,
+                  color: colorScheme.onSurface,
                 ),
               ),
             ],
@@ -423,6 +427,7 @@ class PlantDetailScreen extends ConsumerWidget {
               children: [
                 if (plant.family != null)
                   _buildHierarchyRow(
+                    context,
                     Icons.folder_outlined,
                     l10n.family,
                     plant.family!,
@@ -430,6 +435,7 @@ class PlantDetailScreen extends ConsumerWidget {
                   ),
                 if (plant.genus != null)
                   _buildHierarchyRow(
+                    context,
                     Icons.category_outlined,
                     l10n.genus,
                     plant.genus!,
@@ -437,6 +443,7 @@ class PlantDetailScreen extends ConsumerWidget {
                   ),
                 if (plant.species != null)
                   _buildHierarchyRow(
+                    context,
                     Icons.grain,
                     l10n.species,
                     plant.species!,
@@ -450,11 +457,13 @@ class PlantDetailScreen extends ConsumerWidget {
   }
 
   Widget _buildHierarchyRow(
+    BuildContext context,
     IconData icon,
     String label,
     String value,
     int level,
   ) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: EdgeInsets.only(left: level * 20.0, top: 8, bottom: 8),
       child: Row(
@@ -463,15 +472,15 @@ class PlantDetailScreen extends ConsumerWidget {
             Container(
               width: 2,
               height: 20,
-              color: Colors.grey.shade300,
+              color: colorScheme.outlineVariant,
               margin: const EdgeInsets.only(right: 12),
             ),
-          Icon(icon, size: 18, color: Colors.grey.shade600),
+          Icon(icon, size: 18, color: colorScheme.onSurfaceVariant),
           const SizedBox(width: 8),
           Text(
             '$label: ',
             style: TextStyle(
-              color: Colors.grey.shade600,
+              color: colorScheme.onSurfaceVariant,
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
@@ -502,7 +511,7 @@ class PlantDetailScreen extends ConsumerWidget {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 Text(
-                  '${plant.photoPaths.length} ${plant.photoPaths.length == 1 ? 'photo' : 'photos'}',
+                  l10n.nPhotos(plant.photoPaths.length),
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
@@ -527,14 +536,14 @@ class PlantDetailScreen extends ConsumerWidget {
                           return Container(
                             width: 120,
                             height: 120,
-                            color: Colors.grey.shade300,
-                            child: const Column(
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.broken_image, color: Colors.grey),
-                                SizedBox(height: 4),
+                                Icon(Icons.broken_image, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                const SizedBox(height: 4),
                                 Text(
-                                  'Imagem não encontrada',
+                                  l10n.imageNotFound,
                                   style: TextStyle(fontSize: 10),
                                 ),
                               ],
@@ -570,9 +579,9 @@ class PlantDetailScreen extends ConsumerWidget {
                       color: Theme.of(context).primaryColor,
                     ),
                     const SizedBox(width: 8),
-                    const Text(
-                      'Notas de Áudio',
-                      style: TextStyle(
+                    Text(
+                      l10n.audioNotes,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -630,8 +639,8 @@ class PlantDetailScreen extends ConsumerWidget {
                     ClipboardData(text: plant.latitude!.toStringAsFixed(6)),
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Copiado para área de transferência'),
+                    SnackBar(
+                      content: Text(l10n.copiedToClipboard),
                     ),
                   );
                 },
@@ -648,8 +657,8 @@ class PlantDetailScreen extends ConsumerWidget {
                     ClipboardData(text: plant.longitude!.toStringAsFixed(6)),
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Copiado para área de transferência'),
+                    SnackBar(
+                      content: Text(l10n.copiedToClipboard),
                     ),
                   );
                 },
@@ -690,7 +699,7 @@ class PlantDetailScreen extends ConsumerWidget {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 Text(
-                  '${plant.measurements.length} ${plant.measurements.length == 1 ? 'measurement' : 'measurements'}',
+                  l10n.nMeasurements(plant.measurements.length),
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
@@ -732,7 +741,7 @@ class PlantDetailScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Notes', style: Theme.of(context).textTheme.titleLarge),
+            Text(l10n.notes, style: Theme.of(context).textTheme.titleLarge),
             const Divider(),
             if (plant.habitat != null) ...[
               Text(
@@ -775,13 +784,13 @@ class PlantDetailScreen extends ConsumerWidget {
                 plant.sementeTamanho != null) ...[
               const SizedBox(height: 16),
               Text(
-                'Morfologia',
+                l10n.morphology,
                 style: Theme.of(
                   context,
                 ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               const Divider(),
-              if (plant.raiz != null) _buildInfoRow('Raiz', plant.raiz!),
+              if (plant.raiz != null) _buildInfoRow(l10n.root, plant.raiz!),
               if (plant.caule != null ||
                   plant.cauleTipoCasca != null ||
                   plant.cauleCor != null ||
@@ -791,30 +800,30 @@ class PlantDetailScreen extends ConsumerWidget {
                   plant.cauleDescricaoSeiva != null) ...[
                 const SizedBox(height: 8),
                 Text(
-                  'Caule',
+                  l10n.stem,
                   style: Theme.of(
                     context,
                   ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 if (plant.caule != null)
-                  _buildInfoRow('Descrição', plant.caule!),
+                  _buildInfoRow(l10n.descriptionLabel, plant.caule!),
                 if (plant.cauleTipoCasca != null)
-                  _buildInfoRow('Tipo de casca', plant.cauleTipoCasca!),
+                  _buildInfoRow(l10n.stemBarkType, plant.cauleTipoCasca!),
                 if (plant.cauleCor != null)
-                  _buildInfoRow('Cor', plant.cauleCor!),
+                  _buildInfoRow(l10n.colorLabel, plant.cauleCor!),
                 if (plant.cauleTamanho != null)
                   _buildInfoRow(
-                    'Tamanho',
+                    l10n.sizeLabel,
                     '${plant.cauleTamanho} ${plant.cauleTamanhoUnidade ?? 'cm'}',
                   ),
                 if (plant.cauleCircunferencia != null)
                   _buildInfoRow(
-                    'Circunferência',
+                    l10n.circumference,
                     '${plant.cauleCircunferencia} ${plant.cauleCircunferenciaUnidade ?? 'cm'}',
                   ),
-                if (plant.cauleTemSeiva) _buildInfoRow('Seiva', 'Sim'),
+                if (plant.cauleTemSeiva) _buildInfoRow(l10n.sapPresence, l10n.yes),
                 if (plant.cauleDescricaoSeiva != null)
-                  _buildInfoRow('Descrição da seiva', plant.cauleDescricaoSeiva!),
+                  _buildInfoRow(l10n.sapDescription, plant.cauleDescricaoSeiva!),
               ],
               if (plant.folhaDescricao != null ||
                   plant.folhaBainha != null ||
@@ -822,19 +831,19 @@ class PlantDetailScreen extends ConsumerWidget {
                   plant.folhaLamina != null) ...[
                 const SizedBox(height: 8),
                 Text(
-                  'Folha',
+                  l10n.leaf,
                   style: Theme.of(
                     context,
                   ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 if (plant.folhaDescricao != null)
-                  _buildInfoRow('Descrição', plant.folhaDescricao!),
+                  _buildInfoRow(l10n.descriptionLabel, plant.folhaDescricao!),
                 if (plant.folhaBainha != null)
-                  _buildInfoRow('Bainha', plant.folhaBainha!),
+                  _buildInfoRow(l10n.sheathLabel, plant.folhaBainha!),
                 if (plant.folhaPeciolo != null)
-                  _buildInfoRow('Pecíolo', plant.folhaPeciolo!),
+                  _buildInfoRow(l10n.petioleLabel, plant.folhaPeciolo!),
                 if (plant.folhaLamina != null)
-                  _buildInfoRow('Lâmina', plant.folhaLamina!),
+                  _buildInfoRow(l10n.bladeLabel, plant.folhaLamina!),
               ],
               if (plant.florDescricao != null ||
                   plant.florInflorescencia != null ||
@@ -842,19 +851,19 @@ class PlantDetailScreen extends ConsumerWidget {
                   plant.florTamanho != null) ...[
                 const SizedBox(height: 8),
                 Text(
-                  'Flor',
+                  l10n.flower,
                   style: Theme.of(
                     context,
                   ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 if (plant.florDescricao != null)
-                  _buildInfoRow('Descrição', plant.florDescricao!),
+                  _buildInfoRow(l10n.descriptionLabel, plant.florDescricao!),
                 if (plant.florInflorescencia != null)
-                  _buildInfoRow('Inflorescência', plant.florInflorescencia!),
-                if (plant.florCor != null) _buildInfoRow('Cor', plant.florCor!),
+                  _buildInfoRow(l10n.inflorescenceLabel, plant.florInflorescencia!),
+                if (plant.florCor != null) _buildInfoRow(l10n.colorLabel, plant.florCor!),
                 if (plant.florTamanho != null)
                   _buildInfoRow(
-                    'Tamanho',
+                    l10n.sizeLabel,
                     '${plant.florTamanho} ${plant.florTamanhoUnidade ?? 'cm'}',
                   ),
               ],
@@ -864,20 +873,20 @@ class PlantDetailScreen extends ConsumerWidget {
                   plant.frutoTamanho != null) ...[
                 const SizedBox(height: 8),
                 Text(
-                  'Fruto',
+                  l10n.fruitLabel,
                   style: Theme.of(
                     context,
                   ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 if (plant.frutoDescricao != null)
-                  _buildInfoRow('Descrição', plant.frutoDescricao!),
+                  _buildInfoRow(l10n.descriptionLabel, plant.frutoDescricao!),
                 if (plant.frutoCor != null)
-                  _buildInfoRow('Cor', plant.frutoCor!),
+                  _buildInfoRow(l10n.colorLabel, plant.frutoCor!),
                 if (plant.frutoFormato != null)
-                  _buildInfoRow('Formato', plant.frutoFormato!),
+                  _buildInfoRow(l10n.shapeLabel, plant.frutoFormato!),
                 if (plant.frutoTamanho != null)
                   _buildInfoRow(
-                    'Tamanho',
+                    l10n.sizeLabel,
                     '${plant.frutoTamanho} ${plant.frutoTamanhoUnidade ?? 'cm'}',
                   ),
               ],
@@ -887,20 +896,20 @@ class PlantDetailScreen extends ConsumerWidget {
                   plant.sementeTamanho != null) ...[
                 const SizedBox(height: 8),
                 Text(
-                  'Semente',
+                  l10n.seedLabel,
                   style: Theme.of(
                     context,
                   ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 if (plant.sementeDescricao != null)
-                  _buildInfoRow('Descrição', plant.sementeDescricao!),
+                  _buildInfoRow(l10n.descriptionLabel, plant.sementeDescricao!),
                 if (plant.sementeCor != null)
-                  _buildInfoRow('Cor', plant.sementeCor!),
+                  _buildInfoRow(l10n.colorLabel, plant.sementeCor!),
                 if (plant.sementeFormato != null)
-                  _buildInfoRow('Formato', plant.sementeFormato!),
+                  _buildInfoRow(l10n.shapeLabel, plant.sementeFormato!),
                 if (plant.sementeTamanho != null)
                   _buildInfoRow(
-                    'Tamanho',
+                    l10n.sizeLabel,
                     '${plant.sementeTamanho} ${plant.sementeTamanhoUnidade ?? 'mm'}',
                   ),
               ],
@@ -918,18 +927,18 @@ class PlantDetailScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Metadata', style: Theme.of(context).textTheme.titleLarge),
+            Text(l10n.metadata, style: Theme.of(context).textTheme.titleLarge),
             const Divider(),
             if (plant.registryIdentifier != null)
-              _buildInfoRow('Identificador', plant.registryIdentifier!),
+              _buildInfoRow(l10n.identifierLabel, plant.registryIdentifier!),
             _buildInfoRow(
               l10n.collectionDate,
               '${plant.dateCollected.day}/${plant.dateCollected.month}/${plant.dateCollected.year}',
             ),
-            _buildInfoRow('Created', _formatDateTime(plant.createdAt)),
-            _buildInfoRow('Last Updated', _formatDateTime(plant.updatedAt)),
+            _buildInfoRow(l10n.createdAt, _formatDateTime(plant.createdAt)),
+            _buildInfoRow(l10n.lastUpdated, _formatDateTime(plant.updatedAt)),
             if (plant.contributorName != null)
-              _buildInfoRow('Contributor', plant.contributorName!),
+              _buildInfoRow(l10n.contributor, plant.contributorName!),
           ],
         ),
       ),
@@ -1003,7 +1012,7 @@ class PlantDetailScreen extends ConsumerWidget {
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
             child: Text(l10n.delete),
           ),
         ],
@@ -1018,8 +1027,7 @@ class PlantDetailScreen extends ConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('${plant.scientificName} deleted'),
-              backgroundColor: Colors.green,
+              content: Text(l10n.plantDeletedName(plant.scientificName)),
             ),
           );
           Navigator.of(context).pop(true);
@@ -1028,8 +1036,8 @@ class PlantDetailScreen extends ConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Erro ao excluir planta: $e'),
-              backgroundColor: Colors.red,
+              content: Text(l10n.errorDeletingPlant(e.toString())),
+              backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
         }
@@ -1038,6 +1046,7 @@ class PlantDetailScreen extends ConsumerWidget {
   }
 
   Widget _buildRelatedPlantsCard(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     return FutureBuilder<List<PlantRecord>>(
       future: _findRelatedPlants(ref),
       builder: (context, snapshot) {
@@ -1057,9 +1066,9 @@ class PlantDetailScreen extends ConsumerWidget {
                   children: [
                     Icon(Icons.link, color: Theme.of(context).primaryColor),
                     const SizedBox(width: 8),
-                    const Text(
-                      'Plantas Relacionadas',
-                      style: TextStyle(
+                    Text(
+                      l10n.relatedPlants,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -1068,8 +1077,8 @@ class PlantDetailScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Mesmo gênero ou localização próxima',
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                  l10n.sameGenusOrNearbyLocation,
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12),
                 ),
                 const SizedBox(height: 16),
                 ...relatedPlants.map(

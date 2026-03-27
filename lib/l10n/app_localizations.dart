@@ -340,6 +340,12 @@ abstract class AppLocalizations {
   /// **'New Plant'**
   String get newPlant;
 
+  /// No description provided for @newPlantSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete form with all fields'**
+  String get newPlantSubtitle;
+
   /// No description provided for @plantDetails.
   ///
   /// In en, this message translates to:
@@ -369,6 +375,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Habitat'**
   String get habitatInfo;
+
+  /// No description provided for @habitatHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the habitat where the plant was found...'**
+  String get habitatHint;
+
+  /// No description provided for @notesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional observations or notes...'**
+  String get notesHint;
 
   /// No description provided for @measurementsInfo.
   ///
@@ -661,7 +679,7 @@ abstract class AppLocalizations {
   /// No description provided for @confirmDeletePlant.
   ///
   /// In en, this message translates to:
-  /// **'Delete this plant record?'**
+  /// **'Are you sure you want to delete this plant?'**
   String get confirmDeletePlant;
 
   /// No description provided for @confirmDeleteSession.
@@ -1371,6 +1389,1074 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Performance'**
   String get performance;
+
+  /// No description provided for @map.
+  ///
+  /// In en, this message translates to:
+  /// **'Map'**
+  String get map;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// No description provided for @loginButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In'**
+  String get loginButton;
+
+  /// No description provided for @loginError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error signing in'**
+  String get loginError;
+
+  /// No description provided for @signInWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with Google'**
+  String get signInWithGoogle;
+
+  /// No description provided for @googleSignInError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error signing in with Google: {error}'**
+  String googleSignInError(String error);
+
+  /// No description provided for @botanicalFieldBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Botanical field book'**
+  String get botanicalFieldBook;
+
+  /// No description provided for @enterEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email'**
+  String get enterEmail;
+
+  /// No description provided for @invalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email'**
+  String get invalidEmail;
+
+  /// No description provided for @enterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password'**
+  String get enterPassword;
+
+  /// No description provided for @or.
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get or;
+
+  /// No description provided for @noAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account? '**
+  String get noAccount;
+
+  /// No description provided for @signUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Up'**
+  String get signUp;
+
+  /// No description provided for @continueOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue offline'**
+  String get continueOffline;
+
+  /// No description provided for @createAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get createAccount;
+
+  /// No description provided for @nameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get nameLabel;
+
+  /// No description provided for @confirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get confirmPassword;
+
+  /// No description provided for @registerButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get registerButton;
+
+  /// No description provided for @enterName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your name'**
+  String get enterName;
+
+  /// No description provided for @passwordMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum 8 characters'**
+  String get passwordMinLength;
+
+  /// No description provided for @passwordsDoNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords don\'t match'**
+  String get passwordsDoNotMatch;
+
+  /// No description provided for @registerError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error registering'**
+  String get registerError;
+
+  /// No description provided for @drafts.
+  ///
+  /// In en, this message translates to:
+  /// **'Drafts'**
+  String get drafts;
+
+  /// No description provided for @thisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This Month'**
+  String get thisMonth;
+
+  /// No description provided for @plantsByCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Plants by Category'**
+  String get plantsByCategory;
+
+  /// No description provided for @noPlantsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No plants recorded yet'**
+  String get noPlantsYet;
+
+  /// No description provided for @collectionsByMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Collections by Month'**
+  String get collectionsByMonth;
+
+  /// No description provided for @noActivityRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'No activity recorded'**
+  String get noActivityRecorded;
+
+  /// No description provided for @recentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Activity'**
+  String get recentActivity;
+
+  /// No description provided for @noRecentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'No recent activity'**
+  String get noRecentActivity;
+
+  /// No description provided for @general.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get general;
+
+  /// No description provided for @registryIdentification.
+  ///
+  /// In en, this message translates to:
+  /// **'Registry Identification'**
+  String get registryIdentification;
+
+  /// No description provided for @formSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Form'**
+  String get formSection;
+
+  /// No description provided for @audioSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio'**
+  String get audioSection;
+
+  /// No description provided for @account.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get account;
+
+  /// No description provided for @syncSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync'**
+  String get syncSection;
+
+  /// No description provided for @errorLoadingSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading settings'**
+  String get errorLoadingSettings;
+
+  /// No description provided for @selectLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Language'**
+  String get selectLanguage;
+
+  /// No description provided for @somethingWentWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Oops! Something went wrong'**
+  String get somethingWentWrong;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get tryAgain;
+
+  /// No description provided for @startCollectionMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Start your collection by adding the first plant'**
+  String get startCollectionMsg;
+
+  /// No description provided for @addPlant.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Plant'**
+  String get addPlant;
+
+  /// No description provided for @noCollectionSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'No collection sessions'**
+  String get noCollectionSessions;
+
+  /// No description provided for @createSessionMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a session to organize your field collections'**
+  String get createSessionMsg;
+
+  /// No description provided for @noResultsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get noResultsFound;
+
+  /// No description provided for @noResultsForQuery.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found for \"{query}\"'**
+  String noResultsForQuery(String query);
+
+  /// No description provided for @adjustFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting the search filters'**
+  String get adjustFilters;
+
+  /// No description provided for @addPhotosMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Add photos to document this plant'**
+  String get addPhotosMsg;
+
+  /// No description provided for @noMeasurementsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No measurements'**
+  String get noMeasurementsTitle;
+
+  /// No description provided for @recordMeasurementsMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Record measurements for scientific analysis'**
+  String get recordMeasurementsMsg;
+
+  /// No description provided for @errorLoadingPlants.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading plants: {error}'**
+  String errorLoadingPlants(String error);
+
+  /// No description provided for @aboutAppDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'An app for recording and documenting plants in the field.'**
+  String get aboutAppDescription;
+
+  /// No description provided for @searchTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Search plants'**
+  String get searchTooltip;
+
+  /// No description provided for @savedAsDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved as draft'**
+  String get savedAsDraft;
+
+  /// No description provided for @plantRecordSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Plant record saved'**
+  String get plantRecordSaved;
+
+  /// No description provided for @identifierLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Identifier'**
+  String get identifierLabel;
+
+  /// No description provided for @identifierHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g.: RC000001'**
+  String get identifierHint;
+
+  /// No description provided for @generateIdentifierTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate identifier'**
+  String get generateIdentifierTooltip;
+
+  /// No description provided for @invalidIdentifierFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid format (E.g.: RC000001)'**
+  String get invalidIdentifierFormat;
+
+  /// No description provided for @scientificNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Scientific name is required'**
+  String get scientificNameRequired;
+
+  /// No description provided for @categoryRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Category is required'**
+  String get categoryRequired;
+
+  /// No description provided for @possibleDuplicates.
+  ///
+  /// In en, this message translates to:
+  /// **'Possible duplicates:'**
+  String get possibleDuplicates;
+
+  /// No description provided for @collectedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Collected on {date}'**
+  String collectedOn(String date);
+
+  /// No description provided for @morphology.
+  ///
+  /// In en, this message translates to:
+  /// **'Morphology'**
+  String get morphology;
+
+  /// No description provided for @root.
+  ///
+  /// In en, this message translates to:
+  /// **'Root'**
+  String get root;
+
+  /// No description provided for @stem.
+  ///
+  /// In en, this message translates to:
+  /// **'Stem'**
+  String get stem;
+
+  /// No description provided for @stemBarkType.
+  ///
+  /// In en, this message translates to:
+  /// **'Bark type'**
+  String get stemBarkType;
+
+  /// No description provided for @stemBarkTypeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g.: smooth, rough, fissured...'**
+  String get stemBarkTypeHint;
+
+  /// No description provided for @colorLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Color'**
+  String get colorLabel;
+
+  /// No description provided for @stemColorHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g.: brown, gray, green...'**
+  String get stemColorHint;
+
+  /// No description provided for @sizeHeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Size (height)'**
+  String get sizeHeight;
+
+  /// No description provided for @circumference.
+  ///
+  /// In en, this message translates to:
+  /// **'Circumference'**
+  String get circumference;
+
+  /// No description provided for @sapPresence.
+  ///
+  /// In en, this message translates to:
+  /// **'Sap presence'**
+  String get sapPresence;
+
+  /// No description provided for @sapPresenceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Does the plant exude sap?'**
+  String get sapPresenceSubtitle;
+
+  /// No description provided for @sapDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Sap description'**
+  String get sapDescription;
+
+  /// No description provided for @sapDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the sap (color, consistency, odor...)'**
+  String get sapDescriptionHint;
+
+  /// No description provided for @leaf.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaf'**
+  String get leaf;
+
+  /// No description provided for @sheathLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sheath'**
+  String get sheathLabel;
+
+  /// No description provided for @sheathHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the sheath...'**
+  String get sheathHint;
+
+  /// No description provided for @petioleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Petiole'**
+  String get petioleLabel;
+
+  /// No description provided for @petioleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the petiole...'**
+  String get petioleHint;
+
+  /// No description provided for @bladeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Blade'**
+  String get bladeLabel;
+
+  /// No description provided for @bladeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the blade...'**
+  String get bladeHint;
+
+  /// No description provided for @flower.
+  ///
+  /// In en, this message translates to:
+  /// **'Flower'**
+  String get flower;
+
+  /// No description provided for @inflorescenceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Inflorescence'**
+  String get inflorescenceLabel;
+
+  /// No description provided for @inflorescenceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the inflorescence...'**
+  String get inflorescenceHint;
+
+  /// No description provided for @flowerColorHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g.: white, yellow, pink...'**
+  String get flowerColorHint;
+
+  /// No description provided for @fruitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fruit'**
+  String get fruitLabel;
+
+  /// No description provided for @fruitColorHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g.: green, red, yellow...'**
+  String get fruitColorHint;
+
+  /// No description provided for @shapeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Shape'**
+  String get shapeLabel;
+
+  /// No description provided for @fruitShapeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g.: spherical, elongated, flat...'**
+  String get fruitShapeHint;
+
+  /// No description provided for @seedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Seed'**
+  String get seedLabel;
+
+  /// No description provided for @seedColorHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g.: brown, black, white...'**
+  String get seedColorHint;
+
+  /// No description provided for @seedShapeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g.: oval, round, winged...'**
+  String get seedShapeHint;
+
+  /// No description provided for @descriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get descriptionLabel;
+
+  /// No description provided for @descriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe...'**
+  String get descriptionHint;
+
+  /// No description provided for @sizeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get sizeLabel;
+
+  /// No description provided for @sizeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g.: 2.5'**
+  String get sizeHint;
+
+  /// No description provided for @unitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit'**
+  String get unitLabel;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get saveChanges;
+
+  /// No description provided for @photoGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo Gallery'**
+  String get photoGallery;
+
+  /// No description provided for @noPhotosFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No photos found'**
+  String get noPhotosFound;
+
+  /// No description provided for @sortDateDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Date (Newest)'**
+  String get sortDateDesc;
+
+  /// No description provided for @sortDateAsc.
+  ///
+  /// In en, this message translates to:
+  /// **'Date (Oldest)'**
+  String get sortDateAsc;
+
+  /// No description provided for @sortByPlantName.
+  ///
+  /// In en, this message translates to:
+  /// **'Plant name'**
+  String get sortByPlantName;
+
+  /// No description provided for @activeFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Active filters: {filters}'**
+  String activeFilters(String filters);
+
+  /// No description provided for @clearFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clearFilters;
+
+  /// No description provided for @filters.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get filters;
+
+  /// No description provided for @allCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get allCategories;
+
+  /// No description provided for @categoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get categoryLabel;
+
+  /// No description provided for @observations.
+  ///
+  /// In en, this message translates to:
+  /// **'Observations'**
+  String get observations;
+
+  /// No description provided for @suggestionWithName.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestion: {name}'**
+  String suggestionWithName(String name);
+
+  /// No description provided for @rootDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the root...'**
+  String get rootDescriptionHint;
+
+  /// No description provided for @stemDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the stem...'**
+  String get stemDescriptionHint;
+
+  /// No description provided for @leafDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'General description of the leaf...'**
+  String get leafDescriptionHint;
+
+  /// No description provided for @flowerDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'General description of the flower...'**
+  String get flowerDescriptionHint;
+
+  /// No description provided for @fruitDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'General description of the fruit...'**
+  String get fruitDescriptionHint;
+
+  /// No description provided for @seedDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'General description of the seed...'**
+  String get seedDescriptionHint;
+
+  /// No description provided for @metadata.
+  ///
+  /// In en, this message translates to:
+  /// **'Metadata'**
+  String get metadata;
+
+  /// No description provided for @createdAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get createdAt;
+
+  /// No description provided for @lastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Updated'**
+  String get lastUpdated;
+
+  /// No description provided for @contributor.
+  ///
+  /// In en, this message translates to:
+  /// **'Contributor'**
+  String get contributor;
+
+  /// No description provided for @plantDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Plant deleted'**
+  String get plantDeleted;
+
+  /// No description provided for @measurementHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g.: 2.5'**
+  String get measurementHint;
+
+  /// No description provided for @editMeasurement.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Measurement'**
+  String get editMeasurement;
+
+  /// No description provided for @measurementDescriptionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Description *'**
+  String get measurementDescriptionRequired;
+
+  /// No description provided for @measurementDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Height, Width, Diameter'**
+  String get measurementDescriptionHint;
+
+  /// No description provided for @measurementValueRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Value *'**
+  String get measurementValueRequired;
+
+  /// No description provided for @measurementValueHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g.: 15.5'**
+  String get measurementValueHint;
+
+  /// No description provided for @enterDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a description'**
+  String get enterDescription;
+
+  /// No description provided for @enterValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a value'**
+  String get enterValue;
+
+  /// No description provided for @enterValidNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid number'**
+  String get enterValidNumber;
+
+  /// No description provided for @negativeValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Value cannot be negative'**
+  String get negativeValue;
+
+  /// No description provided for @valueTooBig.
+  ///
+  /// In en, this message translates to:
+  /// **'Value too large (maximum: 999999)'**
+  String get valueTooBig;
+
+  /// No description provided for @add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get add;
+
+  /// No description provided for @relatedPlants.
+  ///
+  /// In en, this message translates to:
+  /// **'Related Plants'**
+  String get relatedPlants;
+
+  /// No description provided for @sameGenusOrNearbyLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Same genus or nearby location'**
+  String get sameGenusOrNearbyLocation;
+
+  /// No description provided for @yes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get yes;
+
+  /// No description provided for @nPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} {count, plural, =1{photo} other{photos}}'**
+  String nPhotos(int count);
+
+  /// No description provided for @nMeasurements.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} {count, plural, =1{measurement} other{measurements}}'**
+  String nMeasurements(int count);
+
+  /// No description provided for @plantDeletedName.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} deleted'**
+  String plantDeletedName(String name);
+
+  /// No description provided for @errorLoadingPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading photos: {error}'**
+  String errorLoadingPhotos(String error);
+
+  /// No description provided for @dateFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get dateFilter;
+
+  /// No description provided for @quickCapture.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Capture'**
+  String get quickCapture;
+
+  /// No description provided for @quickCaptureSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rapid field recording'**
+  String get quickCaptureSubtitle;
+
+  /// No description provided for @photoAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo added'**
+  String get photoAdded;
+
+  /// No description provided for @gpsAcquired.
+  ///
+  /// In en, this message translates to:
+  /// **'GPS acquired'**
+  String get gpsAcquired;
+
+  /// No description provided for @gpsAcquiring.
+  ///
+  /// In en, this message translates to:
+  /// **'Acquiring GPS...'**
+  String get gpsAcquiring;
+
+  /// No description provided for @gpsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to get GPS'**
+  String get gpsFailed;
+
+  /// No description provided for @savedAsDraftSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved as draft'**
+  String get savedAsDraftSuccess;
+
+  /// No description provided for @quickNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick notes'**
+  String get quickNotes;
+
+  /// No description provided for @quickNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Field observations...'**
+  String get quickNotesHint;
+
+  /// No description provided for @environmentalData.
+  ///
+  /// In en, this message translates to:
+  /// **'Environmental Data'**
+  String get environmentalData;
+
+  /// No description provided for @altitude.
+  ///
+  /// In en, this message translates to:
+  /// **'Altitude (m)'**
+  String get altitude;
+
+  /// No description provided for @altitudeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Meters above sea level'**
+  String get altitudeHint;
+
+  /// No description provided for @temperatureLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Temperature (°C)'**
+  String get temperatureLabel;
+
+  /// No description provided for @temperatureHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 25.5'**
+  String get temperatureHint;
+
+  /// No description provided for @humidityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Humidity (%)'**
+  String get humidityLabel;
+
+  /// No description provided for @humidityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 70'**
+  String get humidityHint;
+
+  /// No description provided for @weatherCondition.
+  ///
+  /// In en, this message translates to:
+  /// **'Weather condition'**
+  String get weatherCondition;
+
+  /// No description provided for @weatherSunny.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunny'**
+  String get weatherSunny;
+
+  /// No description provided for @weatherCloudy.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloudy'**
+  String get weatherCloudy;
+
+  /// No description provided for @weatherOvercast.
+  ///
+  /// In en, this message translates to:
+  /// **'Overcast'**
+  String get weatherOvercast;
+
+  /// No description provided for @weatherRainy.
+  ///
+  /// In en, this message translates to:
+  /// **'Rainy'**
+  String get weatherRainy;
+
+  /// No description provided for @weatherStormy.
+  ///
+  /// In en, this message translates to:
+  /// **'Stormy'**
+  String get weatherStormy;
+
+  /// No description provided for @weatherFoggy.
+  ///
+  /// In en, this message translates to:
+  /// **'Foggy'**
+  String get weatherFoggy;
+
+  /// No description provided for @weatherWindy.
+  ///
+  /// In en, this message translates to:
+  /// **'Windy'**
+  String get weatherWindy;
+
+  /// No description provided for @windSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Wind speed (km/h)'**
+  String get windSpeed;
+
+  /// No description provided for @windSpeedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 15'**
+  String get windSpeedHint;
+
+  /// No description provided for @selectMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get selectMode;
+
+  /// No description provided for @selectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Select All'**
+  String get selectAll;
+
+  /// No description provided for @deselectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Deselect All'**
+  String get deselectAll;
+
+  /// No description provided for @nSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} selected'**
+  String nSelected(int count);
+
+  /// No description provided for @deleteSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Selected'**
+  String get deleteSelected;
+
+  /// No description provided for @exportSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Selected'**
+  String get exportSelected;
+
+  /// No description provided for @confirmDeleteCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {count} plant(s)?'**
+  String confirmDeleteCount(int count);
+
+  /// No description provided for @nPlantsDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} plant(s) deleted'**
+  String nPlantsDeleted(int count);
 }
 
 class _AppLocalizationsDelegate

@@ -129,6 +129,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get newPlant => 'Nova Planta';
 
   @override
+  String get newPlantSubtitle => 'Formulário completo com todos os campos';
+
+  @override
   String get plantDetails => 'Detalhes da Planta';
 
   @override
@@ -142,6 +145,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get habitatInfo => 'Habitat';
+
+  @override
+  String get habitatHint =>
+      'Descreva o habitat onde a planta foi encontrada...';
+
+  @override
+  String get notesHint => 'Observações ou notas adicionais...';
 
   @override
   String get measurementsInfo => 'Medições';
@@ -288,7 +298,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get confirmDelete => 'Tem certeza que deseja excluir?';
 
   @override
-  String get confirmDeletePlant => 'Excluir este registro de planta?';
+  String get confirmDeletePlant =>
+      'Tem certeza que deseja excluir esta planta?';
 
   @override
   String get confirmDeleteSession => 'Excluir esta sessão?';
@@ -690,4 +701,581 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get performance => 'Performance';
+
+  @override
+  String get map => 'Mapa';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get password => 'Senha';
+
+  @override
+  String get loginButton => 'Entrar';
+
+  @override
+  String get loginError => 'Erro ao fazer login';
+
+  @override
+  String get signInWithGoogle => 'Entrar com Google';
+
+  @override
+  String googleSignInError(String error) {
+    return 'Erro ao entrar com Google: $error';
+  }
+
+  @override
+  String get botanicalFieldBook => 'Caderno de campo botânico';
+
+  @override
+  String get enterEmail => 'Informe o email';
+
+  @override
+  String get invalidEmail => 'Email inválido';
+
+  @override
+  String get enterPassword => 'Informe a senha';
+
+  @override
+  String get or => 'ou';
+
+  @override
+  String get noAccount => 'Não tem conta? ';
+
+  @override
+  String get signUp => 'Cadastre-se';
+
+  @override
+  String get continueOffline => 'Continuar offline';
+
+  @override
+  String get createAccount => 'Criar conta';
+
+  @override
+  String get nameLabel => 'Nome';
+
+  @override
+  String get confirmPassword => 'Confirmar senha';
+
+  @override
+  String get registerButton => 'Cadastrar';
+
+  @override
+  String get enterName => 'Informe seu nome';
+
+  @override
+  String get passwordMinLength => 'Mínimo 8 caracteres';
+
+  @override
+  String get passwordsDoNotMatch => 'As senhas não coincidem';
+
+  @override
+  String get registerError => 'Erro ao cadastrar';
+
+  @override
+  String get drafts => 'Rascunhos';
+
+  @override
+  String get thisMonth => 'Este Mês';
+
+  @override
+  String get plantsByCategory => 'Plantas por Categoria';
+
+  @override
+  String get noPlantsYet => 'Nenhuma planta registrada ainda';
+
+  @override
+  String get collectionsByMonth => 'Coletas por Mês';
+
+  @override
+  String get noActivityRecorded => 'Nenhuma atividade registrada';
+
+  @override
+  String get recentActivity => 'Atividade Recente';
+
+  @override
+  String get noRecentActivity => 'Nenhuma atividade recente';
+
+  @override
+  String get general => 'Geral';
+
+  @override
+  String get registryIdentification => 'Identificação de Registro';
+
+  @override
+  String get formSection => 'Formulário';
+
+  @override
+  String get audioSection => 'Áudio';
+
+  @override
+  String get account => 'Conta';
+
+  @override
+  String get syncSection => 'Sincronização';
+
+  @override
+  String get errorLoadingSettings => 'Erro ao carregar configurações';
+
+  @override
+  String get selectLanguage => 'Selecionar Idioma';
+
+  @override
+  String get somethingWentWrong => 'Ops! Algo deu errado';
+
+  @override
+  String get tryAgain => 'Tentar Novamente';
+
+  @override
+  String get startCollectionMsg =>
+      'Comece sua coleção adicionando a primeira planta';
+
+  @override
+  String get addPlant => 'Adicionar Planta';
+
+  @override
+  String get noCollectionSessions => 'Nenhuma sessão de coleta';
+
+  @override
+  String get createSessionMsg =>
+      'Crie uma sessão para organizar suas coletas de campo';
+
+  @override
+  String get noResultsFound => 'Nenhum resultado encontrado';
+
+  @override
+  String noResultsForQuery(String query) {
+    return 'Não encontramos resultados para \"$query\"';
+  }
+
+  @override
+  String get adjustFilters => 'Tente ajustar os filtros de busca';
+
+  @override
+  String get addPhotosMsg => 'Adicione fotos para documentar esta planta';
+
+  @override
+  String get noMeasurementsTitle => 'Sem medições';
+
+  @override
+  String get recordMeasurementsMsg =>
+      'Registre medições para análise científica';
+
+  @override
+  String errorLoadingPlants(String error) {
+    return 'Erro ao carregar plantas: $error';
+  }
+
+  @override
+  String get aboutAppDescription =>
+      'Um aplicativo para registro e documentação de plantas em campo.';
+
+  @override
+  String get searchTooltip => 'Buscar plantas';
+
+  @override
+  String get savedAsDraft => 'Salvo como rascunho';
+
+  @override
+  String get plantRecordSaved => 'Registro de planta salvo';
+
+  @override
+  String get identifierLabel => 'Identificador';
+
+  @override
+  String get identifierHint => 'Ex: RC000001';
+
+  @override
+  String get generateIdentifierTooltip => 'Gerar identificador';
+
+  @override
+  String get invalidIdentifierFormat => 'Formato inválido (Ex: RC000001)';
+
+  @override
+  String get scientificNameRequired => 'Nome científico é obrigatório';
+
+  @override
+  String get categoryRequired => 'Categoria é obrigatória';
+
+  @override
+  String get possibleDuplicates => 'Possíveis duplicatas:';
+
+  @override
+  String collectedOn(String date) {
+    return 'Coletada em $date';
+  }
+
+  @override
+  String get morphology => 'Morfologia';
+
+  @override
+  String get root => 'Raiz';
+
+  @override
+  String get stem => 'Caule';
+
+  @override
+  String get stemBarkType => 'Tipo de casca';
+
+  @override
+  String get stemBarkTypeHint => 'Ex: lisa, rugosa, fissurada...';
+
+  @override
+  String get colorLabel => 'Cor';
+
+  @override
+  String get stemColorHint => 'Ex: marrom, cinza, verde...';
+
+  @override
+  String get sizeHeight => 'Tamanho (altura)';
+
+  @override
+  String get circumference => 'Circunferência';
+
+  @override
+  String get sapPresence => 'Presença de seiva';
+
+  @override
+  String get sapPresenceSubtitle => 'A planta apresenta exsudação de seiva?';
+
+  @override
+  String get sapDescription => 'Descrição da seiva';
+
+  @override
+  String get sapDescriptionHint =>
+      'Descreva a seiva (cor, consistência, odor...)';
+
+  @override
+  String get leaf => 'Folha';
+
+  @override
+  String get sheathLabel => 'Bainha';
+
+  @override
+  String get sheathHint => 'Descreva a bainha...';
+
+  @override
+  String get petioleLabel => 'Pecíolo';
+
+  @override
+  String get petioleHint => 'Descreva o pecíolo...';
+
+  @override
+  String get bladeLabel => 'Lâmina';
+
+  @override
+  String get bladeHint => 'Descreva a lâmina...';
+
+  @override
+  String get flower => 'Flor';
+
+  @override
+  String get inflorescenceLabel => 'Inflorescência';
+
+  @override
+  String get inflorescenceHint => 'Descreva a inflorescência...';
+
+  @override
+  String get flowerColorHint => 'Ex: branca, amarela, rosa...';
+
+  @override
+  String get fruitLabel => 'Fruto';
+
+  @override
+  String get fruitColorHint => 'Ex: verde, vermelho, amarelo...';
+
+  @override
+  String get shapeLabel => 'Formato';
+
+  @override
+  String get fruitShapeHint => 'Ex: esférico, alongado, achatado...';
+
+  @override
+  String get seedLabel => 'Semente';
+
+  @override
+  String get seedColorHint => 'Ex: marrom, preta, branca...';
+
+  @override
+  String get seedShapeHint => 'Ex: oval, arredondada, alada...';
+
+  @override
+  String get descriptionLabel => 'Descrição';
+
+  @override
+  String get descriptionHint => 'Descreva...';
+
+  @override
+  String get sizeLabel => 'Tamanho';
+
+  @override
+  String get sizeHint => 'Ex: 2.5';
+
+  @override
+  String get unitLabel => 'Unidade';
+
+  @override
+  String get saveChanges => 'Salvar Alterações';
+
+  @override
+  String get photoGallery => 'Galeria de Fotos';
+
+  @override
+  String get noPhotosFound => 'Nenhuma foto encontrada';
+
+  @override
+  String get sortDateDesc => 'Data (Mais recente)';
+
+  @override
+  String get sortDateAsc => 'Data (Mais antiga)';
+
+  @override
+  String get sortByPlantName => 'Nome da planta';
+
+  @override
+  String activeFilters(String filters) {
+    return 'Filtros ativos: $filters';
+  }
+
+  @override
+  String get clearFilters => 'Limpar';
+
+  @override
+  String get filters => 'Filtros';
+
+  @override
+  String get allCategories => 'Todas';
+
+  @override
+  String get categoryLabel => 'Categoria';
+
+  @override
+  String get observations => 'Observações';
+
+  @override
+  String suggestionWithName(String name) {
+    return 'Sugestão: $name';
+  }
+
+  @override
+  String get rootDescriptionHint => 'Descreva a raiz...';
+
+  @override
+  String get stemDescriptionHint => 'Descreva o caule...';
+
+  @override
+  String get leafDescriptionHint => 'Descrição geral da folha...';
+
+  @override
+  String get flowerDescriptionHint => 'Descrição geral da flor...';
+
+  @override
+  String get fruitDescriptionHint => 'Descrição geral do fruto...';
+
+  @override
+  String get seedDescriptionHint => 'Descrição geral da semente...';
+
+  @override
+  String get metadata => 'Metadados';
+
+  @override
+  String get createdAt => 'Criado em';
+
+  @override
+  String get lastUpdated => 'Última atualização';
+
+  @override
+  String get contributor => 'Contribuinte';
+
+  @override
+  String get plantDeleted => 'Planta excluída';
+
+  @override
+  String get measurementHint => 'Ex: 2.5';
+
+  @override
+  String get editMeasurement => 'Editar Medição';
+
+  @override
+  String get measurementDescriptionRequired => 'Descrição *';
+
+  @override
+  String get measurementDescriptionHint => 'ex: Altura, Largura, Diâmetro';
+
+  @override
+  String get measurementValueRequired => 'Valor *';
+
+  @override
+  String get measurementValueHint => 'Ex: 15.5';
+
+  @override
+  String get enterDescription => 'Por favor, insira uma descrição';
+
+  @override
+  String get enterValue => 'Por favor, insira um valor';
+
+  @override
+  String get enterValidNumber => 'Por favor, insira um número válido';
+
+  @override
+  String get negativeValue => 'Valor não pode ser negativo';
+
+  @override
+  String get valueTooBig => 'Valor muito grande (máximo: 999999)';
+
+  @override
+  String get add => 'Adicionar';
+
+  @override
+  String get relatedPlants => 'Plantas Relacionadas';
+
+  @override
+  String get sameGenusOrNearbyLocation => 'Mesmo gênero ou localização próxima';
+
+  @override
+  String get yes => 'Sim';
+
+  @override
+  String nPhotos(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'fotos',
+      one: 'foto',
+    );
+    return '$count $_temp0';
+  }
+
+  @override
+  String nMeasurements(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'medições',
+      one: 'medição',
+    );
+    return '$count $_temp0';
+  }
+
+  @override
+  String plantDeletedName(String name) {
+    return '$name excluída';
+  }
+
+  @override
+  String errorLoadingPhotos(String error) {
+    return 'Erro ao carregar fotos: $error';
+  }
+
+  @override
+  String get dateFilter => 'Data';
+
+  @override
+  String get quickCapture => 'Captura Rápida';
+
+  @override
+  String get quickCaptureSubtitle => 'Registro rápido no campo';
+
+  @override
+  String get photoAdded => 'Foto adicionada';
+
+  @override
+  String get gpsAcquired => 'GPS adquirido';
+
+  @override
+  String get gpsAcquiring => 'Obtendo GPS...';
+
+  @override
+  String get gpsFailed => 'Falha ao obter GPS';
+
+  @override
+  String get savedAsDraftSuccess => 'Salvo como rascunho';
+
+  @override
+  String get quickNotes => 'Notas rápidas';
+
+  @override
+  String get quickNotesHint => 'Observações de campo...';
+
+  @override
+  String get environmentalData => 'Dados Ambientais';
+
+  @override
+  String get altitude => 'Altitude (m)';
+
+  @override
+  String get altitudeHint => 'Metros acima do nível do mar';
+
+  @override
+  String get temperatureLabel => 'Temperatura (°C)';
+
+  @override
+  String get temperatureHint => 'ex: 25.5';
+
+  @override
+  String get humidityLabel => 'Umidade (%)';
+
+  @override
+  String get humidityHint => 'ex: 70';
+
+  @override
+  String get weatherCondition => 'Condição climática';
+
+  @override
+  String get weatherSunny => 'Ensolarado';
+
+  @override
+  String get weatherCloudy => 'Nublado';
+
+  @override
+  String get weatherOvercast => 'Encoberto';
+
+  @override
+  String get weatherRainy => 'Chuvoso';
+
+  @override
+  String get weatherStormy => 'Tempestuoso';
+
+  @override
+  String get weatherFoggy => 'Nevoeiro';
+
+  @override
+  String get weatherWindy => 'Ventoso';
+
+  @override
+  String get windSpeed => 'Velocidade do vento (km/h)';
+
+  @override
+  String get windSpeedHint => 'ex: 15';
+
+  @override
+  String get selectMode => 'Selecionar';
+
+  @override
+  String get selectAll => 'Selecionar Todos';
+
+  @override
+  String get deselectAll => 'Limpar Seleção';
+
+  @override
+  String nSelected(int count) {
+    return '$count selecionado(s)';
+  }
+
+  @override
+  String get deleteSelected => 'Excluir Selecionados';
+
+  @override
+  String get exportSelected => 'Exportar Selecionados';
+
+  @override
+  String confirmDeleteCount(int count) {
+    return 'Excluir $count planta(s)?';
+  }
+
+  @override
+  String nPlantsDeleted(int count) {
+    return '$count planta(s) excluída(s)';
+  }
 }

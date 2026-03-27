@@ -38,6 +38,11 @@ class ExportImportService {
         'dateCollected': plant.dateCollected.toIso8601String(),
         'latitude': plant.latitude,
         'longitude': plant.longitude,
+        'altitude': plant.altitude,
+        'temperature': plant.temperature,
+        'humidity': plant.humidity,
+        'weatherCondition': plant.weatherCondition,
+        'windSpeed': plant.windSpeed,
         'category': plant.category.name,
         'measurements': plant.measurements
             .map((m) => {'label': m.label, 'value': m.value, 'unit': m.unit})
@@ -139,6 +144,7 @@ class ExportImportService {
       'Flor Descrição,Flor Inflorescência,Flor Cor,Flor Tamanho,Flor Tamanho Unid,'
       'Fruto Descrição,Fruto Cor,Fruto Formato,Fruto Tamanho,Fruto Tamanho Unid,'
       'Semente Descrição,Semente Cor,Semente Formato,Semente Tamanho,Semente Tamanho Unid,'
+      'Altitude,Temperatura,Umidade,Condição Climática,Velocidade Vento,'
       'Rascunho,Criado em,Atualizado em',
     );
 
@@ -189,6 +195,11 @@ class ExportImportService {
           _escapeCsv(plant.sementeFormato ?? ''),
           plant.sementeTamanho?.toString() ?? '',
           _escapeCsv(plant.sementeTamanhoUnidade ?? ''),
+          plant.altitude?.toString() ?? '',
+          plant.temperature?.toString() ?? '',
+          plant.humidity?.toString() ?? '',
+          _escapeCsv(plant.weatherCondition ?? ''),
+          plant.windSpeed?.toString() ?? '',
           plant.isDraft ? 'Sim' : 'Não',
           _formatDate(plant.createdAt),
           _formatDate(plant.updatedAt),
@@ -209,7 +220,8 @@ class ExportImportService {
     buffer.writeln(
       'occurrenceID,scientificName,vernacularName,family,genus,'
       'specificEpithet,eventDate,decimalLatitude,decimalLongitude,'
-      'habitat,basisOfRecord,recordedBy,eventRemarks,occurrenceRemarks,'
+      'habitat,basisOfRecord,recordedBy,minimumElevationInMeters,'
+      'eventRemarks,occurrenceRemarks,'
       'modified',
     );
 
@@ -228,6 +240,7 @@ class ExportImportService {
           _escapeCsv(plant.habitat ?? ''),
           'HumanObservation',
           _escapeCsv(plant.contributorName ?? ''),
+          plant.altitude?.toString() ?? '',
           '', // eventRemarks
           _escapeCsv(plant.notes ?? ''),
           _formatDateIso(plant.updatedAt),
@@ -282,6 +295,11 @@ class ExportImportService {
             )
             ..latitude = (plantData['latitude'] as num?)?.toDouble()
             ..longitude = (plantData['longitude'] as num?)?.toDouble()
+            ..altitude = (plantData['altitude'] as num?)?.toDouble()
+            ..temperature = (plantData['temperature'] as num?)?.toDouble()
+            ..humidity = (plantData['humidity'] as num?)?.toDouble()
+            ..weatherCondition = plantData['weatherCondition'] as String?
+            ..windSpeed = (plantData['windSpeed'] as num?)?.toDouble()
             ..category = PlantCategory.values.firstWhere(
               (c) => c.name == plantData['category'],
               orElse: () => PlantCategory.herbs,
