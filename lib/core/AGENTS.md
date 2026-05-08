@@ -8,23 +8,38 @@ Everything non-UI: repositories, services, providers, sync, database init, theme
 
 ```
 core/
+├── config/                      # Compile-time configuration (e.g., API endpoints)
 ├── database/
 │   ├── isar_service.dart        # IsarService singleton — init all schemas here
 │   └── platforms/               # Conditional imports: web vs mobile DB setup
-├── repositories/
+├── repositories/                # 4 repositories
 │   ├── plant_repository.dart    # CRUD + FTS + GPS radius queries
 │   ├── session_repository.dart
-│   └── saved_search_repository.dart
-├── services/
-│   ├── photo_service.dart       # Compression, EXIF extraction
-│   ├── location_service.dart    # GPS + permission handling
+│   ├── saved_search_repository.dart
+│   └── template_repository.dart # Collection templates
+├── services/                    # 22 services
 │   ├── audio_transcription_service.dart
-│   ├── export_import_service.dart
-│   ├── google_drive_backup_service.dart
-│   ├── registry_identifier_service.dart
-│   ├── media_upload_service.dart
-│   ├── settings_service.dart    # @riverpod singleton
 │   ├── auth_service.dart
+│   ├── coords_validation_service.dart
+│   ├── dichotomous_key_service.dart
+│   ├── export_import_service.dart
+│   ├── geocoding_service.dart
+│   ├── google_drive_backup_service.dart
+│   ├── gps_track_service.dart
+│   ├── herbarium_label_service.dart
+│   ├── identifier_export_import_service.dart
+│   ├── inaturalist_service.dart
+│   ├── location_service.dart    # GPS + permission handling
+│   ├── map_service.dart         # FMTC tile cache
+│   ├── media_upload_service.dart
+│   ├── moon_phase_service.dart
+│   ├── ocr_service.dart
+│   ├── photo_service.dart       # Compression, EXIF extraction
+│   ├── plantnet_service.dart
+│   ├── registry_identifier_service.dart
+│   ├── settings_service.dart    # @riverpod singleton
+│   ├── taxon_service.dart
+│   ├── weather_service.dart
 │   └── platforms/               # Platform splits for services
 ├── providers/                   # Shared/cross-cutting @riverpod providers
 ├── sync/                        # Offline sync orchestration
