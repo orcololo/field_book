@@ -55,6 +55,9 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
 
   Future<void> _deleteSession() async {
     final l10n = AppLocalizations.of(context)!;
+    final navigator = Navigator.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final errorColor = Theme.of(context).colorScheme.error;
 
     final initialConfirmed = await showDialog<bool>(
       context: context,
@@ -75,6 +78,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
       ),
     );
 
+    if (!mounted) return;
     if (initialConfirmed != true) return;
 
     final confirmed = await RainModeGuard.confirmDestructiveAction(
@@ -90,29 +94,28 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
       cancelLabel: l10n.cancel,
       confirmLabel: l10n.deleteSessionConfirm,
       countdownLabel: l10n.rainModeCountdownLabel,
-      confirmColor: Theme.of(context).colorScheme.error,
+      confirmColor: errorColor,
     );
 
+    if (!mounted) return;
     if (confirmed != true) return;
 
     try {
       final sessionRepo = ref.read(sessionRepositoryProvider);
       await sessionRepo.delete(_session.id);
-
-      if (mounted) {
-        Navigator.of(context).pop(true); // Return to list
-      }
+      if (!mounted) return;
+      navigator.pop(true);
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$e'), backgroundColor: Colors.red),
-        );
-      }
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(content: Text('$e'), backgroundColor: errorColor),
+      );
     }
   }
 
   Future<void> _toggleArchive() async {
     final l10n = AppLocalizations.of(context)!;
+    final tertiaryColor = Theme.of(context).colorScheme.tertiary;
     final sessionRepo = ref.read(sessionRepositoryProvider);
 
     if (!_session.isArchived) {
@@ -134,6 +137,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
         ),
       );
 
+      if (!mounted) return;
       if (initialConfirmed != true) return;
 
       final confirmed = await RainModeGuard.confirmDestructiveAction(
@@ -149,9 +153,10 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
         cancelLabel: l10n.cancel,
         confirmLabel: l10n.archive,
         countdownLabel: l10n.rainModeCountdownLabel,
-        confirmColor: Theme.of(context).colorScheme.tertiary,
+        confirmColor: tertiaryColor,
       );
 
+      if (!mounted) return;
       if (confirmed != true) return;
     }
 
