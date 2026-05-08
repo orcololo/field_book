@@ -3,6 +3,7 @@
 import 'package:isar/isar.dart';
 import 'package:logger/logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../models/determination.dart';
 import '../../models/plant_record.dart';
 import '../../models/plant_category.dart';
 import '../database/isar_service.dart';
@@ -338,6 +339,126 @@ class PlantRepository {
         .filter()
         .registryIdentifierEqualTo(identifier)
         .findFirst();
+  }
+
+  Future<List<PlantRecord>> searchByCollectorNumber(
+    String collectorNumber, {
+    int limit = 20,
+  }) async {
+    final isar = await _isar;
+    final query = collectorNumber.trim();
+
+    if (query.isEmpty) {
+      return [];
+    }
+
+    return await isar.plantRecords
+        .filter()
+        .collectorNumberStartsWith(query, caseSensitive: false)
+        .sortByDateCollectedDesc()
+        .limit(limit)
+        .findAll();
+  }
+
+  Future<List<PlantRecord>> getByUuids(List<String> uuids) async {
+    if (uuids.isEmpty) return [];
+
+    final isar = await _isar;
+    final plants = await isar.plantRecords
+        .filter()
+        .anyOf(uuids, (q, uuid) => q.uuidEqualTo(uuid))
+        .findAll();
+
+    final byUuid = {for (final plant in plants) plant.uuid: plant};
+    return uuids.map((uuid) => byUuid[uuid]).whereType<PlantRecord>().toList();
+  }
+
+  Future<void> addDetermination(
+    String plantUuid,
+    Determination determination,
+  ) async {
+    final plant = await getByUuid(plantUuid);
+
+    if (plant == null) {
+      throw StateError('Plant not found: $plantUuid');
+    }
+
+    plant.determinations = [...plant.determinations, determination]
+      ..sort((a, b) => b.determinedAt.compareTo(a.determinedAt));
+    plant.applyLatestDetermination();
+
+    await save(plant);
+  }
+
+  Future<void> markAsDuplicate({
+    required String duplicateUuid,
+    required String originalUuid,
+  }) async {
+    if (duplicateUuid == originalUuid) {
+      throw ArgumentError('A plant cannot be a duplicate of itself');
+    }
+
+    final isar = await _isar;
+    final duplicate = await getByUuid(duplicateUuid);
+    final selectedOriginal = await getByUuid(originalUuid);
+
+    if (duplicate == null || selectedOriginal == null) {
+      throw StateError('Plant not found for duplicate linking');
+    }
+
+    final rootOriginal = selectedOriginal.duplicateOf != null
+        ? await getByUuid(selectedOriginal.duplicateOf!) ?? selectedOriginal
+        : selectedOriginal;
+
+    final previousOriginalUuid = duplicate.duplicateOf;
+    duplicate.duplicateOf = rootOriginal.uuid;
+
+    rootOriginal.duplicateUuids = {
+      ...rootOriginal.duplicateUuids,
+      duplicate.uuid,
+    }.toList();
+
+    await isar.writeTxn(() async {
+      if (previousOriginalUuid != null &&
+          previousOriginalUuid != rootOriginal.uuid) {
+        final previousOriginal = await isar.plantRecords
+            .filter()
+            .uuidEqualTo(previousOriginalUuid)
+            .findFirst();
+        if (previousOriginal != null) {
+          previousOriginal.duplicateUuids = previousOriginal.duplicateUuids
+              .where((uuid) => uuid != duplicate.uuid)
+              .toList();
+          previousOriginal.updatedAt = DateTime.now();
+          await isar.plantRecords.put(previousOriginal);
+        }
+      }
+
+      duplicate.updatedAt = DateTime.now();
+      rootOriginal.updatedAt = DateTime.now();
+
+      await isar.plantRecords.put(duplicate);
+      await isar.plantRecords.put(rootOriginal);
+    });
+  }
+
+  Future<List<PlantRecord>> getDuplicateSeries(String plantUuid) async {
+    final plant = await getByUuid(plantUuid);
+    if (plant == null) return [];
+
+    final root = plant.duplicateOf != null
+        ? await getByUuid(plant.duplicateOf!)
+        : plant;
+    if (root == null) return [];
+
+    final linkedUuids = <String>{root.uuid, ...root.duplicateUuids};
+    final linkedPlants = await getByUuids(linkedUuids.toList());
+    linkedPlants.sort((a, b) {
+      final aId = a.registryIdentifier ?? a.collectorNumber ?? a.scientificName;
+      final bId = b.registryIdentifier ?? b.collectorNumber ?? b.scientificName;
+      return aId.compareTo(bId);
+    });
+    return linkedPlants;
   }
 
   // Get all registry identifiers (non-null)

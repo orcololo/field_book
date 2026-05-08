@@ -19,6 +19,11 @@ enum MapProvider {
 class Settings {
   Id id = 1; // Singleton - always ID 1
 
+  // Accessibility settings
+  double fontScale = 1.0;
+  bool highContrastMode = false;
+  bool rainModeEnabled = false;
+
   // Map settings
   @Enumerated(EnumType.name)
   MapProvider mapProvider = MapProvider.openStreetMap;
@@ -34,6 +39,7 @@ class Settings {
   // Photo settings
   int photoCompressionQuality = 70; // 30-100
   bool preserveExif = true;
+  String plantnetApiKey = '';
 
   // Audio settings
   bool transcriptionEnabled = false;
@@ -43,6 +49,8 @@ class Settings {
   // Export settings
   String exportFilenameFormat = 'plant_{scientificName}_{date}';
   String duplicateHandling = 'skip'; // skip, overwrite, rename
+  String? inatAccessToken;
+  String? inatUsername;
 
   // Performance settings
   int paginationSize = 20;

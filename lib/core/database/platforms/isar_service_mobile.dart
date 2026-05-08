@@ -1,9 +1,12 @@
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
-import '../../../models/plant_record.dart';
 import '../../../models/collection_session.dart';
+import '../../../models/collection_template.dart';
+import '../../../models/municipality_bounding_box_cache.dart';
+import '../../../models/plant_record.dart';
 import '../../../models/saved_search.dart';
 import '../../../models/settings.dart';
+import '../../../models/taxon_cache.dart';
 import 'isar_service_interface.dart';
 
 class IsarService extends IsarServiceInterface {
@@ -29,10 +32,13 @@ class IsarService extends IsarServiceInterface {
 
     return await Isar.open(
       [
-        PlantRecordSchema,
         CollectionSessionSchema,
+        CollectionTemplateSchema,
+        MunicipalityBoundingBoxCacheSchema,
+        PlantRecordSchema,
         SavedSearchSchema,
         SettingsSchema,
+        TaxonCacheSchema,
       ],
       directory: dir.path,
       inspector: true,

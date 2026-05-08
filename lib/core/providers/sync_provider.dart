@@ -1,6 +1,14 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:isar/isar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../models/plant_record.dart';
+import '../../models/sync_metadata.dart';
+import '../database/isar_service.dart';
+import 'auth_provider.dart';
 import '../network/api_client.dart';
 import '../services/media_upload_service.dart';
 import '../sync/sync_service.dart';
@@ -20,11 +28,57 @@ SyncService syncService(Ref ref) {
   );
 }
 
+final conflictRecordsProvider = StreamProvider<List<PlantRecord>>((ref) async* {
+  final isar = await IsarService.instance.isar;
+
+  yield await _loadConflictRecords(isar);
+
+  yield* isar.plantRecords.watchLazy().asyncMap(
+    (_) => _loadConflictRecords(isar),
+  );
+});
+
+Future<List<PlantRecord>> _loadConflictRecords(Isar isar) {
+  return isar.plantRecords
+      .filter()
+      .syncMetadata((q) => q.syncStatusEqualTo(SyncStatus.conflict))
+      .sortByUpdatedAtDesc()
+      .findAll();
+}
+
 /// Notifier that drives sync and exposes status to the UI.
 @Riverpod(keepAlive: true)
 class SyncNotifier extends _$SyncNotifier {
   @override
-  SyncState build() => const SyncState();
+  SyncState build() {
+    _setupAutoSync();
+    return const SyncState();
+  }
+
+  void _setupAutoSync() {
+    final connectivity = Connectivity();
+
+    final sub = connectivity.onConnectivityChanged.listen((result) {
+      if (result != ConnectivityResult.none) {
+        final authState = ref.read(authNotifierProvider);
+        if (authState is AuthAuthenticated) {
+          sync();
+        }
+      }
+    });
+
+    final timer = Timer.periodic(const Duration(minutes: 15), (_) {
+      final authState = ref.read(authNotifierProvider);
+      if (authState is AuthAuthenticated) {
+        sync();
+      }
+    });
+
+    ref.onDispose(() {
+      sub.cancel();
+      timer.cancel();
+    });
+  }
 
   Future<void> sync({String? deviceId}) async {
     if (state.isSyncing) return;

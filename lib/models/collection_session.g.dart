@@ -68,13 +68,19 @@ const CollectionSessionSchema = CollectionSchema(
       name: r'teamMembers',
       type: IsarType.stringList,
     ),
-    r'tripName': PropertySchema(
+    r'track': PropertySchema(
       id: 10,
+      name: r'track',
+      type: IsarType.objectList,
+      target: r'GpsPoint',
+    ),
+    r'tripName': PropertySchema(
+      id: 11,
       name: r'tripName',
       type: IsarType.string,
     ),
     r'uuid': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'uuid',
       type: IsarType.string,
     )
@@ -126,7 +132,10 @@ const CollectionSessionSchema = CollectionSchema(
     )
   },
   links: {},
-  embeddedSchemas: {r'SyncMetadata': SyncMetadataSchema},
+  embeddedSchemas: {
+    r'GpsPoint': GpsPointSchema,
+    r'SyncMetadata': SyncMetadataSchema
+  },
   getId: _collectionSessionGetId,
   getLinks: _collectionSessionGetLinks,
   attach: _collectionSessionAttach,
@@ -174,6 +183,14 @@ int _collectionSessionEstimateSize(
       bytesCount += value.length * 3;
     }
   }
+  bytesCount += 3 + object.track.length * 3;
+  {
+    final offsets = allOffsets[GpsPoint]!;
+    for (var i = 0; i < object.track.length; i++) {
+      final value = object.track[i];
+      bytesCount += GpsPointSchema.estimateSize(value, offsets, allOffsets);
+    }
+  }
   bytesCount += 3 + object.tripName.length * 3;
   bytesCount += 3 + object.uuid.length * 3;
   return bytesCount;
@@ -200,8 +217,14 @@ void _collectionSessionSerialize(
     object.syncMetadata,
   );
   writer.writeStringList(offsets[9], object.teamMembers);
-  writer.writeString(offsets[10], object.tripName);
-  writer.writeString(offsets[11], object.uuid);
+  writer.writeObjectList<GpsPoint>(
+    offsets[10],
+    allOffsets,
+    GpsPointSchema.serialize,
+    object.track,
+  );
+  writer.writeString(offsets[11], object.tripName);
+  writer.writeString(offsets[12], object.uuid);
 }
 
 CollectionSession _collectionSessionDeserialize(
@@ -227,8 +250,15 @@ CollectionSession _collectionSessionDeserialize(
       ) ??
       SyncMetadata();
   object.teamMembers = reader.readStringList(offsets[9]) ?? [];
-  object.tripName = reader.readString(offsets[10]);
-  object.uuid = reader.readString(offsets[11]);
+  object.track = reader.readObjectList<GpsPoint>(
+        offsets[10],
+        GpsPointSchema.deserialize,
+        allOffsets,
+        GpsPoint(),
+      ) ??
+      [];
+  object.tripName = reader.readString(offsets[11]);
+  object.uuid = reader.readString(offsets[12]);
   return object;
 }
 
@@ -265,8 +295,16 @@ P _collectionSessionDeserializeProp<P>(
     case 9:
       return (reader.readStringList(offset) ?? []) as P;
     case 10:
-      return (reader.readString(offset)) as P;
+      return (reader.readObjectList<GpsPoint>(
+            offset,
+            GpsPointSchema.deserialize,
+            allOffsets,
+            GpsPoint(),
+          ) ??
+          []) as P;
     case 11:
+      return (reader.readString(offset)) as P;
+    case 12:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1748,6 +1786,95 @@ extension CollectionSessionQueryFilter
   }
 
   QueryBuilder<CollectionSession, CollectionSession, QAfterFilterCondition>
+      trackLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'track',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<CollectionSession, CollectionSession, QAfterFilterCondition>
+      trackIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'track',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<CollectionSession, CollectionSession, QAfterFilterCondition>
+      trackIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'track',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<CollectionSession, CollectionSession, QAfterFilterCondition>
+      trackLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'track',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<CollectionSession, CollectionSession, QAfterFilterCondition>
+      trackLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'track',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<CollectionSession, CollectionSession, QAfterFilterCondition>
+      trackLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'track',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<CollectionSession, CollectionSession, QAfterFilterCondition>
       tripNameEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -2026,6 +2153,13 @@ extension CollectionSessionQueryObject
       syncMetadata(FilterQuery<SyncMetadata> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'syncMetadata');
+    });
+  }
+
+  QueryBuilder<CollectionSession, CollectionSession, QAfterFilterCondition>
+      trackElement(FilterQuery<GpsPoint> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'track');
     });
   }
 }
@@ -2457,6 +2591,13 @@ extension CollectionSessionQueryProperty
       teamMembersProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'teamMembers');
+    });
+  }
+
+  QueryBuilder<CollectionSession, List<GpsPoint>, QQueryOperations>
+      trackProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'track');
     });
   }
 

@@ -1,11 +1,15 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/repositories/plant_repository.dart';
+import '../../../core/services/geocoding_service.dart';
 import '../../../core/services/location_service.dart';
+import '../../../core/services/weather_service.dart';
 import '../../../core/services/photo_service.dart';
 import '../../../core/services/settings_service.dart';
 import '../../../core/theme/folium_theme.dart';
@@ -14,6 +18,20 @@ import '../../../models/plant_category.dart';
 import '../../../models/plant_record.dart';
 
 const _uuid = Uuid();
+
+class _LocationSnapshot {
+  final String locality;
+  final String municipality;
+  final String state;
+  final String country;
+
+  const _LocationSnapshot({
+    required this.locality,
+    required this.municipality,
+    required this.state,
+    required this.country,
+  });
+}
 
 /// Minimal quick-capture screen optimised for field conditions.
 /// Auto-acquires GPS, offers one-tap photo, and saves as draft.
@@ -29,12 +47,20 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
   final _scientificNameController = TextEditingController();
   final _commonNameController = TextEditingController();
   final _notesController = TextEditingController();
+  final _localityController = TextEditingController();
+  final _municipalityController = TextEditingController();
+  final _stateController = TextEditingController();
+  final _countryController = TextEditingController();
   final _altitudeController = TextEditingController();
   final _temperatureController = TextEditingController();
   final _humidityController = TextEditingController();
+  final _weatherNotesController = TextEditingController();
 
   PlantCategory _category = PlantCategory.herbs;
   String? _weatherCondition;
+  String? _moonPhase;
+  bool _showOfflineLocationHint = false;
+  _LocationSnapshot? _lastLocationSnapshot;
 
   // GPS
   double? _latitude;
@@ -45,6 +71,8 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
   final List<String> _photoPaths = [];
   final _photoService = PhotoService();
   final _locationService = LocationService();
+  final _geocodingService = GeocodingService();
+  final _weatherService = WeatherService();
 
   bool _saving = false;
 
@@ -59,9 +87,14 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
     _scientificNameController.dispose();
     _commonNameController.dispose();
     _notesController.dispose();
+    _localityController.dispose();
+    _municipalityController.dispose();
+    _stateController.dispose();
+    _countryController.dispose();
     _altitudeController.dispose();
     _temperatureController.dispose();
     _humidityController.dispose();
+    _weatherNotesController.dispose();
     super.dispose();
   }
 
@@ -80,6 +113,14 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
           }
           _fetchingGps = false;
         });
+        unawaited(_autofillLocation(position.latitude, position.longitude));
+        unawaited(
+          _autofillWeather(
+            position.latitude,
+            position.longitude,
+            DateTime.now(),
+          ),
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -122,14 +163,22 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
         ..dateCollected = DateTime.now()
         ..latitude = _latitude
         ..longitude = _longitude
+        ..locality = _emptyToNull(_localityController.text)
+        ..municipality = _emptyToNull(_municipalityController.text)
+        ..state = _emptyToNull(_stateController.text)
+        ..country = _emptyToNull(_countryController.text)
+        ..determinations = []
         ..altitude = double.tryParse(_altitudeController.text.trim())
         ..temperature = double.tryParse(_temperatureController.text.trim())
         ..humidity = double.tryParse(_humidityController.text.trim())
         ..weatherCondition = _weatherCondition
+        ..weatherNotes = _emptyToNull(_weatherNotesController.text)
+        ..moonPhase = _moonPhase
         ..notes = _notesController.text.trim().isEmpty
             ? null
             : _notesController.text.trim()
         ..photoPaths = _photoPaths
+        ..duplicateUuids = []
         ..isDraft = true
         ..deviceId = settings.deviceId
         ..contributorName = settings.deviceName
@@ -225,6 +274,55 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
                   prefixIcon: const Icon(Icons.notes),
                 ),
                 maxLines: 3,
+              ),
+              const SizedBox(height: FoliumTheme.space16),
+
+              TextFormField(
+                controller: _localityController,
+                decoration: InputDecoration(
+                  labelText: l10n.locality,
+                  prefixIcon: const Icon(Icons.place_outlined),
+                  hintText: _locationHintText(l10n),
+                ),
+                textCapitalization: TextCapitalization.words,
+              ),
+              const SizedBox(height: FoliumTheme.space12),
+              TextFormField(
+                controller: _municipalityController,
+                decoration: InputDecoration(
+                  labelText: l10n.municipality,
+                  prefixIcon: const Icon(Icons.location_city),
+                  hintText: _locationHintText(l10n),
+                ),
+                textCapitalization: TextCapitalization.words,
+              ),
+              const SizedBox(height: FoliumTheme.space12),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _stateController,
+                      decoration: InputDecoration(
+                        labelText: l10n.state,
+                        prefixIcon: const Icon(Icons.map_outlined),
+                        hintText: _locationHintText(l10n),
+                      ),
+                      textCapitalization: TextCapitalization.words,
+                    ),
+                  ),
+                  const SizedBox(width: FoliumTheme.space12),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _countryController,
+                      decoration: InputDecoration(
+                        labelText: l10n.country,
+                        prefixIcon: const Icon(Icons.public),
+                        hintText: _locationHintText(l10n),
+                      ),
+                      textCapitalization: TextCapitalization.words,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: FoliumTheme.space16),
 
@@ -498,11 +596,206 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
                   decimal: true,
                 ),
               ),
+              const SizedBox(height: FoliumTheme.space12),
+              TextFormField(
+                controller: _weatherNotesController,
+                decoration: InputDecoration(
+                  labelText: l10n.weatherNotes,
+                  hintText: l10n.weatherNotesHint,
+                  isDense: true,
+                ),
+                maxLines: 2,
+              ),
+              const SizedBox(height: FoliumTheme.space12),
+              TextFormField(
+                key: ValueKey(_moonPhase),
+                initialValue:
+                    _moonPhase == null ? '' : _getMoonPhaseLabel(l10n, _moonPhase!),
+                decoration: InputDecoration(
+                  labelText: l10n.moonPhase,
+                  isDense: true,
+                ),
+                readOnly: true,
+              ),
               const SizedBox(height: FoliumTheme.space8),
             ],
           ),
         ),
       ],
     );
+  }
+
+  Future<void> _autofillLocation(double latitude, double longitude) async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      if (!mounted) return;
+      setState(() {
+        _showOfflineLocationHint = true;
+        _clearLocationFields();
+      });
+      return;
+    }
+
+    final locationData = await _geocodingService.reverseGeocode(
+      latitude,
+      longitude,
+    );
+    if (!mounted || locationData == null) {
+      return;
+    }
+
+    final previousSnapshot = _captureLocationSnapshot();
+    setState(() {
+      _showOfflineLocationHint = false;
+      _lastLocationSnapshot = previousSnapshot;
+      _localityController.text = locationData.locality ?? '';
+      _municipalityController.text = locationData.municipality ?? '';
+      _stateController.text = locationData.state ?? '';
+      _countryController.text = locationData.country ?? '';
+    });
+
+    final l10n = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(l10n.locationAutoFilled),
+          action: SnackBarAction(
+            label: l10n.undo,
+            onPressed: _restorePreviousLocationSnapshot,
+          ),
+        ),
+      );
+  }
+
+  Future<void> _autofillWeather(
+    double latitude,
+    double longitude,
+    DateTime date,
+  ) async {
+    final weatherData = await _weatherService.fetchWeather(
+      latitude,
+      longitude,
+      date,
+    );
+    if (!mounted || weatherData == null) {
+      return;
+    }
+
+    final l10n = AppLocalizations.of(context)!;
+    setState(() {
+      if (weatherData.temperature != null) {
+        _temperatureController.text = weatherData.temperature!.toStringAsFixed(1);
+      }
+      if (weatherData.humidity != null) {
+        _humidityController.text = weatherData.humidity!.toString();
+      }
+      if (weatherData.weatherCondition != null) {
+        _weatherCondition = weatherData.weatherCondition;
+      }
+      _moonPhase = weatherData.moonPhase;
+      _weatherNotesController.text = _buildWeatherNotes(l10n, weatherData);
+    });
+  }
+
+  _LocationSnapshot _captureLocationSnapshot() {
+    return _LocationSnapshot(
+      locality: _localityController.text,
+      municipality: _municipalityController.text,
+      state: _stateController.text,
+      country: _countryController.text,
+    );
+  }
+
+  void _restorePreviousLocationSnapshot() {
+    final snapshot = _lastLocationSnapshot;
+    if (snapshot == null || !mounted) {
+      return;
+    }
+
+    setState(() {
+      _localityController.text = snapshot.locality;
+      _municipalityController.text = snapshot.municipality;
+      _stateController.text = snapshot.state;
+      _countryController.text = snapshot.country;
+      _showOfflineLocationHint = false;
+    });
+  }
+
+  void _clearLocationFields() {
+    _localityController.clear();
+    _municipalityController.clear();
+    _stateController.clear();
+    _countryController.clear();
+  }
+
+  String? _emptyToNull(String value) {
+    final trimmed = value.trim();
+    return trimmed.isEmpty ? null : trimmed;
+  }
+
+  String? _locationHintText(AppLocalizations l10n) {
+    return _showOfflineLocationHint ? l10n.noConnectionManualFill : null;
+  }
+
+  String _buildWeatherNotes(AppLocalizations l10n, WeatherData weatherData) {
+    final parts = <String>[];
+
+    if (weatherData.weatherCondition != null) {
+      parts.add(_getWeatherConditionLabel(l10n, weatherData.weatherCondition!));
+    }
+    if (weatherData.sunrise != null) {
+      parts.add('${l10n.sunriseLabel} ${_formatTime(weatherData.sunrise!)}');
+    }
+    if (weatherData.sunset != null) {
+      parts.add('${l10n.sunsetLabel} ${_formatTime(weatherData.sunset!)}');
+    }
+    if (weatherData.weatherCode != null) {
+      parts.add(l10n.weatherCode(weatherData.weatherCode!));
+    }
+
+    return parts.join(' • ');
+  }
+
+  String _formatTime(DateTime dateTime) {
+    final hours = dateTime.hour.toString().padLeft(2, '0');
+    final minutes = dateTime.minute.toString().padLeft(2, '0');
+    return '$hours:$minutes';
+  }
+
+  String _getWeatherConditionLabel(AppLocalizations l10n, String condition) {
+    switch (condition) {
+      case 'sunny':
+        return l10n.weatherSunny;
+      case 'cloudy':
+        return l10n.weatherCloudy;
+      case 'overcast':
+        return l10n.weatherOvercast;
+      case 'rainy':
+        return l10n.weatherRainy;
+      case 'stormy':
+        return l10n.weatherStormy;
+      case 'foggy':
+        return l10n.weatherFoggy;
+      case 'windy':
+        return l10n.weatherWindy;
+      default:
+        return condition;
+    }
+  }
+
+  String _getMoonPhaseLabel(AppLocalizations l10n, String moonPhase) {
+    switch (moonPhase) {
+      case 'new':
+        return l10n.moonPhaseNew;
+      case 'waxing':
+        return l10n.moonPhaseWaxing;
+      case 'full':
+        return l10n.moonPhaseFull;
+      case 'waning':
+        return l10n.moonPhaseWaning;
+      default:
+        return moonPhase;
+    }
   }
 }

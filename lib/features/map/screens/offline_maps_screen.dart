@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart' as fmtc;
 import '../../../core/services/map_service.dart';
+import '../../../l10n/app_localizations.dart';
 
 class OfflineMapsScreen extends StatefulWidget {
   const OfflineMapsScreen({super.key});
@@ -55,10 +56,11 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
       _southWest = null;
     });
 
+    final l10n = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Toque no mapa para definir a área de download'),
-        duration: Duration(seconds: 3),
+      SnackBar(
+        content: Text(l10n.tapMapToDefineArea),
+        duration: const Duration(seconds: 3),
       ),
     );
   }
@@ -80,34 +82,39 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
   void _showDownloadDialog() {
     if (_northEast == null || _southWest == null) return;
 
+    final now = DateTime.now();
     final TextEditingController nameController = TextEditingController(
-      text: 'Região ${DateTime.now().day}/${DateTime.now().month}',
+      text: AppLocalizations.of(context)!.offlineRegionName(
+        '${now.day}/${now.month}',
+      ),
     );
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Baixar Área Offline'),
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return AlertDialog(
+        title: Text(l10n.downloadOfflineAreaTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(
-                labelText: 'Nome da área',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.areaNameLabel,
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Zoom levels: 8-15',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+            Text(
+              l10n.zoomLevelsLabel,
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Isso pode demorar alguns minutos e consumir dados móveis.',
-              style: TextStyle(fontSize: 12, color: Colors.orange),
+            Text(
+              l10n.downloadWarnMsg,
+              style: const TextStyle(fontSize: 12, color: Colors.orange),
             ),
           ],
         ),
@@ -120,17 +127,18 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
               });
               Navigator.pop(context);
             },
-            child: const Text('Cancelar'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               _startDownload(nameController.text);
             },
-            child: const Text('Baixar'),
+            child: Text(l10n.download),
           ),
         ],
-      ),
+      );
+      },
     );
   }
 
@@ -168,18 +176,20 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
       await _loadCacheStats();
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Download concluído!'),
+          SnackBar(
+            content: Text(l10n.downloadCompletedSuccess),
             backgroundColor: Colors.green,
           ),
         );
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erro ao baixar: $e'),
+            content: Text(l10n.errorDownloadMapMsg(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -198,26 +208,26 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
   Future<void> _clearCache() async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Limpar cache'),
-        content: const Text(
-          'Tem certeza que deseja excluir todos os mapas offline?\n\n'
-          'Isso liberará espaço mas você precisará estar online para ver os mapas.',
-        ),
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return AlertDialog(
+        title: Text(l10n.clearCacheTitle),
+        content: Text(l10n.clearCacheBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
             ),
-            child: const Text('Limpar'),
+            child: Text(l10n.clearCacheConfirmBtn),
           ),
         ],
-      ),
+      );
+      },
     );
 
     if (confirm == true) {
@@ -227,8 +237,8 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
         
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Cache limpo com sucesso'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.cacheClearedSuccess),
               backgroundColor: Colors.green,
             ),
           );
@@ -237,7 +247,7 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Erro ao limpar cache: $e'),
+              content: Text(AppLocalizations.of(context)!.errorClearCacheMsg(e.toString())),
               backgroundColor: Colors.red,
             ),
           );
@@ -257,15 +267,16 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mapas Offline'),
+        title: Text(l10n.offlineMapsTitle),
         actions: [
           if (!_isDownloading)
             IconButton(
               icon: const Icon(Icons.add_location),
               onPressed: _startAreaSelection,
-              tooltip: 'Baixar nova área',
+              tooltip: l10n.downloadNewAreaTooltip,
             ),
         ],
       ),
@@ -354,7 +365,7 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
                               const CircularProgressIndicator(),
                               const SizedBox(height: 16),
                               Text(
-                                'Baixando $_downloadingRegionName',
+                                l10n.downloadingRegion(_downloadingRegionName ?? ''),
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -388,8 +399,8 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
                         padding: const EdgeInsets.all(12),
                         child: Text(
                           _northEast == null
-                              ? '1. Toque no primeiro canto da área'
-                              : '2. Toque no canto oposto da área',
+                              ? l10n.selectFirstAreaCorner
+                              : l10n.selectOppositeAreaCorner,
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -412,8 +423,8 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Cache de Mapas',
+                    Text(
+                      l10n.mapCacheTitle,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -430,13 +441,13 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
                                 child: Column(
                                   children: [
                                     Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text('Tiles em cache:'),
-                                        Text(
-                                          _cachedTiles.toString(),
-                                          style: const TextStyle(
+                                       mainAxisAlignment:
+                                           MainAxisAlignment.spaceBetween,
+                                       children: [
+                                         Text(l10n.cachedTilesLabel),
+                                         Text(
+                                           _cachedTiles.toString(),
+                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16,
                                           ),
@@ -445,13 +456,13 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
                                     ),
                                     const SizedBox(height: 8),
                                     Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text('Espaço usado:'),
-                                        Text(
-                                          _formatBytes(_cacheSize),
-                                          style: const TextStyle(
+                                       mainAxisAlignment:
+                                           MainAxisAlignment.spaceBetween,
+                                       children: [
+                                         Text(l10n.usedSpaceLabel),
+                                         Text(
+                                           _formatBytes(_cacheSize),
+                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16,
                                           ),
@@ -465,7 +476,7 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
                                         onPressed:
                                             _cachedTiles > 0 ? _clearCache : null,
                                         icon: const Icon(Icons.delete),
-                                        label: const Text('Limpar Cache'),
+                                        label: Text(l10n.clearCacheLabel),
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.red,
                                           foregroundColor: Colors.white,
@@ -480,31 +491,28 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
                     const SizedBox(height: 16),
                     
                     // Instructions
-                    const Card(
+                    Card(
                       child: Padding(
-                        padding: EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(12),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
                               children: [
-                                Icon(Icons.info_outline, size: 20),
-                                SizedBox(width: 8),
+                                const Icon(Icons.info_outline, size: 20),
+                                const SizedBox(width: 8),
                                 Text(
-                                  'Como usar',
-                                  style: TextStyle(
+                                  l10n.howToUseLabel,
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ],
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             Text(
-                              '1. Toque em + para baixar área\n'
-                              '2. Toque em dois pontos no mapa\n'
-                              '3. Confirme o download\n'
-                              '4. Use mapas offline no campo!',
-                              style: TextStyle(fontSize: 12),
+                              l10n.offlineMapsHowToUse,
+                              style: const TextStyle(fontSize: 12),
                             ),
                           ],
                         ),

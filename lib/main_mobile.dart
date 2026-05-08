@@ -9,6 +9,8 @@ import 'core/theme/folium_theme.dart';
 import 'features/home/screens/home_screen.dart';
 import 'features/onboarding/screens/onboarding_screen.dart';
 
+const _defaultLocale = Locale('pt');
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -34,7 +36,7 @@ class MyApp extends ConsumerWidget {
 
     return settingsAsync.when(
       loading: () => const MaterialApp(
-        locale: Locale('pt'),
+        locale: _defaultLocale,
         localizationsDelegates: [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
@@ -53,7 +55,7 @@ class MyApp extends ConsumerWidget {
         ),
       ),
       error: (error, stack) => MaterialApp(
-        locale: const Locale('pt'),
+        locale: _defaultLocale,
         localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
@@ -65,8 +67,8 @@ class MyApp extends ConsumerWidget {
           Locale('en'),
           Locale('es'),
         ],
-        theme: FoliumTheme.lightTheme,
-        darkTheme: FoliumTheme.darkTheme,
+        theme: FoliumTheme.getLightTheme(),
+        darkTheme: FoliumTheme.getDarkTheme(),
         home: Scaffold(
           body: Center(
             child: Text('Error initializing app: $error'),
@@ -93,8 +95,14 @@ class MyApp extends ConsumerWidget {
           locale: Locale(settings.localeCode),
           
           // Folium Eco-Modern Theme
-          theme: FoliumTheme.lightTheme,
-          darkTheme: FoliumTheme.darkTheme,
+          theme: FoliumTheme.getLightTheme(
+            fontScale: settings.fontScale,
+            highContrast: settings.highContrastMode,
+          ),
+          darkTheme: FoliumTheme.getDarkTheme(
+            fontScale: settings.fontScale,
+            highContrast: settings.highContrastMode,
+          ),
           
           // Home screen (or onboarding on first launch)
           home: settings.hasCompletedOnboarding

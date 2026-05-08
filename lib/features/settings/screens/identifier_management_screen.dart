@@ -7,6 +7,7 @@ import '../../../core/services/registry_identifier_service.dart';
 import '../../../core/services/settings_service.dart';
 import '../../../core/services/identifier_export_import_service.dart';
 import '../../../models/plant_record.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../plant_detail/screens/plant_detail_screen.dart';
 
 class IdentifierManagementScreen extends ConsumerStatefulWidget {
@@ -49,9 +50,10 @@ class _IdentifierManagementScreenState
         _isLoading = false;
       });
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erro ao carregar plantas: $e'),
+            content: Text(l10n.errorLoadingPlants2(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -65,9 +67,10 @@ class _IdentifierManagementScreenState
         .toList();
 
     if (selectedPlants.isEmpty) {
+      final l10n = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Selecione pelo menos uma planta'),
+        SnackBar(
+          content: Text(l10n.selectAtLeastOnePlant),
           backgroundColor: Colors.orange,
         ),
       );
@@ -93,9 +96,10 @@ class _IdentifierManagementScreenState
         previews.add(identifier);
       } catch (e) {
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Erro ao gerar prévia: $e'),
+              content: Text(l10n.errorGeneratingPreview(e.toString())),
               backgroundColor: Colors.red,
             ),
           );
@@ -105,10 +109,13 @@ class _IdentifierManagementScreenState
     }
 
     // Show confirmation dialog
+    if (!mounted) return;
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirmar Atribuição'),
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return AlertDialog(
+        title: Text(l10n.confirmAssignTitle),
         content: SizedBox(
           width: double.maxFinite,
           child: Column(
@@ -116,7 +123,7 @@ class _IdentifierManagementScreenState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Serão atribuídos identificadores a ${selectedPlants.length} planta(s):',
+                l10n.confirmAssignBody(selectedPlants.length),
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
@@ -176,14 +183,15 @@ class _IdentifierManagementScreenState
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Confirmar'),
+            child: Text(l10n.confirmAssignTitle),
           ),
         ],
-      ),
+      );
+      },
     );
 
     if (confirmed == true) {
@@ -224,11 +232,10 @@ class _IdentifierManagementScreenState
       });
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              'Atribuídos $successCount identificador(es) com sucesso',
-            ),
+            content: Text(l10n.identifiersAssigned(successCount)),
             backgroundColor: Colors.green,
           ),
         );
@@ -241,9 +248,10 @@ class _IdentifierManagementScreenState
         _isAssigning = false;
       });
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erro ao atribuir identificadores: $e'),
+            content: Text(l10n.errorAssigningIdentifiers(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -252,34 +260,39 @@ class _IdentifierManagementScreenState
   }
 
   Future<void> _showExportDialog() async {
+    final l10n = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
     final format = await showDialog<IdentifierExportFormat>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Exportar Identificadores'),
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return AlertDialog(
+        title: Text(l10n.exportIdentifiersTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
               leading: const Icon(Icons.code),
-              title: const Text('JSON'),
-              subtitle: const Text('Formato estruturado, completo'),
+              title: Text(l10n.exportFormatJson),
+              subtitle: Text(l10n.exportFormatJsonSubtitle),
               onTap: () => Navigator.pop(context, IdentifierExportFormat.json),
             ),
             ListTile(
               leading: const Icon(Icons.table_chart),
-              title: const Text('CSV'),
-              subtitle: const Text('Planilha simples, compatível'),
+              title: Text(l10n.exportFormatCsv),
+              subtitle: Text(l10n.exportFormatCsvSubtitle),
               onTap: () => Navigator.pop(context, IdentifierExportFormat.csv),
             ),
             ListTile(
               leading: const Icon(Icons.description),
-              title: const Text('Excel'),
-              subtitle: const Text('Planilha Excel com formatação'),
+              title: Text(l10n.exportFormatExcel),
+              subtitle: Text(l10n.exportFormatExcelSubtitle),
               onTap: () => Navigator.pop(context, IdentifierExportFormat.xlsx),
             ),
           ],
         ),
-      ),
+      );
+      },
     );
 
     if (format == null) return;
@@ -304,18 +317,18 @@ class _IdentifierManagementScreenState
       if (mounted) {
         await exportService.shareExport(file);
         
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Exportação concluída'),
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(l10n.exportCompletedSuccess),
             backgroundColor: Colors.green,
           ),
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        messenger.showSnackBar(
           SnackBar(
-            content: Text('Erro ao exportar: $e'),
+            content: Text(l10n.errorExporting(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -324,6 +337,7 @@ class _IdentifierManagementScreenState
   }
 
   Future<void> _performImport() async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       final plantRepo = ref.read(plantRepositoryProvider);
       final importService = IdentifierExportImportService(plantRepo);
@@ -347,7 +361,7 @@ class _IdentifierManagementScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erro na importação: $e'),
+            content: Text(l10n.errorImporting2(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -357,18 +371,19 @@ class _IdentifierManagementScreenState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gerenciar Identificadores'),
+        title: Text(l10n.manageIdentifiersTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.upload_file),
-            tooltip: 'Importar',
+            tooltip: l10n.import,
             onPressed: _performImport,
           ),
           IconButton(
             icon: const Icon(Icons.download),
-            tooltip: 'Exportar',
+            tooltip: l10n.exportIdentifiers,
             onPressed: _showExportDialog,
           ),
           if (_selectedPlantIds.isNotEmpty)
@@ -391,13 +406,14 @@ class _IdentifierManagementScreenState
           ? FloatingActionButton.extended(
               onPressed: _isAssigning ? null : _showAssignmentPreview,
               icon: const Icon(Icons.assignment_turned_in),
-              label: Text('Atribuir (${_selectedPlantIds.length})'),
+              label: Text(l10n.assignIdentifiers(_selectedPlantIds.length)),
             )
           : null,
     );
   }
 
   Widget _buildEmptyState() {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -410,9 +426,9 @@ class _IdentifierManagementScreenState
               color: Colors.green.shade300,
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Todas as plantas possuem identificadores',
-              style: TextStyle(
+            Text(
+              l10n.allPlantsHaveIdentifiers,
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -420,7 +436,7 @@ class _IdentifierManagementScreenState
             ),
             const SizedBox(height: 8),
             Text(
-              'Não há plantas sem identificadores no momento.',
+              l10n.noPlantsWithoutIdentifiers,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade600,
@@ -434,6 +450,7 @@ class _IdentifierManagementScreenState
   }
 
   Widget _buildPlantList() {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         // Header with count and select all
@@ -462,7 +479,7 @@ class _IdentifierManagementScreenState
               ),
               Expanded(
                 child: Text(
-                  '${_plantsWithoutIdentifiers.length} planta(s) sem identificador',
+                  l10n.plantsWithoutIdentifier(_plantsWithoutIdentifiers.length),
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
@@ -498,7 +515,7 @@ class _IdentifierManagementScreenState
                     if (plant.commonName.isNotEmpty)
                       Text(plant.commonName),
                     Text(
-                      'Coletado em: ${plant.dateCollected.day}/${plant.dateCollected.month}/${plant.dateCollected.year}',
+                      l10n.collectedOn('${plant.dateCollected.day}/${plant.dateCollected.month}/${plant.dateCollected.year}'),
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey.shade600,

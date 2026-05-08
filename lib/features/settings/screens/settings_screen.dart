@@ -6,13 +6,17 @@ import '../../../core/theme/folium_theme.dart';
 import '../../../models/settings.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/modern/shimmer_loading.dart';
+import '../../../shared/widgets/rain_mode_guard.dart';
 import '../../export_import/screens/export_import_screen.dart';
 import '../../onboarding/screens/onboarding_screen.dart';
 import '../../../core/services/google_drive_backup_service.dart';
 import '../../../core/providers/auth_provider.dart';
+import '../../../core/providers/rain_mode_provider.dart';
 import '../../../core/providers/sync_provider.dart';
 import '../../auth/screens/login_screen.dart';
 import 'identifier_management_screen.dart';
+import 'templates_screen.dart';
+import 'inaturalist_auth_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -78,7 +82,23 @@ class SettingsScreen extends ConsumerWidget {
                   const SizedBox(height: FoliumTheme.space8),
                   _buildModernCard(
                     context,
-                    children: [_LanguageTile(settings: settings)],
+                    children: [
+                      _LanguageTile(settings: settings),
+                      const Divider(height: 1),
+                      _RainModeTile(settings: settings),
+                    ],
+                  ),
+
+                  const SizedBox(height: FoliumTheme.space24),
+                  _buildSectionHeader(context, l10n.accessibilityTitle),
+                  const SizedBox(height: FoliumTheme.space8),
+                  _buildModernCard(
+                    context,
+                    children: [
+                      _HighContrastTile(settings: settings),
+                      const Divider(height: 1),
+                      _FontScaleTile(settings: settings),
+                    ],
                   ),
 
                   const SizedBox(height: FoliumTheme.space24),
@@ -116,20 +136,26 @@ class SettingsScreen extends ConsumerWidget {
                   const SizedBox(height: FoliumTheme.space8),
                   _buildModernCard(
                     context,
-                    children: [_AutoSaveTile(settings: settings)],
+                    children: [
+                      _CollectionTemplatesTile(),
+                      const Divider(height: 1),
+                      _AutoSaveTile(settings: settings),
+                    ],
                   ),
 
                   const SizedBox(height: FoliumTheme.space24),
                   _buildSectionHeader(context, l10n.photos),
                   const SizedBox(height: FoliumTheme.space8),
-                  _buildModernCard(
-                    context,
-                    children: [
-                      _PhotoQualityTile(settings: settings),
-                      const Divider(height: 1),
-                      _PreserveExifTile(settings: settings),
-                    ],
-                  ),
+                   _buildModernCard(
+                     context,
+                     children: [
+                       _PhotoQualityTile(settings: settings),
+                       const Divider(height: 1),
+                       _PreserveExifTile(settings: settings),
+                       const Divider(height: 1),
+                       _PlantNetApiKeyTile(settings: settings),
+                     ],
+                   ),
 
                   const SizedBox(height: FoliumTheme.space24),
                   _buildSectionHeader(context, l10n.audioSection),
@@ -178,6 +204,45 @@ class SettingsScreen extends ConsumerWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => const ExportImportScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      const Divider(height: 1),
+                      ListTile(
+                        leading: Container(
+                          padding: const EdgeInsets.all(FoliumTheme.space8),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(
+                              FoliumTheme.radiusSmall,
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.outbox_outlined,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                        title: Text(l10n.inaturalist),
+                        subtitle: Text(
+                          settings.inatAccessToken?.trim().isNotEmpty ?? false
+                              ? l10n.inaturalistConfigured(
+                                  settings.inatUsername?.trim().isNotEmpty ?? false
+                                      ? settings.inatUsername!.trim()
+                                      : l10n.inaturalist,
+                                )
+                              : l10n.inaturalistNotConfigured,
+                        ),
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const InaturalistAuthScreen(),
                             ),
                           );
                         },
@@ -392,6 +457,37 @@ class SettingsScreen extends ConsumerWidget {
   }
 }
 
+class _RainModeTile extends ConsumerWidget {
+  final Settings settings;
+
+  const _RainModeTile({required this.settings});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return SwitchListTile(
+      secondary: Container(
+        padding: const EdgeInsets.all(FoliumTheme.space8),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondaryContainer,
+          borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+        ),
+        child: Icon(
+          Icons.water_drop,
+          color: Theme.of(context).colorScheme.secondary,
+        ),
+      ),
+      title: Text(l10n.rainModeTitle),
+      subtitle: Text(l10n.rainModeSubtitle),
+      value: settings.rainModeEnabled,
+      onChanged: (value) async {
+        await ref.read(rainModeNotifierProvider.notifier).setEnabled(value);
+      },
+    );
+  }
+}
+
 class _LanguageTile extends ConsumerWidget {
   final Settings settings;
 
@@ -399,6 +495,7 @@ class _LanguageTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsNotifierProvider.notifier);
 
     return ListTile(
@@ -410,8 +507,8 @@ class _LanguageTile extends ConsumerWidget {
         ),
         child: const Icon(Icons.language, color: FoliumTheme.tertiaryMain),
       ),
-      title: const Text('Idioma'),
-      subtitle: Text(_getLanguageName(settings.localeCode)),
+      title: Text(l10n.language),
+      subtitle: Text(_getLanguageName(l10n, settings.localeCode)),
       trailing: Icon(
         Icons.chevron_right,
         color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -419,32 +516,35 @@ class _LanguageTile extends ConsumerWidget {
       onTap: () async {
         final selected = await showDialog<String>(
           context: context,
-          builder: (context) => SimpleDialog(
-            title: const Text('Selecionar Idioma'),
-            children: [
-              SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, 'pt'),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text('Português (BR)'),
+          builder: (context) {
+            final dl10n = AppLocalizations.of(context)!;
+            return SimpleDialog(
+              title: Text(dl10n.selectLanguage),
+              children: [
+                SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context, 'pt'),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(dl10n.portugueseBR),
+                  ),
                 ),
-              ),
-              SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, 'en'),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text('English'),
+                SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context, 'en'),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(dl10n.english),
+                  ),
                 ),
-              ),
-              SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, 'es'),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text('Español'),
+                SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context, 'es'),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(dl10n.spanish),
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            );
+          },
         );
 
         if (selected != null && selected != settings.localeCode) {
@@ -454,14 +554,14 @@ class _LanguageTile extends ConsumerWidget {
     );
   }
 
-  String _getLanguageName(String code) {
+  String _getLanguageName(AppLocalizations l10n, String code) {
     switch (code) {
       case 'pt':
-        return 'Português (BR)';
+        return l10n.portugueseBR;
       case 'en':
-        return 'English';
+        return l10n.english;
       case 'es':
-        return 'Español';
+        return l10n.spanish;
       default:
         return code;
     }
@@ -475,28 +575,32 @@ class _MapProviderTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsNotifierProvider.notifier);
 
     return ListTile(
       leading: const Icon(Icons.map),
-      title: const Text('Provedor de Mapas'),
-      subtitle: Text(_getProviderName(settings.mapProvider)),
+      title: Text(l10n.mapProvider),
+      subtitle: Text(_getProviderName(l10n, settings.mapProvider)),
       trailing: const Icon(Icons.chevron_right),
       onTap: () async {
         final selected = await showDialog<MapProvider>(
           context: context,
-          builder: (context) => SimpleDialog(
-            title: const Text('Selecionar Provedor'),
-            children: MapProvider.values.map((provider) {
-              return SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, provider),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(_getProviderName(provider)),
-                ),
-              );
-            }).toList(),
-          ),
+          builder: (context) {
+            final dl10n = AppLocalizations.of(context)!;
+            return SimpleDialog(
+              title: Text(dl10n.selectMapProvider),
+              children: MapProvider.values.map((provider) {
+                return SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context, provider),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(_getProviderName(dl10n, provider)),
+                  ),
+                );
+              }).toList(),
+            );
+          },
         );
 
         if (selected != null && selected != settings.mapProvider) {
@@ -506,14 +610,14 @@ class _MapProviderTile extends ConsumerWidget {
     );
   }
 
-  String _getProviderName(MapProvider provider) {
+  String _getProviderName(AppLocalizations l10n, MapProvider provider) {
     switch (provider) {
       case MapProvider.openStreetMap:
         return 'OpenStreetMap';
       case MapProvider.mapboxStreets:
         return 'Mapbox Streets';
       case MapProvider.mapboxSatellite:
-        return 'Mapbox Satélite';
+        return l10n.mapboxSatellite;
     }
   }
 }
@@ -525,11 +629,12 @@ class _MapCacheTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsNotifierProvider.notifier);
 
     return ListTile(
       leading: const Icon(Icons.sd_storage),
-      title: const Text('Raio do Cache do Mapa'),
+      title: Text(l10n.mapCacheRadius),
       subtitle: Text('${settings.mapCacheRadius.toStringAsFixed(1)} km'),
       trailing: SizedBox(
         width: 150,
@@ -556,12 +661,13 @@ class _AutoCacheTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsNotifierProvider.notifier);
 
     return SwitchListTile(
       secondary: const Icon(Icons.cached),
-      title: const Text('Cache Automático'),
-      subtitle: const Text('Baixar tiles automaticamente'),
+      title: Text(l10n.autoCache),
+      subtitle: Text(l10n.autoDownloadTiles),
       value: settings.autoCache,
       onChanged: (value) async {
         final updatedSettings = settings..autoCache = value;
@@ -578,60 +684,64 @@ class _AutoSaveTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsNotifierProvider.notifier);
 
     return ListTile(
       leading: const Icon(Icons.save),
-      title: const Text('Intervalo de Auto-salvamento'),
+      title: Text(l10n.autoSaveInterval),
       subtitle: Text(
         settings.autoSaveInterval == 0
-            ? 'Desativado'
-            : '${settings.autoSaveInterval} segundos',
+            ? l10n.disabled
+            : l10n.nSeconds(settings.autoSaveInterval),
       ),
       trailing: const Icon(Icons.chevron_right),
       onTap: () async {
         final selected = await showDialog<int>(
           context: context,
-          builder: (context) => SimpleDialog(
-            title: const Text('Intervalo de Auto-salvamento'),
-            children: [
-              SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, 0),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text('Desativado'),
+          builder: (context) {
+            final dl10n = AppLocalizations.of(context)!;
+            return SimpleDialog(
+              title: Text(dl10n.autoSaveInterval),
+              children: [
+                SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context, 0),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(dl10n.disabled),
+                  ),
                 ),
-              ),
-              SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, 15),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text('15 segundos'),
+                SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context, 15),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(dl10n.nSeconds(15)),
+                  ),
                 ),
-              ),
-              SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, 30),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text('30 segundos'),
+                SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context, 30),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(dl10n.nSeconds(30)),
+                  ),
                 ),
-              ),
-              SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, 60),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text('60 segundos'),
+                SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context, 60),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(dl10n.nSeconds(60)),
+                  ),
                 ),
-              ),
-              SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, 120),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text('2 minutos'),
+                SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context, 120),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(dl10n.nMinutes(2)),
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            );
+          },
         );
 
         if (selected != null && selected != settings.autoSaveInterval) {
@@ -649,11 +759,12 @@ class _PhotoQualityTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsNotifierProvider.notifier);
 
     return ListTile(
       leading: const Icon(Icons.high_quality),
-      title: const Text('Qualidade de Compressão'),
+      title: Text(l10n.compressionQuality),
       subtitle: Text('${settings.photoCompressionQuality}%'),
       trailing: SizedBox(
         width: 150,
@@ -679,16 +790,52 @@ class _PreserveExifTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsNotifierProvider.notifier);
 
     return SwitchListTile(
       secondary: const Icon(Icons.info),
-      title: const Text('Preservar Metadados EXIF'),
-      subtitle: const Text('Manter informações de GPS e câmera'),
+      title: Text(l10n.preserveExifTitle),
+      subtitle: Text(l10n.preserveExifSubtitle),
       value: settings.preserveExif,
       onChanged: (value) async {
         final updatedSettings = settings..preserveExif = value;
         await notifier.updateSettings(updatedSettings);
+      },
+    );
+  }
+}
+
+class _PlantNetApiKeyTile extends ConsumerWidget {
+  final Settings settings;
+
+  const _PlantNetApiKeyTile({required this.settings});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final notifier = ref.read(settingsNotifierProvider.notifier);
+
+    return ListTile(
+      leading: const Icon(Icons.key_outlined),
+      title: Text(l10n.plantNetApiKeyTitle),
+      subtitle: Text(
+        settings.plantnetApiKey.trim().isEmpty
+            ? l10n.plantNetApiKeyNotConfigured
+            : l10n.plantNetApiKeyConfigured,
+      ),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: () async {
+        final result = await showDialog<String>(
+          context: context,
+          builder: (context) =>
+              _PlantNetApiKeyDialog(currentValue: settings.plantnetApiKey),
+        );
+
+        if (result != null && result != settings.plantnetApiKey) {
+          final updatedSettings = settings..plantnetApiKey = result.trim();
+          await notifier.updateSettings(updatedSettings);
+        }
       },
     );
   }
@@ -701,12 +848,13 @@ class _TranscriptionTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsNotifierProvider.notifier);
 
     return SwitchListTile(
       secondary: const Icon(Icons.mic),
-      title: const Text('Transcrição de Áudio'),
-      subtitle: const Text('Converter voz em texto'),
+      title: Text(l10n.transcriptionTitle),
+      subtitle: Text(l10n.transcriptionSubtitle),
       value: settings.transcriptionEnabled,
       onChanged: (value) async {
         final updatedSettings = settings..transcriptionEnabled = value;
@@ -723,44 +871,48 @@ class _TranscriptionLocaleTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsNotifierProvider.notifier);
 
     return ListTile(
       leading: const Icon(Icons.record_voice_over),
-      title: const Text('Idioma da Transcrição'),
-      subtitle: Text(_getLanguageName(settings.transcriptionLocale)),
+      title: Text(l10n.transcriptionLanguage),
+      subtitle: Text(_getLanguageName(l10n, settings.transcriptionLocale)),
       trailing: const Icon(Icons.chevron_right),
       enabled: settings.transcriptionEnabled,
       onTap: settings.transcriptionEnabled
           ? () async {
               final selected = await showDialog<String>(
                 context: context,
-                builder: (context) => SimpleDialog(
-                  title: const Text('Idioma da Transcrição'),
-                  children: [
-                    SimpleDialogOption(
-                      onPressed: () => Navigator.pop(context, 'pt'),
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text('Português (BR)'),
+                builder: (context) {
+                  final dl10n = AppLocalizations.of(context)!;
+                  return SimpleDialog(
+                    title: Text(dl10n.transcriptionLanguage),
+                    children: [
+                      SimpleDialogOption(
+                        onPressed: () => Navigator.pop(context, 'pt'),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text(dl10n.portugueseBR),
+                        ),
                       ),
-                    ),
-                    SimpleDialogOption(
-                      onPressed: () => Navigator.pop(context, 'en'),
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text('English'),
+                      SimpleDialogOption(
+                        onPressed: () => Navigator.pop(context, 'en'),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text(dl10n.english),
+                        ),
                       ),
-                    ),
-                    SimpleDialogOption(
-                      onPressed: () => Navigator.pop(context, 'es'),
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text('Español'),
+                      SimpleDialogOption(
+                        onPressed: () => Navigator.pop(context, 'es'),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text(dl10n.spanish),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  );
+                },
               );
 
               if (selected != null &&
@@ -774,14 +926,14 @@ class _TranscriptionLocaleTile extends ConsumerWidget {
     );
   }
 
-  String _getLanguageName(String code) {
+  String _getLanguageName(AppLocalizations l10n, String code) {
     switch (code) {
       case 'pt':
-        return 'Português (BR)';
+        return l10n.portugueseBR;
       case 'en':
-        return 'English';
+        return l10n.english;
       case 'es':
-        return 'Español';
+        return l10n.spanish;
       default:
         return code;
     }
@@ -795,42 +947,46 @@ class _AudioQualityTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsNotifierProvider.notifier);
 
     return ListTile(
       leading: const Icon(Icons.audiotrack),
-      title: const Text('Qualidade de Áudio'),
-      subtitle: Text(_getQualityName(settings.audioQuality)),
+      title: Text(l10n.audioQualityTitle),
+      subtitle: Text(_getQualityName(l10n, settings.audioQuality)),
       trailing: const Icon(Icons.chevron_right),
       onTap: () async {
         final selected = await showDialog<String>(
           context: context,
-          builder: (context) => SimpleDialog(
-            title: const Text('Qualidade de Áudio'),
-            children: [
-              SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, 'low'),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text('Baixa (menor tamanho)'),
+          builder: (context) {
+            final dl10n = AppLocalizations.of(context)!;
+            return SimpleDialog(
+              title: Text(dl10n.audioQualityTitle),
+              children: [
+                SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context, 'low'),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(dl10n.audioQualityLow),
+                  ),
                 ),
-              ),
-              SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, 'medium'),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text('Média'),
+                SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context, 'medium'),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(dl10n.audioQualityMedium),
+                  ),
                 ),
-              ),
-              SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, 'high'),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text('Alta (melhor qualidade)'),
+                SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context, 'high'),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(dl10n.audioQualityHigh),
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            );
+          },
         );
 
         if (selected != null && selected != settings.audioQuality) {
@@ -841,14 +997,14 @@ class _AudioQualityTile extends ConsumerWidget {
     );
   }
 
-  String _getQualityName(String quality) {
+  String _getQualityName(AppLocalizations l10n, String quality) {
     switch (quality) {
       case 'low':
-        return 'Baixa';
+        return l10n.audioQualityLowShort;
       case 'medium':
-        return 'Média';
+        return l10n.audioQualityMedium;
       case 'high':
-        return 'Alta';
+        return l10n.audioQualityHighShort;
       default:
         return quality;
     }
@@ -1009,12 +1165,13 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
             child: ElevatedButton.icon(
               onPressed: _isBackingUp
                   ? null
-                  : () async {
+                   : () async {
+                      final messenger = ScaffoldMessenger.of(context);
                       setState(() => _isBackingUp = true);
                       try {
                         await backupService.backup();
                         if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
+                          messenger.showSnackBar(
                             SnackBar(
                               content: Text(l10n.backupSuccess),
                               backgroundColor: FoliumTheme.success,
@@ -1026,7 +1183,7 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
                       } catch (e) {
                         if (mounted) {
                           final errorMsg = _localizeError(e.toString(), l10n);
-                          ScaffoldMessenger.of(context).showSnackBar(
+                          messenger.showSnackBar(
                             SnackBar(
                               content: Text(l10n.backupFailed(errorMsg)),
                               backgroundColor: FoliumTheme.error,
@@ -1100,7 +1257,7 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
     AppLocalizations l10n,
     GoogleDriveBackupService backupService,
   ) async {
-    final confirmed = await showDialog<bool>(
+    final initialConfirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.restoreConfirmTitle),
@@ -1120,6 +1277,24 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
           ),
         ],
       ),
+    );
+
+    if (initialConfirmed != true || !mounted) return;
+
+    final confirmed = await RainModeGuard.confirmDestructiveAction(
+      context: context,
+      rainModeEnabled: ref.read(rainModeEnabledProvider),
+      actionLabel: l10n.restoreFromCloud,
+      overlayTitle: l10n.rainModeOverlayTitle,
+      overlayMessage: l10n.rainModeOverlayMessage,
+      unlockHint: l10n.rainModeUnlockHold,
+      unlockAlternativeHint: l10n.rainModeUnlockTap,
+      confirmTitle: l10n.rainModeOverwriteConfirmTitle,
+      confirmMessage: l10n.restoreConfirmBody,
+      cancelLabel: l10n.cancel,
+      confirmLabel: l10n.confirm,
+      countdownLabel: l10n.rainModeCountdownLabel,
+      confirmColor: FoliumTheme.primaryMain,
     );
 
     if (confirmed != true || !mounted) return;
@@ -1155,8 +1330,9 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
   }
 
   String _localizeError(String error, AppLocalizations l10n) {
-    if (error.contains('noInternetConnection'))
+    if (error.contains('noInternetConnection')) {
       return l10n.noInternetConnection;
+    }
     if (error.contains('wifiRequired')) return l10n.wifiRequired;
     if (error.contains('noBackupFound')) return l10n.noBackupFound;
     return error;
@@ -1170,28 +1346,32 @@ class _PaginationSizeTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsNotifierProvider.notifier);
 
     return ListTile(
       leading: const Icon(Icons.view_list),
-      title: const Text('Itens por Página'),
-      subtitle: Text('${settings.paginationSize} itens'),
+      title: Text(l10n.paginationSize),
+      subtitle: Text(l10n.nItems(settings.paginationSize)),
       trailing: const Icon(Icons.chevron_right),
       onTap: () async {
         final selected = await showDialog<int>(
           context: context,
-          builder: (context) => SimpleDialog(
-            title: const Text('Itens por Página'),
-            children: [10, 20, 30, 50, 100].map((size) {
-              return SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, size),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text('$size itens'),
-                ),
-              );
-            }).toList(),
-          ),
+          builder: (context) {
+            final dl10n = AppLocalizations.of(context)!;
+            return SimpleDialog(
+              title: Text(dl10n.paginationSize),
+              children: [10, 20, 30, 50, 100].map((size) {
+                return SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context, size),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(dl10n.nItems(size)),
+                  ),
+                );
+              }).toList(),
+            );
+          },
         );
 
         if (selected != null && selected != settings.paginationSize) {
@@ -1210,12 +1390,13 @@ class _ThumbnailCacheTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsNotifierProvider.notifier);
 
     return SwitchListTile(
       secondary: const Icon(Icons.image),
-      title: const Text('Cache de Miniaturas'),
-      subtitle: const Text('Melhorar performance das listas'),
+      title: Text(l10n.thumbnailCacheTitle),
+      subtitle: Text(l10n.thumbnailCacheSubtitle),
       value: settings.enableThumbnailCache,
       onChanged: (value) async {
         final updatedSettings = settings..enableThumbnailCache = value;
@@ -1232,6 +1413,7 @@ class _UserInitialsTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsNotifierProvider.notifier);
 
     return ListTile(
@@ -1243,7 +1425,7 @@ class _UserInitialsTile extends ConsumerWidget {
         ),
         child: const Icon(Icons.person, color: FoliumTheme.primaryMain),
       ),
-      title: const Text('Iniciais do Usuário'),
+      title: Text(l10n.userInitialsTitle),
       subtitle: Text(settings.userInitials),
       trailing: const Icon(
         Icons.chevron_right,
@@ -1271,6 +1453,7 @@ class _LastRegistryNumberTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsNotifierProvider.notifier);
     final nextNumber = settings.lastRegistryNumber + 1;
     final nextId =
@@ -1285,8 +1468,8 @@ class _LastRegistryNumberTile extends ConsumerWidget {
         ),
         child: const Icon(Icons.tag, color: FoliumTheme.secondaryMain),
       ),
-      title: const Text('Último Número de Registro'),
-      subtitle: Text('${settings.lastRegistryNumber} • Próximo: $nextId'),
+      title: Text(l10n.lastRegistryNumberTitle),
+      subtitle: Text('${settings.lastRegistryNumber} • ${l10n.nextLabel(nextId)}'),
       trailing: const Icon(
         Icons.chevron_right,
         color: FoliumTheme.onSurfaceVariant,
@@ -1313,6 +1496,7 @@ class _AutoGenerateIdentifierTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsNotifierProvider.notifier);
 
     return SwitchListTile(
@@ -1324,8 +1508,8 @@ class _AutoGenerateIdentifierTile extends ConsumerWidget {
         ),
         child: const Icon(Icons.auto_awesome, color: FoliumTheme.warning),
       ),
-      title: const Text('Gerar Automaticamente'),
-      subtitle: const Text('Criar identificador ao salvar registro'),
+      title: Text(l10n.autoGenerateTitle),
+      subtitle: Text(l10n.autoGenerateSubtitle),
       value: settings.autoGenerateIdentifier,
       activeTrackColor: FoliumTheme.primaryContainer,
       onChanged: (value) async {
@@ -1361,14 +1545,15 @@ class _InitialsDialogState extends State<_InitialsDialog> {
     super.dispose();
   }
 
-  bool _validate() {
+  bool _validate(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final value = _controller.text.trim().toUpperCase();
     if (value.isEmpty) {
-      setState(() => _errorText = 'Iniciais não podem estar vazias');
+      setState(() => _errorText = l10n.initialsCannotBeEmpty);
       return false;
     }
     if (!RegExp(r'^[A-Z]{1,4}$').hasMatch(value)) {
-      setState(() => _errorText = 'Use 1-4 letras maiúsculas');
+      setState(() => _errorText = l10n.initialsFormatError);
       return false;
     }
     setState(() => _errorText = null);
@@ -1377,34 +1562,35 @@ class _InitialsDialogState extends State<_InitialsDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: const Text('Iniciais do Usuário'),
+      title: Text(l10n.userInitialsTitle),
       content: TextField(
         controller: _controller,
         decoration: InputDecoration(
-          labelText: 'Iniciais',
-          hintText: 'Ex: RC, ABC',
+          labelText: l10n.initialsLabel,
+          hintText: l10n.initialsHint,
           errorText: _errorText,
-          helperText: '1-4 letras maiúsculas',
+          helperText: l10n.initialsHelper,
         ),
         textCapitalization: TextCapitalization.characters,
         maxLength: 4,
         onChanged: (_) {
-          if (_errorText != null) _validate();
+          if (_errorText != null) _validate(context);
         },
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancelar'),
+          child: Text(l10n.cancel),
         ),
         FilledButton(
           onPressed: () {
-            if (_validate()) {
+            if (_validate(context)) {
               Navigator.pop(context, _controller.text.trim().toUpperCase());
             }
           },
-          child: const Text('Salvar'),
+          child: Text(l10n.save),
         ),
       ],
     );
@@ -1435,89 +1621,158 @@ class _RegistryNumberDialogState extends State<_RegistryNumberDialog> {
     super.dispose();
   }
 
-  bool _validate() {
+  bool _validate(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final value = _controller.text.trim();
     if (value.isEmpty) {
-      setState(() => _errorText = 'Número não pode estar vazio');
+      setState(() => _errorText = l10n.numberCannotBeEmpty);
       return false;
     }
     final number = int.tryParse(value);
     if (number == null || number < 0) {
-      setState(() => _errorText = 'Digite um número válido (≥ 0)');
+      setState(() => _errorText = l10n.enterValidNumber);
       return false;
     }
     if (number > 999999) {
-      setState(() => _errorText = 'Número muito grande (máx: 999999)');
+      setState(() => _errorText = l10n.numberTooLarge);
       return false;
     }
     setState(() => _errorText = null);
     return true;
   }
 
-  String _getHelperText() {
+  String _getHelperText(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final value = _controller.text.trim();
     if (value.isEmpty) {
-      return 'Digite o último número de registro';
+      return l10n.enterLastRegistryNumber;
     }
 
     final number = int.tryParse(value);
     if (number == null) {
-      return 'Digite apenas números';
+      return l10n.digitsOnly;
     }
 
     if (number < 0 || number > 999999) {
-      return 'Número deve estar entre 0 e 999999';
+      return l10n.numberBetweenError;
     }
 
     try {
-      return 'Próximo registro usará: ${number + 1}';
+      return l10n.nextRegistryWillUse(number + 1);
     } catch (e) {
-      return 'Erro ao calcular próximo';
+      return l10n.errorCalcNext;
     }
   }
 
   @override
-  Widget build(BuildContext context) {
+          Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: const Text('Último Número de Registro'),
+      title: Text(l10n.lastRegistryNumberTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
             controller: _controller,
             decoration: InputDecoration(
-              labelText: 'Número',
-              hintText: 'Ex: 0, 40, 1000',
+              labelText: l10n.numberLabel,
+              hintText: l10n.numberHint,
               errorText: _errorText,
-              helperText: _getHelperText(),
+              helperText: _getHelperText(context),
             ),
             keyboardType: TextInputType.number,
             maxLength: 6,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             onChanged: (_) {
-              if (_errorText != null) _validate();
+              if (_errorText != null) _validate(context);
               setState(() {}); // Update helper text
             },
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Alterar este número afetará os próximos registros criados.',
-            style: TextStyle(fontSize: 12, color: Colors.orange),
+          Text(
+            l10n.changeNumberWarning,
+            style: const TextStyle(fontSize: 12, color: Colors.orange),
           ),
         ],
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancelar'),
+          child: Text(l10n.cancel),
         ),
         FilledButton(
           onPressed: () {
-            if (_validate()) {
+            if (_validate(context)) {
               Navigator.pop(context, int.parse(_controller.text.trim()));
             }
           },
-          child: const Text('Salvar'),
+          child: Text(l10n.save),
+        ),
+      ],
+    );
+  }
+}
+
+class _PlantNetApiKeyDialog extends StatefulWidget {
+  final String currentValue;
+
+  const _PlantNetApiKeyDialog({required this.currentValue});
+
+  @override
+  State<_PlantNetApiKeyDialog> createState() => _PlantNetApiKeyDialogState();
+}
+
+class _PlantNetApiKeyDialogState extends State<_PlantNetApiKeyDialog> {
+  late final TextEditingController _controller;
+  bool _obscureText = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.currentValue);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return AlertDialog(
+      title: Text(l10n.plantNetApiKeyTitle),
+      content: TextField(
+        controller: _controller,
+        obscureText: _obscureText,
+        autocorrect: false,
+        enableSuggestions: false,
+        decoration: InputDecoration(
+          labelText: l10n.plantNetApiKeyLabel,
+          hintText: l10n.plantNetApiKeyHint,
+          helperText: l10n.plantNetApiKeyHelper,
+          suffixIcon: IconButton(
+            onPressed: () {
+              setState(() {
+                _obscureText = !_obscureText;
+              });
+            },
+            icon: Icon(
+              _obscureText ? Icons.visibility : Icons.visibility_off,
+            ),
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.cancel),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, _controller.text.trim()),
+          child: Text(l10n.save),
         ),
       ],
     );
@@ -1530,6 +1785,7 @@ class _IdentifierManagementTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(FoliumTheme.space8),
@@ -1542,8 +1798,8 @@ class _IdentifierManagementTile extends StatelessWidget {
           color: FoliumTheme.tertiaryMain,
         ),
       ),
-      title: const Text('Gerenciar Identificadores'),
-      subtitle: const Text('Atribuir identificadores a plantas existentes'),
+      title: Text(l10n.manageIdentifiers),
+      subtitle: Text(l10n.manageIdentifiersSubtitle),
       trailing: const Icon(
         Icons.chevron_right,
         color: FoliumTheme.onSurfaceVariant,
@@ -1560,12 +1816,45 @@ class _IdentifierManagementTile extends StatelessWidget {
   }
 }
 
+class _CollectionTemplatesTile extends StatelessWidget {
+  const _CollectionTemplatesTile();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(FoliumTheme.space8),
+        decoration: BoxDecoration(
+          color: FoliumTheme.primaryContainer,
+          borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+        ),
+        child: const Icon(Icons.library_books, color: FoliumTheme.primaryMain),
+      ),
+      title: Text(l10n.collectionTemplatesTitle),
+      subtitle: Text(l10n.collectionTemplatesSubtitle),
+      trailing: const Icon(
+        Icons.chevron_right,
+        color: FoliumTheme.onSurfaceVariant,
+      ),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const TemplatesScreen()),
+        );
+      },
+    );
+  }
+}
+
 class _AccountSection extends ConsumerWidget {
   final Settings settings;
   const _AccountSection({required this.settings});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final authState = ref.watch(authNotifierProvider);
 
     return Container(
@@ -1591,7 +1880,7 @@ class _AccountSection extends ConsumerWidget {
               subtitle: Text(
                 authState.user.email.isNotEmpty
                     ? authState.user.email
-                    : 'Conectado',
+                    : l10n.connected,
               ),
             ),
             const Divider(height: 1),
@@ -1604,7 +1893,7 @@ class _AccountSection extends ConsumerWidget {
                 ),
                 child: Icon(Icons.logout, color: FoliumTheme.error),
               ),
-              title: const Text('Sair da conta'),
+              title: Text(l10n.signOut),
               onTap: () async {
                 await ref.read(authNotifierProvider.notifier).logout();
               },
@@ -1619,8 +1908,8 @@ class _AccountSection extends ConsumerWidget {
                 ),
                 child: const Icon(Icons.login, color: FoliumTheme.primaryMain),
               ),
-              title: const Text('Entrar na conta'),
-              subtitle: const Text('Sincronize seus dados na nuvem'),
+              title: Text(l10n.signIn),
+              subtitle: Text(l10n.syncCloud),
               trailing: const Icon(
                 Icons.chevron_right,
                 color: FoliumTheme.onSurfaceVariant,
@@ -1645,6 +1934,7 @@ class _SyncSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final authState = ref.watch(authNotifierProvider);
     final syncState = ref.watch(syncNotifierProvider);
     final isAuthenticated = authState is AuthAuthenticated;
@@ -1679,14 +1969,14 @@ class _SyncSection extends ConsumerWidget {
                     ),
             ),
             title: Text(
-              syncState.isSyncing ? 'Sincronizando...' : 'Sincronizar agora',
+              syncState.isSyncing ? l10n.syncing2 : l10n.syncNow,
             ),
             subtitle: Text(
               !isAuthenticated
-                  ? 'Faça login para sincronizar'
+                  ? l10n.loginToSync
                   : syncState.lastSyncAt != null
-                  ? 'Última: ${_formatDateTime(syncState.lastSyncAt!)}'
-                  : 'Nunca sincronizado',
+                  ? l10n.lastSync(_formatDateTime(syncState.lastSyncAt!))
+                  : l10n.neverSynced,
             ),
             trailing: isAuthenticated && !syncState.isSyncing
                 ? const Icon(
@@ -1713,7 +2003,7 @@ class _SyncSection extends ConsumerWidget {
                 ),
                 child: Icon(Icons.error_outline, color: FoliumTheme.error),
               ),
-              title: const Text('Erro na sincronização'),
+              title: Text(l10n.syncErrorTitle),
               subtitle: Text(
                 syncState.lastError!,
                 maxLines: 2,
@@ -1735,11 +2025,15 @@ class _SyncSection extends ConsumerWidget {
                   color: FoliumTheme.primaryMain,
                 ),
               ),
-              title: const Text('Último resultado'),
+              title: Text(l10n.lastSyncResult),
               subtitle: Text(
-                '${syncState.lastResult!.pushed} enviados, '
-                '${syncState.lastResult!.pulled} recebidos'
-                '${syncState.lastResult!.conflicts > 0 ? ', ${syncState.lastResult!.conflicts} conflitos' : ''}',
+                l10n.syncResultSummary(
+                  syncState.lastResult!.pushed,
+                  syncState.lastResult!.pulled,
+                ) +
+                (syncState.lastResult!.conflicts > 0
+                    ? l10n.syncResultConflicts(syncState.lastResult!.conflicts)
+                    : ''),
               ),
             ),
           ],
@@ -1751,5 +2045,80 @@ class _SyncSection extends ConsumerWidget {
   String _formatDateTime(DateTime dateTime) {
     return '${dateTime.day}/${dateTime.month}/${dateTime.year} '
         'às ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
+  }
+}
+
+class _HighContrastTile extends ConsumerWidget {
+  final Settings settings;
+
+  const _HighContrastTile({required this.settings});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final notifier = ref.read(settingsNotifierProvider.notifier);
+
+    return SwitchListTile(
+      secondary: Container(
+        padding: const EdgeInsets.all(FoliumTheme.space8),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+        ),
+        child: Icon(
+          Icons.contrast,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+      ),
+      title: Text(l10n.highContrast),
+      subtitle: Text(l10n.highContrastSubtitle),
+      value: settings.highContrastMode,
+      onChanged: (value) async {
+        final updatedSettings = settings..highContrastMode = value;
+        await notifier.updateSettings(updatedSettings);
+      },
+    );
+  }
+}
+
+class _FontScaleTile extends ConsumerWidget {
+  final Settings settings;
+
+  const _FontScaleTile({required this.settings});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final notifier = ref.read(settingsNotifierProvider.notifier);
+
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(FoliumTheme.space8),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondaryContainer,
+          borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+        ),
+        child: Icon(
+          Icons.text_fields,
+          color: Theme.of(context).colorScheme.secondary,
+        ),
+      ),
+      title: Text(l10n.fontSize),
+      subtitle: Text('${(settings.fontScale * 100).toInt()}%'),
+      trailing: SizedBox(
+        width: 150,
+        child: Slider(
+          value: settings.fontScale,
+          min: 0.8,
+          max: 2.0,
+          divisions: 12,
+          label: '${(settings.fontScale * 100).toInt()}%',
+          onChanged: (value) async {
+            final updatedSettings = settings..fontScale = value;
+            await notifier.updateSettings(updatedSettings);
+          },
+        ),
+      ),
+    );
   }
 }

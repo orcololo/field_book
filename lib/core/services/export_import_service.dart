@@ -3,11 +3,14 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:file_picker/file_picker.dart';
+
+import '../../models/determination.dart';
 import '../../models/plant_record.dart';
 import '../../models/measurement.dart';
 import '../../models/photo_metadata.dart';
 import '../../models/plant_category.dart';
 import '../../models/collection_session.dart';
+import '../../models/gps_point.dart';
 import '../repositories/plant_repository.dart';
 import '../repositories/session_repository.dart';
 
@@ -38,12 +41,30 @@ class ExportImportService {
         'dateCollected': plant.dateCollected.toIso8601String(),
         'latitude': plant.latitude,
         'longitude': plant.longitude,
+        'locality': plant.locality,
+        'municipality': plant.municipality,
+        'state': plant.state,
+        'country': plant.country,
         'altitude': plant.altitude,
         'temperature': plant.temperature,
         'humidity': plant.humidity,
         'weatherCondition': plant.weatherCondition,
+        'weatherNotes': plant.weatherNotes,
+        'moonPhase': plant.moonPhase,
         'windSpeed': plant.windSpeed,
         'category': plant.category.name,
+        'determinations': plant.determinations
+            .map(
+              (d) => {
+                'determinedBy': d.determinedBy,
+                'determinedAt': d.determinedAt.toIso8601String(),
+                'scientificName': d.scientificName,
+                'family': d.family,
+                'notes': d.notes,
+                'basis': d.basis,
+              },
+            )
+            .toList(),
         'measurements': plant.measurements
             .map((m) => {'label': m.label, 'value': m.value, 'unit': m.unit})
             .toList(),
@@ -61,7 +82,11 @@ class ExportImportService {
             .toList(),
         'audioNotePaths': plant.audioNotePaths,
         'audioTranscripts': plant.audioTranscripts,
+        'duplicateOf': plant.duplicateOf,
+        'duplicateUuids': plant.duplicateUuids,
         'notes': plant.notes,
+        'iNaturalistId': plant.iNaturalistId,
+        'iNaturalistSyncedAt': plant.iNaturalistSyncedAt?.toIso8601String(),
         'raiz': plant.raiz,
         'caule': plant.caule,
         'cauleTipoCasca': plant.cauleTipoCasca,
@@ -120,6 +145,17 @@ class ExportImportService {
               'teamMembers': s.teamMembers,
               'notes': s.notes,
               'shareCode': s.shareCode,
+              'track': s.track
+                  .map(
+                    (point) => {
+                      'latitude': point.latitude,
+                      'longitude': point.longitude,
+                      'altitude': point.altitude,
+                      'timestamp': point.timestamp.toIso8601String(),
+                    },
+                  )
+                  .toList(),
+              'trackGeoJson': _buildTrackGeoJson(s),
               'isArchived': s.isArchived,
               'createdAt': s.createdAt.toIso8601String(),
             },
@@ -139,12 +175,12 @@ class ExportImportService {
     // CSV Header
     buffer.writeln(
       'UUID,Nome Científico,Nome Popular,Família,Gênero,Espécie,'
-      'Data Coleta,Latitude,Longitude,Categoria,Habitat,'
+      'Data Coleta,Latitude,Longitude,Localidade,Município,Estado,País,Categoria,Habitat,'
       'Fotos,Notas Áudio,Observações,Raiz,Caule,Caule Tipo Casca,Caule Cor,Caule Tamanho,Caule Tamanho Unid,Caule Circunf,Caule Circunf Unid,Caule Seiva,Caule Descrição Seiva,Folha Descrição,Folha Bainha,Folha Pecíolo,Folha Lâmina,'
       'Flor Descrição,Flor Inflorescência,Flor Cor,Flor Tamanho,Flor Tamanho Unid,'
       'Fruto Descrição,Fruto Cor,Fruto Formato,Fruto Tamanho,Fruto Tamanho Unid,'
       'Semente Descrição,Semente Cor,Semente Formato,Semente Tamanho,Semente Tamanho Unid,'
-      'Altitude,Temperatura,Umidade,Condição Climática,Velocidade Vento,'
+      'Altitude,Temperatura,Umidade,Condição Climática,Notas Climáticas,Fase Lunar,Velocidade Vento,'
       'Rascunho,Criado em,Atualizado em',
     );
 
@@ -161,6 +197,10 @@ class ExportImportService {
           _formatDate(plant.dateCollected),
           plant.latitude?.toStringAsFixed(6) ?? '',
           plant.longitude?.toStringAsFixed(6) ?? '',
+          _escapeCsv(plant.locality ?? ''),
+          _escapeCsv(plant.municipality ?? ''),
+          _escapeCsv(plant.state ?? ''),
+          _escapeCsv(plant.country ?? ''),
           _getCategoryName(plant.category),
           _escapeCsv(plant.habitat ?? ''),
           plant.photoPaths.length.toString(),
@@ -199,6 +239,8 @@ class ExportImportService {
           plant.temperature?.toString() ?? '',
           plant.humidity?.toString() ?? '',
           _escapeCsv(plant.weatherCondition ?? ''),
+          _escapeCsv(plant.weatherNotes ?? ''),
+          _escapeCsv(plant.moonPhase ?? ''),
           plant.windSpeed?.toString() ?? '',
           plant.isDraft ? 'Sim' : 'Não',
           _formatDate(plant.createdAt),
@@ -218,10 +260,12 @@ class ExportImportService {
 
     // Darwin Core Standard headers
     buffer.writeln(
-      'occurrenceID,scientificName,vernacularName,family,genus,'
-      'specificEpithet,eventDate,decimalLatitude,decimalLongitude,'
-      'habitat,basisOfRecord,recordedBy,minimumElevationInMeters,'
-      'eventRemarks,occurrenceRemarks,'
+      'occurrenceID,catalogNumber,scientificName,vernacularName,family,genus,'
+      'specificEpithet,identificationQualifier,eventDate,decimalLatitude,decimalLongitude,'
+      'habitat,substrate,verbatimLocality,associatedTaxa,'
+      'basisOfRecord,recordedBy,recordNumber,individualCount,'
+      'minimumElevationInMeters,phenology,collectionCode,'
+      'eventRemarks,occurrenceRemarks,identificationRemarks,'
       'modified',
     );
 
@@ -229,20 +273,30 @@ class ExportImportService {
       buffer.writeln(
         [
           _escapeCsv(plant.uuid),
+          _escapeCsv(plant.registryIdentifier ?? ''),
           _escapeCsv(plant.scientificName),
           _escapeCsv(plant.commonName),
           _escapeCsv(plant.family ?? ''),
           _escapeCsv(plant.genus ?? ''),
           _escapeCsv(plant.species ?? ''),
+          _escapeCsv(plant.determinationQualifier ?? ''),
           _formatDateIso(plant.dateCollected),
           plant.latitude?.toStringAsFixed(6) ?? '',
           plant.longitude?.toStringAsFixed(6) ?? '',
           _escapeCsv(plant.habitat ?? ''),
+          _escapeCsv(plant.substrate ?? ''),
+          _escapeCsv(plant.vegetationType ?? ''),
+          _escapeCsv(plant.associatedTaxa ?? ''),
           'HumanObservation',
           _escapeCsv(plant.contributorName ?? ''),
+          _escapeCsv(plant.collectorNumber ?? ''),
+          plant.numberOfIndividuals?.toString() ?? '',
           plant.altitude?.toString() ?? '',
+          _escapeCsv(plant.phenologicalState?.name ?? ''),
+          _escapeCsv(plant.topography ?? ''),
           '', // eventRemarks
           _escapeCsv(plant.notes ?? ''),
+          _escapeCsv(_buildIdentificationRemarks(plant)),
           _formatDateIso(plant.updatedAt),
         ].join(','),
       );
@@ -295,15 +349,37 @@ class ExportImportService {
             )
             ..latitude = (plantData['latitude'] as num?)?.toDouble()
             ..longitude = (plantData['longitude'] as num?)?.toDouble()
+            ..locality = plantData['locality'] as String?
+            ..municipality = plantData['municipality'] as String?
+            ..state = plantData['state'] as String?
+            ..country = plantData['country'] as String?
             ..altitude = (plantData['altitude'] as num?)?.toDouble()
             ..temperature = (plantData['temperature'] as num?)?.toDouble()
             ..humidity = (plantData['humidity'] as num?)?.toDouble()
             ..weatherCondition = plantData['weatherCondition'] as String?
+            ..weatherNotes = plantData['weatherNotes'] as String?
+            ..moonPhase = plantData['moonPhase'] as String?
             ..windSpeed = (plantData['windSpeed'] as num?)?.toDouble()
             ..category = PlantCategory.values.firstWhere(
               (c) => c.name == plantData['category'],
               orElse: () => PlantCategory.herbs,
             )
+            ..determinations =
+                (plantData['determinations'] as List<dynamic>?)
+                    ?.map(
+                      (d) => Determination()
+                        ..determinedBy = d['determinedBy'] as String? ?? ''
+                        ..determinedAt = DateTime.parse(
+                          d['determinedAt'] as String? ??
+                              DateTime.now().toIso8601String(),
+                        )
+                        ..scientificName = d['scientificName'] as String? ?? ''
+                        ..family = d['family'] as String?
+                        ..notes = d['notes'] as String?
+                        ..basis = d['basis'] as String?,
+                    )
+                    .toList() ??
+                []
             ..measurements =
                 (plantData['measurements'] as List<dynamic>?)
                     ?.map(
@@ -337,7 +413,15 @@ class ExportImportService {
             ..audioTranscripts = List<String>.from(
               plantData['audioTranscripts'] as List<dynamic>? ?? [],
             )
+            ..duplicateOf = plantData['duplicateOf'] as String?
+            ..duplicateUuids = List<String>.from(
+              plantData['duplicateUuids'] as List<dynamic>? ?? [],
+            )
             ..notes = plantData['notes'] as String?
+            ..iNaturalistId = plantData['iNaturalistId'] as String?
+            ..iNaturalistSyncedAt = plantData['iNaturalistSyncedAt'] != null
+                ? DateTime.parse(plantData['iNaturalistSyncedAt'] as String)
+                : null
             ..raiz = plantData['raiz'] as String?
             ..caule = plantData['caule'] as String?
             ..cauleTipoCasca = plantData['cauleTipoCasca'] as String?
@@ -377,6 +461,7 @@ class ExportImportService {
             ..createdAt = DateTime.parse(plantData['createdAt'] as String)
             ..updatedAt = DateTime.parse(plantData['updatedAt'] as String);
 
+          plant.applyLatestDetermination();
           plant.updateFtsFields();
 
           if (existing != null) {
@@ -443,6 +528,22 @@ class ExportImportService {
               )
               ..notes = sessionData['notes'] as String?
               ..shareCode = sessionData['shareCode'] as String?
+              ..track =
+                  (sessionData['track'] as List<dynamic>?)
+                      ?.map(
+                        (point) => GpsPoint()
+                          ..latitude =
+                              (point['latitude'] as num?)?.toDouble() ?? 0
+                          ..longitude =
+                              (point['longitude'] as num?)?.toDouble() ?? 0
+                          ..altitude = (point['altitude'] as num?)?.toDouble()
+                          ..timestamp = DateTime.parse(
+                            point['timestamp'] as String? ??
+                                DateTime.now().toIso8601String(),
+                          ),
+                      )
+                      .toList() ??
+                  []
               ..isArchived = sessionData['isArchived'] as bool? ?? false
               ..createdAt = DateTime.parse(sessionData['createdAt'] as String);
 
@@ -494,6 +595,53 @@ class ExportImportService {
 
   String _formatDateIso(DateTime date) {
     return date.toIso8601String().split('T').first;
+  }
+
+  Map<String, dynamic>? _buildTrackGeoJson(CollectionSession session) {
+    if (session.track.isEmpty) {
+      return null;
+    }
+
+    return {
+      'type': 'LineString',
+      'coordinates': session.track
+          .map(
+            (point) => [
+              point.longitude,
+              point.latitude,
+              if (point.altitude != null) point.altitude,
+            ],
+          )
+          .toList(),
+    };
+  }
+
+  String _buildIdentificationRemarks(PlantRecord plant) {
+    if (plant.determinations.isEmpty) {
+      return '';
+    }
+
+    final entries = [...plant.determinations]
+      ..sort((a, b) => a.determinedAt.compareTo(b.determinedAt));
+
+    return entries
+        .map((determination) {
+          final date = _formatDateIso(determination.determinedAt);
+          final family = (determination.family?.isNotEmpty ?? false)
+              ? ' [${determination.family}]'
+              : '';
+          final by = determination.determinedBy.isNotEmpty
+              ? ' by ${determination.determinedBy}'
+              : '';
+          final basis = (determination.basis?.isNotEmpty ?? false)
+              ? ' (${determination.basis})'
+              : '';
+          final notes = (determination.notes?.isNotEmpty ?? false)
+              ? ': ${determination.notes}'
+              : '';
+          return '$date - ${determination.scientificName}$family$by$basis$notes';
+        })
+        .join(' | ');
   }
 
   String _getCategoryName(PlantCategory category) {

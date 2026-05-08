@@ -9,6 +9,10 @@ import '../../../shared/widgets/modern/modern_plant_card.dart';
 import '../../../shared/widgets/modern/empty_state_widget.dart';
 import '../../../shared/widgets/modern/shimmer_loading.dart';
 import '../../../shared/widgets/modern/glass_app_bar.dart';
+import '../../../shared/widgets/rain_mode_guard.dart';
+import '../../../shared/widgets/modern/sync_status_icon.dart';
+import '../../../core/providers/sync_provider.dart';
+import '../../../core/providers/rain_mode_provider.dart';
 import '../../plant_form/screens/plant_form_screen.dart';
 import '../../plant_detail/screens/plant_detail_screen.dart';
 import '../../settings/screens/settings_screen.dart';
@@ -16,8 +20,10 @@ import '../../sessions/screens/session_form_screen.dart';
 import '../../sessions/screens/session_detail_screen.dart';
 import '../../statistics/screens/statistics_screen.dart';
 import '../../search/screens/search_screen.dart';
+import '../../export_import/screens/export_import_screen.dart';
 import '../../map/screens/map_view_screen.dart';
 import '../../quick_capture/screens/quick_capture_screen.dart';
+import '../../sync/screens/conflict_resolution_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -44,6 +50,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final syncState = ref.watch(syncNotifierProvider);
+    final conflictRecordsAsync = ref.watch(conflictRecordsProvider);
+    final hasConflictBanner = conflictRecordsAsync.valueOrNull?.isNotEmpty ?? false;
+    final rainModeEnabled = ref.watch(rainModeEnabledProvider);
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -57,7 +67,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             : null,
         title: _isSelectMode ? l10n.nSelected(_selectedIds.length) : null,
         actions: [
+          if (!_isSelectMode && rainModeEnabled)
+            Padding(
+              padding: const EdgeInsets.only(right: FoliumTheme.space8),
+              child: Tooltip(
+                message: l10n.rainModeBadge,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: FoliumTheme.space10,
+                    vertical: FoliumTheme.space8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colorScheme.tertiaryContainer.withValues(alpha: 0.95),
+                    borderRadius: BorderRadius.circular(FoliumTheme.radiusFull),
+                    border: Border.all(
+                      color: colorScheme.tertiary.withValues(alpha: 0.28),
+                    ),
+                  ),
+                  child: Text(
+                    '🌧️',
+                    style: theme.textTheme.titleMedium,
+                  ),
+                ),
+              ),
+            ),
           if (_selectedIndex == 0 && !_isSelectMode) ...[
+            IconButton(
+              tooltip: syncState.isSyncing 
+                ? l10n.syncing 
+                : syncState.lastError != null 
+                  ? l10n.syncErrorTitle 
+                  : l10n.syncNow,
+              icon: const SyncStatusIcon(),
+              onPressed: syncState.isSyncing 
+                ? null 
+                : () => ref.read(syncNotifierProvider.notifier).sync(),
+            ),
             IconButton(
               tooltip: l10n.selectMode,
               icon: Container(
@@ -120,30 +165,87 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ],
         ],
       ),
-      body: IndexedStack(
-        index: _selectedIndex,
+      body: Column(
         children: [
-          _PlantsTab(
-            key: ValueKey('$_selectedIndex-$_isSelectMode'),
-            isSelectMode: _isSelectMode,
-            selectedIds: _selectedIds,
-            onToggleSelect: (id) {
-              setState(() {
-                if (_selectedIds.contains(id)) {
-                  _selectedIds.remove(id);
-                } else {
-                  _selectedIds.add(id);
+          if (_selectedIndex == 0)
+            conflictRecordsAsync.when(
+              loading: () => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
+              data: (conflicts) {
+                if (conflicts.isEmpty) {
+                  return const SizedBox.shrink();
                 }
-              });
-            },
-            onPlantsLoaded: (ids) {
-              _allPlantIds = ids;
-            },
+
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    FoliumTheme.space16,
+                    88,
+                    FoliumTheme.space16,
+                    0,
+                  ),
+                  child: MaterialBanner(
+                    backgroundColor: colorScheme.errorContainer,
+                    content: Text(
+                      l10n.syncConflictBannerMessage(conflicts.length),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onErrorContainer,
+                      ),
+                    ),
+                    leading: Icon(
+                      Icons.sync_problem_outlined,
+                      color: colorScheme.onErrorContainer,
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const ConflictResolutionScreen(),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          l10n.resolveConflicts,
+                          style: TextStyle(
+                            color: colorScheme.onErrorContainer,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          Expanded(
+            child: IndexedStack(
+              index: _selectedIndex,
+              children: [
+                _PlantsTab(
+                  key: ValueKey('$_selectedIndex-$_isSelectMode'),
+                  hasConflictBanner: hasConflictBanner,
+                  isSelectMode: _isSelectMode,
+                  selectedIds: _selectedIds,
+                  onToggleSelect: (id) {
+                    setState(() {
+                      if (_selectedIds.contains(id)) {
+                        _selectedIds.remove(id);
+                      } else {
+                        _selectedIds.add(id);
+                      }
+                    });
+                  },
+                  onPlantsLoaded: (ids) {
+                    _allPlantIds = ids;
+                  },
+                ),
+                const _SessionsTab(),
+                const MapViewScreen(),
+                const StatisticsScreen(),
+                const SettingsScreen(),
+              ],
+            ),
           ),
-          const _SessionsTab(),
-          const MapViewScreen(),
-          const StatisticsScreen(),
-          const SettingsScreen(),
         ],
       ),
       bottomNavigationBar: NavigationBar(
@@ -186,10 +288,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       floatingActionButton: _isSelectMode
           ? null
           : _selectedIndex == 0
-          ? FloatingActionButton.extended(
-              onPressed: () => _showNewPlantOptions(context, l10n),
-              icon: const Icon(Icons.add),
-              label: Text(l10n.newPlant),
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                FloatingActionButton.small(
+                  heroTag: 'rain_mode_toggle_fab',
+                  tooltip: rainModeEnabled
+                      ? l10n.disableRainModeQuickAction
+                      : l10n.enableRainModeQuickAction,
+                  onPressed: () async {
+                    await ref.read(rainModeNotifierProvider.notifier).toggle();
+                    if (!context.mounted) return;
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          rainModeEnabled
+                              ? l10n.rainModeDisabledMessage
+                              : l10n.rainModeEnabledMessage,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    '🌧️',
+                    style: theme.textTheme.titleMedium,
+                  ),
+                ),
+                const SizedBox(height: FoliumTheme.space12),
+                FloatingActionButton.extended(
+                  heroTag: 'new_plant_fab',
+                  onPressed: () => _showNewPlantOptions(context, l10n),
+                  icon: const Icon(Icons.add),
+                  label: Text(l10n.newPlant),
+                ),
+              ],
             )
           : _selectedIndex == 1
           ? FloatingActionButton.extended(
@@ -221,7 +355,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Future<void> _bulkDelete(BuildContext context, AppLocalizations l10n) async {
-    final confirmed = await showDialog<bool>(
+    final messenger = ScaffoldMessenger.of(context);
+    final initialConfirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(l10n.deleteSelected),
@@ -241,27 +376,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ],
       ),
     );
+    if (initialConfirmed != true || !mounted) return;
+    final confirmed = await RainModeGuard.confirmDestructiveAction(
+      context: context,
+      rainModeEnabled: ref.read(rainModeEnabledProvider),
+      actionLabel: l10n.deleteSelected,
+      overlayTitle: l10n.rainModeOverlayTitle,
+      overlayMessage: l10n.rainModeOverlayMessage,
+      unlockHint: l10n.rainModeUnlockHold,
+      unlockAlternativeHint: l10n.rainModeUnlockTap,
+      confirmTitle: l10n.rainModeDeleteConfirmTitle,
+      confirmMessage: l10n.confirmDeleteCount(_selectedIds.length),
+      cancelLabel: l10n.cancel,
+      confirmLabel: l10n.delete,
+      countdownLabel: l10n.rainModeCountdownLabel,
+      confirmColor: Theme.of(context).colorScheme.error,
+    );
     if (confirmed != true || !mounted) return;
     final plantRepo = ref.read(plantRepositoryProvider);
     await plantRepo.bulkDelete(_selectedIds.toList());
     if (!mounted) return;
     final count = _selectedIds.length;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(l10n.nPlantsDeleted(count))));
+    messenger.showSnackBar(SnackBar(content: Text(l10n.nPlantsDeleted(count))));
     _exitSelectMode();
   }
 
   Future<void> _bulkExport(BuildContext context) async {
-    final l10n = AppLocalizations.of(context)!;
+    final navigator = Navigator.of(context);
     final plantRepo = ref.read(plantRepositoryProvider);
     final plants = await plantRepo.getByIds(_selectedIds.toList());
     if (!mounted || plants.isEmpty) return;
-    // Navigate to export with pre-selected plants
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(l10n.exportSelected)));
     _exitSelectMode();
+    navigator.push(
+      MaterialPageRoute(
+        builder: (_) => ExportImportScreen(preSelectedPlants: plants),
+      ),
+    );
   }
 
   void _showNewPlantOptions(BuildContext context, AppLocalizations l10n) {
@@ -332,6 +482,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 }
 
 class _PlantsTab extends ConsumerStatefulWidget {
+  final bool hasConflictBanner;
   final bool isSelectMode;
   final Set<int> selectedIds;
   final ValueChanged<int>? onToggleSelect;
@@ -339,6 +490,7 @@ class _PlantsTab extends ConsumerStatefulWidget {
 
   const _PlantsTab({
     super.key,
+    this.hasConflictBanner = false,
     this.isSelectMode = false,
     this.selectedIds = const {},
     this.onToggleSelect,
@@ -370,8 +522,8 @@ class _PlantsTabState extends ConsumerState<_PlantsTab> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return ListView.builder(
             itemCount: 3,
-            padding: const EdgeInsets.only(
-              top: 80, // Account for app bar
+            padding: EdgeInsets.only(
+              top: widget.hasConflictBanner ? 16 : 80,
               left: 0,
               right: 0,
               bottom: 100, // Account for bottom navigation bar
@@ -384,8 +536,9 @@ class _PlantsTabState extends ConsumerState<_PlantsTab> {
 
         if (snapshot.hasError) {
           return Padding(
-            padding: const EdgeInsets.only(top: 80),
+            padding: EdgeInsets.only(top: widget.hasConflictBanner ? 16 : 80),
             child: EmptyStates.error(
+              context: context,
               message: '${l10n.errorOccurred}: ${snapshot.error}',
               onRetry: _refresh,
             ),
@@ -402,8 +555,8 @@ class _PlantsTabState extends ConsumerState<_PlantsTab> {
 
         if (plants.isEmpty) {
           return Padding(
-            padding: const EdgeInsets.only(top: 80),
-            child: EmptyStates.noPlants(),
+            padding: EdgeInsets.only(top: widget.hasConflictBanner ? 16 : 80),
+            child: EmptyStates.noPlants(context: context),
           );
         }
 
@@ -414,8 +567,8 @@ class _PlantsTabState extends ConsumerState<_PlantsTab> {
           },
           child: ListView.builder(
             itemCount: plants.length,
-            padding: const EdgeInsets.only(
-              top: 80, // Account for app bar
+            padding: EdgeInsets.only(
+              top: widget.hasConflictBanner ? 16 : 80,
               left: 0,
               right: 0,
               bottom: 100, // Account for bottom navigation bar
@@ -529,7 +682,7 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
         if (sessions.isEmpty) {
           return Padding(
             padding: const EdgeInsets.only(top: 80),
-            child: EmptyStates.noSessions(),
+            child: EmptyStates.noSessions(context: context),
           );
         }
 

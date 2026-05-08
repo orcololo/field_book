@@ -38,6 +38,9 @@ class ApiEndpoints {
   static const String syncPush = '$basePath/sync/push';
   static const String syncPull = '$basePath/sync/pull';
 
+  // ── Taxa ──────────────────────────────────────────────
+  static const String taxaSearch = '$basePath/taxa/search';
+
   // ── Health ────────────────────────────────────────────
   static const String health = '$basePath/health';
 }

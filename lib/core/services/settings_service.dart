@@ -83,6 +83,12 @@ class SettingsNotifier extends _$SettingsNotifier {
     await updateSettings(settings);
   }
 
+  Future<void> setRainModeEnabled(bool enabled) async {
+    final settings = await future;
+    settings.rainModeEnabled = enabled;
+    await updateSettings(settings);
+  }
+
   Future<void> setHasCompletedOnboarding(bool completed) async {
     final settings = await future;
     settings.hasCompletedOnboarding = completed;
@@ -98,6 +104,20 @@ class SettingsNotifier extends _$SettingsNotifier {
   Future<void> updateLastLocalBackup() async {
     final settings = await future;
     settings.lastLocalBackup = DateTime.now();
+    await updateSettings(settings);
+  }
+
+  Future<void> setInaturalistCredentials({
+    required String? accessToken,
+    required String? username,
+  }) async {
+    final settings = await future;
+    settings.inatAccessToken = accessToken?.trim().isEmpty ?? true
+        ? null
+        : accessToken!.trim();
+    settings.inatUsername = username?.trim().isEmpty ?? true
+        ? null
+        : username!.trim();
     await updateSettings(settings);
   }
 }

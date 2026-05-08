@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../../l10n/app_localizations.dart';
 import '../../../core/theme/folium_theme.dart';
 
 /// Modern empty state widget with organic design
@@ -137,60 +139,82 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
 class EmptyStates {
   EmptyStates._();
 
-  static Widget noPlants({VoidCallback? onAddPlant}) {
+  static Widget noPlants({
+    required BuildContext context,
+    VoidCallback? onAddPlant,
+  }) {
+    final l10n = AppLocalizations.of(context)!;
+
     return EmptyStateWidget(
       icon: Icons.eco,
-      title: 'Nenhuma planta registrada',
-      message: 'Comece sua coleção adicionando a primeira planta',
-      actionLabel: 'Adicionar Planta',
+      title: l10n.noPlants,
+      message: l10n.startCollectionMsg,
+      actionLabel: l10n.addPlant,
       onAction: onAddPlant,
     );
   }
 
-  static Widget noSessions({VoidCallback? onCreateSession}) {
+  static Widget noSessions({
+    required BuildContext context,
+    VoidCallback? onCreateSession,
+  }) {
+    final l10n = AppLocalizations.of(context)!;
+
     return EmptyStateWidget(
       icon: Icons.explore,
-      title: 'Nenhuma sessão de coleta',
-      message: 'Crie uma sessão para organizar suas coletas de campo',
-      actionLabel: 'Nova Sessão',
+      title: l10n.noCollectionSessions,
+      message: l10n.createSessionMsg,
+      actionLabel: l10n.newSession,
       onAction: onCreateSession,
       iconColor: FoliumTheme.tertiaryMain,
     );
   }
 
-  static Widget noResults({String? query}) {
+  static Widget noResults({required BuildContext context, String? query}) {
+    final l10n = AppLocalizations.of(context)!;
+
     return EmptyStateWidget(
       icon: Icons.search_off,
-      title: 'Nenhum resultado encontrado',
+      title: l10n.noResultsFound,
       message: query != null
-          ? 'Não encontramos resultados para "$query"'
-          : 'Tente ajustar os filtros de busca',
+          ? l10n.noResultsForQuery(query)
+          : l10n.adjustFilters,
       iconColor: FoliumTheme.warning,
     );
   }
 
-  static Widget noPhotos() {
-    return const EmptyStateWidget(
+  static Widget noPhotos({required BuildContext context}) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return EmptyStateWidget(
       icon: Icons.photo_library_outlined,
-      title: 'Sem fotos',
-      message: 'Adicione fotos para documentar esta planta',
+      title: l10n.noPhotos,
+      message: l10n.addPhotosMsg,
     );
   }
 
-  static Widget noMeasurements() {
-    return const EmptyStateWidget(
+  static Widget noMeasurements({required BuildContext context}) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return EmptyStateWidget(
       icon: Icons.straighten,
-      title: 'Sem medições',
-      message: 'Registre medições para análise científica',
+      title: l10n.noMeasurementsTitle,
+      message: l10n.recordMeasurementsMsg,
     );
   }
 
-  static Widget error({required String message, VoidCallback? onRetry}) {
+  static Widget error({
+    required BuildContext context,
+    required String message,
+    VoidCallback? onRetry,
+  }) {
+    final l10n = AppLocalizations.of(context)!;
+
     return EmptyStateWidget(
       icon: Icons.error_outline,
-      title: 'Ops! Algo deu errado',
+      title: l10n.somethingWentWrong,
       message: message,
-      actionLabel: onRetry != null ? 'Tentar Novamente' : null,
+      actionLabel: onRetry != null ? l10n.tryAgain : null,
       onAction: onRetry,
       iconColor: FoliumTheme.error,
     );

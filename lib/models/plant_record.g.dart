@@ -22,307 +22,431 @@ const PlantRecordSchema = CollectionSchema(
       name: r'altitude',
       type: IsarType.double,
     ),
-    r'audioNotePaths': PropertySchema(
+    r'associatedTaxa': PropertySchema(
       id: 1,
+      name: r'associatedTaxa',
+      type: IsarType.string,
+    ),
+    r'audioNotePaths': PropertySchema(
+      id: 2,
       name: r'audioNotePaths',
       type: IsarType.stringList,
     ),
     r'audioTranscripts': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'audioTranscripts',
       type: IsarType.stringList,
     ),
     r'category': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'category',
       type: IsarType.string,
       enumMap: _PlantRecordcategoryEnumValueMap,
     ),
     r'caule': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'caule',
       type: IsarType.string,
     ),
     r'cauleCircunferencia': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'cauleCircunferencia',
       type: IsarType.double,
     ),
     r'cauleCircunferenciaUnidade': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'cauleCircunferenciaUnidade',
       type: IsarType.string,
     ),
     r'cauleCor': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'cauleCor',
       type: IsarType.string,
     ),
     r'cauleDescricaoSeiva': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'cauleDescricaoSeiva',
       type: IsarType.string,
     ),
     r'cauleTamanho': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'cauleTamanho',
       type: IsarType.double,
     ),
     r'cauleTamanhoUnidade': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'cauleTamanhoUnidade',
       type: IsarType.string,
     ),
     r'cauleTemSeiva': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'cauleTemSeiva',
       type: IsarType.bool,
     ),
     r'cauleTipoCasca': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'cauleTipoCasca',
       type: IsarType.string,
     ),
+    r'collectionMethod': PropertySchema(
+      id: 14,
+      name: r'collectionMethod',
+      type: IsarType.string,
+      enumMap: _PlantRecordcollectionMethodEnumValueMap,
+    ),
+    r'collectorNumber': PropertySchema(
+      id: 15,
+      name: r'collectorNumber',
+      type: IsarType.string,
+    ),
     r'commonName': PropertySchema(
-      id: 13,
+      id: 16,
       name: r'commonName',
       type: IsarType.string,
     ),
     r'commonNameFts': PropertySchema(
-      id: 14,
+      id: 17,
       name: r'commonNameFts',
       type: IsarType.string,
     ),
     r'contributorName': PropertySchema(
-      id: 15,
+      id: 18,
       name: r'contributorName',
       type: IsarType.string,
     ),
+    r'country': PropertySchema(
+      id: 19,
+      name: r'country',
+      type: IsarType.string,
+    ),
     r'createdAt': PropertySchema(
-      id: 16,
+      id: 20,
       name: r'createdAt',
       type: IsarType.dateTime,
     ),
     r'dateCollected': PropertySchema(
-      id: 17,
+      id: 21,
       name: r'dateCollected',
       type: IsarType.dateTime,
     ),
+    r'determinationQualifier': PropertySchema(
+      id: 22,
+      name: r'determinationQualifier',
+      type: IsarType.string,
+    ),
+    r'determinations': PropertySchema(
+      id: 23,
+      name: r'determinations',
+      type: IsarType.objectList,
+      target: r'Determination',
+    ),
     r'deviceId': PropertySchema(
-      id: 18,
+      id: 24,
       name: r'deviceId',
       type: IsarType.string,
     ),
+    r'duplicateOf': PropertySchema(
+      id: 25,
+      name: r'duplicateOf',
+      type: IsarType.string,
+    ),
+    r'duplicateUuids': PropertySchema(
+      id: 26,
+      name: r'duplicateUuids',
+      type: IsarType.stringList,
+    ),
     r'family': PropertySchema(
-      id: 19,
+      id: 27,
       name: r'family',
       type: IsarType.string,
     ),
     r'florCor': PropertySchema(
-      id: 20,
+      id: 28,
       name: r'florCor',
       type: IsarType.string,
     ),
     r'florDescricao': PropertySchema(
-      id: 21,
+      id: 29,
       name: r'florDescricao',
       type: IsarType.string,
     ),
     r'florInflorescencia': PropertySchema(
-      id: 22,
+      id: 30,
       name: r'florInflorescencia',
       type: IsarType.string,
     ),
     r'florTamanho': PropertySchema(
-      id: 23,
+      id: 31,
       name: r'florTamanho',
       type: IsarType.double,
     ),
     r'florTamanhoUnidade': PropertySchema(
-      id: 24,
+      id: 32,
       name: r'florTamanhoUnidade',
       type: IsarType.string,
     ),
     r'folhaBainha': PropertySchema(
-      id: 25,
+      id: 33,
       name: r'folhaBainha',
       type: IsarType.string,
     ),
     r'folhaDescricao': PropertySchema(
-      id: 26,
+      id: 34,
       name: r'folhaDescricao',
       type: IsarType.string,
     ),
     r'folhaLamina': PropertySchema(
-      id: 27,
+      id: 35,
       name: r'folhaLamina',
       type: IsarType.string,
     ),
     r'folhaPeciolo': PropertySchema(
-      id: 28,
+      id: 36,
       name: r'folhaPeciolo',
       type: IsarType.string,
     ),
     r'frutoCor': PropertySchema(
-      id: 29,
+      id: 37,
       name: r'frutoCor',
       type: IsarType.string,
     ),
     r'frutoDescricao': PropertySchema(
-      id: 30,
+      id: 38,
       name: r'frutoDescricao',
       type: IsarType.string,
     ),
     r'frutoFormato': PropertySchema(
-      id: 31,
+      id: 39,
       name: r'frutoFormato',
       type: IsarType.string,
     ),
     r'frutoTamanho': PropertySchema(
-      id: 32,
+      id: 40,
       name: r'frutoTamanho',
       type: IsarType.double,
     ),
     r'frutoTamanhoUnidade': PropertySchema(
-      id: 33,
+      id: 41,
       name: r'frutoTamanhoUnidade',
       type: IsarType.string,
     ),
     r'genus': PropertySchema(
-      id: 34,
+      id: 42,
       name: r'genus',
       type: IsarType.string,
     ),
     r'habitat': PropertySchema(
-      id: 35,
+      id: 43,
       name: r'habitat',
       type: IsarType.string,
     ),
     r'humidity': PropertySchema(
-      id: 36,
+      id: 44,
       name: r'humidity',
       type: IsarType.double,
     ),
+    r'iNaturalistId': PropertySchema(
+      id: 45,
+      name: r'iNaturalistId',
+      type: IsarType.string,
+    ),
+    r'iNaturalistSyncedAt': PropertySchema(
+      id: 46,
+      name: r'iNaturalistSyncedAt',
+      type: IsarType.dateTime,
+    ),
     r'isDraft': PropertySchema(
-      id: 37,
+      id: 47,
       name: r'isDraft',
       type: IsarType.bool,
     ),
+    r'latestDetermination': PropertySchema(
+      id: 48,
+      name: r'latestDetermination',
+      type: IsarType.object,
+      target: r'Determination',
+    ),
     r'latitude': PropertySchema(
-      id: 38,
+      id: 49,
       name: r'latitude',
       type: IsarType.double,
     ),
+    r'locality': PropertySchema(
+      id: 50,
+      name: r'locality',
+      type: IsarType.string,
+    ),
     r'longitude': PropertySchema(
-      id: 39,
+      id: 51,
       name: r'longitude',
       type: IsarType.double,
     ),
     r'measurements': PropertySchema(
-      id: 40,
+      id: 52,
       name: r'measurements',
       type: IsarType.objectList,
       target: r'Measurement',
     ),
+    r'moonPhase': PropertySchema(
+      id: 53,
+      name: r'moonPhase',
+      type: IsarType.string,
+    ),
+    r'municipality': PropertySchema(
+      id: 54,
+      name: r'municipality',
+      type: IsarType.string,
+    ),
     r'notes': PropertySchema(
-      id: 41,
+      id: 55,
       name: r'notes',
       type: IsarType.string,
     ),
+    r'numberOfIndividuals': PropertySchema(
+      id: 56,
+      name: r'numberOfIndividuals',
+      type: IsarType.long,
+    ),
+    r'phenologicalState': PropertySchema(
+      id: 57,
+      name: r'phenologicalState',
+      type: IsarType.string,
+      enumMap: _PlantRecordphenologicalStateEnumValueMap,
+    ),
+    r'phenologyFournier': PropertySchema(
+      id: 58,
+      name: r'phenologyFournier',
+      type: IsarType.string,
+    ),
     r'photoMetadata': PropertySchema(
-      id: 42,
+      id: 59,
       name: r'photoMetadata',
       type: IsarType.objectList,
       target: r'PhotoMetadata',
     ),
     r'photoPaths': PropertySchema(
-      id: 43,
+      id: 60,
       name: r'photoPaths',
       type: IsarType.stringList,
     ),
     r'raiz': PropertySchema(
-      id: 44,
+      id: 61,
       name: r'raiz',
       type: IsarType.string,
     ),
     r'registryIdentifier': PropertySchema(
-      id: 45,
+      id: 62,
       name: r'registryIdentifier',
       type: IsarType.string,
     ),
+    r'scientificAuthor': PropertySchema(
+      id: 63,
+      name: r'scientificAuthor',
+      type: IsarType.string,
+    ),
     r'scientificName': PropertySchema(
-      id: 46,
+      id: 64,
       name: r'scientificName',
       type: IsarType.string,
     ),
     r'scientificNameFts': PropertySchema(
-      id: 47,
+      id: 65,
       name: r'scientificNameFts',
       type: IsarType.string,
     ),
     r'sementeCor': PropertySchema(
-      id: 48,
+      id: 66,
       name: r'sementeCor',
       type: IsarType.string,
     ),
     r'sementeDescricao': PropertySchema(
-      id: 49,
+      id: 67,
       name: r'sementeDescricao',
       type: IsarType.string,
     ),
     r'sementeFormato': PropertySchema(
-      id: 50,
+      id: 68,
       name: r'sementeFormato',
       type: IsarType.string,
     ),
     r'sementeTamanho': PropertySchema(
-      id: 51,
+      id: 69,
       name: r'sementeTamanho',
       type: IsarType.double,
     ),
     r'sementeTamanhoUnidade': PropertySchema(
-      id: 52,
+      id: 70,
       name: r'sementeTamanhoUnidade',
       type: IsarType.string,
     ),
     r'sessionId': PropertySchema(
-      id: 53,
+      id: 71,
       name: r'sessionId',
       type: IsarType.string,
     ),
     r'species': PropertySchema(
-      id: 54,
+      id: 72,
       name: r'species',
       type: IsarType.string,
     ),
+    r'state': PropertySchema(
+      id: 73,
+      name: r'state',
+      type: IsarType.string,
+    ),
+    r'substrate': PropertySchema(
+      id: 74,
+      name: r'substrate',
+      type: IsarType.string,
+    ),
     r'syncMetadata': PropertySchema(
-      id: 55,
+      id: 75,
       name: r'syncMetadata',
       type: IsarType.object,
       target: r'SyncMetadata',
     ),
+    r'taxonStatus': PropertySchema(
+      id: 76,
+      name: r'taxonStatus',
+      type: IsarType.string,
+    ),
     r'temperature': PropertySchema(
-      id: 56,
+      id: 77,
       name: r'temperature',
       type: IsarType.double,
     ),
+    r'topography': PropertySchema(
+      id: 78,
+      name: r'topography',
+      type: IsarType.string,
+    ),
     r'updatedAt': PropertySchema(
-      id: 57,
+      id: 79,
       name: r'updatedAt',
       type: IsarType.dateTime,
     ),
     r'uuid': PropertySchema(
-      id: 58,
+      id: 80,
       name: r'uuid',
       type: IsarType.string,
     ),
+    r'vegetationType': PropertySchema(
+      id: 81,
+      name: r'vegetationType',
+      type: IsarType.string,
+    ),
     r'weatherCondition': PropertySchema(
-      id: 59,
+      id: 82,
       name: r'weatherCondition',
       type: IsarType.string,
     ),
+    r'weatherNotes': PropertySchema(
+      id: 83,
+      name: r'weatherNotes',
+      type: IsarType.string,
+    ),
     r'windSpeed': PropertySchema(
-      id: 60,
+      id: 84,
       name: r'windSpeed',
       type: IsarType.double,
     )
@@ -408,6 +532,19 @@ const PlantRecordSchema = CollectionSchema(
           name: r'longitude',
           type: IndexType.value,
           caseSensitive: false,
+        )
+      ],
+    ),
+    r'municipality': IndexSchema(
+      id: 867571283543279071,
+      name: r'municipality',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'municipality',
+          type: IndexType.hash,
+          caseSensitive: true,
         )
       ],
     ),
@@ -499,6 +636,7 @@ const PlantRecordSchema = CollectionSchema(
     )
   },
   embeddedSchemas: {
+    r'Determination': DeterminationSchema,
     r'Measurement': MeasurementSchema,
     r'PhotoMetadata': PhotoMetadataSchema,
     r'SyncMetadata': SyncMetadataSchema
@@ -515,6 +653,12 @@ int _plantRecordEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  {
+    final value = object.associatedTaxa;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.audioNotePaths.length * 3;
   {
     for (var i = 0; i < object.audioNotePaths.length; i++) {
@@ -566,6 +710,18 @@ int _plantRecordEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  {
+    final value = object.collectionMethod;
+    if (value != null) {
+      bytesCount += 3 + value.name.length * 3;
+    }
+  }
+  {
+    final value = object.collectorNumber;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.commonName.length * 3;
   bytesCount += 3 + object.commonNameFts.length * 3;
   {
@@ -574,7 +730,41 @@ int _plantRecordEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  {
+    final value = object.country;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.determinationQualifier;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  bytesCount += 3 + object.determinations.length * 3;
+  {
+    final offsets = allOffsets[Determination]!;
+    for (var i = 0; i < object.determinations.length; i++) {
+      final value = object.determinations[i];
+      bytesCount +=
+          DeterminationSchema.estimateSize(value, offsets, allOffsets);
+    }
+  }
   bytesCount += 3 + object.deviceId.length * 3;
+  {
+    final value = object.duplicateOf;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  bytesCount += 3 + object.duplicateUuids.length * 3;
+  {
+    for (var i = 0; i < object.duplicateUuids.length; i++) {
+      final value = object.duplicateUuids[i];
+      bytesCount += value.length * 3;
+    }
+  }
   {
     final value = object.family;
     if (value != null) {
@@ -665,6 +855,26 @@ int _plantRecordEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  {
+    final value = object.iNaturalistId;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.latestDetermination;
+    if (value != null) {
+      bytesCount += 3 +
+          DeterminationSchema.estimateSize(
+              value, allOffsets[Determination]!, allOffsets);
+    }
+  }
+  {
+    final value = object.locality;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.measurements.length * 3;
   {
     final offsets = allOffsets[Measurement]!;
@@ -674,7 +884,31 @@ int _plantRecordEstimateSize(
     }
   }
   {
+    final value = object.moonPhase;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.municipality;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.notes;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.phenologicalState;
+    if (value != null) {
+      bytesCount += 3 + value.name.length * 3;
+    }
+  }
+  {
+    final value = object.phenologyFournier;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
@@ -703,6 +937,12 @@ int _plantRecordEstimateSize(
   }
   {
     final value = object.registryIdentifier;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.scientificAuthor;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
@@ -745,12 +985,48 @@ int _plantRecordEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  {
+    final value = object.state;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.substrate;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 +
       SyncMetadataSchema.estimateSize(
           object.syncMetadata, allOffsets[SyncMetadata]!, allOffsets);
+  {
+    final value = object.taxonStatus;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.topography;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.uuid.length * 3;
   {
+    final value = object.vegetationType;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.weatherCondition;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.weatherNotes;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
@@ -765,81 +1041,115 @@ void _plantRecordSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeDouble(offsets[0], object.altitude);
-  writer.writeStringList(offsets[1], object.audioNotePaths);
-  writer.writeStringList(offsets[2], object.audioTranscripts);
-  writer.writeString(offsets[3], object.category.name);
-  writer.writeString(offsets[4], object.caule);
-  writer.writeDouble(offsets[5], object.cauleCircunferencia);
-  writer.writeString(offsets[6], object.cauleCircunferenciaUnidade);
-  writer.writeString(offsets[7], object.cauleCor);
-  writer.writeString(offsets[8], object.cauleDescricaoSeiva);
-  writer.writeDouble(offsets[9], object.cauleTamanho);
-  writer.writeString(offsets[10], object.cauleTamanhoUnidade);
-  writer.writeBool(offsets[11], object.cauleTemSeiva);
-  writer.writeString(offsets[12], object.cauleTipoCasca);
-  writer.writeString(offsets[13], object.commonName);
-  writer.writeString(offsets[14], object.commonNameFts);
-  writer.writeString(offsets[15], object.contributorName);
-  writer.writeDateTime(offsets[16], object.createdAt);
-  writer.writeDateTime(offsets[17], object.dateCollected);
-  writer.writeString(offsets[18], object.deviceId);
-  writer.writeString(offsets[19], object.family);
-  writer.writeString(offsets[20], object.florCor);
-  writer.writeString(offsets[21], object.florDescricao);
-  writer.writeString(offsets[22], object.florInflorescencia);
-  writer.writeDouble(offsets[23], object.florTamanho);
-  writer.writeString(offsets[24], object.florTamanhoUnidade);
-  writer.writeString(offsets[25], object.folhaBainha);
-  writer.writeString(offsets[26], object.folhaDescricao);
-  writer.writeString(offsets[27], object.folhaLamina);
-  writer.writeString(offsets[28], object.folhaPeciolo);
-  writer.writeString(offsets[29], object.frutoCor);
-  writer.writeString(offsets[30], object.frutoDescricao);
-  writer.writeString(offsets[31], object.frutoFormato);
-  writer.writeDouble(offsets[32], object.frutoTamanho);
-  writer.writeString(offsets[33], object.frutoTamanhoUnidade);
-  writer.writeString(offsets[34], object.genus);
-  writer.writeString(offsets[35], object.habitat);
-  writer.writeDouble(offsets[36], object.humidity);
-  writer.writeBool(offsets[37], object.isDraft);
-  writer.writeDouble(offsets[38], object.latitude);
-  writer.writeDouble(offsets[39], object.longitude);
+  writer.writeString(offsets[1], object.associatedTaxa);
+  writer.writeStringList(offsets[2], object.audioNotePaths);
+  writer.writeStringList(offsets[3], object.audioTranscripts);
+  writer.writeString(offsets[4], object.category.name);
+  writer.writeString(offsets[5], object.caule);
+  writer.writeDouble(offsets[6], object.cauleCircunferencia);
+  writer.writeString(offsets[7], object.cauleCircunferenciaUnidade);
+  writer.writeString(offsets[8], object.cauleCor);
+  writer.writeString(offsets[9], object.cauleDescricaoSeiva);
+  writer.writeDouble(offsets[10], object.cauleTamanho);
+  writer.writeString(offsets[11], object.cauleTamanhoUnidade);
+  writer.writeBool(offsets[12], object.cauleTemSeiva);
+  writer.writeString(offsets[13], object.cauleTipoCasca);
+  writer.writeString(offsets[14], object.collectionMethod?.name);
+  writer.writeString(offsets[15], object.collectorNumber);
+  writer.writeString(offsets[16], object.commonName);
+  writer.writeString(offsets[17], object.commonNameFts);
+  writer.writeString(offsets[18], object.contributorName);
+  writer.writeString(offsets[19], object.country);
+  writer.writeDateTime(offsets[20], object.createdAt);
+  writer.writeDateTime(offsets[21], object.dateCollected);
+  writer.writeString(offsets[22], object.determinationQualifier);
+  writer.writeObjectList<Determination>(
+    offsets[23],
+    allOffsets,
+    DeterminationSchema.serialize,
+    object.determinations,
+  );
+  writer.writeString(offsets[24], object.deviceId);
+  writer.writeString(offsets[25], object.duplicateOf);
+  writer.writeStringList(offsets[26], object.duplicateUuids);
+  writer.writeString(offsets[27], object.family);
+  writer.writeString(offsets[28], object.florCor);
+  writer.writeString(offsets[29], object.florDescricao);
+  writer.writeString(offsets[30], object.florInflorescencia);
+  writer.writeDouble(offsets[31], object.florTamanho);
+  writer.writeString(offsets[32], object.florTamanhoUnidade);
+  writer.writeString(offsets[33], object.folhaBainha);
+  writer.writeString(offsets[34], object.folhaDescricao);
+  writer.writeString(offsets[35], object.folhaLamina);
+  writer.writeString(offsets[36], object.folhaPeciolo);
+  writer.writeString(offsets[37], object.frutoCor);
+  writer.writeString(offsets[38], object.frutoDescricao);
+  writer.writeString(offsets[39], object.frutoFormato);
+  writer.writeDouble(offsets[40], object.frutoTamanho);
+  writer.writeString(offsets[41], object.frutoTamanhoUnidade);
+  writer.writeString(offsets[42], object.genus);
+  writer.writeString(offsets[43], object.habitat);
+  writer.writeDouble(offsets[44], object.humidity);
+  writer.writeString(offsets[45], object.iNaturalistId);
+  writer.writeDateTime(offsets[46], object.iNaturalistSyncedAt);
+  writer.writeBool(offsets[47], object.isDraft);
+  writer.writeObject<Determination>(
+    offsets[48],
+    allOffsets,
+    DeterminationSchema.serialize,
+    object.latestDetermination,
+  );
+  writer.writeDouble(offsets[49], object.latitude);
+  writer.writeString(offsets[50], object.locality);
+  writer.writeDouble(offsets[51], object.longitude);
   writer.writeObjectList<Measurement>(
-    offsets[40],
+    offsets[52],
     allOffsets,
     MeasurementSchema.serialize,
     object.measurements,
   );
-  writer.writeString(offsets[41], object.notes);
+  writer.writeString(offsets[53], object.moonPhase);
+  writer.writeString(offsets[54], object.municipality);
+  writer.writeString(offsets[55], object.notes);
+  writer.writeLong(offsets[56], object.numberOfIndividuals);
+  writer.writeString(offsets[57], object.phenologicalState?.name);
+  writer.writeString(offsets[58], object.phenologyFournier);
   writer.writeObjectList<PhotoMetadata>(
-    offsets[42],
+    offsets[59],
     allOffsets,
     PhotoMetadataSchema.serialize,
     object.photoMetadata,
   );
-  writer.writeStringList(offsets[43], object.photoPaths);
-  writer.writeString(offsets[44], object.raiz);
-  writer.writeString(offsets[45], object.registryIdentifier);
-  writer.writeString(offsets[46], object.scientificName);
-  writer.writeString(offsets[47], object.scientificNameFts);
-  writer.writeString(offsets[48], object.sementeCor);
-  writer.writeString(offsets[49], object.sementeDescricao);
-  writer.writeString(offsets[50], object.sementeFormato);
-  writer.writeDouble(offsets[51], object.sementeTamanho);
-  writer.writeString(offsets[52], object.sementeTamanhoUnidade);
-  writer.writeString(offsets[53], object.sessionId);
-  writer.writeString(offsets[54], object.species);
+  writer.writeStringList(offsets[60], object.photoPaths);
+  writer.writeString(offsets[61], object.raiz);
+  writer.writeString(offsets[62], object.registryIdentifier);
+  writer.writeString(offsets[63], object.scientificAuthor);
+  writer.writeString(offsets[64], object.scientificName);
+  writer.writeString(offsets[65], object.scientificNameFts);
+  writer.writeString(offsets[66], object.sementeCor);
+  writer.writeString(offsets[67], object.sementeDescricao);
+  writer.writeString(offsets[68], object.sementeFormato);
+  writer.writeDouble(offsets[69], object.sementeTamanho);
+  writer.writeString(offsets[70], object.sementeTamanhoUnidade);
+  writer.writeString(offsets[71], object.sessionId);
+  writer.writeString(offsets[72], object.species);
+  writer.writeString(offsets[73], object.state);
+  writer.writeString(offsets[74], object.substrate);
   writer.writeObject<SyncMetadata>(
-    offsets[55],
+    offsets[75],
     allOffsets,
     SyncMetadataSchema.serialize,
     object.syncMetadata,
   );
-  writer.writeDouble(offsets[56], object.temperature);
-  writer.writeDateTime(offsets[57], object.updatedAt);
-  writer.writeString(offsets[58], object.uuid);
-  writer.writeString(offsets[59], object.weatherCondition);
-  writer.writeDouble(offsets[60], object.windSpeed);
+  writer.writeString(offsets[76], object.taxonStatus);
+  writer.writeDouble(offsets[77], object.temperature);
+  writer.writeString(offsets[78], object.topography);
+  writer.writeDateTime(offsets[79], object.updatedAt);
+  writer.writeString(offsets[80], object.uuid);
+  writer.writeString(offsets[81], object.vegetationType);
+  writer.writeString(offsets[82], object.weatherCondition);
+  writer.writeString(offsets[83], object.weatherNotes);
+  writer.writeDouble(offsets[84], object.windSpeed);
 }
 
 PlantRecord _plantRecordDeserialize(
@@ -850,86 +1160,117 @@ PlantRecord _plantRecordDeserialize(
 ) {
   final object = PlantRecord();
   object.altitude = reader.readDoubleOrNull(offsets[0]);
-  object.audioNotePaths = reader.readStringList(offsets[1]) ?? [];
-  object.audioTranscripts = reader.readStringList(offsets[2]) ?? [];
+  object.associatedTaxa = reader.readStringOrNull(offsets[1]);
+  object.audioNotePaths = reader.readStringList(offsets[2]) ?? [];
+  object.audioTranscripts = reader.readStringList(offsets[3]) ?? [];
   object.category =
-      _PlantRecordcategoryValueEnumMap[reader.readStringOrNull(offsets[3])] ??
+      _PlantRecordcategoryValueEnumMap[reader.readStringOrNull(offsets[4])] ??
           PlantCategory.trees;
-  object.caule = reader.readStringOrNull(offsets[4]);
-  object.cauleCircunferencia = reader.readDoubleOrNull(offsets[5]);
-  object.cauleCircunferenciaUnidade = reader.readStringOrNull(offsets[6]);
-  object.cauleCor = reader.readStringOrNull(offsets[7]);
-  object.cauleDescricaoSeiva = reader.readStringOrNull(offsets[8]);
-  object.cauleTamanho = reader.readDoubleOrNull(offsets[9]);
-  object.cauleTamanhoUnidade = reader.readStringOrNull(offsets[10]);
-  object.cauleTemSeiva = reader.readBool(offsets[11]);
-  object.cauleTipoCasca = reader.readStringOrNull(offsets[12]);
-  object.commonName = reader.readString(offsets[13]);
-  object.commonNameFts = reader.readString(offsets[14]);
-  object.contributorName = reader.readStringOrNull(offsets[15]);
-  object.createdAt = reader.readDateTime(offsets[16]);
-  object.dateCollected = reader.readDateTime(offsets[17]);
-  object.deviceId = reader.readString(offsets[18]);
-  object.family = reader.readStringOrNull(offsets[19]);
-  object.florCor = reader.readStringOrNull(offsets[20]);
-  object.florDescricao = reader.readStringOrNull(offsets[21]);
-  object.florInflorescencia = reader.readStringOrNull(offsets[22]);
-  object.florTamanho = reader.readDoubleOrNull(offsets[23]);
-  object.florTamanhoUnidade = reader.readStringOrNull(offsets[24]);
-  object.folhaBainha = reader.readStringOrNull(offsets[25]);
-  object.folhaDescricao = reader.readStringOrNull(offsets[26]);
-  object.folhaLamina = reader.readStringOrNull(offsets[27]);
-  object.folhaPeciolo = reader.readStringOrNull(offsets[28]);
-  object.frutoCor = reader.readStringOrNull(offsets[29]);
-  object.frutoDescricao = reader.readStringOrNull(offsets[30]);
-  object.frutoFormato = reader.readStringOrNull(offsets[31]);
-  object.frutoTamanho = reader.readDoubleOrNull(offsets[32]);
-  object.frutoTamanhoUnidade = reader.readStringOrNull(offsets[33]);
-  object.genus = reader.readStringOrNull(offsets[34]);
-  object.habitat = reader.readStringOrNull(offsets[35]);
-  object.humidity = reader.readDoubleOrNull(offsets[36]);
+  object.caule = reader.readStringOrNull(offsets[5]);
+  object.cauleCircunferencia = reader.readDoubleOrNull(offsets[6]);
+  object.cauleCircunferenciaUnidade = reader.readStringOrNull(offsets[7]);
+  object.cauleCor = reader.readStringOrNull(offsets[8]);
+  object.cauleDescricaoSeiva = reader.readStringOrNull(offsets[9]);
+  object.cauleTamanho = reader.readDoubleOrNull(offsets[10]);
+  object.cauleTamanhoUnidade = reader.readStringOrNull(offsets[11]);
+  object.cauleTemSeiva = reader.readBool(offsets[12]);
+  object.cauleTipoCasca = reader.readStringOrNull(offsets[13]);
+  object.collectionMethod = _PlantRecordcollectionMethodValueEnumMap[
+      reader.readStringOrNull(offsets[14])];
+  object.collectorNumber = reader.readStringOrNull(offsets[15]);
+  object.commonName = reader.readString(offsets[16]);
+  object.commonNameFts = reader.readString(offsets[17]);
+  object.contributorName = reader.readStringOrNull(offsets[18]);
+  object.country = reader.readStringOrNull(offsets[19]);
+  object.createdAt = reader.readDateTime(offsets[20]);
+  object.dateCollected = reader.readDateTime(offsets[21]);
+  object.determinationQualifier = reader.readStringOrNull(offsets[22]);
+  object.determinations = reader.readObjectList<Determination>(
+        offsets[23],
+        DeterminationSchema.deserialize,
+        allOffsets,
+        Determination(),
+      ) ??
+      [];
+  object.deviceId = reader.readString(offsets[24]);
+  object.duplicateOf = reader.readStringOrNull(offsets[25]);
+  object.duplicateUuids = reader.readStringList(offsets[26]) ?? [];
+  object.family = reader.readStringOrNull(offsets[27]);
+  object.florCor = reader.readStringOrNull(offsets[28]);
+  object.florDescricao = reader.readStringOrNull(offsets[29]);
+  object.florInflorescencia = reader.readStringOrNull(offsets[30]);
+  object.florTamanho = reader.readDoubleOrNull(offsets[31]);
+  object.florTamanhoUnidade = reader.readStringOrNull(offsets[32]);
+  object.folhaBainha = reader.readStringOrNull(offsets[33]);
+  object.folhaDescricao = reader.readStringOrNull(offsets[34]);
+  object.folhaLamina = reader.readStringOrNull(offsets[35]);
+  object.folhaPeciolo = reader.readStringOrNull(offsets[36]);
+  object.frutoCor = reader.readStringOrNull(offsets[37]);
+  object.frutoDescricao = reader.readStringOrNull(offsets[38]);
+  object.frutoFormato = reader.readStringOrNull(offsets[39]);
+  object.frutoTamanho = reader.readDoubleOrNull(offsets[40]);
+  object.frutoTamanhoUnidade = reader.readStringOrNull(offsets[41]);
+  object.genus = reader.readStringOrNull(offsets[42]);
+  object.habitat = reader.readStringOrNull(offsets[43]);
+  object.humidity = reader.readDoubleOrNull(offsets[44]);
+  object.iNaturalistId = reader.readStringOrNull(offsets[45]);
+  object.iNaturalistSyncedAt = reader.readDateTimeOrNull(offsets[46]);
   object.id = id;
-  object.isDraft = reader.readBool(offsets[37]);
-  object.latitude = reader.readDoubleOrNull(offsets[38]);
-  object.longitude = reader.readDoubleOrNull(offsets[39]);
+  object.isDraft = reader.readBool(offsets[47]);
+  object.latitude = reader.readDoubleOrNull(offsets[49]);
+  object.locality = reader.readStringOrNull(offsets[50]);
+  object.longitude = reader.readDoubleOrNull(offsets[51]);
   object.measurements = reader.readObjectList<Measurement>(
-        offsets[40],
+        offsets[52],
         MeasurementSchema.deserialize,
         allOffsets,
         Measurement(),
       ) ??
       [];
-  object.notes = reader.readStringOrNull(offsets[41]);
+  object.moonPhase = reader.readStringOrNull(offsets[53]);
+  object.municipality = reader.readStringOrNull(offsets[54]);
+  object.notes = reader.readStringOrNull(offsets[55]);
+  object.numberOfIndividuals = reader.readLongOrNull(offsets[56]);
+  object.phenologicalState = _PlantRecordphenologicalStateValueEnumMap[
+      reader.readStringOrNull(offsets[57])];
+  object.phenologyFournier = reader.readStringOrNull(offsets[58]);
   object.photoMetadata = reader.readObjectList<PhotoMetadata>(
-        offsets[42],
+        offsets[59],
         PhotoMetadataSchema.deserialize,
         allOffsets,
         PhotoMetadata(),
       ) ??
       [];
-  object.photoPaths = reader.readStringList(offsets[43]) ?? [];
-  object.raiz = reader.readStringOrNull(offsets[44]);
-  object.registryIdentifier = reader.readStringOrNull(offsets[45]);
-  object.scientificName = reader.readString(offsets[46]);
-  object.scientificNameFts = reader.readString(offsets[47]);
-  object.sementeCor = reader.readStringOrNull(offsets[48]);
-  object.sementeDescricao = reader.readStringOrNull(offsets[49]);
-  object.sementeFormato = reader.readStringOrNull(offsets[50]);
-  object.sementeTamanho = reader.readDoubleOrNull(offsets[51]);
-  object.sementeTamanhoUnidade = reader.readStringOrNull(offsets[52]);
-  object.sessionId = reader.readStringOrNull(offsets[53]);
-  object.species = reader.readStringOrNull(offsets[54]);
+  object.photoPaths = reader.readStringList(offsets[60]) ?? [];
+  object.raiz = reader.readStringOrNull(offsets[61]);
+  object.registryIdentifier = reader.readStringOrNull(offsets[62]);
+  object.scientificAuthor = reader.readStringOrNull(offsets[63]);
+  object.scientificName = reader.readString(offsets[64]);
+  object.scientificNameFts = reader.readString(offsets[65]);
+  object.sementeCor = reader.readStringOrNull(offsets[66]);
+  object.sementeDescricao = reader.readStringOrNull(offsets[67]);
+  object.sementeFormato = reader.readStringOrNull(offsets[68]);
+  object.sementeTamanho = reader.readDoubleOrNull(offsets[69]);
+  object.sementeTamanhoUnidade = reader.readStringOrNull(offsets[70]);
+  object.sessionId = reader.readStringOrNull(offsets[71]);
+  object.species = reader.readStringOrNull(offsets[72]);
+  object.state = reader.readStringOrNull(offsets[73]);
+  object.substrate = reader.readStringOrNull(offsets[74]);
   object.syncMetadata = reader.readObjectOrNull<SyncMetadata>(
-        offsets[55],
+        offsets[75],
         SyncMetadataSchema.deserialize,
         allOffsets,
       ) ??
       SyncMetadata();
-  object.temperature = reader.readDoubleOrNull(offsets[56]);
-  object.updatedAt = reader.readDateTime(offsets[57]);
-  object.uuid = reader.readString(offsets[58]);
-  object.weatherCondition = reader.readStringOrNull(offsets[59]);
-  object.windSpeed = reader.readDoubleOrNull(offsets[60]);
+  object.taxonStatus = reader.readStringOrNull(offsets[76]);
+  object.temperature = reader.readDoubleOrNull(offsets[77]);
+  object.topography = reader.readStringOrNull(offsets[78]);
+  object.updatedAt = reader.readDateTime(offsets[79]);
+  object.uuid = reader.readString(offsets[80]);
+  object.vegetationType = reader.readStringOrNull(offsets[81]);
+  object.weatherCondition = reader.readStringOrNull(offsets[82]);
+  object.weatherNotes = reader.readStringOrNull(offsets[83]);
+  object.windSpeed = reader.readDoubleOrNull(offsets[84]);
   return object;
 }
 
@@ -943,59 +1284,66 @@ P _plantRecordDeserializeProp<P>(
     case 0:
       return (reader.readDoubleOrNull(offset)) as P;
     case 1:
-      return (reader.readStringList(offset) ?? []) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 2:
       return (reader.readStringList(offset) ?? []) as P;
     case 3:
+      return (reader.readStringList(offset) ?? []) as P;
+    case 4:
       return (_PlantRecordcategoryValueEnumMap[
               reader.readStringOrNull(offset)] ??
           PlantCategory.trees) as P;
-    case 4:
-      return (reader.readStringOrNull(offset)) as P;
     case 5:
-      return (reader.readDoubleOrNull(offset)) as P;
-    case 6:
       return (reader.readStringOrNull(offset)) as P;
+    case 6:
+      return (reader.readDoubleOrNull(offset)) as P;
     case 7:
       return (reader.readStringOrNull(offset)) as P;
     case 8:
       return (reader.readStringOrNull(offset)) as P;
     case 9:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 10:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 11:
-      return (reader.readBool(offset)) as P;
-    case 12:
       return (reader.readStringOrNull(offset)) as P;
+    case 12:
+      return (reader.readBool(offset)) as P;
     case 13:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 14:
-      return (reader.readString(offset)) as P;
+      return (_PlantRecordcollectionMethodValueEnumMap[
+          reader.readStringOrNull(offset)]) as P;
     case 15:
       return (reader.readStringOrNull(offset)) as P;
     case 16:
-      return (reader.readDateTime(offset)) as P;
-    case 17:
-      return (reader.readDateTime(offset)) as P;
-    case 18:
       return (reader.readString(offset)) as P;
+    case 17:
+      return (reader.readString(offset)) as P;
+    case 18:
+      return (reader.readStringOrNull(offset)) as P;
     case 19:
       return (reader.readStringOrNull(offset)) as P;
     case 20:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 21:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 22:
       return (reader.readStringOrNull(offset)) as P;
     case 23:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readObjectList<Determination>(
+            offset,
+            DeterminationSchema.deserialize,
+            allOffsets,
+            Determination(),
+          ) ??
+          []) as P;
     case 24:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 25:
       return (reader.readStringOrNull(offset)) as P;
     case 26:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readStringList(offset) ?? []) as P;
     case 27:
       return (reader.readStringOrNull(offset)) as P;
     case 28:
@@ -1005,9 +1353,9 @@ P _plantRecordDeserializeProp<P>(
     case 30:
       return (reader.readStringOrNull(offset)) as P;
     case 31:
-      return (reader.readStringOrNull(offset)) as P;
-    case 32:
       return (reader.readDoubleOrNull(offset)) as P;
+    case 32:
+      return (reader.readStringOrNull(offset)) as P;
     case 33:
       return (reader.readStringOrNull(offset)) as P;
     case 34:
@@ -1015,14 +1363,42 @@ P _plantRecordDeserializeProp<P>(
     case 35:
       return (reader.readStringOrNull(offset)) as P;
     case 36:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 37:
-      return (reader.readBool(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 38:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 39:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 40:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 41:
+      return (reader.readStringOrNull(offset)) as P;
+    case 42:
+      return (reader.readStringOrNull(offset)) as P;
+    case 43:
+      return (reader.readStringOrNull(offset)) as P;
+    case 44:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 45:
+      return (reader.readStringOrNull(offset)) as P;
+    case 46:
+      return (reader.readDateTimeOrNull(offset)) as P;
+    case 47:
+      return (reader.readBool(offset)) as P;
+    case 48:
+      return (reader.readObjectOrNull<Determination>(
+        offset,
+        DeterminationSchema.deserialize,
+        allOffsets,
+      )) as P;
+    case 49:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 50:
+      return (reader.readStringOrNull(offset)) as P;
+    case 51:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 52:
       return (reader.readObjectList<Measurement>(
             offset,
             MeasurementSchema.deserialize,
@@ -1030,9 +1406,20 @@ P _plantRecordDeserializeProp<P>(
             Measurement(),
           ) ??
           []) as P;
-    case 41:
+    case 53:
       return (reader.readStringOrNull(offset)) as P;
-    case 42:
+    case 54:
+      return (reader.readStringOrNull(offset)) as P;
+    case 55:
+      return (reader.readStringOrNull(offset)) as P;
+    case 56:
+      return (reader.readLongOrNull(offset)) as P;
+    case 57:
+      return (_PlantRecordphenologicalStateValueEnumMap[
+          reader.readStringOrNull(offset)]) as P;
+    case 58:
+      return (reader.readStringOrNull(offset)) as P;
+    case 59:
       return (reader.readObjectList<PhotoMetadata>(
             offset,
             PhotoMetadataSchema.deserialize,
@@ -1040,46 +1427,60 @@ P _plantRecordDeserializeProp<P>(
             PhotoMetadata(),
           ) ??
           []) as P;
-    case 43:
+    case 60:
       return (reader.readStringList(offset) ?? []) as P;
-    case 44:
+    case 61:
       return (reader.readStringOrNull(offset)) as P;
-    case 45:
+    case 62:
       return (reader.readStringOrNull(offset)) as P;
-    case 46:
+    case 63:
+      return (reader.readStringOrNull(offset)) as P;
+    case 64:
       return (reader.readString(offset)) as P;
-    case 47:
+    case 65:
       return (reader.readString(offset)) as P;
-    case 48:
+    case 66:
       return (reader.readStringOrNull(offset)) as P;
-    case 49:
+    case 67:
       return (reader.readStringOrNull(offset)) as P;
-    case 50:
+    case 68:
       return (reader.readStringOrNull(offset)) as P;
-    case 51:
+    case 69:
       return (reader.readDoubleOrNull(offset)) as P;
-    case 52:
+    case 70:
       return (reader.readStringOrNull(offset)) as P;
-    case 53:
+    case 71:
       return (reader.readStringOrNull(offset)) as P;
-    case 54:
+    case 72:
       return (reader.readStringOrNull(offset)) as P;
-    case 55:
+    case 73:
+      return (reader.readStringOrNull(offset)) as P;
+    case 74:
+      return (reader.readStringOrNull(offset)) as P;
+    case 75:
       return (reader.readObjectOrNull<SyncMetadata>(
             offset,
             SyncMetadataSchema.deserialize,
             allOffsets,
           ) ??
           SyncMetadata()) as P;
-    case 56:
-      return (reader.readDoubleOrNull(offset)) as P;
-    case 57:
-      return (reader.readDateTime(offset)) as P;
-    case 58:
-      return (reader.readString(offset)) as P;
-    case 59:
+    case 76:
       return (reader.readStringOrNull(offset)) as P;
-    case 60:
+    case 77:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 78:
+      return (reader.readStringOrNull(offset)) as P;
+    case 79:
+      return (reader.readDateTime(offset)) as P;
+    case 80:
+      return (reader.readString(offset)) as P;
+    case 81:
+      return (reader.readStringOrNull(offset)) as P;
+    case 82:
+      return (reader.readStringOrNull(offset)) as P;
+    case 83:
+      return (reader.readStringOrNull(offset)) as P;
+    case 84:
       return (reader.readDoubleOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1105,6 +1506,36 @@ const _PlantRecordcategoryValueEnumMap = {
   r'vines': PlantCategory.vines,
   r'cacti': PlantCategory.cacti,
   r'aquatic': PlantCategory.aquatic,
+};
+const _PlantRecordcollectionMethodEnumValueMap = {
+  r'voucherCollected': r'voucherCollected',
+  r'photoOnly': r'photoOnly',
+  r'sterileMaterial': r'sterileMaterial',
+  r'livingMaterial': r'livingMaterial',
+};
+const _PlantRecordcollectionMethodValueEnumMap = {
+  r'voucherCollected': CollectionMethod.voucherCollected,
+  r'photoOnly': CollectionMethod.photoOnly,
+  r'sterileMaterial': CollectionMethod.sterileMaterial,
+  r'livingMaterial': CollectionMethod.livingMaterial,
+};
+const _PlantRecordphenologicalStateEnumValueMap = {
+  r'flowering': r'flowering',
+  r'fruiting': r'fruiting',
+  r'budding': r'budding',
+  r'withFruit': r'withFruit',
+  r'vegetative': r'vegetative',
+  r'sterile': r'sterile',
+  r'unknown': r'unknown',
+};
+const _PlantRecordphenologicalStateValueEnumMap = {
+  r'flowering': PhenologicalState.flowering,
+  r'fruiting': PhenologicalState.fruiting,
+  r'budding': PhenologicalState.budding,
+  r'withFruit': PhenologicalState.withFruit,
+  r'vegetative': PhenologicalState.vegetative,
+  r'sterile': PhenologicalState.sterile,
+  r'unknown': PhenologicalState.unknown,
 };
 
 Id _plantRecordGetId(PlantRecord object) {
@@ -1758,6 +2189,73 @@ extension PlantRecordQueryWhere
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterWhereClause>
+      municipalityIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'municipality',
+        value: [null],
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterWhereClause>
+      municipalityIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'municipality',
+        lower: [null],
+        includeLower: false,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterWhereClause> municipalityEqualTo(
+      String? municipality) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'municipality',
+        value: [municipality],
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterWhereClause>
+      municipalityNotEqualTo(String? municipality) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'municipality',
+              lower: [],
+              upper: [municipality],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'municipality',
+              lower: [municipality],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'municipality',
+              lower: [municipality],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'municipality',
+              lower: [],
+              upper: [municipality],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterWhereClause> categoryEqualTo(
       PlantCategory category) {
     return QueryBuilder.apply(this, (query) {
@@ -2244,6 +2742,160 @@ extension PlantRecordQueryFilter
         upper: upper,
         includeUpper: includeUpper,
         epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      associatedTaxaIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'associatedTaxa',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      associatedTaxaIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'associatedTaxa',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      associatedTaxaEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'associatedTaxa',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      associatedTaxaGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'associatedTaxa',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      associatedTaxaLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'associatedTaxa',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      associatedTaxaBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'associatedTaxa',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      associatedTaxaStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'associatedTaxa',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      associatedTaxaEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'associatedTaxa',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      associatedTaxaContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'associatedTaxa',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      associatedTaxaMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'associatedTaxa',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      associatedTaxaIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'associatedTaxa',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      associatedTaxaIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'associatedTaxa',
+        value: '',
       ));
     });
   }
@@ -3935,6 +4587,314 @@ extension PlantRecordQueryFilter
   }
 
   QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectionMethodIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'collectionMethod',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectionMethodIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'collectionMethod',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectionMethodEqualTo(
+    CollectionMethod? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'collectionMethod',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectionMethodGreaterThan(
+    CollectionMethod? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'collectionMethod',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectionMethodLessThan(
+    CollectionMethod? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'collectionMethod',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectionMethodBetween(
+    CollectionMethod? lower,
+    CollectionMethod? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'collectionMethod',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectionMethodStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'collectionMethod',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectionMethodEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'collectionMethod',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectionMethodContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'collectionMethod',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectionMethodMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'collectionMethod',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectionMethodIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'collectionMethod',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectionMethodIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'collectionMethod',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectorNumberIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'collectorNumber',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectorNumberIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'collectorNumber',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectorNumberEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'collectorNumber',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectorNumberGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'collectorNumber',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectorNumberLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'collectorNumber',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectorNumberBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'collectorNumber',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectorNumberStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'collectorNumber',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectorNumberEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'collectorNumber',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectorNumberContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'collectorNumber',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectorNumberMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'collectorNumber',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectorNumberIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'collectorNumber',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      collectorNumberIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'collectorNumber',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
       commonNameEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -4361,6 +5321,158 @@ extension PlantRecordQueryFilter
   }
 
   QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      countryIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'country',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      countryIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'country',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> countryEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'country',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      countryGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'country',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> countryLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'country',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> countryBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'country',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      countryStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'country',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> countryEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'country',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> countryContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'country',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> countryMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'country',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      countryIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'country',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      countryIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'country',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
       createdAtEqualTo(DateTime value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -4469,6 +5581,251 @@ extension PlantRecordQueryFilter
         upper: upper,
         includeUpper: includeUpper,
       ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      determinationQualifierIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'determinationQualifier',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      determinationQualifierIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'determinationQualifier',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      determinationQualifierEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'determinationQualifier',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      determinationQualifierGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'determinationQualifier',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      determinationQualifierLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'determinationQualifier',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      determinationQualifierBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'determinationQualifier',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      determinationQualifierStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'determinationQualifier',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      determinationQualifierEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'determinationQualifier',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      determinationQualifierContains(String value,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'determinationQualifier',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      determinationQualifierMatches(String pattern,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'determinationQualifier',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      determinationQualifierIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'determinationQualifier',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      determinationQualifierIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'determinationQualifier',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      determinationsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'determinations',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      determinationsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'determinations',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      determinationsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'determinations',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      determinationsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'determinations',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      determinationsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'determinations',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      determinationsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'determinations',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
     });
   }
 
@@ -4604,6 +5961,386 @@ extension PlantRecordQueryFilter
         property: r'deviceId',
         value: '',
       ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateOfIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'duplicateOf',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateOfIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'duplicateOf',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateOfEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'duplicateOf',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateOfGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'duplicateOf',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateOfLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'duplicateOf',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateOfBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'duplicateOf',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateOfStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'duplicateOf',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateOfEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'duplicateOf',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateOfContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'duplicateOf',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateOfMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'duplicateOf',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateOfIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'duplicateOf',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateOfIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'duplicateOf',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateUuidsElementEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'duplicateUuids',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateUuidsElementGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'duplicateUuids',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateUuidsElementLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'duplicateUuids',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateUuidsElementBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'duplicateUuids',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateUuidsElementStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'duplicateUuids',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateUuidsElementEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'duplicateUuids',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateUuidsElementContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'duplicateUuids',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateUuidsElementMatches(String pattern,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'duplicateUuids',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateUuidsElementIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'duplicateUuids',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateUuidsElementIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'duplicateUuids',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateUuidsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'duplicateUuids',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateUuidsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'duplicateUuids',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateUuidsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'duplicateUuids',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateUuidsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'duplicateUuids',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateUuidsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'duplicateUuids',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      duplicateUuidsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'duplicateUuids',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
     });
   }
 
@@ -7154,6 +8891,234 @@ extension PlantRecordQueryFilter
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      iNaturalistIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'iNaturalistId',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      iNaturalistIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'iNaturalistId',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      iNaturalistIdEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'iNaturalistId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      iNaturalistIdGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'iNaturalistId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      iNaturalistIdLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'iNaturalistId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      iNaturalistIdBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'iNaturalistId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      iNaturalistIdStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'iNaturalistId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      iNaturalistIdEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'iNaturalistId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      iNaturalistIdContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'iNaturalistId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      iNaturalistIdMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'iNaturalistId',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      iNaturalistIdIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'iNaturalistId',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      iNaturalistIdIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'iNaturalistId',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      iNaturalistSyncedAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'iNaturalistSyncedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      iNaturalistSyncedAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'iNaturalistSyncedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      iNaturalistSyncedAtEqualTo(DateTime? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'iNaturalistSyncedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      iNaturalistSyncedAtGreaterThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'iNaturalistSyncedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      iNaturalistSyncedAtLessThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'iNaturalistSyncedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      iNaturalistSyncedAtBetween(
+    DateTime? lower,
+    DateTime? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'iNaturalistSyncedAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -7213,6 +9178,24 @@ extension PlantRecordQueryFilter
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isDraft',
         value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      latestDeterminationIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'latestDetermination',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      latestDeterminationIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'latestDetermination',
       ));
     });
   }
@@ -7295,6 +9278,159 @@ extension PlantRecordQueryFilter
         upper: upper,
         includeUpper: includeUpper,
         epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      localityIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'locality',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      localityIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'locality',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> localityEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'locality',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      localityGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'locality',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      localityLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'locality',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> localityBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'locality',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      localityStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'locality',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      localityEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'locality',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      localityContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'locality',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> localityMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'locality',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      localityIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'locality',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      localityIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'locality',
+        value: '',
       ));
     });
   }
@@ -7472,6 +9608,314 @@ extension PlantRecordQueryFilter
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      moonPhaseIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'moonPhase',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      moonPhaseIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'moonPhase',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      moonPhaseEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'moonPhase',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      moonPhaseGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'moonPhase',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      moonPhaseLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'moonPhase',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      moonPhaseBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'moonPhase',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      moonPhaseStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'moonPhase',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      moonPhaseEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'moonPhase',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      moonPhaseContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'moonPhase',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      moonPhaseMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'moonPhase',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      moonPhaseIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'moonPhase',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      moonPhaseIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'moonPhase',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      municipalityIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'municipality',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      municipalityIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'municipality',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      municipalityEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'municipality',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      municipalityGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'municipality',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      municipalityLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'municipality',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      municipalityBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'municipality',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      municipalityStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'municipality',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      municipalityEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'municipality',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      municipalityContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'municipality',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      municipalityMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'municipality',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      municipalityIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'municipality',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      municipalityIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'municipality',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> notesIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -7616,6 +10060,388 @@ extension PlantRecordQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'notes',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      numberOfIndividualsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'numberOfIndividuals',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      numberOfIndividualsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'numberOfIndividuals',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      numberOfIndividualsEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'numberOfIndividuals',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      numberOfIndividualsGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'numberOfIndividuals',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      numberOfIndividualsLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'numberOfIndividuals',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      numberOfIndividualsBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'numberOfIndividuals',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologicalStateIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'phenologicalState',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologicalStateIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'phenologicalState',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologicalStateEqualTo(
+    PhenologicalState? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'phenologicalState',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologicalStateGreaterThan(
+    PhenologicalState? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'phenologicalState',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologicalStateLessThan(
+    PhenologicalState? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'phenologicalState',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologicalStateBetween(
+    PhenologicalState? lower,
+    PhenologicalState? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'phenologicalState',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologicalStateStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'phenologicalState',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologicalStateEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'phenologicalState',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologicalStateContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'phenologicalState',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologicalStateMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'phenologicalState',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologicalStateIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'phenologicalState',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologicalStateIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'phenologicalState',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologyFournierIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'phenologyFournier',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologyFournierIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'phenologyFournier',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologyFournierEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'phenologyFournier',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologyFournierGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'phenologyFournier',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologyFournierLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'phenologyFournier',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologyFournierBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'phenologyFournier',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologyFournierStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'phenologyFournier',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologyFournierEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'phenologyFournier',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologyFournierContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'phenologyFournier',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologyFournierMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'phenologyFournier',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologyFournierIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'phenologyFournier',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      phenologyFournierIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'phenologyFournier',
         value: '',
       ));
     });
@@ -8232,6 +11058,160 @@ extension PlantRecordQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'registryIdentifier',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      scientificAuthorIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'scientificAuthor',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      scientificAuthorIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'scientificAuthor',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      scientificAuthorEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'scientificAuthor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      scientificAuthorGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'scientificAuthor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      scientificAuthorLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'scientificAuthor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      scientificAuthorBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'scientificAuthor',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      scientificAuthorStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'scientificAuthor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      scientificAuthorEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'scientificAuthor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      scientificAuthorContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'scientificAuthor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      scientificAuthorMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'scientificAuthor',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      scientificAuthorIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'scientificAuthor',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      scientificAuthorIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'scientificAuthor',
         value: '',
       ));
     });
@@ -9516,6 +12496,463 @@ extension PlantRecordQueryFilter
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> stateIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'state',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      stateIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'state',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> stateEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'state',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      stateGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'state',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> stateLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'state',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> stateBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'state',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> stateStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'state',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> stateEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'state',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> stateContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'state',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> stateMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'state',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> stateIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'state',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      stateIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'state',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      substrateIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'substrate',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      substrateIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'substrate',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      substrateEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'substrate',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      substrateGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'substrate',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      substrateLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'substrate',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      substrateBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'substrate',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      substrateStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'substrate',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      substrateEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'substrate',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      substrateContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'substrate',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      substrateMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'substrate',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      substrateIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'substrate',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      substrateIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'substrate',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      taxonStatusIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'taxonStatus',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      taxonStatusIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'taxonStatus',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      taxonStatusEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'taxonStatus',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      taxonStatusGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'taxonStatus',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      taxonStatusLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'taxonStatus',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      taxonStatusBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'taxonStatus',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      taxonStatusStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'taxonStatus',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      taxonStatusEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'taxonStatus',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      taxonStatusContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'taxonStatus',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      taxonStatusMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'taxonStatus',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      taxonStatusIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'taxonStatus',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      taxonStatusIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'taxonStatus',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
       temperatureIsNull() {
     return QueryBuilder.apply(this, (query) {
@@ -9596,6 +13033,160 @@ extension PlantRecordQueryFilter
         upper: upper,
         includeUpper: includeUpper,
         epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      topographyIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'topography',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      topographyIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'topography',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      topographyEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'topography',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      topographyGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'topography',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      topographyLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'topography',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      topographyBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'topography',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      topographyStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'topography',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      topographyEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'topography',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      topographyContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'topography',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      topographyMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'topography',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      topographyIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'topography',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      topographyIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'topography',
+        value: '',
       ));
     });
   }
@@ -9788,6 +13379,160 @@ extension PlantRecordQueryFilter
   }
 
   QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      vegetationTypeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'vegetationType',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      vegetationTypeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'vegetationType',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      vegetationTypeEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'vegetationType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      vegetationTypeGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'vegetationType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      vegetationTypeLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'vegetationType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      vegetationTypeBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'vegetationType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      vegetationTypeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'vegetationType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      vegetationTypeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'vegetationType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      vegetationTypeContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'vegetationType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      vegetationTypeMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'vegetationType',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      vegetationTypeIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'vegetationType',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      vegetationTypeIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'vegetationType',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
       weatherConditionIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -9942,6 +13687,160 @@ extension PlantRecordQueryFilter
   }
 
   QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherNotesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'weatherNotes',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherNotesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'weatherNotes',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherNotesEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'weatherNotes',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherNotesGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'weatherNotes',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherNotesLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'weatherNotes',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherNotesBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'weatherNotes',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherNotesStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'weatherNotes',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherNotesEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'weatherNotes',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherNotesContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'weatherNotes',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherNotesMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'weatherNotes',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherNotesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'weatherNotes',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      weatherNotesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'weatherNotes',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
       windSpeedIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -10029,6 +13928,20 @@ extension PlantRecordQueryFilter
 extension PlantRecordQueryObject
     on QueryBuilder<PlantRecord, PlantRecord, QFilterCondition> {
   QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      determinationsElement(FilterQuery<Determination> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'determinations');
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      latestDetermination(FilterQuery<Determination> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'latestDetermination');
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
       measurementsElement(FilterQuery<Measurement> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'measurements');
@@ -10078,6 +13991,19 @@ extension PlantRecordQuerySortBy
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByAltitudeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'altitude', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByAssociatedTaxa() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'associatedTaxa', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByAssociatedTaxaDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'associatedTaxa', Sort.desc);
     });
   }
 
@@ -10212,6 +14138,33 @@ extension PlantRecordQuerySortBy
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByCollectionMethod() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'collectionMethod', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByCollectionMethodDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'collectionMethod', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByCollectorNumber() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'collectorNumber', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByCollectorNumberDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'collectorNumber', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByCommonName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'commonName', Sort.asc);
@@ -10250,6 +14203,18 @@ extension PlantRecordQuerySortBy
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByCountry() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'country', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByCountryDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'country', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.asc);
@@ -10275,6 +14240,20 @@ extension PlantRecordQuerySortBy
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByDeterminationQualifier() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'determinationQualifier', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByDeterminationQualifierDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'determinationQualifier', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByDeviceId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'deviceId', Sort.asc);
@@ -10284,6 +14263,18 @@ extension PlantRecordQuerySortBy
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByDeviceIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'deviceId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByDuplicateOf() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'duplicateOf', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByDuplicateOfDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'duplicateOf', Sort.desc);
     });
   }
 
@@ -10515,6 +14506,33 @@ extension PlantRecordQuerySortBy
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByINaturalistId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'iNaturalistId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByINaturalistIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'iNaturalistId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByINaturalistSyncedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'iNaturalistSyncedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByINaturalistSyncedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'iNaturalistSyncedAt', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByIsDraft() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isDraft', Sort.asc);
@@ -10539,6 +14557,18 @@ extension PlantRecordQuerySortBy
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByLocality() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'locality', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByLocalityDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'locality', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByLongitude() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'longitude', Sort.asc);
@@ -10551,6 +14581,31 @@ extension PlantRecordQuerySortBy
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByMoonPhase() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'moonPhase', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByMoonPhaseDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'moonPhase', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByMunicipality() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'municipality', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByMunicipalityDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'municipality', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByNotes() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'notes', Sort.asc);
@@ -10560,6 +14615,48 @@ extension PlantRecordQuerySortBy
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByNotesDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'notes', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByNumberOfIndividuals() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'numberOfIndividuals', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByNumberOfIndividualsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'numberOfIndividuals', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByPhenologicalState() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'phenologicalState', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByPhenologicalStateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'phenologicalState', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByPhenologyFournier() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'phenologyFournier', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByPhenologyFournierDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'phenologyFournier', Sort.desc);
     });
   }
 
@@ -10586,6 +14683,20 @@ extension PlantRecordQuerySortBy
       sortByRegistryIdentifierDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'registryIdentifier', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByScientificAuthor() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'scientificAuthor', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByScientificAuthorDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'scientificAuthor', Sort.desc);
     });
   }
 
@@ -10706,6 +14817,42 @@ extension PlantRecordQuerySortBy
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByState() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'state', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByStateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'state', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortBySubstrate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'substrate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortBySubstrateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'substrate', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByTaxonStatus() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'taxonStatus', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByTaxonStatusDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'taxonStatus', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByTemperature() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'temperature', Sort.asc);
@@ -10715,6 +14862,18 @@ extension PlantRecordQuerySortBy
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByTemperatureDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'temperature', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByTopography() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'topography', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByTopographyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'topography', Sort.desc);
     });
   }
 
@@ -10742,6 +14901,19 @@ extension PlantRecordQuerySortBy
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByVegetationType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'vegetationType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByVegetationTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'vegetationType', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
       sortByWeatherCondition() {
     return QueryBuilder.apply(this, (query) {
@@ -10753,6 +14925,19 @@ extension PlantRecordQuerySortBy
       sortByWeatherConditionDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'weatherCondition', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> sortByWeatherNotes() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weatherNotes', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      sortByWeatherNotesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weatherNotes', Sort.desc);
     });
   }
 
@@ -10780,6 +14965,19 @@ extension PlantRecordQuerySortThenBy
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByAltitudeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'altitude', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByAssociatedTaxa() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'associatedTaxa', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByAssociatedTaxaDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'associatedTaxa', Sort.desc);
     });
   }
 
@@ -10914,6 +15112,33 @@ extension PlantRecordQuerySortThenBy
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByCollectionMethod() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'collectionMethod', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByCollectionMethodDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'collectionMethod', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByCollectorNumber() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'collectorNumber', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByCollectorNumberDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'collectorNumber', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByCommonName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'commonName', Sort.asc);
@@ -10952,6 +15177,18 @@ extension PlantRecordQuerySortThenBy
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByCountry() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'country', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByCountryDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'country', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.asc);
@@ -10977,6 +15214,20 @@ extension PlantRecordQuerySortThenBy
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByDeterminationQualifier() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'determinationQualifier', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByDeterminationQualifierDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'determinationQualifier', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByDeviceId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'deviceId', Sort.asc);
@@ -10986,6 +15237,18 @@ extension PlantRecordQuerySortThenBy
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByDeviceIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'deviceId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByDuplicateOf() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'duplicateOf', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByDuplicateOfDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'duplicateOf', Sort.desc);
     });
   }
 
@@ -11217,6 +15480,33 @@ extension PlantRecordQuerySortThenBy
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByINaturalistId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'iNaturalistId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByINaturalistIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'iNaturalistId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByINaturalistSyncedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'iNaturalistSyncedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByINaturalistSyncedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'iNaturalistSyncedAt', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -11253,6 +15543,18 @@ extension PlantRecordQuerySortThenBy
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByLocality() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'locality', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByLocalityDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'locality', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByLongitude() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'longitude', Sort.asc);
@@ -11265,6 +15567,31 @@ extension PlantRecordQuerySortThenBy
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByMoonPhase() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'moonPhase', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByMoonPhaseDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'moonPhase', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByMunicipality() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'municipality', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByMunicipalityDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'municipality', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByNotes() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'notes', Sort.asc);
@@ -11274,6 +15601,48 @@ extension PlantRecordQuerySortThenBy
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByNotesDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'notes', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByNumberOfIndividuals() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'numberOfIndividuals', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByNumberOfIndividualsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'numberOfIndividuals', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByPhenologicalState() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'phenologicalState', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByPhenologicalStateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'phenologicalState', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByPhenologyFournier() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'phenologyFournier', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByPhenologyFournierDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'phenologyFournier', Sort.desc);
     });
   }
 
@@ -11300,6 +15669,20 @@ extension PlantRecordQuerySortThenBy
       thenByRegistryIdentifierDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'registryIdentifier', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByScientificAuthor() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'scientificAuthor', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByScientificAuthorDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'scientificAuthor', Sort.desc);
     });
   }
 
@@ -11420,6 +15803,42 @@ extension PlantRecordQuerySortThenBy
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByState() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'state', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByStateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'state', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenBySubstrate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'substrate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenBySubstrateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'substrate', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByTaxonStatus() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'taxonStatus', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByTaxonStatusDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'taxonStatus', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByTemperature() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'temperature', Sort.asc);
@@ -11429,6 +15848,18 @@ extension PlantRecordQuerySortThenBy
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByTemperatureDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'temperature', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByTopography() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'topography', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByTopographyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'topography', Sort.desc);
     });
   }
 
@@ -11456,6 +15887,19 @@ extension PlantRecordQuerySortThenBy
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByVegetationType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'vegetationType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByVegetationTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'vegetationType', Sort.desc);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
       thenByWeatherCondition() {
     return QueryBuilder.apply(this, (query) {
@@ -11467,6 +15911,19 @@ extension PlantRecordQuerySortThenBy
       thenByWeatherConditionDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'weatherCondition', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy> thenByWeatherNotes() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weatherNotes', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterSortBy>
+      thenByWeatherNotesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weatherNotes', Sort.desc);
     });
   }
 
@@ -11488,6 +15945,14 @@ extension PlantRecordQueryWhereDistinct
   QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByAltitude() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'altitude');
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByAssociatedTaxa(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'associatedTaxa',
+          caseSensitive: caseSensitive);
     });
   }
 
@@ -11576,6 +16041,22 @@ extension PlantRecordQueryWhereDistinct
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByCollectionMethod(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'collectionMethod',
+          caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByCollectorNumber(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'collectorNumber',
+          caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByCommonName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -11599,6 +16080,13 @@ extension PlantRecordQueryWhereDistinct
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByCountry(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'country', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'createdAt');
@@ -11611,10 +16099,31 @@ extension PlantRecordQueryWhereDistinct
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct>
+      distinctByDeterminationQualifier({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'determinationQualifier',
+          caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByDeviceId(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'deviceId', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByDuplicateOf(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'duplicateOf', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByDuplicateUuids() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'duplicateUuids');
     });
   }
 
@@ -11747,6 +16256,21 @@ extension PlantRecordQueryWhereDistinct
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByINaturalistId(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'iNaturalistId',
+          caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct>
+      distinctByINaturalistSyncedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'iNaturalistSyncedAt');
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByIsDraft() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isDraft');
@@ -11759,9 +16283,30 @@ extension PlantRecordQueryWhereDistinct
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByLocality(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'locality', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByLongitude() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'longitude');
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByMoonPhase(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'moonPhase', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByMunicipality(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'municipality', caseSensitive: caseSensitive);
     });
   }
 
@@ -11769,6 +16314,29 @@ extension PlantRecordQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'notes', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct>
+      distinctByNumberOfIndividuals() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'numberOfIndividuals');
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByPhenologicalState(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'phenologicalState',
+          caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByPhenologyFournier(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'phenologyFournier',
+          caseSensitive: caseSensitive);
     });
   }
 
@@ -11789,6 +16357,14 @@ extension PlantRecordQueryWhereDistinct
       distinctByRegistryIdentifier({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'registryIdentifier',
+          caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByScientificAuthor(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'scientificAuthor',
           caseSensitive: caseSensitive);
     });
   }
@@ -11860,9 +16436,37 @@ extension PlantRecordQueryWhereDistinct
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByState(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'state', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctBySubstrate(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'substrate', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByTaxonStatus(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'taxonStatus', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByTemperature() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'temperature');
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByTopography(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'topography', caseSensitive: caseSensitive);
     });
   }
 
@@ -11879,11 +16483,26 @@ extension PlantRecordQueryWhereDistinct
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByVegetationType(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'vegetationType',
+          caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByWeatherCondition(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'weatherCondition',
           caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByWeatherNotes(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'weatherNotes', caseSensitive: caseSensitive);
     });
   }
 
@@ -11905,6 +16524,13 @@ extension PlantRecordQueryProperty
   QueryBuilder<PlantRecord, double?, QQueryOperations> altitudeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'altitude');
+    });
+  }
+
+  QueryBuilder<PlantRecord, String?, QQueryOperations>
+      associatedTaxaProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'associatedTaxa');
     });
   }
 
@@ -11988,6 +16614,20 @@ extension PlantRecordQueryProperty
     });
   }
 
+  QueryBuilder<PlantRecord, CollectionMethod?, QQueryOperations>
+      collectionMethodProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'collectionMethod');
+    });
+  }
+
+  QueryBuilder<PlantRecord, String?, QQueryOperations>
+      collectorNumberProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'collectorNumber');
+    });
+  }
+
   QueryBuilder<PlantRecord, String, QQueryOperations> commonNameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'commonName');
@@ -12007,6 +16647,12 @@ extension PlantRecordQueryProperty
     });
   }
 
+  QueryBuilder<PlantRecord, String?, QQueryOperations> countryProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'country');
+    });
+  }
+
   QueryBuilder<PlantRecord, DateTime, QQueryOperations> createdAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'createdAt');
@@ -12020,9 +16666,36 @@ extension PlantRecordQueryProperty
     });
   }
 
+  QueryBuilder<PlantRecord, String?, QQueryOperations>
+      determinationQualifierProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'determinationQualifier');
+    });
+  }
+
+  QueryBuilder<PlantRecord, List<Determination>, QQueryOperations>
+      determinationsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'determinations');
+    });
+  }
+
   QueryBuilder<PlantRecord, String, QQueryOperations> deviceIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'deviceId');
+    });
+  }
+
+  QueryBuilder<PlantRecord, String?, QQueryOperations> duplicateOfProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'duplicateOf');
+    });
+  }
+
+  QueryBuilder<PlantRecord, List<String>, QQueryOperations>
+      duplicateUuidsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'duplicateUuids');
     });
   }
 
@@ -12139,15 +16812,41 @@ extension PlantRecordQueryProperty
     });
   }
 
+  QueryBuilder<PlantRecord, String?, QQueryOperations> iNaturalistIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'iNaturalistId');
+    });
+  }
+
+  QueryBuilder<PlantRecord, DateTime?, QQueryOperations>
+      iNaturalistSyncedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'iNaturalistSyncedAt');
+    });
+  }
+
   QueryBuilder<PlantRecord, bool, QQueryOperations> isDraftProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isDraft');
     });
   }
 
+  QueryBuilder<PlantRecord, Determination?, QQueryOperations>
+      latestDeterminationProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'latestDetermination');
+    });
+  }
+
   QueryBuilder<PlantRecord, double?, QQueryOperations> latitudeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'latitude');
+    });
+  }
+
+  QueryBuilder<PlantRecord, String?, QQueryOperations> localityProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'locality');
     });
   }
 
@@ -12164,9 +16863,42 @@ extension PlantRecordQueryProperty
     });
   }
 
+  QueryBuilder<PlantRecord, String?, QQueryOperations> moonPhaseProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'moonPhase');
+    });
+  }
+
+  QueryBuilder<PlantRecord, String?, QQueryOperations> municipalityProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'municipality');
+    });
+  }
+
   QueryBuilder<PlantRecord, String?, QQueryOperations> notesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'notes');
+    });
+  }
+
+  QueryBuilder<PlantRecord, int?, QQueryOperations>
+      numberOfIndividualsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'numberOfIndividuals');
+    });
+  }
+
+  QueryBuilder<PlantRecord, PhenologicalState?, QQueryOperations>
+      phenologicalStateProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'phenologicalState');
+    });
+  }
+
+  QueryBuilder<PlantRecord, String?, QQueryOperations>
+      phenologyFournierProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'phenologyFournier');
     });
   }
 
@@ -12194,6 +16926,13 @@ extension PlantRecordQueryProperty
       registryIdentifierProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'registryIdentifier');
+    });
+  }
+
+  QueryBuilder<PlantRecord, String?, QQueryOperations>
+      scientificAuthorProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'scientificAuthor');
     });
   }
 
@@ -12256,6 +16995,18 @@ extension PlantRecordQueryProperty
     });
   }
 
+  QueryBuilder<PlantRecord, String?, QQueryOperations> stateProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'state');
+    });
+  }
+
+  QueryBuilder<PlantRecord, String?, QQueryOperations> substrateProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'substrate');
+    });
+  }
+
   QueryBuilder<PlantRecord, SyncMetadata, QQueryOperations>
       syncMetadataProperty() {
     return QueryBuilder.apply(this, (query) {
@@ -12263,9 +17014,21 @@ extension PlantRecordQueryProperty
     });
   }
 
+  QueryBuilder<PlantRecord, String?, QQueryOperations> taxonStatusProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'taxonStatus');
+    });
+  }
+
   QueryBuilder<PlantRecord, double?, QQueryOperations> temperatureProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'temperature');
+    });
+  }
+
+  QueryBuilder<PlantRecord, String?, QQueryOperations> topographyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'topography');
     });
   }
 
@@ -12282,9 +17045,22 @@ extension PlantRecordQueryProperty
   }
 
   QueryBuilder<PlantRecord, String?, QQueryOperations>
+      vegetationTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'vegetationType');
+    });
+  }
+
+  QueryBuilder<PlantRecord, String?, QQueryOperations>
       weatherConditionProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'weatherCondition');
+    });
+  }
+
+  QueryBuilder<PlantRecord, String?, QQueryOperations> weatherNotesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'weatherNotes');
     });
   }
 

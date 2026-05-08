@@ -27,10 +27,32 @@ class AppLocalizationsPt extends AppLocalizations {
   String get scientificName => 'Nome Científico';
 
   @override
+  String get scientificNameBinomialHint => 'Genus species';
+
+  @override
   String get commonName => 'Nome Popular';
 
   @override
   String get family => 'Família';
+
+  @override
+  String get taxonAuthor => 'Autor';
+
+  @override
+  String get taxonStatus => 'Status Taxonômico';
+
+  @override
+  String get taxonSearchHint => 'Buscar nome científico via POWO';
+
+  @override
+  String get taxonOfflineHint =>
+      'As sugestões usam busca online e cache local quando offline';
+
+  @override
+  String get taxonStatusAccepted => 'Aceito';
+
+  @override
+  String get taxonStatusSynonym => 'Sinônimo';
 
   @override
   String get genus => 'Gênero';
@@ -366,6 +388,60 @@ class AppLocalizationsPt extends AppLocalizations {
   String get apply => 'Aplicar';
 
   @override
+  String get identifyFamilyWithKey =>
+      'Identificar família com chave dicotômica';
+
+  @override
+  String get dichotomousKeyTitle => 'Chave dicotômica';
+
+  @override
+  String get dichotomousKeyIntro =>
+      'Responda cada pergunta com base em caracteres observáveis em campo. A chave começa ampla e afunila até uma família sugerida.';
+
+  @override
+  String get dichotomousKeyHowToUse => 'Como usar';
+
+  @override
+  String get dichotomousKeyGeneralBranch => 'Chave geral';
+
+  @override
+  String dichotomousKeyCurrentBranch(String family) {
+    return 'Ramo atual: $family';
+  }
+
+  @override
+  String get dichotomousKeyTrail => 'Trilha de decisão';
+
+  @override
+  String get dichotomousKeyBackStep => 'Voltar passo';
+
+  @override
+  String get dichotomousKeyRestart => 'Reiniciar chave';
+
+  @override
+  String get dichotomousKeySuggestedFamily => 'Família sugerida';
+
+  @override
+  String get dichotomousKeyUseFamily => 'Usar esta família';
+
+  @override
+  String dichotomousKeyQuestionCounter(int step) {
+    return 'Passo $step';
+  }
+
+  @override
+  String get dichotomousKeyResultHelp =>
+      'Use a sugestão abaixo para preencher o campo de família do registro atual.';
+
+  @override
+  String dichotomousKeyLoadError(String error) {
+    return 'Erro ao carregar a chave dicotômica: $error';
+  }
+
+  @override
+  String get dichotomousKeyEmpty => 'Nenhuma chave dicotômica disponível.';
+
+  @override
   String get suggestion => 'Sugestão';
 
   @override
@@ -673,6 +749,100 @@ class AppLocalizationsPt extends AppLocalizations {
   String get localDataBackup => 'Backup local de dados';
 
   @override
+  String get inaturalist => 'iNaturalist';
+
+  @override
+  String get inaturalistAuthTitle => 'Conectar ao iNaturalist';
+
+  @override
+  String get inaturalistTokenSetupTitle => 'Token de acesso pessoal';
+
+  @override
+  String get inaturalistTokenSetupDescription =>
+      'Use primeiro um token pessoal do iNaturalist. Você pode gerá-lo na sua conta do iNaturalist e colá-lo aqui para habilitar o envio de observações.';
+
+  @override
+  String get inaturalistOpenTokenPage => 'Abrir página do token';
+
+  @override
+  String get inaturalistUsername => 'Usuário do iNaturalist';
+
+  @override
+  String get inaturalistUsernameHint =>
+      'Nome de usuário opcional para exibição';
+
+  @override
+  String get inaturalistAccessToken => 'Token de acesso';
+
+  @override
+  String get inaturalistAccessTokenHint => 'Cole seu token do iNaturalist';
+
+  @override
+  String get inaturalistTokenHelp =>
+      'Seu token é armazenado localmente neste dispositivo e usado apenas para enviar observações.';
+
+  @override
+  String get inaturalistSaveCredentials => 'Salvar credenciais do iNaturalist';
+
+  @override
+  String get inaturalistClearCredentials => 'Limpar credenciais do iNaturalist';
+
+  @override
+  String get inaturalistCredentialsSaved => 'Credenciais do iNaturalist salvas';
+
+  @override
+  String get inaturalistCredentialsCleared =>
+      'Credenciais do iNaturalist removidas';
+
+  @override
+  String inaturalistConfigured(String username) {
+    return 'Configurado para @$username';
+  }
+
+  @override
+  String get inaturalistNotConfigured => 'Não configurado';
+
+  @override
+  String get sendToInaturalist => 'Enviar para iNaturalist';
+
+  @override
+  String get sendSelectedToInaturalist =>
+      'Enviar registros selecionados para iNaturalist';
+
+  @override
+  String get inaturalistAlreadySent => 'Já enviada ao iNaturalist';
+
+  @override
+  String inaturalistObservationId(String id) {
+    return 'ID da observação: $id';
+  }
+
+  @override
+  String get inaturalistSyncBadge => '📤 iNat';
+
+  @override
+  String get inaturalistPushSuccess => 'Observação enviada ao iNaturalist';
+
+  @override
+  String inaturalistBulkSuccess(int count) {
+    return '$count registro(s) enviados ao iNaturalist';
+  }
+
+  @override
+  String inaturalistPushError(String error) {
+    return 'Falha ao enviar para iNaturalist: $error';
+  }
+
+  @override
+  String get inaturalistRequiresToken =>
+      'Configure seu token do iNaturalist nas Configurações antes de enviar registros.';
+
+  @override
+  String inaturalistProgress(int current, int total) {
+    return 'Enviando $current de $total';
+  }
+
+  @override
   String get syncAutomatically => 'Sincronizar dados automaticamente';
 
   @override
@@ -807,6 +977,103 @@ class AppLocalizationsPt extends AppLocalizations {
   String get formSection => 'Formulário';
 
   @override
+  String get collectionTemplatesTitle => 'Templates de Coleta';
+
+  @override
+  String get collectionTemplatesSubtitle =>
+      'Gerencie modelos por bioma para pré-preenchimento';
+
+  @override
+  String get newCollectionTemplate => 'Novo Template';
+
+  @override
+  String get editCollectionTemplate => 'Editar Template';
+
+  @override
+  String get duplicateCollectionTemplate => 'Duplicar template';
+
+  @override
+  String get collectionTemplateSaved => 'Template salvo com sucesso';
+
+  @override
+  String get collectionTemplateDeleted => 'Template excluído com sucesso';
+
+  @override
+  String get collectionTemplateDuplicated => 'Template duplicado com sucesso';
+
+  @override
+  String get collectionTemplateName => 'Nome do template';
+
+  @override
+  String get collectionTemplateNameRequired =>
+      'Informe um nome para o template';
+
+  @override
+  String get collectionTemplateBiome => 'Bioma';
+
+  @override
+  String get collectionTemplateHabitat => 'Habitat padrão';
+
+  @override
+  String get collectionTemplateVegetationType => 'Tipo de vegetação padrão';
+
+  @override
+  String get collectionTemplateTopography => 'Topografia padrão';
+
+  @override
+  String get collectionTemplateSubstrate => 'Substrato padrão';
+
+  @override
+  String get collectionTemplateNotes => 'Observações frequentes';
+
+  @override
+  String get useCollectionTemplateTitle => 'Usar template?';
+
+  @override
+  String useCollectionTemplateBody(String templateName, String biomeName) {
+    return 'Encontramos o template \"$templateName\" para o bioma $biomeName. Deseja pré-preencher o formulário?';
+  }
+
+  @override
+  String get useCollectionTemplateAction => 'Usar template';
+
+  @override
+  String collectionTemplateApplied(String templateName) {
+    return 'Template \"$templateName\" aplicado';
+  }
+
+  @override
+  String get deleteCollectionTemplateTitle => 'Excluir template';
+
+  @override
+  String deleteCollectionTemplateBody(String templateName) {
+    return 'Deseja excluir o template \"$templateName\"?';
+  }
+
+  @override
+  String templateCopyName(String name) {
+    return 'Cópia de $name';
+  }
+
+  @override
+  String get biomeCerrado => 'Cerrado';
+
+  @override
+  String get biomeMataAtlantica => 'Mata Atlântica';
+
+  @override
+  String get biomeAmazonia => 'Amazônia';
+
+  @override
+  String get biomeCaatinga => 'Caatinga';
+
+  @override
+  String get biomePampa => 'Pampa';
+
+  @override
+  String get biomePantanal => 'Pantanal';
+
+  @override
   String get audioSection => 'Áudio';
 
   @override
@@ -879,6 +1146,82 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get plantRecordSaved => 'Registro de planta salvo';
+
+  @override
+  String get plantNetIdentifyButton => 'Identificar com PlantNet';
+
+  @override
+  String get plantNetSuggestionsTitle => 'Sugestões do PlantNet';
+
+  @override
+  String get plantNetSelectSuggestion =>
+      'Selecione uma sugestão para preencher os campos automaticamente';
+
+  @override
+  String get plantNetNoResults =>
+      'Nenhuma sugestão encontrada para estas fotos';
+
+  @override
+  String plantNetConfidence(String score) {
+    return 'Confiança: $score%';
+  }
+
+  @override
+  String get plantNetApiKeyTitle => 'PlantNet API Key';
+
+  @override
+  String get plantNetApiKeyLabel => 'API key do PlantNet';
+
+  @override
+  String get plantNetApiKeyHint => 'Cole sua API key aqui';
+
+  @override
+  String get plantNetApiKeyHelper =>
+      'Necessária para identificar espécies a partir de fotos';
+
+  @override
+  String get plantNetApiKeyConfigured => 'Configurada';
+
+  @override
+  String get plantNetApiKeyNotConfigured => 'Não configurada';
+
+  @override
+  String get plantNetMissingApiKey =>
+      'Configure a API key do PlantNet nas configurações para usar a identificação por imagem';
+
+  @override
+  String get plantNetNoInternet =>
+      'Conecte-se à internet para identificar espécies com o PlantNet';
+
+  @override
+  String get plantNetIdentifying => 'Identificando espécie...';
+
+  @override
+  String plantNetIdentificationFailed(String error) {
+    return 'Falha ao identificar espécie: $error';
+  }
+
+  @override
+  String get plantNetSuggestionApplied => 'Sugestão do PlantNet aplicada';
+
+  @override
+  String get ocrScanLabel => 'Digitalização da etiqueta';
+
+  @override
+  String get ocrScanButton => 'Digitalizar etiqueta';
+
+  @override
+  String get ocrReviewTitle => 'Revisar campos identificados';
+
+  @override
+  String get ocrConfirmFill => 'Preencher formulário';
+
+  @override
+  String get ocrNoTextFound =>
+      'Nenhum texto legível foi encontrado na etiqueta';
+
+  @override
+  String get ocrProcessing => 'Processando etiqueta...';
 
   @override
   String get identifierLabel => 'Identificador';
@@ -1116,7 +1459,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get enterValue => 'Por favor, insira um valor';
 
   @override
-  String get enterValidNumber => 'Por favor, insira um número válido';
+  String get enterValidNumber => 'Digite um número válido (≥ 0)';
 
   @override
   String get negativeValue => 'Valor não pode ser negativo';
@@ -1135,6 +1478,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get yes => 'Sim';
+
+  @override
+  String get no => 'Não';
 
   @override
   String nPhotos(int count) {
@@ -1223,6 +1569,27 @@ class AppLocalizationsPt extends AppLocalizations {
   String get weatherCondition => 'Condição climática';
 
   @override
+  String get weatherNotes => 'Notas climáticas';
+
+  @override
+  String get weatherNotesHint => 'Ex.: nascer do sol, pôr do sol e código WMO';
+
+  @override
+  String get moonPhase => 'Fase lunar';
+
+  @override
+  String get moonPhaseNew => 'Nova';
+
+  @override
+  String get moonPhaseWaxing => 'Crescente';
+
+  @override
+  String get moonPhaseFull => 'Cheia';
+
+  @override
+  String get moonPhaseWaning => 'Minguante';
+
+  @override
   String get weatherSunny => 'Ensolarado';
 
   @override
@@ -1248,6 +1615,144 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get windSpeedHint => 'ex: 15';
+
+  @override
+  String get municipality => 'Município';
+
+  @override
+  String get state => 'Estado';
+
+  @override
+  String get country => 'País';
+
+  @override
+  String get gpsTrackTitle => 'Track GPS';
+
+  @override
+  String get startTrack => 'Iniciar Track';
+
+  @override
+  String get pauseTrack => 'Pausar Track';
+
+  @override
+  String get gpsTrackActive => 'Track ativo';
+
+  @override
+  String get gpsTrackPaused => 'Track pausado';
+
+  @override
+  String gpsTrackPoints(int count) {
+    return '$count pontos gravados';
+  }
+
+  @override
+  String get coordsValidationTitle => 'Validação de coordenadas';
+
+  @override
+  String coordsValidationWarning(String municipality) {
+    return '⚠️ As coordenadas podem estar fora de $municipality. Deseja continuar?';
+  }
+
+  @override
+  String get continueAction => 'Continuar';
+
+  @override
+  String get rainModeTitle => 'Modo Chuva';
+
+  @override
+  String get rainModeSubtitle =>
+      'Adiciona proteção extra para ações destrutivas em telas molhadas';
+
+  @override
+  String get rainModeBadge => 'Modo chuva ativo';
+
+  @override
+  String get enableRainModeQuickAction => 'Ativar modo chuva';
+
+  @override
+  String get disableRainModeQuickAction => 'Desativar modo chuva';
+
+  @override
+  String get rainModeEnabledMessage => 'Modo chuva ativado';
+
+  @override
+  String get rainModeDisabledMessage => 'Modo chuva desativado';
+
+  @override
+  String get rainModeOverlayTitle => 'Proteção do modo chuva';
+
+  @override
+  String get rainModeOverlayMessage =>
+      'Telas molhadas podem gerar toques fantasmas. Desbloqueie esta ação intencionalmente antes de continuar.';
+
+  @override
+  String get rainModeUnlockHold => 'Pressione e segure a gota por 2 segundos';
+
+  @override
+  String get rainModeUnlockTap => 'ou toque na gota 3 vezes';
+
+  @override
+  String get rainModeDeleteConfirmTitle => 'Confirmar ação destrutiva';
+
+  @override
+  String get rainModeArchiveConfirmTitle => 'Arquivar sessão?';
+
+  @override
+  String get rainModeArchiveConfirmMessage =>
+      'Arquivar remove esta sessão do fluxo ativo, mas mantém os dados armazenados.';
+
+  @override
+  String get rainModeOverwriteConfirmTitle => 'Confirmar sobrescrita';
+
+  @override
+  String get rainModeExitWithoutSavingTitle => 'Sair sem salvar?';
+
+  @override
+  String get rainModeExitWithoutSavingMessage =>
+      'Suas alterações não salvas serão perdidas se você sair desta tela agora.';
+
+  @override
+  String get rainModeDiscardChanges => 'Sair sem salvar';
+
+  @override
+  String rainModeCountdownLabel(int seconds) {
+    return 'Ação disponível em ${seconds}s';
+  }
+
+  @override
+  String get undo => 'Desfazer';
+
+  @override
+  String get locationAutoFilled => 'Localidade preenchida automaticamente';
+
+  @override
+  String get noConnectionManualFill => 'Sem conexão — preencha manualmente';
+
+  @override
+  String get getCurrentLocation => 'Obter Localização Atual';
+
+  @override
+  String get tapToShowMap =>
+      'Toque em \"Obter Localização Atual\" para mostrar o mapa';
+
+  @override
+  String get tapToAdjustMarker =>
+      'Toque no mapa para ajustar a posição do marcador';
+
+  @override
+  String get enableLocationServicesMessage =>
+      'Por favor, ative os serviços de localização para registrar localizações de plantas';
+
+  @override
+  String get sunriseLabel => 'Nascer do sol';
+
+  @override
+  String get sunsetLabel => 'Pôr do sol';
+
+  @override
+  String weatherCode(int code) {
+    return 'Código WMO $code';
+  }
 
   @override
   String get selectMode => 'Selecionar';
@@ -1278,4 +1783,889 @@ class AppLocalizationsPt extends AppLocalizations {
   String nPlantsDeleted(int count) {
     return '$count planta(s) excluída(s)';
   }
+
+  @override
+  String get collectionInfo => 'Informações de Coleta';
+
+  @override
+  String get notSpecified => 'Não especificado';
+
+  @override
+  String get collectorNumber => 'Número do Coletor';
+
+  @override
+  String get collectorNumberHint => 'Número sequencial do coletor (ex.: 1234)';
+
+  @override
+  String get numberOfIndividuals => 'Número de Indivíduos';
+
+  @override
+  String get numberOfIndividualsHint => 'Quantos espécimes observados';
+
+  @override
+  String get determinationQualifier => 'Certeza Taxonômica';
+
+  @override
+  String get determinationQualifierHint => 'ex.: cf., aff., ?';
+
+  @override
+  String get habitatDetails => 'Detalhes do Habitat';
+
+  @override
+  String get substrate => 'Substrato / Solo';
+
+  @override
+  String get substrateHint => 'ex.: solo argiloso, rocha, epífita, areia';
+
+  @override
+  String get vegetationType => 'Tipo de Vegetação';
+
+  @override
+  String get vegetationTypeHint =>
+      'ex.: Cerrado, Mata Atlântica, Caatinga, Restinga';
+
+  @override
+  String get topography => 'Topografia';
+
+  @override
+  String get topographyHint => 'ex.: encosta, vale, topo, ripária, platô';
+
+  @override
+  String get associatedTaxa => 'Espécies Associadas';
+
+  @override
+  String get associatedTaxaHint =>
+      'Outras espécies encontradas próximas (separadas por vírgula)';
+
+  @override
+  String get phenologicalState => 'Estado Fenológico';
+
+  @override
+  String get phenoFlowering => 'Floração';
+
+  @override
+  String get phenoFruiting => 'Frutificação';
+
+  @override
+  String get phenoBudding => 'Brotação';
+
+  @override
+  String get phenoWithFruit => 'Com Frutos';
+
+  @override
+  String get phenoVegetative => 'Vegetativo';
+
+  @override
+  String get phenoSterile => 'Estéril';
+
+  @override
+  String get phenoUnknown => 'Desconhecido';
+
+  @override
+  String get collectionMethod => 'Método de Coleta';
+
+  @override
+  String get methodVoucherCollected => 'Exsicata Coletada';
+
+  @override
+  String get methodPhotoOnly => 'Apenas Foto';
+
+  @override
+  String get methodSterileMaterial => 'Material Estéril';
+
+  @override
+  String get methodLivingMaterial => 'Material Vivo';
+
+  @override
+  String get confirmAssignTitle => 'Confirmar Atribuição';
+
+  @override
+  String confirmAssignBody(int count) {
+    return '$count identificador(es) serão atribuídos:';
+  }
+
+  @override
+  String errorLoadingPlants2(String error) {
+    return 'Erro ao carregar plantas: $error';
+  }
+
+  @override
+  String errorGeneratingPreview(String error) {
+    return 'Erro ao gerar prévia: $error';
+  }
+
+  @override
+  String errorAssigningIdentifiers(String error) {
+    return 'Erro ao atribuir identificadores: $error';
+  }
+
+  @override
+  String get exportIdentifiersTitle => 'Exportar Identificadores';
+
+  @override
+  String get exportFormatJson => 'JSON';
+
+  @override
+  String get exportFormatJsonSubtitle => 'Formato estruturado, completo';
+
+  @override
+  String get exportFormatCsv => 'CSV';
+
+  @override
+  String get exportFormatCsvSubtitle => 'Planilha simples, compatível';
+
+  @override
+  String get exportFormatExcel => 'Excel';
+
+  @override
+  String get exportFormatExcelSubtitle => 'Planilha Excel com formatação';
+
+  @override
+  String get exportCompletedSuccess => 'Exportação concluída';
+
+  @override
+  String errorExporting(String error) {
+    return 'Erro ao exportar: $error';
+  }
+
+  @override
+  String errorImporting2(String error) {
+    return 'Erro ao importar: $error';
+  }
+
+  @override
+  String get manageIdentifiersTitle => 'Gerenciar Identificadores';
+
+  @override
+  String assignIdentifiers(int count) {
+    return 'Atribuir ($count)';
+  }
+
+  @override
+  String get assignSubtitle => 'Atribuir identificadores a plantas existentes';
+
+  @override
+  String get syncErrorTitle => 'Erro na sincronização';
+
+  @override
+  String get deleteSessionTitle => 'Excluir Sessão';
+
+  @override
+  String get deleteSessionConfirm => 'Excluir';
+
+  @override
+  String get exportImportTitle => 'Exportar & Importar';
+
+  @override
+  String get exportSuccessMsg => 'Exportação concluída com sucesso!';
+
+  @override
+  String errorExportMsg(String error) {
+    return 'Erro ao exportar: $error';
+  }
+
+  @override
+  String errorImportMsg(String error) {
+    return 'Erro ao importar: $error';
+  }
+
+  @override
+  String errorTranscribeMsg(String error) {
+    return 'Erro ao transcrever: $error';
+  }
+
+  @override
+  String errorLocationMsg(String error) {
+    return 'Erro ao obter localização: $error';
+  }
+
+  @override
+  String errorPhotoMsg(String error) {
+    return 'Erro ao tirar foto: $error';
+  }
+
+  @override
+  String errorPickPhotoMsg(String error) {
+    return 'Erro ao escolher fotos: $error';
+  }
+
+  @override
+  String errorSearchMsg(String error) {
+    return 'Erro na busca: $error';
+  }
+
+  @override
+  String errorDownloadMapMsg(String error) {
+    return 'Erro ao baixar: $error';
+  }
+
+  @override
+  String errorClearCacheMsg(String error) {
+    return 'Erro ao limpar cache: $error';
+  }
+
+  @override
+  String get downloadOfflineArea => 'Baixar Área Offline';
+
+  @override
+  String get download => 'Baixar';
+
+  @override
+  String get clearCacheTitle => 'Limpar Cache';
+
+  @override
+  String get clearCacheConfirm => 'Limpar';
+
+  @override
+  String get downloadNewAreaTooltip => 'Baixar nova área';
+
+  @override
+  String get exportData => 'Exportar Dados';
+
+  @override
+  String get importData => 'Importar Dados';
+
+  @override
+  String get errorsLabel => 'Erros:';
+
+  @override
+  String get searchByLabel => 'Buscar por:';
+
+  @override
+  String get searchByIdentifierHint =>
+      'Buscar por identificador (ex: RC000001)...';
+
+  @override
+  String get searchPlantsHint => 'Buscar plantas...';
+
+  @override
+  String get autoDownloadTiles => 'Baixar tiles automaticamente';
+
+  @override
+  String get syncNow => 'Sincronizar agora';
+
+  @override
+  String get syncing2 => 'Sincronizando...';
+
+  @override
+  String get syncCloud => 'Sincronize seus dados na nuvem';
+
+  @override
+  String get errorCalcNext => 'Erro ao calcular próximo';
+
+  @override
+  String get excluir => 'Excluir';
+
+  @override
+  String get archive => 'Arquivar';
+
+  @override
+  String get unarchive => 'Desarquivar';
+
+  @override
+  String get shareCodeTitle => 'Código de Compartilhamento';
+
+  @override
+  String get shareWithUsersHint =>
+      'Compartilhe este código com outros usuários:';
+
+  @override
+  String get archivedLabel => 'Arquivado';
+
+  @override
+  String get sharedLabel => 'Compartilhado';
+
+  @override
+  String get importResultTitle => 'Resultado da Importação';
+
+  @override
+  String get importedLabel => 'Importados';
+
+  @override
+  String get updatedLabel => 'Atualizados';
+
+  @override
+  String get skippedLabel => 'Ignorados';
+
+  @override
+  String get aboutFormats => 'Sobre os Formatos';
+
+  @override
+  String get exportBackupHint =>
+      'Exporte suas plantas para backup ou compartilhamento';
+
+  @override
+  String get formatLabel => 'Formato:';
+
+  @override
+  String get jsonFormatSubtitle => 'Formato completo com todos os dados';
+
+  @override
+  String get csvFormatSubtitle => 'Planilha simples (Excel, LibreOffice)';
+
+  @override
+  String get darwinCoreFormatSubtitle =>
+      'Padrão internacional para biodiversidade';
+
+  @override
+  String get includeCollectionSessions => 'Incluir sessões de coleta';
+
+  @override
+  String get importFromJson => 'Importe plantas de um arquivo JSON exportado';
+
+  @override
+  String get importWarnMsg =>
+      'Plantas existentes serão atualizadas. Apenas arquivos JSON são suportados.';
+
+  @override
+  String get selectFile => 'Selecionar Arquivo';
+
+  @override
+  String get jsonFormatDesc =>
+      'Formato completo que preserva todos os dados incluindo fotos, áudios, medições e metadados. Ideal para backup e restauração completa.';
+
+  @override
+  String get csvFormatDesc =>
+      'Formato de planilha simples que pode ser aberto no Excel, LibreOffice ou Google Sheets. Contém apenas dados básicos.';
+
+  @override
+  String get darwinCoreDesc =>
+      'Padrão internacional para dados de biodiversidade. Compatível com portais científicos como GBIF e iNaturalist.';
+
+  @override
+  String get offlineMapsTitle => 'Mapas Offline';
+
+  @override
+  String get downloadOfflineAreaTitle => 'Baixar Área Offline';
+
+  @override
+  String get areaNameLabel => 'Nome da área';
+
+  @override
+  String get zoomLevelsLabel => 'Níveis de zoom: 8-15';
+
+  @override
+  String get downloadWarnMsg =>
+      'Isso pode demorar alguns minutos e consumir dados móveis.';
+
+  @override
+  String get downloadCompletedSuccess => 'Download concluído!';
+
+  @override
+  String get cacheClearedSuccess => 'Cache limpo com sucesso';
+
+  @override
+  String get clearCacheBody =>
+      'Tem certeza que deseja excluir todos os mapas offline?\n\nIsso liberará espaço mas você precisará estar online para ver os mapas.';
+
+  @override
+  String get clearCacheConfirmBtn => 'Limpar';
+
+  @override
+  String get clearCacheLabel => 'Limpar Cache';
+
+  @override
+  String get userInitialsTitle => 'Iniciais do Usuário';
+
+  @override
+  String get initialsLabel => 'Iniciais';
+
+  @override
+  String get initialsHint => 'Ex: RC, ABC';
+
+  @override
+  String get initialsHelper => '1-4 letras maiúsculas';
+
+  @override
+  String get lastRegistryNumberTitle => 'Último Número de Registro';
+
+  @override
+  String get numberLabel => 'Número';
+
+  @override
+  String get numberHint => 'Ex: 0, 40, 1000';
+
+  @override
+  String get numberBetweenError => 'Número deve estar entre 0 e 999999';
+
+  @override
+  String nextRegistryWillUse(int next) {
+    return 'Próximo registro usará: $next';
+  }
+
+  @override
+  String get changeNumberWarning =>
+      'Alterar este número afetará os próximos registros criados.';
+
+  @override
+  String get enterLastRegistryNumber => 'Digite o último número de registro';
+
+  @override
+  String get digitsOnly => 'Digite apenas números';
+
+  @override
+  String get connected => 'Conectado';
+
+  @override
+  String get loginToSync => 'Faça login para sincronizar';
+
+  @override
+  String lastSync(String date) {
+    return 'Última: $date';
+  }
+
+  @override
+  String get neverSynced => 'Nunca sincronizado';
+
+  @override
+  String get initialsCannotBeEmpty => 'Iniciais não podem estar vazias';
+
+  @override
+  String get initialsFormatError => 'Use 1-4 letras maiúsculas';
+
+  @override
+  String get numberCannotBeEmpty => 'Número não pode estar vazio';
+
+  @override
+  String get numberTooLarge => 'Número muito grande (máx: 999999)';
+
+  @override
+  String get portugueseBR => 'Português (BR)';
+
+  @override
+  String get mapProvider => 'Provedor de Mapas';
+
+  @override
+  String get selectMapProvider => 'Selecionar Provedor';
+
+  @override
+  String get mapboxSatellite => 'Mapbox Satélite';
+
+  @override
+  String get mapCacheRadius => 'Raio do Cache do Mapa';
+
+  @override
+  String get autoSaveInterval => 'Intervalo de Auto-salvamento';
+
+  @override
+  String get disabled => 'Desativado';
+
+  @override
+  String nSeconds(int n) {
+    return '$n segundos';
+  }
+
+  @override
+  String nMinutes(int n) {
+    return '$n minuto(s)';
+  }
+
+  @override
+  String get compressionQuality => 'Qualidade de Compressão';
+
+  @override
+  String get preserveExifTitle => 'Preservar Metadados EXIF';
+
+  @override
+  String get preserveExifSubtitle => 'Manter informações de GPS e câmera';
+
+  @override
+  String get transcriptionTitle => 'Transcrição de Áudio';
+
+  @override
+  String get transcriptionSubtitle => 'Converter voz em texto';
+
+  @override
+  String get transcriptionLanguage => 'Idioma da Transcrição';
+
+  @override
+  String get audioQualityTitle => 'Qualidade de Áudio';
+
+  @override
+  String get audioQualityLow => 'Baixa (menor tamanho)';
+
+  @override
+  String get audioQualityMedium => 'Média';
+
+  @override
+  String get audioQualityHigh => 'Alta (melhor qualidade)';
+
+  @override
+  String get audioQualityLowShort => 'Baixa';
+
+  @override
+  String get audioQualityHighShort => 'Alta';
+
+  @override
+  String get paginationSize => 'Itens por Página';
+
+  @override
+  String nItems(int n) {
+    return '$n itens';
+  }
+
+  @override
+  String get thumbnailCacheTitle => 'Cache de Miniaturas';
+
+  @override
+  String get thumbnailCacheSubtitle => 'Melhorar performance das listas';
+
+  @override
+  String get autoGenerateTitle => 'Gerar Automaticamente';
+
+  @override
+  String get autoGenerateSubtitle => 'Criar identificador ao salvar registro';
+
+  @override
+  String get manageIdentifiersSubtitle =>
+      'Atribuir identificadores a plantas existentes';
+
+  @override
+  String nextLabel(String id) {
+    return 'Próximo: $id';
+  }
+
+  @override
+  String get lastSyncResult => 'Último resultado';
+
+  @override
+  String get autoCache => 'Cache Automático';
+
+  @override
+  String syncResultSummary(int pushed, int pulled) {
+    return '$pushed enviados, $pulled recebidos';
+  }
+
+  @override
+  String syncResultConflicts(int conflicts) {
+    return ', $conflicts conflitos';
+  }
+
+  @override
+  String exportingNPlants(int n) {
+    return 'Exportando $n planta(s) selecionada(s)';
+  }
+
+  @override
+  String get editSessionTitle => 'Editar Sessão';
+
+  @override
+  String get sessionTripNameLabel => 'Nome da Viagem *';
+
+  @override
+  String get sessionTripNameHint => 'Ex: Coleta na Serra do Mar';
+
+  @override
+  String get sessionTripNameRequired => 'Nome da viagem é obrigatório';
+
+  @override
+  String get sessionLocationHint => 'Ex: Parque Estadual, São Paulo';
+
+  @override
+  String get teamLabel => 'Equipe';
+
+  @override
+  String get teamMemberNameHint => 'Nome do membro da equipe';
+
+  @override
+  String get noTeamMembersAdded => 'Nenhum membro adicionado';
+
+  @override
+  String get sessionNotesHint => 'Informações adicionais sobre a coleta...';
+
+  @override
+  String get saveSessionLabel => 'Salvar Sessão';
+
+  @override
+  String sessionStartDateValue(String date) {
+    return 'Início: $date';
+  }
+
+  @override
+  String sessionEndDateValue(String date) {
+    return 'Término: $date';
+  }
+
+  @override
+  String sessionCollaborators(int count) {
+    return '$count colaboradores';
+  }
+
+  @override
+  String sessionTeamCount(int count) {
+    return 'Equipe ($count)';
+  }
+
+  @override
+  String get sessionCollectedPlantsTitle => 'Plantas Coletadas';
+
+  @override
+  String get noPlantsCollectedInSession =>
+      'Nenhuma planta coletada nesta sessão';
+
+  @override
+  String get statusLabel => 'Status';
+
+  @override
+  String get allLabel => 'Todos';
+
+  @override
+  String get completedLabel => 'Completos';
+
+  @override
+  String mapPlantsCount(int count) {
+    return '$count plantas no mapa';
+  }
+
+  @override
+  String get mapPlantsTitle => 'Mapa de Plantas';
+
+  @override
+  String get legendLabel => 'Legenda';
+
+  @override
+  String plantsCount(int count) {
+    return '$count plantas';
+  }
+
+  @override
+  String get tapMapToDefineArea =>
+      'Toque no mapa para definir a área de download';
+
+  @override
+  String offlineRegionName(String date) {
+    return 'Região $date';
+  }
+
+  @override
+  String downloadingRegion(String region) {
+    return 'Baixando $region';
+  }
+
+  @override
+  String get selectFirstAreaCorner => '1. Toque no primeiro canto da área';
+
+  @override
+  String get selectOppositeAreaCorner => '2. Toque no canto oposto da área';
+
+  @override
+  String get mapCacheTitle => 'Cache de Mapas';
+
+  @override
+  String get cachedTilesLabel => 'Tiles em cache:';
+
+  @override
+  String get usedSpaceLabel => 'Espaço usado:';
+
+  @override
+  String get howToUseLabel => 'Como usar';
+
+  @override
+  String get offlineMapsHowToUse =>
+      '1. Toque em + para baixar área\n2. Toque em dois pontos no mapa\n3. Confirme o download\n4. Use mapas offline no campo!';
+
+  @override
+  String get accessibilityTitle => 'Acessibilidade';
+
+  @override
+  String get highContrast => 'Alto Contraste';
+
+  @override
+  String get highContrastSubtitle =>
+      'Aumenta o contraste das cores e reduz cinzas';
+
+  @override
+  String get fontSize => 'Tamanho da Fonte';
+
+  @override
+  String get phenologyFournier => 'Fenologia (Escala Fournier)';
+
+  @override
+  String get fournierFlowerBud => 'Botão Floral';
+
+  @override
+  String get fournierOpenFlower => 'Flor Aberta';
+
+  @override
+  String get fournierImmatureFruit => 'Fruto Imaturo';
+
+  @override
+  String get fournierMatureFruit => 'Fruto Maduro';
+
+  @override
+  String get fournierLeafFall => 'Queda Foliar';
+
+  @override
+  String get exportLabelPdf => 'Exportar Etiqueta PDF';
+
+  @override
+  String get exportLabelPdfTooltip =>
+      'Visualizar e compartilhar PDF da etiqueta de herbário';
+
+  @override
+  String get herbariumLabelTitle => 'Etiqueta de herbário';
+
+  @override
+  String get collector => 'Coletor';
+
+  @override
+  String get locality => 'Localidade';
+
+  @override
+  String get morphologicalNotes => 'Anotações morfológicas';
+
+  @override
+  String errorExportingLabelPdf(String error) {
+    return 'Erro ao exportar etiqueta PDF: $error';
+  }
+
+  @override
+  String get conflictResolutionTitle => 'Resolver conflitos';
+
+  @override
+  String get syncConflictBadge => 'Conflito';
+
+  @override
+  String syncConflictBannerMessage(int count) {
+    return '$count conflito(s) de sincronização precisam de revisão.';
+  }
+
+  @override
+  String get resolveConflicts => 'Resolver conflitos';
+
+  @override
+  String pendingConflictsCount(int count) {
+    return '$count conflito(s) pendente(s)';
+  }
+
+  @override
+  String get conflictResolutionHelper =>
+      'Compare os valores locais e do servidor, depois decida campo por campo ou resolva o registro inteiro de uma vez.';
+
+  @override
+  String get resolveAllKeepMostRecent => 'Resolver todos → manter mais recente';
+
+  @override
+  String get conflictsResolvedMostRecent =>
+      'Conflitos resolvidos usando a versão mais recente.';
+
+  @override
+  String get syncConflictLocalVersion => 'Local';
+
+  @override
+  String get syncConflictServerVersion => 'Servidor';
+
+  @override
+  String get keepLocalField => 'Manter campo local';
+
+  @override
+  String get acceptServerField => 'Aceitar campo do servidor';
+
+  @override
+  String fieldResolvedKeepingLocal(String field) {
+    return 'Campo \"$field\" resolvido mantendo valor local.';
+  }
+
+  @override
+  String fieldResolvedKeepingServer(String field) {
+    return 'Campo \"$field\" resolvido aceitando valor do servidor.';
+  }
+
+  @override
+  String get keepLocalRecord => 'Manter registro local';
+
+  @override
+  String get acceptServerRecord => 'Aceitar registro do servidor';
+
+  @override
+  String get conflictResolvedKeepingLocal =>
+      'Conflito resolvido mantendo o registro local.';
+
+  @override
+  String get conflictResolvedKeepingServer =>
+      'Conflito resolvido aceitando o registro do servidor.';
+
+  @override
+  String get syncConflictLoadErrorTitle =>
+      'Não foi possível carregar os conflitos';
+
+  @override
+  String get noPendingConflictsTitle => 'Sem conflitos pendentes';
+
+  @override
+  String get noPendingConflictsMessage => 'Tudo está sincronizado no momento.';
+
+  @override
+  String get determinationsTitle => 'Determinações';
+
+  @override
+  String get newDetermination => 'Nova determinação';
+
+  @override
+  String get determinedBy => 'Determinado por';
+
+  @override
+  String get determinedAt => 'Determinado em';
+
+  @override
+  String get determinationBasis => 'Base';
+
+  @override
+  String get determinationNotesHint => 'Notas sobre esta determinação...';
+
+  @override
+  String get determinationBasisHint =>
+      'ex.: comparação com herbário, revisão de especialista';
+
+  @override
+  String get noDeterminationsYet => 'Nenhuma determinação registrada ainda';
+
+  @override
+  String get latestDeterminationLabel => 'Determinação mais recente';
+
+  @override
+  String get duplicatesTitle => 'Duplicatas';
+
+  @override
+  String get markAsDuplicate => 'Marcar como duplicata';
+
+  @override
+  String duplicateOfLabel(String identifier) {
+    return 'Duplicata de #$identifier';
+  }
+
+  @override
+  String get noDuplicatesLinked => 'Nenhuma duplicata vinculada';
+
+  @override
+  String get searchCollectorNumber => 'Buscar por número de coleta';
+
+  @override
+  String get searchCollectorNumberHint => 'ex.: 42 ou RC000042';
+
+  @override
+  String get duplicateSearchHelp =>
+      'Escolha o voucher original da mesma série de coleta';
+
+  @override
+  String get originalVoucher => 'Voucher original';
+
+  @override
+  String get linkedDuplicates => 'Duplicatas vinculadas';
+
+  @override
+  String get duplicateLinkedSuccess => 'Duplicata vinculada com sucesso';
+
+  @override
+  String get determinationSavedSuccess => 'Determinação salva com sucesso';
+
+  @override
+  String get fillDeterminationRequiredFields =>
+      'Preencha os campos obrigatórios da determinação';
+
+  @override
+  String get noMatchingRecords => 'Nenhum registro correspondente encontrado';
+
+  @override
+  String get identificationHistoryLabel => 'Histórico de identificação';
 }

@@ -43,6 +43,11 @@ const SyncMetadataSchema = Schema(
       name: r'syncStatus',
       type: IsarType.string,
       enumMap: _SyncMetadatasyncStatusEnumValueMap,
+    ),
+    r'syncVersion': PropertySchema(
+      id: 6,
+      name: r'syncVersion',
+      type: IsarType.long,
     )
   },
   estimateSize: _syncMetadataEstimateSize,
@@ -91,6 +96,7 @@ void _syncMetadataSerialize(
   writer.writeDateTime(offsets[3], object.localModifiedAt);
   writer.writeString(offsets[4], object.serverId);
   writer.writeString(offsets[5], object.syncStatus.name);
+  writer.writeLong(offsets[6], object.syncVersion);
 }
 
 SyncMetadata _syncMetadataDeserialize(
@@ -108,6 +114,7 @@ SyncMetadata _syncMetadataDeserialize(
   object.syncStatus = _SyncMetadatasyncStatusValueEnumMap[
           reader.readStringOrNull(offsets[5])] ??
       SyncStatus.pending;
+  object.syncVersion = reader.readLong(offsets[6]);
   return object;
 }
 
@@ -132,6 +139,8 @@ P _syncMetadataDeserializeProp<P>(
       return (_SyncMetadatasyncStatusValueEnumMap[
               reader.readStringOrNull(offset)] ??
           SyncStatus.pending) as P;
+    case 6:
+      return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -894,6 +903,62 @@ extension SyncMetadataQueryFilter
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'syncStatus',
         value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<SyncMetadata, SyncMetadata, QAfterFilterCondition>
+      syncVersionEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'syncVersion',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SyncMetadata, SyncMetadata, QAfterFilterCondition>
+      syncVersionGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'syncVersion',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SyncMetadata, SyncMetadata, QAfterFilterCondition>
+      syncVersionLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'syncVersion',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SyncMetadata, SyncMetadata, QAfterFilterCondition>
+      syncVersionBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'syncVersion',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
       ));
     });
   }

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/repositories/session_repository.dart';
+import '../../../core/services/gps_track_service.dart';
 import '../../../core/repositories/plant_repository.dart';
 import '../../../models/collection_session.dart';
 import '../../../models/plant_record.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/rain_mode_guard.dart';
+import '../../../core/providers/rain_mode_provider.dart';
 import 'session_form_screen.dart';
 import '../../plant_detail/screens/plant_detail_screen.dart';
 
@@ -52,45 +56,104 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
   Future<void> _deleteSession() async {
     final l10n = AppLocalizations.of(context)!;
 
-    final confirmed = await showDialog<bool>(
+    final initialConfirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Excluir Sessão'),
+        title: Text(l10n.deleteSessionTitle),
         content: Text(l10n.confirmDeleteSession),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Excluir'),
+            child: Text(l10n.deleteSessionConfirm),
           ),
         ],
       ),
     );
 
-    if (confirmed == true) {
-      try {
-        final sessionRepo = ref.read(sessionRepositoryProvider);
-        await sessionRepo.delete(_session.id);
+    if (initialConfirmed != true) return;
 
-        if (mounted) {
-          Navigator.of(context).pop(true); // Return to list
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('$e'), backgroundColor: Colors.red),
-          );
-        }
+    final confirmed = await RainModeGuard.confirmDestructiveAction(
+      context: context,
+      rainModeEnabled: ref.read(rainModeEnabledProvider),
+      actionLabel: l10n.deleteSessionTitle,
+      overlayTitle: l10n.rainModeOverlayTitle,
+      overlayMessage: l10n.rainModeOverlayMessage,
+      unlockHint: l10n.rainModeUnlockHold,
+      unlockAlternativeHint: l10n.rainModeUnlockTap,
+      confirmTitle: l10n.rainModeDeleteConfirmTitle,
+      confirmMessage: l10n.confirmDeleteSession,
+      cancelLabel: l10n.cancel,
+      confirmLabel: l10n.deleteSessionConfirm,
+      countdownLabel: l10n.rainModeCountdownLabel,
+      confirmColor: Theme.of(context).colorScheme.error,
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      final sessionRepo = ref.read(sessionRepositoryProvider);
+      await sessionRepo.delete(_session.id);
+
+      if (mounted) {
+        Navigator.of(context).pop(true); // Return to list
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$e'), backgroundColor: Colors.red),
+        );
       }
     }
   }
 
   Future<void> _toggleArchive() async {
+    final l10n = AppLocalizations.of(context)!;
     final sessionRepo = ref.read(sessionRepositoryProvider);
+
+    if (!_session.isArchived) {
+      final initialConfirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(l10n.archive),
+          content: Text(l10n.rainModeArchiveConfirmMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(l10n.archive),
+            ),
+          ],
+        ),
+      );
+
+      if (initialConfirmed != true) return;
+
+      final confirmed = await RainModeGuard.confirmDestructiveAction(
+        context: context,
+        rainModeEnabled: ref.read(rainModeEnabledProvider),
+        actionLabel: l10n.archive,
+        overlayTitle: l10n.rainModeOverlayTitle,
+        overlayMessage: l10n.rainModeOverlayMessage,
+        unlockHint: l10n.rainModeUnlockHold,
+        unlockAlternativeHint: l10n.rainModeUnlockTap,
+        confirmTitle: l10n.rainModeArchiveConfirmTitle,
+        confirmMessage: l10n.rainModeArchiveConfirmMessage,
+        cancelLabel: l10n.cancel,
+        confirmLabel: l10n.archive,
+        countdownLabel: l10n.rainModeCountdownLabel,
+        confirmColor: Theme.of(context).colorScheme.tertiary,
+      );
+
+      if (confirmed != true) return;
+    }
 
     if (_session.isArchived) {
       await sessionRepo.unarchive(_session.id);
@@ -114,12 +177,14 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
     if (mounted) {
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Código de Compartilhamento'),
+        builder: (context) {
+          final l10n = AppLocalizations.of(context)!;
+          return AlertDialog(
+          title: Text(l10n.shareCodeTitle),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Compartilhe este código com outros usuários:'),
+              Text(l10n.shareWithUsersHint),
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.all(16),
@@ -140,17 +205,22 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Fechar'),
+              child: Text(l10n.close),
             ),
           ],
-        ),
+        );
+        },
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final plantRepo = ref.watch(plantRepositoryProvider);
+    final gpsTrackState = ref.watch(gpsTrackServiceProvider);
+    final isTrackingCurrentSession =
+        gpsTrackState.isTracking && gpsTrackState.sessionUuid == _session.uuid;
 
     return Scaffold(
       appBar: AppBar(
@@ -172,14 +242,16 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                   break;
               }
             },
-            itemBuilder: (context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
+            itemBuilder: (context) {
+              final l10n = AppLocalizations.of(context)!;
+              return <PopupMenuEntry<String>>[
+              PopupMenuItem<String>(
                 value: 'share',
                 child: Row(
                   children: [
-                    Icon(Icons.share),
-                    SizedBox(width: 8),
-                    Text('Compartilhar'),
+                    const Icon(Icons.share),
+                    const SizedBox(width: 8),
+                    Text(l10n.share),
                   ],
                 ),
               ),
@@ -189,22 +261,23 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                   children: [
                     Icon(_session.isArchived ? Icons.unarchive : Icons.archive),
                     const SizedBox(width: 8),
-                    Text(_session.isArchived ? 'Desarquivar' : 'Arquivar'),
+                    Text(_session.isArchived ? l10n.unarchive : l10n.archive),
                   ],
                 ),
               ),
               const PopupMenuDivider(),
-              const PopupMenuItem<String>(
+              PopupMenuItem<String>(
                 value: 'delete',
                 child: Row(
                   children: [
-                    Icon(Icons.delete, color: Colors.red),
-                    SizedBox(width: 8),
-                    Text('Excluir', style: TextStyle(color: Colors.red)),
+                    const Icon(Icons.delete, color: Colors.red),
+                    const SizedBox(width: 8),
+                    Text(l10n.excluir, style: const TextStyle(color: Colors.red)),
                   ],
                 ),
               ),
-            ],
+            ];
+            },
           ),
         ],
       ),
@@ -222,20 +295,24 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                   Row(
                     children: [
                       const Icon(Icons.calendar_today, size: 20),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Período',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
+                        const SizedBox(width: 8),
+                        Text(
+                          l10n.dateRange,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
                     ],
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Início: ${_session.startDate.day}/${_session.startDate.month}/${_session.startDate.year}',
+                    l10n.sessionStartDateValue(
+                      '${_session.startDate.day}/${_session.startDate.month}/${_session.startDate.year}',
+                    ),
                   ),
                   if (_session.endDate != null)
                     Text(
-                      'Término: ${_session.endDate!.day}/${_session.endDate!.month}/${_session.endDate!.year}',
+                      l10n.sessionEndDateValue(
+                        '${_session.endDate!.day}/${_session.endDate!.month}/${_session.endDate!.year}',
+                      ),
                     ),
 
                   // Location
@@ -255,6 +332,56 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                     ),
                   ],
 
+                  const Divider(height: 24),
+                  Row(
+                    children: [
+                      Icon(
+                        isTrackingCurrentSession ? Icons.route : Icons.route_outlined,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          l10n.gpsTrackTitle,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ),
+                      FilledButton.icon(
+                        onPressed: () => _toggleTrack(isTrackingCurrentSession),
+                        icon: Icon(
+                          isTrackingCurrentSession ? Icons.pause : Icons.play_arrow,
+                        ),
+                        label: Text(
+                          isTrackingCurrentSession
+                              ? l10n.pauseTrack
+                              : l10n.startTrack,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      Chip(
+                        avatar: const Icon(Icons.pin_drop, size: 16),
+                        label: Text(l10n.gpsTrackPoints(_session.track.length)),
+                      ),
+                      Chip(
+                        avatar: Icon(
+                          isTrackingCurrentSession ? Icons.gps_fixed : Icons.pause_circle,
+                          size: 16,
+                        ),
+                        label: Text(
+                          isTrackingCurrentSession
+                              ? l10n.gpsTrackActive
+                              : l10n.gpsTrackPaused,
+                        ),
+                      ),
+                    ],
+                  ),
+
                   // Status badges
                   const Divider(height: 24),
                   Wrap(
@@ -262,20 +389,20 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                     children: [
                       if (_session.isArchived)
                         Chip(
-                          label: const Text('Arquivado'),
+                          label: Text(l10n.archivedLabel),
                           avatar: const Icon(Icons.archive, size: 16),
                           backgroundColor: Colors.grey.shade300,
                         ),
                       if (_session.shareCode != null)
                         Chip(
-                          label: const Text('Compartilhado'),
+                          label: Text(l10n.sharedLabel),
                           avatar: const Icon(Icons.share, size: 16),
                           backgroundColor: Colors.blue.shade100,
                         ),
                       if (_session.sharedWith.isNotEmpty)
                         Chip(
                           label: Text(
-                            '${_session.sharedWith.length} colaboradores',
+                            l10n.sessionCollaborators(_session.sharedWith.length),
                           ),
                           avatar: const Icon(Icons.people, size: 16),
                         ),
@@ -300,7 +427,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                         const Icon(Icons.people, size: 20),
                         const SizedBox(width: 8),
                         Text(
-                          'Equipe (${_session.teamMembers.length})',
+                          l10n.sessionTeamCount(_session.teamMembers.length),
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ],
@@ -341,7 +468,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                         const Icon(Icons.notes, size: 20),
                         const SizedBox(width: 8),
                         Text(
-                          'Notas',
+                          l10n.notes,
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ],
@@ -357,7 +484,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
 
           // Plants in this session
           Text(
-            'Plantas Coletadas',
+            l10n.sessionCollectedPlantsTitle,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 8),
@@ -388,7 +515,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Nenhuma planta coletada nesta sessão',
+                          l10n.noPlantsCollectedInSession,
                           style: TextStyle(color: Colors.grey.shade600),
                           textAlign: TextAlign.center,
                         ),
@@ -440,5 +567,43 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _toggleTrack(bool isTrackingCurrentSession) async {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    try {
+      final gpsTrackService = ref.read(gpsTrackServiceProvider.notifier);
+      if (isTrackingCurrentSession) {
+        await gpsTrackService.stopTracking();
+      } else {
+        await gpsTrackService.startTracking(_session.uuid);
+      }
+
+      await _refreshSession();
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_mapTrackError(l10n, e.toString())),
+          backgroundColor: colorScheme.error,
+        ),
+      );
+    }
+  }
+
+  String _mapTrackError(AppLocalizations l10n, String error) {
+    if (error.contains('location_services_disabled')) {
+      return l10n.locationServicesDisabled;
+    }
+    if (error.contains('location_permission_denied_forever')) {
+      return l10n.locationPermissionRequired;
+    }
+    if (error.contains('location_permission_denied')) {
+      return l10n.permissionLocation;
+    }
+    return l10n.errorOccurred;
   }
 }

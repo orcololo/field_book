@@ -150,8 +150,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ),
                   ),
                   validator: (value) {
-                    if (value == null || value.isEmpty)
+                    if (value == null || value.isEmpty) {
                       return l10n.enterPassword;
+                    }
                     if (value.length < 8) return l10n.passwordMinLength;
                     return null;
                   },

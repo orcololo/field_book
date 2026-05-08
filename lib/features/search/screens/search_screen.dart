@@ -8,6 +8,7 @@ import '../../../shared/widgets/modern/modern_plant_card.dart';
 import '../../../shared/widgets/modern/modern_app_bar.dart';
 import '../../../shared/widgets/modern/glass_app_bar.dart';
 import '../../plant_detail/screens/plant_detail_screen.dart';
+import '../../../l10n/app_localizations.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -100,9 +101,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         _isSearching = false;
       });
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erro na busca: $e'),
+            content: Text(l10n.errorSearchMsg(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -145,11 +147,12 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: FoliumTheme.surface,
       extendBodyBehindAppBar: true,
       appBar: GlassAppBarFrosted(
-        title: 'Buscar',
+        title: l10n.search,
         showBackButton: true,
       ),
       body: Column(
@@ -160,8 +163,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           // Search Bar
           ModernSearchBar(
             hintText: _searchMode == 'identifier' 
-                ? 'Buscar por identificador (ex: RC000001)...'
-                : 'Buscar plantas...',
+                ? l10n.searchByIdentifierHint
+                : l10n.searchPlantsHint,
             controller: _searchController,
             onChanged: (value) {
               setState(() {});
@@ -197,7 +200,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             child: Row(
               children: [
                 Text(
-                  'Buscar por:',
+                  l10n.searchByLabel,
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
                         color: FoliumTheme.onSurfaceVariant,
                         fontWeight: FontWeight.w600,
@@ -262,7 +265,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       TextButton.icon(
                         onPressed: _clearFilters,
                         icon: const Icon(Icons.clear_all),
-                        label: const Text('Limpar'),
+                        label: Text(l10n.clearFilters),
                       ),
                     ],
                   ),
@@ -411,7 +414,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                               const SizedBox(height: FoliumTheme.space16),
                               ElevatedButton(
                                 onPressed: _clearFilters,
-                                child: const Text('Limpar filtros'),
+                                child: Text(l10n.clearFilters),
                               ),
                             ],
                           ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../models/plant_record.dart';
 import '../../../models/plant_category.dart';
 import '../../../core/repositories/plant_repository.dart';
@@ -111,7 +112,10 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
     showModalBottomSheet(
       context: context,
       builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) => Container(
+        builder: (context, setModalState) {
+          final l10n = AppLocalizations.of(context)!;
+
+          return Container(
           padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -120,8 +124,8 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Filtros',
+                  Text(
+                    l10n.filters,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -136,15 +140,15 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
                       });
                       setState(() => _applyFilters());
                     },
-                    child: const Text('Limpar'),
+                    child: Text(l10n.clearFilters),
                   ),
                 ],
               ),
               const SizedBox(height: 16),
               
               // Category filter
-              const Text(
-                'Categoria',
+              Text(
+                l10n.categoryLabel,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
@@ -153,7 +157,7 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
                 runSpacing: 8,
                 children: [
                   FilterChip(
-                    label: const Text('Todas'),
+                    label: Text(l10n.allCategories),
                     selected: _filterCategory == null,
                     onSelected: (selected) {
                       setModalState(() => _filterCategory = null);
@@ -178,8 +182,8 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
               const SizedBox(height: 16),
               
               // Status filter
-              const Text(
-                'Status',
+              Text(
+                l10n.statusLabel,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
@@ -187,7 +191,7 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
                 spacing: 8,
                 children: [
                   FilterChip(
-                    label: const Text('Todos'),
+                    label: Text(l10n.allLabel),
                     selected: !_showDraftsOnly && !_showCompletedOnly,
                     onSelected: (selected) {
                       setModalState(() {
@@ -198,7 +202,7 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
                     },
                   ),
                   FilterChip(
-                    label: const Text('Rascunhos'),
+                    label: Text(l10n.drafts),
                     selected: _showDraftsOnly,
                     onSelected: (selected) {
                       setModalState(() {
@@ -209,7 +213,7 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
                     },
                   ),
                   FilterChip(
-                    label: const Text('Completos'),
+                    label: Text(l10n.completedLabel),
                     selected: _showCompletedOnly,
                     onSelected: (selected) {
                       setModalState(() {
@@ -226,7 +230,7 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
               
               // Results count
               Text(
-                '${_filteredPlants.length} plantas no mapa',
+                l10n.mapPlantsCount(_filteredPlants.length),
                 style: const TextStyle(
                   color: Colors.grey,
                   fontSize: 12,
@@ -234,29 +238,32 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
               ),
             ],
           ),
-        ),
+        );
+        },
       ),
     );
   }
 
   String _getCategoryName(PlantCategory category) {
+    final l10n = AppLocalizations.of(context)!;
+
     switch (category) {
       case PlantCategory.trees:
-        return 'Árvores';
+        return l10n.categoryTrees;
       case PlantCategory.shrubs:
-        return 'Arbustos';
+        return l10n.categoryShrubs;
       case PlantCategory.herbs:
-        return 'Ervas';
+        return l10n.categoryHerbs;
       case PlantCategory.vines:
-        return 'Trepadeiras';
+        return l10n.categoryVines;
       case PlantCategory.ferns:
-        return 'Samambaias';
+        return l10n.categoryFerns;
       case PlantCategory.grasses:
-        return 'Gramíneas';
+        return l10n.categoryGrasses;
       case PlantCategory.cacti:
-        return 'Cactos';
+        return l10n.categoryCacti;
       case PlantCategory.aquatic:
-        return 'Aquáticas';
+        return l10n.categoryAquatic;
     }
   }
 
@@ -304,9 +311,11 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mapa de Plantas'),
+        title: Text(l10n.mapPlantsTitle),
         actions: [
           IconButton(
             icon: Badge(
@@ -314,7 +323,7 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
               child: const Icon(Icons.filter_list),
             ),
             onPressed: _showFilterSheet,
-            tooltip: 'Filtros',
+            tooltip: l10n.filters,
           ),
           IconButton(
             icon: const Icon(Icons.download),
@@ -326,27 +335,27 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
                 ),
               );
             },
-            tooltip: 'Mapas Offline',
+            tooltip: l10n.offlineMapsTitle,
           ),
           IconButton(
             icon: const Icon(Icons.center_focus_strong),
             onPressed: _centerMapOnPlants,
-            tooltip: 'Centralizar',
+            tooltip: l10n.recenter,
           ),
         ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _plants.isEmpty
-              ? const Center(
+              ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.map_outlined, size: 64, color: Colors.grey),
-                      SizedBox(height: 16),
+                      const Icon(Icons.map_outlined, size: 64, color: Colors.grey),
+                      const SizedBox(height: 16),
                       Text(
-                        'Nenhuma planta com localização',
-                        style: TextStyle(color: Colors.grey),
+                        l10n.noLocationSet,
+                        style: const TextStyle(color: Colors.grey),
                       ),
                     ],
                   ),
@@ -430,13 +439,13 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Text(
-                                'Legenda',
+                              Text(
+                                l10n.legendLabel,
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                '${_filteredPlants.length} plantas',
+                                l10n.plantsCount(_filteredPlants.length),
                                 style: const TextStyle(fontSize: 12),
                               ),
                             ],

@@ -136,6 +136,12 @@ abstract class AppLocalizations {
   /// **'Scientific Name'**
   String get scientificName;
 
+  /// No description provided for @scientificNameBinomialHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Genus species'**
+  String get scientificNameBinomialHint;
+
   /// No description provided for @commonName.
   ///
   /// In en, this message translates to:
@@ -147,6 +153,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Family'**
   String get family;
+
+  /// No description provided for @taxonAuthor.
+  ///
+  /// In en, this message translates to:
+  /// **'Author'**
+  String get taxonAuthor;
+
+  /// No description provided for @taxonStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Taxonomic Status'**
+  String get taxonStatus;
+
+  /// No description provided for @taxonSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search scientific name via POWO'**
+  String get taxonSearchHint;
+
+  /// No description provided for @taxonOfflineHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestions use online search and fall back to local cache offline'**
+  String get taxonOfflineHint;
+
+  /// No description provided for @taxonStatusAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get taxonStatusAccepted;
+
+  /// No description provided for @taxonStatusSynonym.
+  ///
+  /// In en, this message translates to:
+  /// **'Synonym'**
+  String get taxonStatusSynonym;
 
   /// No description provided for @genus.
   ///
@@ -808,6 +850,96 @@ abstract class AppLocalizations {
   /// **'Apply'**
   String get apply;
 
+  /// No description provided for @identifyFamilyWithKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Identify family with dichotomous key'**
+  String get identifyFamilyWithKey;
+
+  /// No description provided for @dichotomousKeyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dichotomous key'**
+  String get dichotomousKeyTitle;
+
+  /// No description provided for @dichotomousKeyIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer each question using characters visible in the field. The key starts broad and narrows to a suggested family.'**
+  String get dichotomousKeyIntro;
+
+  /// No description provided for @dichotomousKeyHowToUse.
+  ///
+  /// In en, this message translates to:
+  /// **'How to use'**
+  String get dichotomousKeyHowToUse;
+
+  /// No description provided for @dichotomousKeyGeneralBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'General key'**
+  String get dichotomousKeyGeneralBranch;
+
+  /// No description provided for @dichotomousKeyCurrentBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'Current branch: {family}'**
+  String dichotomousKeyCurrentBranch(String family);
+
+  /// No description provided for @dichotomousKeyTrail.
+  ///
+  /// In en, this message translates to:
+  /// **'Decision trail'**
+  String get dichotomousKeyTrail;
+
+  /// No description provided for @dichotomousKeyBackStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Back one step'**
+  String get dichotomousKeyBackStep;
+
+  /// No description provided for @dichotomousKeyRestart.
+  ///
+  /// In en, this message translates to:
+  /// **'Restart key'**
+  String get dichotomousKeyRestart;
+
+  /// No description provided for @dichotomousKeySuggestedFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested family'**
+  String get dichotomousKeySuggestedFamily;
+
+  /// No description provided for @dichotomousKeyUseFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this family'**
+  String get dichotomousKeyUseFamily;
+
+  /// No description provided for @dichotomousKeyQuestionCounter.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step}'**
+  String dichotomousKeyQuestionCounter(int step);
+
+  /// No description provided for @dichotomousKeyResultHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the suggestion below to fill the family field of the current record.'**
+  String get dichotomousKeyResultHelp;
+
+  /// No description provided for @dichotomousKeyLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading dichotomous key: {error}'**
+  String dichotomousKeyLoadError(String error);
+
+  /// No description provided for @dichotomousKeyEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No dichotomous keys available.'**
+  String get dichotomousKeyEmpty;
+
   /// No description provided for @suggestion.
   ///
   /// In en, this message translates to:
@@ -1330,6 +1462,162 @@ abstract class AppLocalizations {
   /// **'Local data backup'**
   String get localDataBackup;
 
+  /// No description provided for @inaturalist.
+  ///
+  /// In en, this message translates to:
+  /// **'iNaturalist'**
+  String get inaturalist;
+
+  /// No description provided for @inaturalistAuthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect to iNaturalist'**
+  String get inaturalistAuthTitle;
+
+  /// No description provided for @inaturalistTokenSetupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal access token'**
+  String get inaturalistTokenSetupTitle;
+
+  /// No description provided for @inaturalistTokenSetupDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a personal iNaturalist token first. You can generate it in your iNaturalist account and paste it here to enable observation uploads.'**
+  String get inaturalistTokenSetupDescription;
+
+  /// No description provided for @inaturalistOpenTokenPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Open token page'**
+  String get inaturalistOpenTokenPage;
+
+  /// No description provided for @inaturalistUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'iNaturalist username'**
+  String get inaturalistUsername;
+
+  /// No description provided for @inaturalistUsernameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional username for display'**
+  String get inaturalistUsernameHint;
+
+  /// No description provided for @inaturalistAccessToken.
+  ///
+  /// In en, this message translates to:
+  /// **'Access token'**
+  String get inaturalistAccessToken;
+
+  /// No description provided for @inaturalistAccessTokenHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste your iNaturalist token'**
+  String get inaturalistAccessTokenHint;
+
+  /// No description provided for @inaturalistTokenHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your token is stored locally on this device and used only for sending observations.'**
+  String get inaturalistTokenHelp;
+
+  /// No description provided for @inaturalistSaveCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Save iNaturalist credentials'**
+  String get inaturalistSaveCredentials;
+
+  /// No description provided for @inaturalistClearCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear iNaturalist credentials'**
+  String get inaturalistClearCredentials;
+
+  /// No description provided for @inaturalistCredentialsSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'iNaturalist credentials saved'**
+  String get inaturalistCredentialsSaved;
+
+  /// No description provided for @inaturalistCredentialsCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'iNaturalist credentials cleared'**
+  String get inaturalistCredentialsCleared;
+
+  /// No description provided for @inaturalistConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Configured for @{username}'**
+  String inaturalistConfigured(String username);
+
+  /// No description provided for @inaturalistNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Not configured'**
+  String get inaturalistNotConfigured;
+
+  /// No description provided for @sendToInaturalist.
+  ///
+  /// In en, this message translates to:
+  /// **'Send to iNaturalist'**
+  String get sendToInaturalist;
+
+  /// No description provided for @sendSelectedToInaturalist.
+  ///
+  /// In en, this message translates to:
+  /// **'Send selected records to iNaturalist'**
+  String get sendSelectedToInaturalist;
+
+  /// No description provided for @inaturalistAlreadySent.
+  ///
+  /// In en, this message translates to:
+  /// **'Already sent to iNaturalist'**
+  String get inaturalistAlreadySent;
+
+  /// No description provided for @inaturalistObservationId.
+  ///
+  /// In en, this message translates to:
+  /// **'Observation ID: {id}'**
+  String inaturalistObservationId(String id);
+
+  /// No description provided for @inaturalistSyncBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'📤 iNat'**
+  String get inaturalistSyncBadge;
+
+  /// No description provided for @inaturalistPushSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Observation sent to iNaturalist'**
+  String get inaturalistPushSuccess;
+
+  /// No description provided for @inaturalistBulkSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} record(s) sent to iNaturalist'**
+  String inaturalistBulkSuccess(int count);
+
+  /// No description provided for @inaturalistPushError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send to iNaturalist: {error}'**
+  String inaturalistPushError(String error);
+
+  /// No description provided for @inaturalistRequiresToken.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure your iNaturalist token in Settings before sending records.'**
+  String get inaturalistRequiresToken;
+
+  /// No description provided for @inaturalistProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending {current} of {total}'**
+  String inaturalistProgress(int current, int total);
+
   /// No description provided for @syncAutomatically.
   ///
   /// In en, this message translates to:
@@ -1594,6 +1882,180 @@ abstract class AppLocalizations {
   /// **'Form'**
   String get formSection;
 
+  /// No description provided for @collectionTemplatesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection Templates'**
+  String get collectionTemplatesTitle;
+
+  /// No description provided for @collectionTemplatesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage biome-based presets for smart prefill'**
+  String get collectionTemplatesSubtitle;
+
+  /// No description provided for @newCollectionTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'New Template'**
+  String get newCollectionTemplate;
+
+  /// No description provided for @editCollectionTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Template'**
+  String get editCollectionTemplate;
+
+  /// No description provided for @duplicateCollectionTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate template'**
+  String get duplicateCollectionTemplate;
+
+  /// No description provided for @collectionTemplateSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Template saved successfully'**
+  String get collectionTemplateSaved;
+
+  /// No description provided for @collectionTemplateDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Template deleted successfully'**
+  String get collectionTemplateDeleted;
+
+  /// No description provided for @collectionTemplateDuplicated.
+  ///
+  /// In en, this message translates to:
+  /// **'Template duplicated successfully'**
+  String get collectionTemplateDuplicated;
+
+  /// No description provided for @collectionTemplateName.
+  ///
+  /// In en, this message translates to:
+  /// **'Template name'**
+  String get collectionTemplateName;
+
+  /// No description provided for @collectionTemplateNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a template name'**
+  String get collectionTemplateNameRequired;
+
+  /// No description provided for @collectionTemplateBiome.
+  ///
+  /// In en, this message translates to:
+  /// **'Biome'**
+  String get collectionTemplateBiome;
+
+  /// No description provided for @collectionTemplateHabitat.
+  ///
+  /// In en, this message translates to:
+  /// **'Default habitat'**
+  String get collectionTemplateHabitat;
+
+  /// No description provided for @collectionTemplateVegetationType.
+  ///
+  /// In en, this message translates to:
+  /// **'Default vegetation type'**
+  String get collectionTemplateVegetationType;
+
+  /// No description provided for @collectionTemplateTopography.
+  ///
+  /// In en, this message translates to:
+  /// **'Default topography'**
+  String get collectionTemplateTopography;
+
+  /// No description provided for @collectionTemplateSubstrate.
+  ///
+  /// In en, this message translates to:
+  /// **'Default substrate'**
+  String get collectionTemplateSubstrate;
+
+  /// No description provided for @collectionTemplateNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequent notes'**
+  String get collectionTemplateNotes;
+
+  /// No description provided for @useCollectionTemplateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use template?'**
+  String get useCollectionTemplateTitle;
+
+  /// No description provided for @useCollectionTemplateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We found the template \"{templateName}\" for the {biomeName} biome. Do you want to prefill the form?'**
+  String useCollectionTemplateBody(String templateName, String biomeName);
+
+  /// No description provided for @useCollectionTemplateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Use template'**
+  String get useCollectionTemplateAction;
+
+  /// No description provided for @collectionTemplateApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Template \"{templateName}\" applied'**
+  String collectionTemplateApplied(String templateName);
+
+  /// No description provided for @deleteCollectionTemplateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete template'**
+  String get deleteCollectionTemplateTitle;
+
+  /// No description provided for @deleteCollectionTemplateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to delete the template \"{templateName}\"?'**
+  String deleteCollectionTemplateBody(String templateName);
+
+  /// No description provided for @templateCopyName.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy of {name}'**
+  String templateCopyName(String name);
+
+  /// No description provided for @biomeCerrado.
+  ///
+  /// In en, this message translates to:
+  /// **'Cerrado'**
+  String get biomeCerrado;
+
+  /// No description provided for @biomeMataAtlantica.
+  ///
+  /// In en, this message translates to:
+  /// **'Atlantic Forest'**
+  String get biomeMataAtlantica;
+
+  /// No description provided for @biomeAmazonia.
+  ///
+  /// In en, this message translates to:
+  /// **'Amazon'**
+  String get biomeAmazonia;
+
+  /// No description provided for @biomeCaatinga.
+  ///
+  /// In en, this message translates to:
+  /// **'Caatinga'**
+  String get biomeCaatinga;
+
+  /// No description provided for @biomePampa.
+  ///
+  /// In en, this message translates to:
+  /// **'Pampa'**
+  String get biomePampa;
+
+  /// No description provided for @biomePantanal.
+  ///
+  /// In en, this message translates to:
+  /// **'Pantanal'**
+  String get biomePantanal;
+
   /// No description provided for @audioSection.
   ///
   /// In en, this message translates to:
@@ -1725,6 +2187,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Plant record saved'**
   String get plantRecordSaved;
+
+  /// No description provided for @plantNetIdentifyButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Identify with PlantNet'**
+  String get plantNetIdentifyButton;
+
+  /// No description provided for @plantNetSuggestionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'PlantNet suggestions'**
+  String get plantNetSuggestionsTitle;
+
+  /// No description provided for @plantNetSelectSuggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a suggestion to fill the fields automatically'**
+  String get plantNetSelectSuggestion;
+
+  /// No description provided for @plantNetNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No suggestions found for these photos'**
+  String get plantNetNoResults;
+
+  /// No description provided for @plantNetConfidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence: {score}%'**
+  String plantNetConfidence(String score);
+
+  /// No description provided for @plantNetApiKeyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'PlantNet API Key'**
+  String get plantNetApiKeyTitle;
+
+  /// No description provided for @plantNetApiKeyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'PlantNet API key'**
+  String get plantNetApiKeyLabel;
+
+  /// No description provided for @plantNetApiKeyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste your API key here'**
+  String get plantNetApiKeyHint;
+
+  /// No description provided for @plantNetApiKeyHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Required to identify species from photos'**
+  String get plantNetApiKeyHelper;
+
+  /// No description provided for @plantNetApiKeyConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Configured'**
+  String get plantNetApiKeyConfigured;
+
+  /// No description provided for @plantNetApiKeyNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Not configured'**
+  String get plantNetApiKeyNotConfigured;
+
+  /// No description provided for @plantNetMissingApiKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure the PlantNet API key in settings to use image identification'**
+  String get plantNetMissingApiKey;
+
+  /// No description provided for @plantNetNoInternet.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect to the internet to identify species with PlantNet'**
+  String get plantNetNoInternet;
+
+  /// No description provided for @plantNetIdentifying.
+  ///
+  /// In en, this message translates to:
+  /// **'Identifying species...'**
+  String get plantNetIdentifying;
+
+  /// No description provided for @plantNetIdentificationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to identify species: {error}'**
+  String plantNetIdentificationFailed(String error);
+
+  /// No description provided for @plantNetSuggestionApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'PlantNet suggestion applied'**
+  String get plantNetSuggestionApplied;
+
+  /// No description provided for @ocrScanLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Label digitization'**
+  String get ocrScanLabel;
+
+  /// No description provided for @ocrScanButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan label'**
+  String get ocrScanButton;
+
+  /// No description provided for @ocrReviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review identified fields'**
+  String get ocrReviewTitle;
+
+  /// No description provided for @ocrConfirmFill.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill form'**
+  String get ocrConfirmFill;
+
+  /// No description provided for @ocrNoTextFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No readable text was found on the label'**
+  String get ocrNoTextFound;
+
+  /// No description provided for @ocrProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing label...'**
+  String get ocrProcessing;
 
   /// No description provided for @identifierLabel.
   ///
@@ -2185,7 +2779,7 @@ abstract class AppLocalizations {
   /// No description provided for @enterValidNumber.
   ///
   /// In en, this message translates to:
-  /// **'Please enter a valid number'**
+  /// **'Enter a valid number (≥ 0)'**
   String get enterValidNumber;
 
   /// No description provided for @negativeValue.
@@ -2223,6 +2817,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Yes'**
   String get yes;
+
+  /// No description provided for @no.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get no;
 
   /// No description provided for @nPhotos.
   ///
@@ -2356,6 +2956,48 @@ abstract class AppLocalizations {
   /// **'Weather condition'**
   String get weatherCondition;
 
+  /// No description provided for @weatherNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Weather notes'**
+  String get weatherNotes;
+
+  /// No description provided for @weatherNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g. sunrise, sunset and WMO code'**
+  String get weatherNotesHint;
+
+  /// No description provided for @moonPhase.
+  ///
+  /// In en, this message translates to:
+  /// **'Moon phase'**
+  String get moonPhase;
+
+  /// No description provided for @moonPhaseNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get moonPhaseNew;
+
+  /// No description provided for @moonPhaseWaxing.
+  ///
+  /// In en, this message translates to:
+  /// **'Waxing'**
+  String get moonPhaseWaxing;
+
+  /// No description provided for @moonPhaseFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Full'**
+  String get moonPhaseFull;
+
+  /// No description provided for @moonPhaseWaning.
+  ///
+  /// In en, this message translates to:
+  /// **'Waning'**
+  String get moonPhaseWaning;
+
   /// No description provided for @weatherSunny.
   ///
   /// In en, this message translates to:
@@ -2410,6 +3052,252 @@ abstract class AppLocalizations {
   /// **'e.g. 15'**
   String get windSpeedHint;
 
+  /// No description provided for @municipality.
+  ///
+  /// In en, this message translates to:
+  /// **'Municipality'**
+  String get municipality;
+
+  /// No description provided for @state.
+  ///
+  /// In en, this message translates to:
+  /// **'State'**
+  String get state;
+
+  /// No description provided for @country.
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get country;
+
+  /// No description provided for @gpsTrackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'GPS Track'**
+  String get gpsTrackTitle;
+
+  /// No description provided for @startTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Track'**
+  String get startTrack;
+
+  /// No description provided for @pauseTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause Track'**
+  String get pauseTrack;
+
+  /// No description provided for @gpsTrackActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracking active'**
+  String get gpsTrackActive;
+
+  /// No description provided for @gpsTrackPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracking paused'**
+  String get gpsTrackPaused;
+
+  /// No description provided for @gpsTrackPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} points recorded'**
+  String gpsTrackPoints(int count);
+
+  /// No description provided for @coordsValidationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Coordinate check'**
+  String get coordsValidationTitle;
+
+  /// No description provided for @coordsValidationWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'⚠️ The coordinates may be outside {municipality}. Do you want to continue?'**
+  String coordsValidationWarning(String municipality);
+
+  /// No description provided for @continueAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueAction;
+
+  /// No description provided for @rainModeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rain Mode'**
+  String get rainModeTitle;
+
+  /// No description provided for @rainModeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add extra protection for destructive actions on wet screens'**
+  String get rainModeSubtitle;
+
+  /// No description provided for @rainModeBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Rain mode active'**
+  String get rainModeBadge;
+
+  /// No description provided for @enableRainModeQuickAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable rain mode'**
+  String get enableRainModeQuickAction;
+
+  /// No description provided for @disableRainModeQuickAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable rain mode'**
+  String get disableRainModeQuickAction;
+
+  /// No description provided for @rainModeEnabledMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Rain mode enabled'**
+  String get rainModeEnabledMessage;
+
+  /// No description provided for @rainModeDisabledMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Rain mode disabled'**
+  String get rainModeDisabledMessage;
+
+  /// No description provided for @rainModeOverlayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rain mode protection'**
+  String get rainModeOverlayTitle;
+
+  /// No description provided for @rainModeOverlayMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Wet screens can trigger ghost touches. Unlock this action intentionally before continuing.'**
+  String get rainModeOverlayMessage;
+
+  /// No description provided for @rainModeUnlockHold.
+  ///
+  /// In en, this message translates to:
+  /// **'Press and hold the drop for 2 seconds'**
+  String get rainModeUnlockHold;
+
+  /// No description provided for @rainModeUnlockTap.
+  ///
+  /// In en, this message translates to:
+  /// **'or tap the drop 3 times'**
+  String get rainModeUnlockTap;
+
+  /// No description provided for @rainModeDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm destructive action'**
+  String get rainModeDeleteConfirmTitle;
+
+  /// No description provided for @rainModeArchiveConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive session?'**
+  String get rainModeArchiveConfirmTitle;
+
+  /// No description provided for @rainModeArchiveConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Archiving hides this session from active work, but keeps the data stored.'**
+  String get rainModeArchiveConfirmMessage;
+
+  /// No description provided for @rainModeOverwriteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm overwrite'**
+  String get rainModeOverwriteConfirmTitle;
+
+  /// No description provided for @rainModeExitWithoutSavingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave without saving?'**
+  String get rainModeExitWithoutSavingTitle;
+
+  /// No description provided for @rainModeExitWithoutSavingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your unsaved changes will be lost if you leave this screen now.'**
+  String get rainModeExitWithoutSavingMessage;
+
+  /// No description provided for @rainModeDiscardChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave without saving'**
+  String get rainModeDiscardChanges;
+
+  /// No description provided for @rainModeCountdownLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Action available in {seconds}s'**
+  String rainModeCountdownLabel(int seconds);
+
+  /// No description provided for @undo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undo;
+
+  /// No description provided for @locationAutoFilled.
+  ///
+  /// In en, this message translates to:
+  /// **'Location filled automatically'**
+  String get locationAutoFilled;
+
+  /// No description provided for @noConnectionManualFill.
+  ///
+  /// In en, this message translates to:
+  /// **'No connection — fill in manually'**
+  String get noConnectionManualFill;
+
+  /// No description provided for @getCurrentLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Current Location'**
+  String get getCurrentLocation;
+
+  /// No description provided for @tapToShowMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap \"Get Current Location\" to show the map'**
+  String get tapToShowMap;
+
+  /// No description provided for @tapToAdjustMarker.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the map to adjust the marker position'**
+  String get tapToAdjustMarker;
+
+  /// No description provided for @enableLocationServicesMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enable location services to record plant locations'**
+  String get enableLocationServicesMessage;
+
+  /// No description provided for @sunriseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunrise'**
+  String get sunriseLabel;
+
+  /// No description provided for @sunsetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunset'**
+  String get sunsetLabel;
+
+  /// No description provided for @weatherCode.
+  ///
+  /// In en, this message translates to:
+  /// **'WMO code {code}'**
+  String weatherCode(int code);
+
   /// No description provided for @selectMode.
   ///
   /// In en, this message translates to:
@@ -2457,6 +3345,1566 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} plant(s) deleted'**
   String nPlantsDeleted(int count);
+
+  /// No description provided for @collectionInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection Info'**
+  String get collectionInfo;
+
+  /// No description provided for @notSpecified.
+  ///
+  /// In en, this message translates to:
+  /// **'Not specified'**
+  String get notSpecified;
+
+  /// No description provided for @collectorNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Collector Number'**
+  String get collectorNumber;
+
+  /// No description provided for @collectorNumberHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Collector\'s sequential number (e.g. 1234)'**
+  String get collectorNumberHint;
+
+  /// No description provided for @numberOfIndividuals.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of Individuals'**
+  String get numberOfIndividuals;
+
+  /// No description provided for @numberOfIndividualsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'How many specimens observed'**
+  String get numberOfIndividualsHint;
+
+  /// No description provided for @determinationQualifier.
+  ///
+  /// In en, this message translates to:
+  /// **'Taxonomic Certainty'**
+  String get determinationQualifier;
+
+  /// No description provided for @determinationQualifierHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. cf., aff., ?'**
+  String get determinationQualifierHint;
+
+  /// No description provided for @habitatDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Habitat Details'**
+  String get habitatDetails;
+
+  /// No description provided for @substrate.
+  ///
+  /// In en, this message translates to:
+  /// **'Substrate / Soil'**
+  String get substrate;
+
+  /// No description provided for @substrateHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. clay soil, rock, epiphyte, sand'**
+  String get substrateHint;
+
+  /// No description provided for @vegetationType.
+  ///
+  /// In en, this message translates to:
+  /// **'Vegetation Type'**
+  String get vegetationType;
+
+  /// No description provided for @vegetationTypeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Cerrado, Atlantic Forest, Caatinga, Restinga'**
+  String get vegetationTypeHint;
+
+  /// No description provided for @topography.
+  ///
+  /// In en, this message translates to:
+  /// **'Topography'**
+  String get topography;
+
+  /// No description provided for @topographyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. slope, valley, hilltop, riparian, plateau'**
+  String get topographyHint;
+
+  /// No description provided for @associatedTaxa.
+  ///
+  /// In en, this message translates to:
+  /// **'Associated Species'**
+  String get associatedTaxa;
+
+  /// No description provided for @associatedTaxaHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Other species found nearby (comma-separated)'**
+  String get associatedTaxaHint;
+
+  /// No description provided for @phenologicalState.
+  ///
+  /// In en, this message translates to:
+  /// **'Phenological State'**
+  String get phenologicalState;
+
+  /// No description provided for @phenoFlowering.
+  ///
+  /// In en, this message translates to:
+  /// **'Flowering'**
+  String get phenoFlowering;
+
+  /// No description provided for @phenoFruiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Fruiting'**
+  String get phenoFruiting;
+
+  /// No description provided for @phenoBudding.
+  ///
+  /// In en, this message translates to:
+  /// **'Budding'**
+  String get phenoBudding;
+
+  /// No description provided for @phenoWithFruit.
+  ///
+  /// In en, this message translates to:
+  /// **'With Fruit'**
+  String get phenoWithFruit;
+
+  /// No description provided for @phenoVegetative.
+  ///
+  /// In en, this message translates to:
+  /// **'Vegetative'**
+  String get phenoVegetative;
+
+  /// No description provided for @phenoSterile.
+  ///
+  /// In en, this message translates to:
+  /// **'Sterile'**
+  String get phenoSterile;
+
+  /// No description provided for @phenoUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get phenoUnknown;
+
+  /// No description provided for @collectionMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection Method'**
+  String get collectionMethod;
+
+  /// No description provided for @methodVoucherCollected.
+  ///
+  /// In en, this message translates to:
+  /// **'Voucher Collected'**
+  String get methodVoucherCollected;
+
+  /// No description provided for @methodPhotoOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo Only'**
+  String get methodPhotoOnly;
+
+  /// No description provided for @methodSterileMaterial.
+  ///
+  /// In en, this message translates to:
+  /// **'Sterile Material'**
+  String get methodSterileMaterial;
+
+  /// No description provided for @methodLivingMaterial.
+  ///
+  /// In en, this message translates to:
+  /// **'Living Material'**
+  String get methodLivingMaterial;
+
+  /// No description provided for @confirmAssignTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Assignment'**
+  String get confirmAssignTitle;
+
+  /// No description provided for @confirmAssignBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} identifier(s) will be assigned:'**
+  String confirmAssignBody(int count);
+
+  /// No description provided for @errorLoadingPlants2.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading plants: {error}'**
+  String errorLoadingPlants2(String error);
+
+  /// No description provided for @errorGeneratingPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Error generating preview: {error}'**
+  String errorGeneratingPreview(String error);
+
+  /// No description provided for @errorAssigningIdentifiers.
+  ///
+  /// In en, this message translates to:
+  /// **'Error assigning identifiers: {error}'**
+  String errorAssigningIdentifiers(String error);
+
+  /// No description provided for @exportIdentifiersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Identifiers'**
+  String get exportIdentifiersTitle;
+
+  /// No description provided for @exportFormatJson.
+  ///
+  /// In en, this message translates to:
+  /// **'JSON'**
+  String get exportFormatJson;
+
+  /// No description provided for @exportFormatJsonSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Structured, complete format'**
+  String get exportFormatJsonSubtitle;
+
+  /// No description provided for @exportFormatCsv.
+  ///
+  /// In en, this message translates to:
+  /// **'CSV'**
+  String get exportFormatCsv;
+
+  /// No description provided for @exportFormatCsvSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Simple spreadsheet, compatible'**
+  String get exportFormatCsvSubtitle;
+
+  /// No description provided for @exportFormatExcel.
+  ///
+  /// In en, this message translates to:
+  /// **'Excel'**
+  String get exportFormatExcel;
+
+  /// No description provided for @exportFormatExcelSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Excel spreadsheet with formatting'**
+  String get exportFormatExcelSubtitle;
+
+  /// No description provided for @exportCompletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Export completed'**
+  String get exportCompletedSuccess;
+
+  /// No description provided for @errorExporting.
+  ///
+  /// In en, this message translates to:
+  /// **'Error exporting: {error}'**
+  String errorExporting(String error);
+
+  /// No description provided for @errorImporting2.
+  ///
+  /// In en, this message translates to:
+  /// **'Error importing: {error}'**
+  String errorImporting2(String error);
+
+  /// No description provided for @manageIdentifiersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Identifiers'**
+  String get manageIdentifiersTitle;
+
+  /// No description provided for @assignIdentifiers.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign ({count})'**
+  String assignIdentifiers(int count);
+
+  /// No description provided for @assignSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign identifiers to existing plants'**
+  String get assignSubtitle;
+
+  /// No description provided for @syncErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync error'**
+  String get syncErrorTitle;
+
+  /// No description provided for @deleteSessionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Session'**
+  String get deleteSessionTitle;
+
+  /// No description provided for @deleteSessionConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteSessionConfirm;
+
+  /// No description provided for @exportImportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export & Import'**
+  String get exportImportTitle;
+
+  /// No description provided for @exportSuccessMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Export completed successfully!'**
+  String get exportSuccessMsg;
+
+  /// No description provided for @errorExportMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Error exporting: {error}'**
+  String errorExportMsg(String error);
+
+  /// No description provided for @errorImportMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Error importing: {error}'**
+  String errorImportMsg(String error);
+
+  /// No description provided for @errorTranscribeMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Error transcribing: {error}'**
+  String errorTranscribeMsg(String error);
+
+  /// No description provided for @errorLocationMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Error getting location: {error}'**
+  String errorLocationMsg(String error);
+
+  /// No description provided for @errorPhotoMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Error taking photo: {error}'**
+  String errorPhotoMsg(String error);
+
+  /// No description provided for @errorPickPhotoMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Error choosing photos: {error}'**
+  String errorPickPhotoMsg(String error);
+
+  /// No description provided for @errorSearchMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Search error: {error}'**
+  String errorSearchMsg(String error);
+
+  /// No description provided for @errorDownloadMapMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Error downloading: {error}'**
+  String errorDownloadMapMsg(String error);
+
+  /// No description provided for @errorClearCacheMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Error clearing cache: {error}'**
+  String errorClearCacheMsg(String error);
+
+  /// No description provided for @downloadOfflineArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Offline Area'**
+  String get downloadOfflineArea;
+
+  /// No description provided for @download.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get download;
+
+  /// No description provided for @clearCacheTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Cache'**
+  String get clearCacheTitle;
+
+  /// No description provided for @clearCacheConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clearCacheConfirm;
+
+  /// No description provided for @downloadNewAreaTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Download new area'**
+  String get downloadNewAreaTooltip;
+
+  /// No description provided for @exportData.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Data'**
+  String get exportData;
+
+  /// No description provided for @importData.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Data'**
+  String get importData;
+
+  /// No description provided for @errorsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Errors:'**
+  String get errorsLabel;
+
+  /// No description provided for @searchByLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by:'**
+  String get searchByLabel;
+
+  /// No description provided for @searchByIdentifierHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by identifier (e.g. RC000001)...'**
+  String get searchByIdentifierHint;
+
+  /// No description provided for @searchPlantsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search plants...'**
+  String get searchPlantsHint;
+
+  /// No description provided for @autoDownloadTiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Download tiles automatically'**
+  String get autoDownloadTiles;
+
+  /// No description provided for @syncNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync now'**
+  String get syncNow;
+
+  /// No description provided for @syncing2.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing...'**
+  String get syncing2;
+
+  /// No description provided for @syncCloud.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync your data in the cloud'**
+  String get syncCloud;
+
+  /// No description provided for @errorCalcNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Error calculating next'**
+  String get errorCalcNext;
+
+  /// No description provided for @excluir.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get excluir;
+
+  /// No description provided for @archive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get archive;
+
+  /// No description provided for @unarchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Unarchive'**
+  String get unarchive;
+
+  /// No description provided for @shareCodeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Code'**
+  String get shareCodeTitle;
+
+  /// No description provided for @shareWithUsersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Share this code with other users:'**
+  String get shareWithUsersHint;
+
+  /// No description provided for @archivedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get archivedLabel;
+
+  /// No description provided for @sharedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared'**
+  String get sharedLabel;
+
+  /// No description provided for @importResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Result'**
+  String get importResultTitle;
+
+  /// No description provided for @importedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported'**
+  String get importedLabel;
+
+  /// No description provided for @updatedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated'**
+  String get updatedLabel;
+
+  /// No description provided for @skippedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped'**
+  String get skippedLabel;
+
+  /// No description provided for @aboutFormats.
+  ///
+  /// In en, this message translates to:
+  /// **'About Formats'**
+  String get aboutFormats;
+
+  /// No description provided for @exportBackupHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Export your plants for backup or sharing'**
+  String get exportBackupHint;
+
+  /// No description provided for @formatLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Format:'**
+  String get formatLabel;
+
+  /// No description provided for @jsonFormatSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete format with all data'**
+  String get jsonFormatSubtitle;
+
+  /// No description provided for @csvFormatSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Simple spreadsheet (Excel, LibreOffice)'**
+  String get csvFormatSubtitle;
+
+  /// No description provided for @darwinCoreFormatSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'International standard for biodiversity'**
+  String get darwinCoreFormatSubtitle;
+
+  /// No description provided for @includeCollectionSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Include collection sessions'**
+  String get includeCollectionSessions;
+
+  /// No description provided for @importFromJson.
+  ///
+  /// In en, this message translates to:
+  /// **'Import plants from an exported JSON file'**
+  String get importFromJson;
+
+  /// No description provided for @importWarnMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Existing plants will be updated. Only JSON files are supported.'**
+  String get importWarnMsg;
+
+  /// No description provided for @selectFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Select File'**
+  String get selectFile;
+
+  /// No description provided for @jsonFormatDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete format that preserves all data including photos, audio, measurements and metadata. Ideal for full backup and restore.'**
+  String get jsonFormatDesc;
+
+  /// No description provided for @csvFormatDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Simple spreadsheet format that can be opened in Excel, LibreOffice or Google Sheets. Contains only basic data.'**
+  String get csvFormatDesc;
+
+  /// No description provided for @darwinCoreDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'International standard for biodiversity data. Compatible with scientific portals such as GBIF and iNaturalist.'**
+  String get darwinCoreDesc;
+
+  /// No description provided for @offlineMapsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline Maps'**
+  String get offlineMapsTitle;
+
+  /// No description provided for @downloadOfflineAreaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Offline Area'**
+  String get downloadOfflineAreaTitle;
+
+  /// No description provided for @areaNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Area name'**
+  String get areaNameLabel;
+
+  /// No description provided for @zoomLevelsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom levels: 8-15'**
+  String get zoomLevelsLabel;
+
+  /// No description provided for @downloadWarnMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'This may take a few minutes and use mobile data.'**
+  String get downloadWarnMsg;
+
+  /// No description provided for @downloadCompletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Download completed!'**
+  String get downloadCompletedSuccess;
+
+  /// No description provided for @cacheClearedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache cleared successfully'**
+  String get cacheClearedSuccess;
+
+  /// No description provided for @clearCacheBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete all offline maps?\n\nThis will free up space but you will need to be online to view maps.'**
+  String get clearCacheBody;
+
+  /// No description provided for @clearCacheConfirmBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clearCacheConfirmBtn;
+
+  /// No description provided for @clearCacheLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Cache'**
+  String get clearCacheLabel;
+
+  /// No description provided for @userInitialsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'User Initials'**
+  String get userInitialsTitle;
+
+  /// No description provided for @initialsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Initials'**
+  String get initialsLabel;
+
+  /// No description provided for @initialsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g.: RC, ABC'**
+  String get initialsHint;
+
+  /// No description provided for @initialsHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'1-4 uppercase letters'**
+  String get initialsHelper;
+
+  /// No description provided for @lastRegistryNumberTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Registry Number'**
+  String get lastRegistryNumberTitle;
+
+  /// No description provided for @numberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Number'**
+  String get numberLabel;
+
+  /// No description provided for @numberHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g.: 0, 40, 1000'**
+  String get numberHint;
+
+  /// No description provided for @numberBetweenError.
+  ///
+  /// In en, this message translates to:
+  /// **'Number must be between 0 and 999999'**
+  String get numberBetweenError;
+
+  /// No description provided for @nextRegistryWillUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Next registry will use: {next}'**
+  String nextRegistryWillUse(int next);
+
+  /// No description provided for @changeNumberWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing this number will affect the next records created.'**
+  String get changeNumberWarning;
+
+  /// No description provided for @enterLastRegistryNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the last registry number'**
+  String get enterLastRegistryNumber;
+
+  /// No description provided for @digitsOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter digits only'**
+  String get digitsOnly;
+
+  /// No description provided for @connected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get connected;
+
+  /// No description provided for @loginToSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in to sync'**
+  String get loginToSync;
+
+  /// No description provided for @lastSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Last: {date}'**
+  String lastSync(String date);
+
+  /// No description provided for @neverSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Never synced'**
+  String get neverSynced;
+
+  /// No description provided for @initialsCannotBeEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Initials cannot be empty'**
+  String get initialsCannotBeEmpty;
+
+  /// No description provided for @initialsFormatError.
+  ///
+  /// In en, this message translates to:
+  /// **'Use 1-4 uppercase letters'**
+  String get initialsFormatError;
+
+  /// No description provided for @numberCannotBeEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Number cannot be empty'**
+  String get numberCannotBeEmpty;
+
+  /// No description provided for @numberTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Number too large (max: 999999)'**
+  String get numberTooLarge;
+
+  /// No description provided for @portugueseBR.
+  ///
+  /// In en, this message translates to:
+  /// **'Português (BR)'**
+  String get portugueseBR;
+
+  /// No description provided for @mapProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Map Provider'**
+  String get mapProvider;
+
+  /// No description provided for @selectMapProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Provider'**
+  String get selectMapProvider;
+
+  /// No description provided for @mapboxSatellite.
+  ///
+  /// In en, this message translates to:
+  /// **'Mapbox Satellite'**
+  String get mapboxSatellite;
+
+  /// No description provided for @mapCacheRadius.
+  ///
+  /// In en, this message translates to:
+  /// **'Map Cache Radius'**
+  String get mapCacheRadius;
+
+  /// No description provided for @autoSaveInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-save Interval'**
+  String get autoSaveInterval;
+
+  /// No description provided for @disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get disabled;
+
+  /// No description provided for @nSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} seconds'**
+  String nSeconds(int n);
+
+  /// No description provided for @nMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} minute(s)'**
+  String nMinutes(int n);
+
+  /// No description provided for @compressionQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Compression Quality'**
+  String get compressionQuality;
+
+  /// No description provided for @preserveExifTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Preserve EXIF Metadata'**
+  String get preserveExifTitle;
+
+  /// No description provided for @preserveExifSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep GPS and camera information'**
+  String get preserveExifSubtitle;
+
+  /// No description provided for @transcriptionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio Transcription'**
+  String get transcriptionTitle;
+
+  /// No description provided for @transcriptionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Convert speech to text'**
+  String get transcriptionSubtitle;
+
+  /// No description provided for @transcriptionLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcription Language'**
+  String get transcriptionLanguage;
+
+  /// No description provided for @audioQualityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio Quality'**
+  String get audioQualityTitle;
+
+  /// No description provided for @audioQualityLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low (smaller size)'**
+  String get audioQualityLow;
+
+  /// No description provided for @audioQualityMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get audioQualityMedium;
+
+  /// No description provided for @audioQualityHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High (best quality)'**
+  String get audioQualityHigh;
+
+  /// No description provided for @audioQualityLowShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get audioQualityLowShort;
+
+  /// No description provided for @audioQualityHighShort.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get audioQualityHighShort;
+
+  /// No description provided for @paginationSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Items per Page'**
+  String get paginationSize;
+
+  /// No description provided for @nItems.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} items'**
+  String nItems(int n);
+
+  /// No description provided for @thumbnailCacheTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Thumbnail Cache'**
+  String get thumbnailCacheTitle;
+
+  /// No description provided for @thumbnailCacheSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Improve list performance'**
+  String get thumbnailCacheSubtitle;
+
+  /// No description provided for @autoGenerateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-generate'**
+  String get autoGenerateTitle;
+
+  /// No description provided for @autoGenerateSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create identifier when saving a record'**
+  String get autoGenerateSubtitle;
+
+  /// No description provided for @manageIdentifiersSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign identifiers to existing plants'**
+  String get manageIdentifiersSubtitle;
+
+  /// No description provided for @nextLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: {id}'**
+  String nextLabel(String id);
+
+  /// No description provided for @lastSyncResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Last result'**
+  String get lastSyncResult;
+
+  /// No description provided for @autoCache.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic Cache'**
+  String get autoCache;
+
+  /// No description provided for @syncResultSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{pushed} sent, {pulled} received'**
+  String syncResultSummary(int pushed, int pulled);
+
+  /// No description provided for @syncResultConflicts.
+  ///
+  /// In en, this message translates to:
+  /// **', {conflicts} conflicts'**
+  String syncResultConflicts(int conflicts);
+
+  /// No description provided for @exportingNPlants.
+  ///
+  /// In en, this message translates to:
+  /// **'Exporting {n} selected plant(s)'**
+  String exportingNPlants(int n);
+
+  /// No description provided for @editSessionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Session'**
+  String get editSessionTitle;
+
+  /// No description provided for @sessionTripNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip Name *'**
+  String get sessionTripNameLabel;
+
+  /// No description provided for @sessionTripNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g. Collection in Serra do Mar'**
+  String get sessionTripNameHint;
+
+  /// No description provided for @sessionTripNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip name is required'**
+  String get sessionTripNameRequired;
+
+  /// No description provided for @sessionLocationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g. State Park, São Paulo'**
+  String get sessionLocationHint;
+
+  /// No description provided for @teamLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Team'**
+  String get teamLabel;
+
+  /// No description provided for @teamMemberNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Team member name'**
+  String get teamMemberNameHint;
+
+  /// No description provided for @noTeamMembersAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'No members added'**
+  String get noTeamMembersAdded;
+
+  /// No description provided for @sessionNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional information about the collection...'**
+  String get sessionNotesHint;
+
+  /// No description provided for @saveSessionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Session'**
+  String get saveSessionLabel;
+
+  /// No description provided for @sessionStartDateValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Start: {date}'**
+  String sessionStartDateValue(String date);
+
+  /// No description provided for @sessionEndDateValue.
+  ///
+  /// In en, this message translates to:
+  /// **'End: {date}'**
+  String sessionEndDateValue(String date);
+
+  /// No description provided for @sessionCollaborators.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} collaborators'**
+  String sessionCollaborators(int count);
+
+  /// No description provided for @sessionTeamCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Team ({count})'**
+  String sessionTeamCount(int count);
+
+  /// No description provided for @sessionCollectedPlantsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Collected Plants'**
+  String get sessionCollectedPlantsTitle;
+
+  /// No description provided for @noPlantsCollectedInSession.
+  ///
+  /// In en, this message translates to:
+  /// **'No plants collected in this session'**
+  String get noPlantsCollectedInSession;
+
+  /// No description provided for @statusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get statusLabel;
+
+  /// No description provided for @allLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get allLabel;
+
+  /// No description provided for @completedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get completedLabel;
+
+  /// No description provided for @mapPlantsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} plants on the map'**
+  String mapPlantsCount(int count);
+
+  /// No description provided for @mapPlantsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Plant Map'**
+  String get mapPlantsTitle;
+
+  /// No description provided for @legendLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Legend'**
+  String get legendLabel;
+
+  /// No description provided for @plantsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} plants'**
+  String plantsCount(int count);
+
+  /// No description provided for @tapMapToDefineArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the map to define the download area'**
+  String get tapMapToDefineArea;
+
+  /// No description provided for @offlineRegionName.
+  ///
+  /// In en, this message translates to:
+  /// **'Region {date}'**
+  String offlineRegionName(String date);
+
+  /// No description provided for @downloadingRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading {region}'**
+  String downloadingRegion(String region);
+
+  /// No description provided for @selectFirstAreaCorner.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Tap the first corner of the area'**
+  String get selectFirstAreaCorner;
+
+  /// No description provided for @selectOppositeAreaCorner.
+  ///
+  /// In en, this message translates to:
+  /// **'2. Tap the opposite corner of the area'**
+  String get selectOppositeAreaCorner;
+
+  /// No description provided for @mapCacheTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Map Cache'**
+  String get mapCacheTitle;
+
+  /// No description provided for @cachedTilesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cached tiles:'**
+  String get cachedTilesLabel;
+
+  /// No description provided for @usedSpaceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Used space:'**
+  String get usedSpaceLabel;
+
+  /// No description provided for @howToUseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'How to use'**
+  String get howToUseLabel;
+
+  /// No description provided for @offlineMapsHowToUse.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Tap + to download an area\n2. Tap two points on the map\n3. Confirm the download\n4. Use offline maps in the field!'**
+  String get offlineMapsHowToUse;
+
+  /// No description provided for @accessibilityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Accessibility'**
+  String get accessibilityTitle;
+
+  /// No description provided for @highContrast.
+  ///
+  /// In en, this message translates to:
+  /// **'High Contrast'**
+  String get highContrast;
+
+  /// No description provided for @highContrastSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Increases color contrast and reduces grays'**
+  String get highContrastSubtitle;
+
+  /// No description provided for @fontSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Font Size'**
+  String get fontSize;
+
+  /// No description provided for @phenologyFournier.
+  ///
+  /// In en, this message translates to:
+  /// **'Phenology (Fournier Scale)'**
+  String get phenologyFournier;
+
+  /// No description provided for @fournierFlowerBud.
+  ///
+  /// In en, this message translates to:
+  /// **'Flower Bud'**
+  String get fournierFlowerBud;
+
+  /// No description provided for @fournierOpenFlower.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Flower'**
+  String get fournierOpenFlower;
+
+  /// No description provided for @fournierImmatureFruit.
+  ///
+  /// In en, this message translates to:
+  /// **'Immature Fruit'**
+  String get fournierImmatureFruit;
+
+  /// No description provided for @fournierMatureFruit.
+  ///
+  /// In en, this message translates to:
+  /// **'Mature Fruit'**
+  String get fournierMatureFruit;
+
+  /// No description provided for @fournierLeafFall.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaf Fall'**
+  String get fournierLeafFall;
+
+  /// No description provided for @exportLabelPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Label PDF'**
+  String get exportLabelPdf;
+
+  /// No description provided for @exportLabelPdfTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview and share herbarium label PDF'**
+  String get exportLabelPdfTooltip;
+
+  /// No description provided for @herbariumLabelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Herbarium label'**
+  String get herbariumLabelTitle;
+
+  /// No description provided for @collector.
+  ///
+  /// In en, this message translates to:
+  /// **'Collector'**
+  String get collector;
+
+  /// No description provided for @locality.
+  ///
+  /// In en, this message translates to:
+  /// **'Locality'**
+  String get locality;
+
+  /// No description provided for @morphologicalNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Morphological notes'**
+  String get morphologicalNotes;
+
+  /// No description provided for @errorExportingLabelPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Error exporting label PDF: {error}'**
+  String errorExportingLabelPdf(String error);
+
+  /// No description provided for @conflictResolutionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve conflicts'**
+  String get conflictResolutionTitle;
+
+  /// No description provided for @syncConflictBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict'**
+  String get syncConflictBadge;
+
+  /// No description provided for @syncConflictBannerMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} sync conflict(s) need review.'**
+  String syncConflictBannerMessage(int count);
+
+  /// No description provided for @resolveConflicts.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve conflicts'**
+  String get resolveConflicts;
+
+  /// No description provided for @pendingConflictsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} pending conflict(s)'**
+  String pendingConflictsCount(int count);
+
+  /// No description provided for @conflictResolutionHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare local and server values, then decide field by field or resolve the whole record at once.'**
+  String get conflictResolutionHelper;
+
+  /// No description provided for @resolveAllKeepMostRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve all → keep most recent'**
+  String get resolveAllKeepMostRecent;
+
+  /// No description provided for @conflictsResolvedMostRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflicts resolved using the most recent version.'**
+  String get conflictsResolvedMostRecent;
+
+  /// No description provided for @syncConflictLocalVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Local'**
+  String get syncConflictLocalVersion;
+
+  /// No description provided for @syncConflictServerVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Server'**
+  String get syncConflictServerVersion;
+
+  /// No description provided for @keepLocalField.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep local field'**
+  String get keepLocalField;
+
+  /// No description provided for @acceptServerField.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept server field'**
+  String get acceptServerField;
+
+  /// No description provided for @fieldResolvedKeepingLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved \"{field}\" keeping local value.'**
+  String fieldResolvedKeepingLocal(String field);
+
+  /// No description provided for @fieldResolvedKeepingServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved \"{field}\" accepting server value.'**
+  String fieldResolvedKeepingServer(String field);
+
+  /// No description provided for @keepLocalRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep local record'**
+  String get keepLocalRecord;
+
+  /// No description provided for @acceptServerRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept server record'**
+  String get acceptServerRecord;
+
+  /// No description provided for @conflictResolvedKeepingLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict resolved keeping local record.'**
+  String get conflictResolvedKeepingLocal;
+
+  /// No description provided for @conflictResolvedKeepingServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict resolved accepting server record.'**
+  String get conflictResolvedKeepingServer;
+
+  /// No description provided for @syncConflictLoadErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load conflicts'**
+  String get syncConflictLoadErrorTitle;
+
+  /// No description provided for @noPendingConflictsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending conflicts'**
+  String get noPendingConflictsTitle;
+
+  /// No description provided for @noPendingConflictsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything is in sync right now.'**
+  String get noPendingConflictsMessage;
+
+  /// No description provided for @determinationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Determinations'**
+  String get determinationsTitle;
+
+  /// No description provided for @newDetermination.
+  ///
+  /// In en, this message translates to:
+  /// **'New determination'**
+  String get newDetermination;
+
+  /// No description provided for @determinedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Determined by'**
+  String get determinedBy;
+
+  /// No description provided for @determinedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Determined at'**
+  String get determinedAt;
+
+  /// No description provided for @determinationBasis.
+  ///
+  /// In en, this message translates to:
+  /// **'Basis'**
+  String get determinationBasis;
+
+  /// No description provided for @determinationNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes about this determination...'**
+  String get determinationNotesHint;
+
+  /// No description provided for @determinationBasisHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. herbarium comparison, specialist review'**
+  String get determinationBasisHint;
+
+  /// No description provided for @noDeterminationsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No determinations recorded yet'**
+  String get noDeterminationsYet;
+
+  /// No description provided for @latestDeterminationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest determination'**
+  String get latestDeterminationLabel;
+
+  /// No description provided for @duplicatesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicates'**
+  String get duplicatesTitle;
+
+  /// No description provided for @markAsDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as duplicate'**
+  String get markAsDuplicate;
+
+  /// No description provided for @duplicateOfLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate of #{identifier}'**
+  String duplicateOfLabel(String identifier);
+
+  /// No description provided for @noDuplicatesLinked.
+  ///
+  /// In en, this message translates to:
+  /// **'No linked duplicates'**
+  String get noDuplicatesLinked;
+
+  /// No description provided for @searchCollectorNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by collector number'**
+  String get searchCollectorNumber;
+
+  /// No description provided for @searchCollectorNumberHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 42 or RC000042'**
+  String get searchCollectorNumberHint;
+
+  /// No description provided for @duplicateSearchHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the original voucher from the same collection series'**
+  String get duplicateSearchHelp;
+
+  /// No description provided for @originalVoucher.
+  ///
+  /// In en, this message translates to:
+  /// **'Original voucher'**
+  String get originalVoucher;
+
+  /// No description provided for @linkedDuplicates.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked duplicates'**
+  String get linkedDuplicates;
+
+  /// No description provided for @duplicateLinkedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate linked successfully'**
+  String get duplicateLinkedSuccess;
+
+  /// No description provided for @determinationSavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Determination saved successfully'**
+  String get determinationSavedSuccess;
+
+  /// No description provided for @fillDeterminationRequiredFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in the required determination fields'**
+  String get fillDeterminationRequiredFields;
+
+  /// No description provided for @noMatchingRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching records found'**
+  String get noMatchingRecords;
+
+  /// No description provided for @identificationHistoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Identification history'**
+  String get identificationHistoryLabel;
 }
 
 class _AppLocalizationsDelegate

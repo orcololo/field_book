@@ -1,9 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/taxon_provider.dart';
+import '../../../features/identification/screens/dichotomous_key_screen.dart';
 import '../../../models/plant_record.dart';
 import '../../../models/plant_category.dart';
+import '../../../models/collection_method.dart';
+import '../../../models/phenological_state.dart';
 import '../../../core/repositories/plant_repository.dart';
+import '../../../core/services/taxon_service.dart';
 import '../../../core/utils/botanical_validator.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -24,6 +31,8 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
   late TextEditingController _scientificNameController;
   late TextEditingController _commonNameController;
   late TextEditingController _familyController;
+  late TextEditingController _scientificAuthorController;
+  late TextEditingController _taxonStatusController;
   late TextEditingController _genusController;
   late TextEditingController _speciesController;
   late TextEditingController _habitatController;
@@ -70,10 +79,23 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
   late TextEditingController _windSpeedController;
   String? _weatherCondition;
 
+  // Botanical field notebook fields
+  late TextEditingController _collectorNumberController;
+  late TextEditingController _numberOfIndividualsController;
+  late TextEditingController _substrateController;
+  late TextEditingController _associatedTaxaController;
+  late TextEditingController _vegetationTypeController;
+  late TextEditingController _topographyController;
+  late TextEditingController _determinationQualifierController;
+  PhenologicalState? _phenologicalState;
+  CollectionMethod? _collectionMethod;
+
   late PlantCategory _selectedCategory;
   bool _isSaving = false;
   List<String> _duplicateWarnings = [];
   String? _suggestedFamily;
+  Timer? _taxonSearchDebounce;
+  List<TaxonSuggestion> _taxonSuggestions = const [];
 
   @override
   void initState() {
@@ -88,6 +110,12 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
       text: widget.plant.commonName,
     );
     _familyController = TextEditingController(text: widget.plant.family ?? '');
+    _scientificAuthorController = TextEditingController(
+      text: widget.plant.scientificAuthor ?? '',
+    );
+    _taxonStatusController = TextEditingController(
+      text: widget.plant.taxonStatus ?? '',
+    );
     _genusController = TextEditingController(text: widget.plant.genus ?? '');
     _speciesController = TextEditingController(
       text: widget.plant.species ?? '',
@@ -200,6 +228,31 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
     );
     _weatherCondition = widget.plant.weatherCondition;
 
+    // Botanical field notebook fields
+    _collectorNumberController = TextEditingController(
+      text: widget.plant.collectorNumber ?? '',
+    );
+    _numberOfIndividualsController = TextEditingController(
+      text: widget.plant.numberOfIndividuals?.toString() ?? '',
+    );
+    _substrateController = TextEditingController(
+      text: widget.plant.substrate ?? '',
+    );
+    _associatedTaxaController = TextEditingController(
+      text: widget.plant.associatedTaxa ?? '',
+    );
+    _vegetationTypeController = TextEditingController(
+      text: widget.plant.vegetationType ?? '',
+    );
+    _topographyController = TextEditingController(
+      text: widget.plant.topography ?? '',
+    );
+    _determinationQualifierController = TextEditingController(
+      text: widget.plant.determinationQualifier ?? '',
+    );
+    _phenologicalState = widget.plant.phenologicalState;
+    _collectionMethod = widget.plant.collectionMethod;
+
     // Listen to scientific name changes for auto-suggestions
     _scientificNameController.addListener(_onScientificNameChanged);
     _genusController.addListener(_onGenusChanged);
@@ -207,9 +260,12 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
 
   @override
   void dispose() {
+    _taxonSearchDebounce?.cancel();
     _scientificNameController.dispose();
     _commonNameController.dispose();
     _familyController.dispose();
+    _scientificAuthorController.dispose();
+    _taxonStatusController.dispose();
     _genusController.dispose();
     _speciesController.dispose();
     _habitatController.dispose();
@@ -241,12 +297,24 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
     _temperatureController.dispose();
     _humidityController.dispose();
     _windSpeedController.dispose();
+    _collectorNumberController.dispose();
+    _numberOfIndividualsController.dispose();
+    _substrateController.dispose();
+    _associatedTaxaController.dispose();
+    _vegetationTypeController.dispose();
+    _topographyController.dispose();
+    _determinationQualifierController.dispose();
     super.dispose();
   }
 
   void _onScientificNameChanged() {
-    final name = _scientificNameController.text;
-    if (name.isEmpty) return;
+    final name = _scientificNameController.text.trim();
+    _scheduleTaxonSearch(name);
+
+    if (name.isEmpty) {
+      setState(() => _taxonSuggestions = const []);
+      return;
+    }
 
     // Parse genus and species
     final parsed = _validator.parseScientificName(name);
@@ -260,6 +328,38 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
 
     // Check for duplicates
     _checkDuplicates();
+  }
+
+  void _scheduleTaxonSearch(String query) {
+    _taxonSearchDebounce?.cancel();
+
+    final normalizedQuery = query.trim();
+    if (normalizedQuery.length < 2) {
+      if (mounted) {
+        setState(() => _taxonSuggestions = const []);
+      }
+      return;
+    }
+
+    _taxonSearchDebounce = Timer(const Duration(milliseconds: 400), () async {
+      try {
+        final suggestions = await ref.read(
+          taxonSearchProvider(normalizedQuery).future,
+        );
+
+        if (!mounted ||
+            _scientificNameController.text.trim().toLowerCase() !=
+                normalizedQuery.toLowerCase()) {
+          return;
+        }
+
+        setState(() => _taxonSuggestions = suggestions);
+      } catch (_) {
+        if (mounted) {
+          setState(() => _taxonSuggestions = const []);
+        }
+      }
+    });
   }
 
   void _onGenusChanged() {
@@ -300,6 +400,13 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
       widget.plant.family = _familyController.text.trim().isEmpty
           ? null
           : _familyController.text.trim();
+      widget.plant.scientificAuthor =
+          _scientificAuthorController.text.trim().isEmpty
+          ? null
+          : _scientificAuthorController.text.trim();
+      widget.plant.taxonStatus = _taxonStatusController.text.trim().isEmpty
+          ? null
+          : _taxonStatusController.text.trim();
       widget.plant.genus = _genusController.text.trim().isEmpty
           ? null
           : _genusController.text.trim();
@@ -426,6 +533,34 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
           ? double.tryParse(_windSpeedController.text.trim())
           : null;
       widget.plant.weatherCondition = _weatherCondition;
+      widget.plant.collectorNumber =
+          _collectorNumberController.text.trim().isNotEmpty
+              ? _collectorNumberController.text.trim()
+              : null;
+      widget.plant.numberOfIndividuals =
+          _numberOfIndividualsController.text.trim().isNotEmpty
+              ? int.tryParse(_numberOfIndividualsController.text.trim())
+              : null;
+      widget.plant.substrate = _substrateController.text.trim().isNotEmpty
+          ? _substrateController.text.trim()
+          : null;
+      widget.plant.associatedTaxa =
+          _associatedTaxaController.text.trim().isNotEmpty
+              ? _associatedTaxaController.text.trim()
+              : null;
+      widget.plant.vegetationType =
+          _vegetationTypeController.text.trim().isNotEmpty
+              ? _vegetationTypeController.text.trim()
+              : null;
+      widget.plant.topography = _topographyController.text.trim().isNotEmpty
+          ? _topographyController.text.trim()
+          : null;
+      widget.plant.determinationQualifier =
+          _determinationQualifierController.text.trim().isNotEmpty
+              ? _determinationQualifierController.text.trim()
+              : null;
+      widget.plant.phenologicalState = _phenologicalState;
+      widget.plant.collectionMethod = _collectionMethod;
       widget.plant.updatedAt = DateTime.now();
 
       widget.plant.updateFtsFields();
@@ -451,6 +586,77 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
         setState(() => _isSaving = false);
       }
     }
+  }
+
+  void _applyTaxonSuggestion(TaxonSuggestion suggestion) {
+    _scientificNameController.value = TextEditingValue(
+      text: suggestion.name,
+      selection: TextSelection.collapsed(offset: suggestion.name.length),
+    );
+    _familyController.text = suggestion.family ?? _familyController.text;
+    _scientificAuthorController.text = suggestion.author ?? '';
+    _taxonStatusController.text = suggestion.status;
+
+    final parsed = _validator.parseScientificName(suggestion.name);
+    _genusController.text = parsed['genus'] ?? _genusController.text;
+    _speciesController.text = parsed['species'] ?? _speciesController.text;
+
+    setState(() {
+      _suggestedFamily = suggestion.family ?? _suggestedFamily;
+      _taxonSuggestions = const [];
+    });
+  }
+
+  Future<void> _openDichotomousKey() async {
+    final selectedFamily = await Navigator.of(context).push<String>(
+      MaterialPageRoute(builder: (_) => const DichotomousKeyScreen()),
+    );
+
+    if (!mounted || selectedFamily == null || selectedFamily.isEmpty) {
+      return;
+    }
+
+    setState(() {
+      _familyController.text = selectedFamily;
+      if (_suggestedFamily == selectedFamily) {
+        _suggestedFamily = null;
+      }
+    });
+  }
+
+  Widget _buildFamilyFieldSuffixIcon(
+    AppLocalizations l10n,
+    ColorScheme colorScheme,
+  ) {
+    final hasSuggestion =
+        _suggestedFamily != null && _familyController.text != _suggestedFamily;
+
+    return SizedBox(
+      width: hasSuggestion ? 96 : 48,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.help_outline),
+            tooltip: l10n.identifyFamilyWithKey,
+            onPressed: _openDichotomousKey,
+          ),
+          if (hasSuggestion)
+            IconButton(
+              icon: Icon(
+                Icons.lightbulb,
+                color: colorScheme.tertiary,
+              ),
+              tooltip: l10n.suggestionWithName(_suggestedFamily!),
+              onPressed: () {
+                _familyController.text = _suggestedFamily!;
+                setState(() => _suggestedFamily = null);
+              },
+            ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -483,16 +689,88 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
           padding: const EdgeInsets.all(16),
           children: [
             // Scientific Name
-            TextFormField(
-              controller: _scientificNameController,
-              decoration: InputDecoration(
-                labelText: '${l10n.scientificName} *',
-                hintText: 'Genus species',
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.science),
-              ),
-              textCapitalization: TextCapitalization.words,
-              validator: _validator.validateScientificName,
+            Autocomplete<TaxonSuggestion>(
+              displayStringForOption: (option) => option.name,
+              optionsBuilder: (textEditingValue) {
+                final query = textEditingValue.text.trim().toLowerCase();
+                if (query.length < 2) {
+                  return const Iterable<TaxonSuggestion>.empty();
+                }
+
+                return _taxonSuggestions.where((suggestion) {
+                  final haystack = [
+                    suggestion.name,
+                    suggestion.author ?? '',
+                    suggestion.family ?? '',
+                    suggestion.rank ?? '',
+                  ].join(' ').toLowerCase();
+                  return haystack.contains(query);
+                });
+              },
+              onSelected: _applyTaxonSuggestion,
+              fieldViewBuilder:
+                  (context, textEditingController, focusNode, onFieldSubmitted) {
+                    if (!identical(
+                      textEditingController,
+                      _scientificNameController,
+                    )) {
+                      textEditingController.value = _scientificNameController.value;
+                    }
+
+                    return TextFormField(
+                      controller: _scientificNameController,
+                      focusNode: focusNode,
+                      decoration: InputDecoration(
+                        labelText: '${l10n.scientificName} *',
+                        hintText: l10n.taxonSearchHint,
+                        helperText: l10n.taxonOfflineHint,
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.science),
+                      ),
+                      textCapitalization: TextCapitalization.words,
+                      validator: _validator.validateScientificName,
+                      onFieldSubmitted: (_) => onFieldSubmitted(),
+                    );
+                  },
+              optionsViewBuilder: (context, onSelected, options) {
+                final optionsList = options.toList(growable: false);
+                return Align(
+                  alignment: Alignment.topLeft,
+                  child: Material(
+                    elevation: 4,
+                    borderRadius: BorderRadius.circular(12),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        maxWidth: 600,
+                        maxHeight: 280,
+                      ),
+                      child: ListView.separated(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        shrinkWrap: true,
+                        itemCount: optionsList.length,
+                        separatorBuilder: (_, _) => const Divider(height: 1),
+                        itemBuilder: (context, index) {
+                          final option = optionsList[index];
+                          final subtitle = option.subtitleParts.isEmpty
+                              ? _getTaxonStatusLabel(l10n, option.status)
+                              : '${option.subtitleParts} • ${_getTaxonStatusLabel(l10n, option.status)}';
+
+                          return ListTile(
+                            leading: Icon(
+                              option.status == 'synonym'
+                                  ? Icons.link
+                                  : Icons.check_circle_outline,
+                            ),
+                            title: Text(option.name),
+                            subtitle: Text(subtitle),
+                            onTap: () => onSelected(option),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
 
             // Duplicate warnings
@@ -589,23 +867,39 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
                 labelText: l10n.family,
                 border: const OutlineInputBorder(),
                 prefixIcon: const Icon(Icons.account_tree),
-                suffixIcon:
-                    _suggestedFamily != null &&
-                        _familyController.text != _suggestedFamily
-                    ? IconButton(
-                        icon: Icon(
-                          Icons.lightbulb,
-                          color: colorScheme.tertiary,
-                        ),
-                        tooltip: l10n.suggestionWithName(_suggestedFamily!),
-                        onPressed: () {
-                          _familyController.text = _suggestedFamily!;
-                          setState(() => _suggestedFamily = null);
-                        },
-                      )
-                    : null,
+                suffixIcon: _buildFamilyFieldSuffixIcon(l10n, colorScheme),
               ),
               textCapitalization: TextCapitalization.words,
+            ),
+
+            const SizedBox(height: 16),
+
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _scientificAuthorController,
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      labelText: l10n.taxonAuthor,
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.person_outline),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextFormField(
+                    controller: _taxonStatusController,
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      labelText: l10n.taxonStatus,
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.verified_outlined),
+                    ),
+                  ),
+                ),
+              ],
             ),
 
             if (_suggestedFamily != null &&
@@ -789,6 +1083,158 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
                   ),
                 ),
               ],
+            ),
+
+            const SizedBox(height: 24),
+            // ── Habitat Details ──────────────────────────────────────
+            Text(
+              l10n.habitatDetails,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+            const Divider(),
+            const SizedBox(height: 8),
+            TextFormField(
+              controller: _substrateController,
+              decoration: InputDecoration(
+                labelText: l10n.substrate,
+                border: const OutlineInputBorder(),
+                hintText: l10n.substrateHint,
+                prefixIcon: const Icon(Icons.layers),
+              ),
+              textCapitalization: TextCapitalization.sentences,
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _vegetationTypeController,
+              decoration: InputDecoration(
+                labelText: l10n.vegetationType,
+                border: const OutlineInputBorder(),
+                hintText: l10n.vegetationTypeHint,
+                prefixIcon: const Icon(Icons.forest),
+              ),
+              textCapitalization: TextCapitalization.sentences,
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _topographyController,
+              decoration: InputDecoration(
+                labelText: l10n.topography,
+                border: const OutlineInputBorder(),
+                hintText: l10n.topographyHint,
+                prefixIcon: const Icon(Icons.terrain),
+              ),
+              textCapitalization: TextCapitalization.sentences,
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _associatedTaxaController,
+              decoration: InputDecoration(
+                labelText: l10n.associatedTaxa,
+                border: const OutlineInputBorder(),
+                hintText: l10n.associatedTaxaHint,
+                prefixIcon: const Icon(Icons.diversity_3),
+              ),
+              textCapitalization: TextCapitalization.sentences,
+            ),
+
+            const SizedBox(height: 24),
+            // ── Collection Info ──────────────────────────────────────
+            Text(
+              l10n.collectionInfo,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+            const Divider(),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _collectorNumberController,
+                    decoration: InputDecoration(
+                      labelText: l10n.collectorNumber,
+                      border: const OutlineInputBorder(),
+                      hintText: l10n.collectorNumberHint,
+                      prefixIcon: const Icon(Icons.tag, size: 20),
+                      isDense: true,
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextFormField(
+                    controller: _numberOfIndividualsController,
+                    decoration: InputDecoration(
+                      labelText: l10n.numberOfIndividuals,
+                      border: const OutlineInputBorder(),
+                      hintText: l10n.numberOfIndividualsHint,
+                      prefixIcon: const Icon(Icons.group, size: 20),
+                      isDense: true,
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _determinationQualifierController,
+              decoration: InputDecoration(
+                labelText: l10n.determinationQualifier,
+                border: const OutlineInputBorder(),
+                hintText: l10n.determinationQualifierHint,
+                prefixIcon: const Icon(Icons.help_outline),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              l10n.phenologicalState,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: PhenologicalState.values.map((state) {
+                final isSelected = _phenologicalState == state;
+                return ChoiceChip(
+                  label: Text(_getPhenologicalStateName(l10n, state)),
+                  selected: isSelected,
+                  onSelected: (selected) {
+                    setState(() {
+                      _phenologicalState = selected ? state : null;
+                    });
+                  },
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<CollectionMethod>(
+              initialValue: _collectionMethod,
+              decoration: InputDecoration(
+                labelText: l10n.collectionMethod,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.science),
+              ),
+              items: [
+                DropdownMenuItem(
+                  value: null,
+                  child: Text(l10n.notSpecified),
+                ),
+                ...CollectionMethod.values.map((method) {
+                  return DropdownMenuItem(
+                    value: method,
+                    child: Text(_getCollectionMethodName(l10n, method)),
+                  );
+                }),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  _collectionMethod = value;
+                });
+              },
             ),
 
             const SizedBox(height: 24),
@@ -1156,6 +1602,50 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
         return l10n.categoryCacti;
       case PlantCategory.aquatic:
         return l10n.categoryAquatic;
+    }
+  }
+
+  String _getPhenologicalStateName(
+      AppLocalizations l10n, PhenologicalState state) {
+    switch (state) {
+      case PhenologicalState.flowering:
+        return l10n.phenoFlowering;
+      case PhenologicalState.fruiting:
+        return l10n.phenoFruiting;
+      case PhenologicalState.budding:
+        return l10n.phenoBudding;
+      case PhenologicalState.withFruit:
+        return l10n.phenoWithFruit;
+      case PhenologicalState.vegetative:
+        return l10n.phenoVegetative;
+      case PhenologicalState.sterile:
+        return l10n.phenoSterile;
+      case PhenologicalState.unknown:
+        return l10n.phenoUnknown;
+    }
+  }
+
+  String _getCollectionMethodName(
+      AppLocalizations l10n, CollectionMethod method) {
+    switch (method) {
+      case CollectionMethod.voucherCollected:
+        return l10n.methodVoucherCollected;
+      case CollectionMethod.photoOnly:
+        return l10n.methodPhotoOnly;
+      case CollectionMethod.sterileMaterial:
+        return l10n.methodSterileMaterial;
+      case CollectionMethod.livingMaterial:
+        return l10n.methodLivingMaterial;
+    }
+  }
+
+  String _getTaxonStatusLabel(AppLocalizations l10n, String status) {
+    switch (status) {
+      case 'synonym':
+        return l10n.taxonStatusSynonym;
+      case 'accepted':
+      default:
+        return l10n.taxonStatusAccepted;
     }
   }
 }

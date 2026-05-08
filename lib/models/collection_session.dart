@@ -1,4 +1,6 @@
 import 'package:isar/isar.dart';
+
+import 'gps_point.dart';
 import 'sync_metadata.dart';
 
 part 'collection_session.g.dart';
@@ -22,6 +24,7 @@ class CollectionSession {
   String? shareCode;
 
   List<String> sharedWith = []; // Device IDs
+  List<GpsPoint> track = [];
   String? notes;
   bool isArchived = false;
 

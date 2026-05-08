@@ -20,7 +20,7 @@ final authServiceProvider = Provider<AuthService>.internal(
 );
 
 typedef AuthServiceRef = ProviderRef<AuthService>;
-String _$authNotifierHash() => r'20bf4d6bb103dc973d4d1413dcf6a779c0cadc27';
+String _$authNotifierHash() => r'bd7a2b0bc450772a411d5a405c73ea189a930bb0';
 
 /// See also [AuthNotifier].
 @ProviderFor(AuthNotifier)

@@ -130,9 +130,10 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erro ao salvar sessão: $e'),
+            content: Text(l10n.errorSavingSession(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -153,7 +154,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditing ? 'Editar Sessão' : l10n.newSession),
+        title: Text(isEditing ? l10n.editSessionTitle : l10n.newSession),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Form(
@@ -164,15 +165,15 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
             // Trip Name
             TextFormField(
               controller: _tripNameController,
-              decoration: InputDecoration(
-                labelText: 'Nome da Viagem *',
-                hintText: 'Ex: Coleta na Serra do Mar',
-                prefixIcon: const Icon(Icons.folder),
-                border: const OutlineInputBorder(),
-              ),
+                decoration: InputDecoration(
+                  labelText: l10n.sessionTripNameLabel,
+                  hintText: l10n.sessionTripNameHint,
+                  prefixIcon: const Icon(Icons.folder),
+                  border: const OutlineInputBorder(),
+                ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Nome da viagem é obrigatório';
+                  return l10n.sessionTripNameRequired;
                 }
                 return null;
               },
@@ -183,11 +184,11 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
             // Location
             TextFormField(
               controller: _locationController,
-              decoration: const InputDecoration(
-                labelText: 'Localização',
-                hintText: 'Ex: Parque Estadual, São Paulo',
-                prefixIcon: Icon(Icons.location_on),
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.location,
+                hintText: l10n.sessionLocationHint,
+                prefixIcon: const Icon(Icons.location_on),
+                border: const OutlineInputBorder(),
               ),
               textCapitalization: TextCapitalization.words,
             ),
@@ -197,7 +198,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
             Card(
               child: ListTile(
                 leading: const Icon(Icons.calendar_today),
-                title: const Text('Data de Início *'),
+                title: Text(l10n.startDate),
                 subtitle: Text(
                   '${_startDate.day}/${_startDate.month}/${_startDate.year}',
                   style: const TextStyle(fontWeight: FontWeight.bold),
@@ -212,11 +213,11 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
             Card(
               child: ListTile(
                 leading: const Icon(Icons.event),
-                title: const Text('Data de Término'),
+                title: Text(l10n.endDate),
                 subtitle: Text(
                   _endDate != null
                       ? '${_endDate!.day}/${_endDate!.month}/${_endDate!.year}'
-                      : 'Não definido',
+                      : l10n.notSpecified,
                   style: TextStyle(
                     fontWeight: _endDate != null ? FontWeight.bold : null,
                     color: _endDate == null ? Colors.grey : null,
@@ -250,7 +251,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
                 const Icon(Icons.people, size: 20),
                 const SizedBox(width: 8),
                 Text(
-                  'Equipe',
+                  l10n.teamLabel,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ],
@@ -263,11 +264,11 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
                 Expanded(
                   child: TextField(
                     controller: _memberController,
-                    decoration: const InputDecoration(
-                      hintText: 'Nome do membro da equipe',
-                      border: OutlineInputBorder(),
-                      isDense: true,
-                    ),
+                  decoration: InputDecoration(
+                    hintText: l10n.teamMemberNameHint,
+                    border: const OutlineInputBorder(),
+                    isDense: true,
+                  ),
                     textCapitalization: TextCapitalization.words,
                     onSubmitted: (_) => _addTeamMember(),
                   ),
@@ -307,7 +308,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Text(
-                  'Nenhum membro adicionado',
+                  l10n.noTeamMembersAdded,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Colors.grey,
                     fontStyle: FontStyle.italic,
@@ -321,10 +322,10 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
             const SizedBox(height: 8),
             TextFormField(
               controller: _notesController,
-              decoration: const InputDecoration(
-                labelText: 'Notas',
-                hintText: 'Informações adicionais sobre a coleta...',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.notes,
+                hintText: l10n.sessionNotesHint,
+                border: const OutlineInputBorder(),
                 alignLabelWithHint: true,
               ),
               maxLines: 5,
@@ -342,7 +343,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.save),
-              label: Text(_isSaving ? 'Salvando...' : 'Salvar Sessão'),
+              label: Text(_isSaving ? l10n.saving : l10n.saveSessionLabel),
               style: FilledButton.styleFrom(
                 padding: const EdgeInsets.all(16),
               ),

@@ -287,8 +287,9 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
     final l10n = AppLocalizations.of(context)!;
     final filters = <String>[];
     if (_filterByCategory != null) filters.add(l10n.category);
-    if (_filterStartDate != null || _filterEndDate != null)
+    if (_filterStartDate != null || _filterEndDate != null) {
       filters.add(l10n.dateFilter);
+    }
     return filters.join(', ');
   }
 

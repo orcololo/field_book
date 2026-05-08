@@ -1,24 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:printing/printing.dart';
 import 'dart:io';
 import 'dart:math';
+import '../../../models/determination.dart';
 import '../../../models/plant_record.dart';
+import '../../../models/collection_method.dart';
+import '../../../models/phenological_state.dart';
+import '../../../core/services/herbarium_label_service.dart';
+import '../../../core/services/inaturalist_service.dart';
+import '../../../core/services/settings_service.dart';
 import '../../../core/repositories/plant_repository.dart';
 import '../../../core/theme/folium_theme.dart';
 import '../../../shared/widgets/map_widget.dart';
 import '../../../shared/widgets/audio/audio_player_widget.dart';
+import '../../../shared/widgets/rain_mode_guard.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../plant_form/screens/plant_form_screen.dart';
+import '../../settings/screens/inaturalist_auth_screen.dart';
 
-class PlantDetailScreen extends ConsumerWidget {
+class PlantDetailScreen extends ConsumerStatefulWidget {
   final PlantRecord plant;
 
   const PlantDetailScreen({super.key, required this.plant});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PlantDetailScreen> createState() => _PlantDetailScreenState();
+}
+
+class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
+  late PlantRecord _currentPlant;
+  bool _isSendingToInaturalist = false;
+
+  PlantRecord get plant => _currentPlant;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentPlant = widget.plant;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final settingsAsync = ref.watch(settingsNotifierProvider);
+    final inatConfigured = settingsAsync.valueOrNull?.inatAccessToken?.trim().isNotEmpty ?? false;
 
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -66,17 +93,33 @@ class PlantDetailScreen extends ConsumerWidget {
             },
             tooltip: l10n.edit,
           ),
-          IconButton(
-            icon: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.3),
-                shape: BoxShape.circle,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Tooltip(
+              message: l10n.delete,
+              child: RainModeGuard(
+                actionLabel: l10n.delete,
+                overlayTitle: l10n.rainModeOverlayTitle,
+                overlayMessage: l10n.rainModeOverlayMessage,
+                unlockHint: l10n.rainModeUnlockHold,
+                unlockAlternativeHint: l10n.rainModeUnlockTap,
+                confirmTitle: l10n.rainModeDeleteConfirmTitle,
+                confirmMessage: l10n.confirmDeletePlant,
+                cancelLabel: l10n.cancel,
+                confirmLabel: l10n.delete,
+                countdownLabel: l10n.rainModeCountdownLabel,
+                confirmColor: Theme.of(context).colorScheme.error,
+                onConfirmed: () => _deletePlant(context, l10n),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.3),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.delete, color: Colors.white),
+                ),
               ),
-              child: const Icon(Icons.delete, color: Colors.white),
             ),
-            onPressed: () => _confirmDelete(context, ref, l10n),
-            tooltip: l10n.delete,
           ),
         ],
       ),
@@ -89,12 +132,22 @@ class PlantDetailScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(FoliumTheme.space16),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                _buildBasicInfoCard(context, l10n),
+                _buildBasicInfoCard(context, ref, l10n),
+                const SizedBox(height: FoliumTheme.space16),
+                if (inatConfigured) ...[
+                  _buildInaturalistButton(context, ref, l10n),
+                  const SizedBox(height: FoliumTheme.space16),
+                ],
+                _buildExportLabelButton(context, l10n),
                 const SizedBox(height: FoliumTheme.space16),
                 if (plant.family != null ||
                     plant.genus != null ||
                     plant.species != null)
                   _buildTaxonomyCard(context, l10n),
+                const SizedBox(height: FoliumTheme.space16),
+                _buildDeterminationsCard(context, ref, l10n),
+                const SizedBox(height: FoliumTheme.space16),
+                _buildDuplicatesCard(context, ref, l10n),
                 const SizedBox(height: FoliumTheme.space16),
                 if (plant.photoPaths.isNotEmpty)
                   _buildPhotosCard(context, l10n),
@@ -107,6 +160,22 @@ class PlantDetailScreen extends ConsumerWidget {
                 const SizedBox(height: FoliumTheme.space16),
                 if (plant.latitude != null && plant.longitude != null)
                   _buildLocationCard(context, l10n),
+                const SizedBox(height: FoliumTheme.space16),
+                if (plant.collectorNumber != null ||
+                    plant.numberOfIndividuals != null ||
+                    plant.temperature != null ||
+                    plant.humidity != null ||
+                    plant.weatherCondition != null ||
+                    plant.weatherNotes != null ||
+                    plant.moonPhase != null ||
+                    plant.substrate != null ||
+                    plant.vegetationType != null ||
+                    plant.topography != null ||
+                    plant.associatedTaxa != null ||
+                    plant.determinationQualifier != null ||
+                    plant.phenologicalState != null ||
+                    plant.collectionMethod != null)
+                  _buildCollectionInfoCard(context, l10n),
                 const SizedBox(height: FoliumTheme.space16),
                 if (plant.habitat != null ||
                     plant.notes != null ||
@@ -144,6 +213,57 @@ class PlantDetailScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildInaturalistButton(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
+    final alreadySent = plant.iNaturalistId?.isNotEmpty ?? false;
+
+    return Column(
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: FilledButton.icon(
+            onPressed: _isSendingToInaturalist
+                ? null
+                : () => _pushToInaturalist(context, ref, l10n),
+            icon: _isSendingToInaturalist
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Icon(
+                    alreadySent
+                        ? Icons.cloud_done_outlined
+                        : Icons.outbox_outlined,
+                  ),
+            label: Text(
+              _isSendingToInaturalist
+                  ? l10n.syncing
+                  : alreadySent
+                  ? l10n.inaturalistAlreadySent
+                  : l10n.sendToInaturalist,
+            ),
+          ),
+        ),
+        if (alreadySent) ...[
+          const SizedBox(height: FoliumTheme.space8),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              l10n.inaturalistObservationId(plant.iNaturalistId!),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+        ],
+      ],
     );
   }
 
@@ -251,7 +371,11 @@ class PlantDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildBasicInfoCard(BuildContext context, AppLocalizations l10n) {
+  Widget _buildBasicInfoCard(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       decoration: FoliumTheme.cardDecoration(),
@@ -287,6 +411,11 @@ class PlantDetailScreen extends ConsumerWidget {
               ),
             ),
 
+          if (plant.duplicateOf != null) ...[
+            const SizedBox(height: FoliumTheme.space12),
+            _buildDuplicateOriginBadge(context, ref, l10n),
+          ],
+
           // Status chips
           Wrap(
             spacing: FoliumTheme.space8,
@@ -321,6 +450,14 @@ class PlantDetailScreen extends ConsumerWidget {
                   colorScheme.tertiary,
                   icon: Icons.photo_camera,
                 ),
+              if (plant.iNaturalistId?.isNotEmpty ?? false)
+                _buildStatusChip(
+                  context,
+                  l10n.inaturalistSyncBadge,
+                  colorScheme.primaryContainer,
+                  colorScheme.primary,
+                  icon: Icons.outbox_outlined,
+                ),
             ],
           ),
 
@@ -346,6 +483,302 @@ class PlantDetailScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildExportLabelButton(BuildContext context, AppLocalizations l10n) {
+    return SizedBox(
+      width: double.infinity,
+      child: FilledButton.icon(
+        onPressed: () => _exportLabelPdf(context, l10n),
+        icon: const Icon(Icons.picture_as_pdf_outlined),
+        label: Text(l10n.exportLabelPdf),
+      ),
+    );
+  }
+
+  Widget _buildDuplicateOriginBadge(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
+    return FutureBuilder<PlantRecord?>(
+      future: ref.read(plantRepositoryProvider).getByUuid(plant.duplicateOf!),
+      builder: (context, snapshot) {
+        final original = snapshot.data;
+        final identifier = original != null
+            ? _displayRecordIdentifier(original)
+            : null;
+
+        return Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: FoliumTheme.space12,
+            vertical: FoliumTheme.space8,
+          ),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.secondaryContainer,
+            borderRadius: BorderRadius.circular(FoliumTheme.radiusFull),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.copy_all_rounded,
+                size: 16,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+              const SizedBox(width: FoliumTheme.space8),
+              Flexible(
+                child: Text(
+                  l10n.duplicateOfLabel(identifier ?? '—'),
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.secondary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDeterminationsCard(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final determinations = [...plant.determinations]
+      ..sort((a, b) => b.determinedAt.compareTo(a.determinedAt));
+
+    return Container(
+      decoration: FoliumTheme.cardDecoration(),
+      padding: const EdgeInsets.all(FoliumTheme.space20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.determinationsTitle,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                ),
+              ),
+              FilledButton.tonalIcon(
+                onPressed: () => _showAddDeterminationSheet(context, ref, l10n),
+                icon: const Icon(Icons.add_task_rounded),
+                label: Text(l10n.newDetermination),
+              ),
+            ],
+          ),
+          const SizedBox(height: FoliumTheme.space16),
+          if (determinations.isEmpty)
+            Text(
+              l10n.noDeterminationsYet,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            )
+          else ...[
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: FoliumTheme.space12,
+                vertical: FoliumTheme.space8,
+              ),
+              decoration: BoxDecoration(
+                color: colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(FoliumTheme.radiusFull),
+              ),
+              child: Text(
+                l10n.latestDeterminationLabel,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: colorScheme.primary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            const SizedBox(height: FoliumTheme.space16),
+            ...determinations.asMap().entries.map((entry) {
+              final index = entry.key;
+              final determination = entry.value;
+              final isLast = index == determinations.length - 1;
+
+              return IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 28,
+                      child: Column(
+                        children: [
+                          Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: index == 0
+                                  ? colorScheme.primary
+                                  : colorScheme.tertiary,
+                            ),
+                          ),
+                          if (!isLast)
+                            Expanded(
+                              child: Container(
+                                width: 2,
+                                margin: const EdgeInsets.symmetric(vertical: 4),
+                                color: colorScheme.outlineVariant,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: FoliumTheme.space12),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: FoliumTheme.space16,
+                        ),
+                        child: Container(
+                          padding: const EdgeInsets.all(FoliumTheme.space16),
+                          decoration: BoxDecoration(
+                            color: colorScheme.surfaceContainerHighest
+                                .withValues(alpha: 0.5),
+                            borderRadius: BorderRadius.circular(
+                              FoliumTheme.radiusMedium,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                determination.scientificName,
+                                style: Theme.of(context).textTheme.titleMedium
+                                    ?.copyWith(fontWeight: FontWeight.w700),
+                              ),
+                              if (determination.family?.isNotEmpty ??
+                                  false) ...[
+                                const SizedBox(height: FoliumTheme.space4),
+                                Text(
+                                  determination.family!,
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        color: colorScheme.onSurfaceVariant,
+                                      ),
+                                ),
+                              ],
+                              const SizedBox(height: FoliumTheme.space12),
+                              _buildInfoRow(
+                                l10n.determinedBy,
+                                determination.determinedBy,
+                              ),
+                              _buildInfoRow(
+                                l10n.determinedAt,
+                                _formatDateTime(determination.determinedAt),
+                              ),
+                              if (determination.basis?.isNotEmpty ?? false)
+                                _buildInfoRow(
+                                  l10n.determinationBasis,
+                                  determination.basis!,
+                                ),
+                              if (determination.notes?.isNotEmpty ?? false)
+                                _buildInfoRow(l10n.notes, determination.notes!),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDuplicatesCard(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
+    return FutureBuilder<List<PlantRecord>>(
+      future: ref.read(plantRepositoryProvider).getDuplicateSeries(plant.uuid),
+      builder: (context, snapshot) {
+        final linked = (snapshot.data ?? [])
+            .where((record) => record.uuid != plant.uuid)
+            .toList();
+
+        return Container(
+          decoration: FoliumTheme.cardDecoration(),
+          padding: const EdgeInsets.all(FoliumTheme.space20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      l10n.duplicatesTitle,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () =>
+                        _showMarkDuplicateSheet(context, ref, l10n),
+                    icon: const Icon(Icons.link_rounded),
+                    label: Text(l10n.markAsDuplicate),
+                  ),
+                ],
+              ),
+              const SizedBox(height: FoliumTheme.space16),
+              if (linked.isEmpty)
+                Text(
+                  l10n.noDuplicatesLinked,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                )
+              else
+                ...linked.map(
+                  (linkedPlant) => ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: CircleAvatar(
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.secondaryContainer,
+                      child: Icon(
+                        linkedPlant.duplicateOf == null
+                            ? Icons.inventory_2_outlined
+                            : Icons.copy_all_rounded,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+                    title: Text(_displayRecordIdentifier(linkedPlant)),
+                    subtitle: Text(_buildLinkedPlantSubtitle(linkedPlant)),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              PlantDetailScreen(plant: linkedPlant),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -635,7 +1068,7 @@ class PlantDetailScreen extends ConsumerWidget {
             const Divider(),
             ListTile(
               leading: const Icon(Icons.location_on),
-              title: const Text('Latitude'),
+              title: Text(l10n.latitude),
               subtitle: Text(plant.latitude!.toStringAsFixed(6)),
               trailing: IconButton(
                 icon: const Icon(Icons.copy),
@@ -651,7 +1084,7 @@ class PlantDetailScreen extends ConsumerWidget {
             ),
             ListTile(
               leading: const Icon(Icons.location_on),
-              title: const Text('Longitude'),
+              title: Text(l10n.longitude),
               subtitle: Text(plant.longitude!.toStringAsFixed(6)),
               trailing: IconButton(
                 icon: const Icon(Icons.copy),
@@ -665,6 +1098,11 @@ class PlantDetailScreen extends ConsumerWidget {
                 },
               ),
             ),
+            if (plant.locality != null) _buildInfoRow(l10n.locality, plant.locality!),
+            if (plant.municipality != null)
+              _buildInfoRow(l10n.municipality, plant.municipality!),
+            if (plant.state != null) _buildInfoRow(l10n.state, plant.state!),
+            if (plant.country != null) _buildInfoRow(l10n.country, plant.country!),
             const SizedBox(height: 12),
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
@@ -954,6 +1392,102 @@ class PlantDetailScreen extends ConsumerWidget {
     );
   }
 
+  Widget _buildCollectionInfoCard(BuildContext context, AppLocalizations l10n) {
+    String phenoLabel(PhenologicalState s) {
+      switch (s) {
+        case PhenologicalState.flowering:
+          return l10n.phenoFlowering;
+        case PhenologicalState.fruiting:
+          return l10n.phenoFruiting;
+        case PhenologicalState.budding:
+          return l10n.phenoBudding;
+        case PhenologicalState.withFruit:
+          return l10n.phenoWithFruit;
+        case PhenologicalState.vegetative:
+          return l10n.phenoVegetative;
+        case PhenologicalState.sterile:
+          return l10n.phenoSterile;
+        case PhenologicalState.unknown:
+          return l10n.phenoUnknown;
+      }
+    }
+
+    String methodLabel(CollectionMethod m) {
+      switch (m) {
+        case CollectionMethod.voucherCollected:
+          return l10n.methodVoucherCollected;
+        case CollectionMethod.photoOnly:
+          return l10n.methodPhotoOnly;
+        case CollectionMethod.sterileMaterial:
+          return l10n.methodSterileMaterial;
+        case CollectionMethod.livingMaterial:
+          return l10n.methodLivingMaterial;
+      }
+    }
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.collectionInfo,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const Divider(),
+            if (plant.collectorNumber != null)
+              _buildInfoRow(l10n.collectorNumber, plant.collectorNumber!),
+            if (plant.numberOfIndividuals != null)
+              _buildInfoRow(
+                l10n.numberOfIndividuals,
+                plant.numberOfIndividuals.toString(),
+              ),
+            if (plant.temperature != null)
+              _buildInfoRow(
+                l10n.temperatureLabel,
+                plant.temperature!.toStringAsFixed(1),
+              ),
+            if (plant.humidity != null)
+              _buildInfoRow(l10n.humidityLabel, plant.humidity!.toStringAsFixed(0)),
+            if (plant.weatherCondition != null)
+              _buildInfoRow(
+                l10n.weatherCondition,
+                _getWeatherConditionLabel(l10n, plant.weatherCondition!),
+              ),
+            if (plant.weatherNotes != null)
+              _buildInfoRow(l10n.weatherNotes, plant.weatherNotes!),
+            if (plant.moonPhase != null)
+              _buildInfoRow(l10n.moonPhase, _getMoonPhaseLabel(l10n, plant.moonPhase!)),
+            if (plant.determinationQualifier != null)
+              _buildInfoRow(
+                l10n.determinationQualifier,
+                plant.determinationQualifier!,
+              ),
+            if (plant.phenologicalState != null)
+              _buildInfoRow(
+                l10n.phenologicalState,
+                phenoLabel(plant.phenologicalState!),
+              ),
+            if (plant.collectionMethod != null)
+              _buildInfoRow(
+                l10n.collectionMethod,
+                methodLabel(plant.collectionMethod!),
+              ),
+            if (plant.substrate != null)
+              _buildInfoRow(l10n.substrate, plant.substrate!),
+            if (plant.vegetationType != null)
+              _buildInfoRow(l10n.vegetationType, plant.vegetationType!),
+            if (plant.topography != null)
+              _buildInfoRow(l10n.topography, plant.topography!),
+            if (plant.associatedTaxa != null)
+              _buildInfoRow(l10n.associatedTaxa, plant.associatedTaxa!),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildInfoRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -977,6 +1511,56 @@ class PlantDetailScreen extends ConsumerWidget {
     return '${dateTime.day}/${dateTime.month}/${dateTime.year} '
         '${dateTime.hour.toString().padLeft(2, '0')}:'
         '${dateTime.minute.toString().padLeft(2, '0')}';
+  }
+
+  String _displayRecordIdentifier(PlantRecord record) {
+    return record.registryIdentifier ??
+        record.collectorNumber ??
+        record.scientificName;
+  }
+
+  String _getWeatherConditionLabel(AppLocalizations l10n, String condition) {
+    switch (condition) {
+      case 'sunny':
+        return l10n.weatherSunny;
+      case 'cloudy':
+        return l10n.weatherCloudy;
+      case 'overcast':
+        return l10n.weatherOvercast;
+      case 'rainy':
+        return l10n.weatherRainy;
+      case 'stormy':
+        return l10n.weatherStormy;
+      case 'foggy':
+        return l10n.weatherFoggy;
+      case 'windy':
+        return l10n.weatherWindy;
+      default:
+        return condition;
+    }
+  }
+
+  String _getMoonPhaseLabel(AppLocalizations l10n, String moonPhase) {
+    switch (moonPhase) {
+      case 'new':
+        return l10n.moonPhaseNew;
+      case 'waxing':
+        return l10n.moonPhaseWaxing;
+      case 'full':
+        return l10n.moonPhaseFull;
+      case 'waning':
+        return l10n.moonPhaseWaning;
+      default:
+        return moonPhase;
+    }
+  }
+
+  String _buildLinkedPlantSubtitle(PlantRecord record) {
+    final parts = <String>[record.scientificName];
+    if (record.commonName.isNotEmpty) {
+      parts.add(record.commonName);
+    }
+    return parts.join(' • ');
   }
 
   String _getCategoryName(BuildContext context, dynamic category) {
@@ -1004,56 +1588,445 @@ class PlantDetailScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _confirmDelete(
+  Future<void> _deletePlant(BuildContext context, AppLocalizations l10n) async {
+    try {
+      final plantRepo = ref.read(plantRepositoryProvider);
+      await plantRepo.delete(plant.id);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.plantDeletedName(plant.scientificName)),
+          ),
+        );
+        Navigator.of(context).pop(true);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.errorDeletingPlant(e.toString())),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _exportLabelPdf(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) async {
+    try {
+      final service = HerbariumLabelService(
+        strings: HerbariumLabelStrings(
+          appTitle: l10n.appTitle,
+          title: l10n.herbariumLabelTitle,
+          family: l10n.family,
+          collector: l10n.collector,
+          collectionDate: l10n.collectionDate,
+          locality: l10n.locality,
+          gpsCoordinates: l10n.gpsCoordinates,
+          altitude: l10n.altitude,
+          habitat: l10n.habitat,
+          morphologicalNotes: l10n.morphologicalNotes,
+          notes: l10n.notes,
+          root: l10n.root,
+          stem: l10n.stem,
+          leaf: l10n.leaf,
+          flower: l10n.flower,
+          fruit: l10n.fruitLabel,
+          seed: l10n.seedLabel,
+          notSpecified: l10n.notSpecified,
+        ),
+      );
+
+      await Printing.layoutPdf(
+        name: '${plant.registryIdentifier ?? plant.uuid}_label.pdf',
+        onLayout: (_) => service.generateLabel(plant),
+      );
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.errorExportingLabelPdf(e.toString())),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _pushToInaturalist(
     BuildContext context,
     WidgetRef ref,
     AppLocalizations l10n,
   ) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.delete),
-        content: Text(l10n.confirmDeletePlant),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-            child: Text(l10n.delete),
-          ),
-        ],
-      ),
-    );
+    final service = ref.read(inaturalistServiceProvider);
+    final hasToken = await service.hasToken();
 
-    if (confirmed == true && context.mounted) {
-      try {
-        final plantRepo = ref.read(plantRepositoryProvider);
-        await plantRepo.delete(plant.id);
+    if (!hasToken) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.inaturalistRequiresToken)),
+      );
+      await Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const InaturalistAuthScreen()),
+      );
+      return;
+    }
 
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.plantDeletedName(plant.scientificName)),
-            ),
-          );
-          Navigator.of(context).pop(true);
-        }
-      } catch (e) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.errorDeletingPlant(e.toString())),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
-        }
+    setState(() => _isSendingToInaturalist = true);
+
+    try {
+      await service.createObservation(plant);
+      final updated = await ref.read(plantRepositoryProvider).getByUuid(plant.uuid);
+      if (updated != null && mounted) {
+        setState(() => _currentPlant = updated);
+      }
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.inaturalistPushSuccess)),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.inaturalistPushError(e.toString())),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isSendingToInaturalist = false);
       }
     }
+  }
+
+  Future<void> _showAddDeterminationSheet(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) async {
+    final parentContext = context;
+    final determinedByController = TextEditingController();
+    final scientificNameController = TextEditingController(
+      text: plant.scientificName,
+    );
+    final familyController = TextEditingController(text: plant.family ?? '');
+    final basisController = TextEditingController();
+    final notesController = TextEditingController();
+    DateTime determinedAt = DateTime.now();
+
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                left: FoliumTheme.space16,
+                right: FoliumTheme.space16,
+                top: FoliumTheme.space16,
+                bottom:
+                    MediaQuery.of(context).viewInsets.bottom +
+                    FoliumTheme.space16,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.newDetermination,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: FoliumTheme.space16),
+                    TextFormField(
+                      controller: determinedByController,
+                      decoration: InputDecoration(labelText: l10n.determinedBy),
+                    ),
+                    const SizedBox(height: FoliumTheme.space12),
+                    TextFormField(
+                      controller: scientificNameController,
+                      decoration: InputDecoration(
+                        labelText: l10n.scientificName,
+                      ),
+                    ),
+                    const SizedBox(height: FoliumTheme.space12),
+                    TextFormField(
+                      controller: familyController,
+                      decoration: InputDecoration(labelText: l10n.family),
+                    ),
+                    const SizedBox(height: FoliumTheme.space12),
+                    InkWell(
+                      onTap: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: determinedAt,
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                        );
+                        if (picked != null) {
+                          setModalState(() {
+                            determinedAt = DateTime(
+                              picked.year,
+                              picked.month,
+                              picked.day,
+                              determinedAt.hour,
+                              determinedAt.minute,
+                            );
+                          });
+                        }
+                      },
+                      child: InputDecorator(
+                        decoration: InputDecoration(
+                          labelText: l10n.determinedAt,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(_formatDateTime(determinedAt)),
+                            const Icon(Icons.event_outlined),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: FoliumTheme.space12),
+                    TextFormField(
+                      controller: basisController,
+                      decoration: InputDecoration(
+                        labelText: l10n.determinationBasis,
+                        hintText: l10n.determinationBasisHint,
+                      ),
+                    ),
+                    const SizedBox(height: FoliumTheme.space12),
+                    TextFormField(
+                      controller: notesController,
+                      minLines: 3,
+                      maxLines: 5,
+                      decoration: InputDecoration(
+                        labelText: l10n.notes,
+                        hintText: l10n.determinationNotesHint,
+                      ),
+                    ),
+                    const SizedBox(height: FoliumTheme.space16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        onPressed: () async {
+                          if (determinedByController.text.trim().isEmpty ||
+                              scientificNameController.text.trim().isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  l10n.fillDeterminationRequiredFields,
+                                ),
+                              ),
+                            );
+                            return;
+                          }
+
+                          final determination = Determination()
+                            ..determinedBy = determinedByController.text.trim()
+                            ..determinedAt = determinedAt
+                            ..scientificName = scientificNameController.text
+                                .trim()
+                            ..family = familyController.text.trim().isEmpty
+                                ? null
+                                : familyController.text.trim()
+                            ..basis = basisController.text.trim().isEmpty
+                                ? null
+                                : basisController.text.trim()
+                            ..notes = notesController.text.trim().isEmpty
+                                ? null
+                                : notesController.text.trim();
+
+                          await ref
+                              .read(plantRepositoryProvider)
+                              .addDetermination(plant.uuid, determination);
+
+                          if (context.mounted) {
+                            Navigator.of(context).pop();
+                            ScaffoldMessenger.of(parentContext).showSnackBar(
+                              SnackBar(
+                                content: Text(l10n.determinationSavedSuccess),
+                              ),
+                            );
+                            Navigator.of(parentContext).pop(true);
+                          }
+                        },
+                        child: Text(l10n.save),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    determinedByController.dispose();
+    scientificNameController.dispose();
+    familyController.dispose();
+    basisController.dispose();
+    notesController.dispose();
+  }
+
+  Future<void> _showMarkDuplicateSheet(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) async {
+    final parentContext = context;
+    final searchController = TextEditingController(
+      text: plant.collectorNumber ?? '',
+    );
+    List<PlantRecord> results = [];
+
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            Future<void> performSearch() async {
+              final query = searchController.text.trim();
+              if (query.isEmpty) {
+                setModalState(() => results = []);
+                return;
+              }
+
+              final byCollectorNumber = await ref
+                  .read(plantRepositoryProvider)
+                  .searchByCollectorNumber(query, limit: 30);
+              final byIdentifier = await ref
+                  .read(plantRepositoryProvider)
+                  .searchByIdentifier(query, limit: 30);
+
+              final merged = <String, PlantRecord>{
+                for (final record in [...byCollectorNumber, ...byIdentifier])
+                  if (record.uuid != plant.uuid) record.uuid: record,
+              };
+
+              setModalState(() => results = merged.values.toList());
+            }
+
+            return Padding(
+              padding: EdgeInsets.only(
+                left: FoliumTheme.space16,
+                right: FoliumTheme.space16,
+                top: FoliumTheme.space16,
+                bottom:
+                    MediaQuery.of(context).viewInsets.bottom +
+                    FoliumTheme.space16,
+              ),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.72,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.markAsDuplicate,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: FoliumTheme.space8),
+                    Text(
+                      l10n.duplicateSearchHelp,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: FoliumTheme.space16),
+                    TextFormField(
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        labelText: l10n.searchCollectorNumber,
+                        hintText: l10n.searchCollectorNumberHint,
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.search),
+                          onPressed: performSearch,
+                        ),
+                      ),
+                      onChanged: (_) => performSearch(),
+                    ),
+                    const SizedBox(height: FoliumTheme.space16),
+                    Expanded(
+                      child: results.isEmpty
+                          ? Center(
+                              child: Text(
+                                l10n.noMatchingRecords,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            )
+                          : ListView.separated(
+                              itemCount: results.length,
+                              separatorBuilder: (_, _) => const Divider(),
+                              itemBuilder: (context, index) {
+                                final candidate = results[index];
+                                return ListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  leading: CircleAvatar(
+                                    backgroundColor: Theme.of(
+                                      context,
+                                    ).colorScheme.primaryContainer,
+                                    child: Icon(
+                                      Icons.inventory_2_outlined,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                    ),
+                                  ),
+                                  title: Text(
+                                    _displayRecordIdentifier(candidate),
+                                  ),
+                                  subtitle: Text(
+                                    _buildLinkedPlantSubtitle(candidate),
+                                  ),
+                                  onTap: () async {
+                                    await ref
+                                        .read(plantRepositoryProvider)
+                                        .markAsDuplicate(
+                                          duplicateUuid: plant.uuid,
+                                          originalUuid: candidate.uuid,
+                                        );
+
+                                    if (context.mounted) {
+                                      Navigator.of(context).pop();
+                                      ScaffoldMessenger.of(
+                                        parentContext,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            l10n.duplicateLinkedSuccess,
+                                          ),
+                                        ),
+                                      );
+                                      Navigator.of(parentContext).pop(true);
+                                    }
+                                  },
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    searchController.dispose();
   }
 
   Widget _buildRelatedPlantsCard(BuildContext context, WidgetRef ref) {

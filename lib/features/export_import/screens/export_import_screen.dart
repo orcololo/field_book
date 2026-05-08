@@ -4,11 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../core/services/export_import_service.dart';
+import '../../../core/services/inaturalist_service.dart';
 import '../../../core/repositories/plant_repository.dart';
 import '../../../core/repositories/session_repository.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../models/plant_record.dart';
+import '../../settings/screens/inaturalist_auth_screen.dart';
 
 class ExportImportScreen extends ConsumerStatefulWidget {
-  const ExportImportScreen({super.key});
+  final List<PlantRecord>? preSelectedPlants;
+  const ExportImportScreen({super.key, this.preSelectedPlants});
 
   @override
   ConsumerState<ExportImportScreen> createState() => _ExportImportScreenState();
@@ -17,8 +22,11 @@ class ExportImportScreen extends ConsumerStatefulWidget {
 class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
   bool _isExporting = false;
   bool _isImporting = false;
+  bool _isPushingToInaturalist = false;
   bool _includeSessions = true;
   ExportFormat _selectedFormat = ExportFormat.json;
+  int _inatProgressCurrent = 0;
+  int _inatProgressTotal = 0;
 
   late final ExportImportService _exportService;
 
@@ -40,10 +48,12 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
       String mimeType;
 
       final timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+      final plants = widget.preSelectedPlants;
 
       switch (_selectedFormat) {
         case ExportFormat.json:
           content = await _exportService.exportToJson(
+            plants: plants,
             includeSessions: _includeSessions,
           );
           filename = 'field_book_$timestamp.json';
@@ -51,13 +61,13 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
           break;
 
         case ExportFormat.csv:
-          content = await _exportService.exportToCsv();
+          content = await _exportService.exportToCsv(plants: plants);
           filename = 'field_book_$timestamp.csv';
           mimeType = 'text/csv';
           break;
 
         case ExportFormat.darwinCore:
-          content = await _exportService.exportToDarwinCore();
+          content = await _exportService.exportToDarwinCore(plants: plants);
           filename = 'field_book_darwin_core_$timestamp.csv';
           mimeType = 'text/csv';
           break;
@@ -66,18 +76,20 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
       await _exportService.saveAndShareExport(content, filename, mimeType);
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Exportação concluída com sucesso!'),
+          SnackBar(
+            content: Text(l10n.exportSuccessMsg),
             backgroundColor: Colors.green,
           ),
         );
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erro ao exportar: $e'),
+            content: Text(l10n.errorExportMsg(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -100,9 +112,10 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erro ao importar: $e'),
+            content: Text(l10n.errorImportMsg(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -114,10 +127,81 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
     }
   }
 
+  Future<void> _handleInaturalistPush() async {
+    final l10n = AppLocalizations.of(context)!;
+    final service = ref.read(inaturalistServiceProvider);
+    final hasToken = await service.hasToken();
+
+    if (!hasToken) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.inaturalistRequiresToken)),
+      );
+      await Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const InaturalistAuthScreen()),
+      );
+      return;
+    }
+
+    final plants = await _resolvePlantsForInaturalist();
+    if (plants.isEmpty) return;
+
+    setState(() {
+      _isPushingToInaturalist = true;
+      _inatProgressCurrent = 0;
+      _inatProgressTotal = plants.length;
+    });
+
+    try {
+      final sent = await service.bulkPush(
+        plants,
+        onProgress: (current, total) {
+          if (!mounted) return;
+          setState(() {
+            _inatProgressCurrent = current;
+            _inatProgressTotal = total;
+          });
+        },
+      );
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.inaturalistBulkSuccess(sent.length))),
+      );
+      Navigator.of(context).pop(true);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.inaturalistPushError(e.toString())),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isPushingToInaturalist = false;
+          _inatProgressCurrent = 0;
+          _inatProgressTotal = 0;
+        });
+      }
+    }
+  }
+
+  Future<List<PlantRecord>> _resolvePlantsForInaturalist() async {
+    if (widget.preSelectedPlants != null) {
+      return widget.preSelectedPlants!;
+    }
+
+    return ref.read(plantRepositoryProvider).getPaginated(limit: 100000);
+  }
+
   void _showImportResultDialog(ImportResult result) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return AlertDialog(
         title: Row(
           children: [
             Icon(
@@ -125,7 +209,7 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
               color: result.hasErrors ? Colors.orange : Colors.green,
             ),
             const SizedBox(width: 8),
-            const Text('Resultado da Importação'),
+            Text(l10n.importResultTitle),
           ],
         ),
         content: SingleChildScrollView(
@@ -133,15 +217,15 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildResultRow('Importados', result.imported, Colors.green),
-              _buildResultRow('Atualizados', result.updated, Colors.blue),
+              _buildResultRow(l10n.importedLabel, result.imported, Colors.green),
+              _buildResultRow(l10n.updatedLabel, result.updated, Colors.blue),
               if (result.skipped > 0)
-                _buildResultRow('Ignorados', result.skipped, Colors.orange),
+                _buildResultRow(l10n.skippedLabel, result.skipped, Colors.orange),
               if (result.errors.isNotEmpty) ...[
                 const SizedBox(height: 16),
-                const Text(
-                  'Erros:',
-                  style: TextStyle(
+                Text(
+                  l10n.errorsLabel,
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.red,
                   ),
@@ -164,7 +248,8 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
             child: const Text('OK'),
           ),
         ],
-      ),
+      );
+      },
     );
   }
 
@@ -190,9 +275,10 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Exportar & Importar'),
+        title: Text(l10n.exportImportTitle),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -209,28 +295,52 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                       Icon(Icons.upload, color: Theme.of(context).primaryColor),
                       const SizedBox(width: 8),
                       Text(
-                        'Exportar Dados',
+                        l10n.exportData,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Exporte suas plantas para backup ou compartilhamento',
-                    style: TextStyle(color: Colors.grey),
+                  Text(
+                    l10n.exportBackupHint,
+                    style: const TextStyle(color: Colors.grey),
                   ),
+                  if (widget.preSelectedPlants != null) ...[
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.filter_list, color: Colors.blue, size: 16),
+                          const SizedBox(width: 8),
+                          Text(
+                            l10n.exportingNPlants(widget.preSelectedPlants!.length),
+                            style: const TextStyle(color: Colors.blue),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 16),
                   
                   // Format selection
-                  const Text(
-                    'Formato:',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  Text(
+                    l10n.formatLabel,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   
                   ListTile(
                     title: const Text('JSON'),
-                    subtitle: const Text('Formato completo com todos os dados'),
+                    subtitle: Text(l10n.jsonFormatSubtitle),
                     leading: Radio<ExportFormat>(
                       value: ExportFormat.json,
                       groupValue: _selectedFormat,
@@ -243,7 +353,7 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                   
                   ListTile(
                     title: const Text('CSV'),
-                    subtitle: const Text('Planilha simples (Excel, LibreOffice)'),
+                    subtitle: Text(l10n.csvFormatSubtitle),
                     leading: Radio<ExportFormat>(
                       value: ExportFormat.csv,
                       groupValue: _selectedFormat,
@@ -256,7 +366,7 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                   
                   ListTile(
                     title: const Text('Darwin Core'),
-                    subtitle: const Text('Padrão internacional para biodiversidade'),
+                    subtitle: Text(l10n.darwinCoreFormatSubtitle),
                     leading: Radio<ExportFormat>(
                       value: ExportFormat.darwinCore,
                       groupValue: _selectedFormat,
@@ -270,7 +380,7 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                   // Options
                   if (_selectedFormat == ExportFormat.json)
                     CheckboxListTile(
-                      title: const Text('Incluir sessões de coleta'),
+                      title: Text(l10n.includeCollectionSessions),
                       value: _includeSessions,
                       onChanged: (value) {
                         setState(() => _includeSessions = value ?? true);
@@ -291,9 +401,39 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
                           : const Icon(Icons.upload_file),
-                      label: Text(_isExporting ? 'Exportando...' : 'Exportar'),
+                      label: Text(_isExporting ? l10n.exporting : l10n.export),
                     ),
                   ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      onPressed: _isPushingToInaturalist
+                          ? null
+                          : _handleInaturalistPush,
+                      icon: _isPushingToInaturalist
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.outbox_outlined),
+                      label: Text(
+                        _isPushingToInaturalist
+                            ? l10n.inaturalistProgress(
+                                _inatProgressCurrent,
+                                _inatProgressTotal,
+                              )
+                            : l10n.sendSelectedToInaturalist,
+                      ),
+                    ),
+                  ),
+                  if (_isPushingToInaturalist && _inatProgressTotal > 0) ...[
+                    const SizedBox(height: 12),
+                    LinearProgressIndicator(
+                      value: _inatProgressCurrent / _inatProgressTotal,
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -313,15 +453,15 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                       Icon(Icons.download, color: Theme.of(context).primaryColor),
                       const SizedBox(width: 8),
                       Text(
-                        'Importar Dados',
+                        l10n.importData,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Importe plantas de um arquivo JSON exportado',
-                    style: TextStyle(color: Colors.grey),
+                  Text(
+                    l10n.importFromJson,
+                    style: const TextStyle(color: Colors.grey),
                   ),
                   const SizedBox(height: 16),
                   
@@ -332,14 +472,14 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                       border: Border.all(color: Colors.amber),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Icon(Icons.info_outline, color: Colors.amber, size: 20),
-                        SizedBox(width: 8),
+                        const Icon(Icons.info_outline, color: Colors.amber, size: 20),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'Plantas existentes serão atualizadas. Apenas arquivos JSON são suportados.',
-                            style: TextStyle(fontSize: 12),
+                            l10n.importWarnMsg,
+                            style: const TextStyle(fontSize: 12),
                           ),
                         ),
                       ],
@@ -360,7 +500,7 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
                           : const Icon(Icons.file_open),
-                      label: Text(_isImporting ? 'Importando...' : 'Selecionar Arquivo'),
+                      label: Text(_isImporting ? l10n.importing : l10n.selectFile),
                     ),
                   ),
                 ],
@@ -382,34 +522,18 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                       Icon(Icons.help_outline, color: Theme.of(context).primaryColor),
                       const SizedBox(width: 8),
                       Text(
-                        'Sobre os Formatos',
+                        l10n.aboutFormats,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
                   
-                  _buildFormatInfo(
-                    'JSON',
-                    'Formato completo que preserva todos os dados incluindo fotos, '
-                    'áudios, medições e metadados. Ideal para backup e restauração completa.',
-                  ),
-                  
+                  _buildFormatInfo('JSON', l10n.jsonFormatDesc),
                   const SizedBox(height: 12),
-                  
-                  _buildFormatInfo(
-                    'CSV',
-                    'Formato de planilha simples que pode ser aberto no Excel, '
-                    'LibreOffice ou Google Sheets. Contém apenas dados básicos.',
-                  ),
-                  
+                  _buildFormatInfo('CSV', l10n.csvFormatDesc),
                   const SizedBox(height: 12),
-                  
-                  _buildFormatInfo(
-                    'Darwin Core',
-                    'Padrão internacional para dados de biodiversidade. '
-                    'Compatível com portais científicos como GBIF e iNaturalist.',
-                  ),
+                  _buildFormatInfo('Darwin Core', l10n.darwinCoreDesc),
                 ],
               ),
             ),

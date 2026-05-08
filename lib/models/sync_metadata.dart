@@ -18,6 +18,7 @@ class SyncMetadata {
   @Enumerated(EnumType.name)
   SyncStatus syncStatus = SyncStatus.pending;
   String? lastPushedHash;
+  int syncVersion = 0;
 
   SyncMetadata();
 }

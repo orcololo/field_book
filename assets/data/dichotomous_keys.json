@@ -1,0 +1,352 @@
+[
+  {
+    "family": "general",
+    "steps": [
+      {
+        "id": "start",
+        "question": "As folhas têm bainha envolvendo o caule e nervação paralela bem evidente?",
+        "ifYes": "monocots_1",
+        "ifNo": "opposite_1"
+      },
+      {
+        "id": "monocots_1",
+        "question": "Os caules são cilíndricos com nós aparentes e as flores ficam em espiguetas discretas?",
+        "ifYes": "Poaceae",
+        "ifNo": "Orchidaceae"
+      },
+      {
+        "id": "opposite_1",
+        "question": "As folhas são opostas ou verticiladas na maior parte dos ramos?",
+        "ifYes": "opposite_2",
+        "ifNo": "alternate_1"
+      },
+      {
+        "id": "opposite_2",
+        "question": "As folhas mostram 3 a 7 nervuras fortes partindo da base ou correndo paralelas até o ápice?",
+        "ifYes": "Melastomataceae",
+        "ifNo": "opposite_3"
+      },
+      {
+        "id": "opposite_3",
+        "question": "As folhas são aromáticas quando amassadas e têm pontuações translúcidas ou muitas nervuras secundárias paralelas?",
+        "ifYes": "Myrtaceae",
+        "ifNo": "opposite_4"
+      },
+      {
+        "id": "opposite_4",
+        "question": "Há látex branco abundante e flores com corola tubular ou em forma de roda?",
+        "ifYes": "Apocynaceae",
+        "ifNo": "Rubiaceae"
+      },
+      {
+        "id": "alternate_1",
+        "question": "A planta tem látex, resina marcante ou flores unissexuadas bem pequenas?",
+        "ifYes": "latex_1",
+        "ifNo": "alternate_2"
+      },
+      {
+        "id": "latex_1",
+        "question": "Existem figos/sicônios, infrutescências carnosas compostas ou cicatrizes grandes de estípulas nos ramos?",
+        "ifYes": "Moraceae",
+        "ifNo": "Euphorbiaceae"
+      },
+      {
+        "id": "alternate_2",
+        "question": "As folhas são compostas, pinadas, bipinadas ou claramente divididas em folíolos?",
+        "ifYes": "compound_1",
+        "ifNo": "alternate_3"
+      },
+      {
+        "id": "compound_1",
+        "question": "O fruto é legume/vagem ou a flor lembra o padrão típico das leguminosas?",
+        "ifYes": "Fabaceae",
+        "ifNo": "Meliaceae"
+      },
+      {
+        "id": "alternate_3",
+        "question": "As flores ficam reunidas em capítulos com muitas flores pequenas sobre a mesma cabeça floral?",
+        "ifYes": "Asteraceae",
+        "ifNo": "alternate_4"
+      },
+      {
+        "id": "alternate_4",
+        "question": "A planta é lenhosa ou lianescente, com flores tubulares vistosas e frutos em cápsulas alongadas?",
+        "ifYes": "Bignoniaceae",
+        "ifNo": "alternate_5"
+      },
+      {
+        "id": "alternate_5",
+        "question": "As folhas são aromáticas quando amassadas e costumam ter três nervuras principais desde a base?",
+        "ifYes": "Lauraceae",
+        "ifNo": "alternate_6"
+      },
+      {
+        "id": "alternate_6",
+        "question": "Há látex branco, folhas espessas e frutos carnosos com sementes grandes e brilhantes?",
+        "ifYes": "Sapotaceae",
+        "ifNo": "alternate_7"
+      },
+      {
+        "id": "alternate_7",
+        "question": "As flores têm corola gamopétala de 5 peças e o fruto costuma ser baga ou cápsula?",
+        "ifYes": "Solanaceae",
+        "ifNo": "Asteraceae"
+      }
+    ]
+  },
+  {
+    "family": "Fabaceae",
+    "steps": [
+      {
+        "id": "start",
+        "question": "As folhas são compostas, bilobadas ou com pulvinos/estípulas perceptíveis na base?",
+        "ifYes": "fruit_check",
+        "ifNo": "Meliaceae"
+      },
+      {
+        "id": "fruit_check",
+        "question": "O fruto é uma vagem ou legume que se abre em duas valvas quando maduro?",
+        "ifYes": "Fabaceae",
+        "ifNo": "Meliaceae"
+      }
+    ]
+  },
+  {
+    "family": "Myrtaceae",
+    "steps": [
+      {
+        "id": "start",
+        "question": "As folhas são opostas, inteiras e aromáticas quando amassadas?",
+        "ifYes": "veins_check",
+        "ifNo": "Melastomataceae"
+      },
+      {
+        "id": "veins_check",
+        "question": "As flores têm muitos estames vistosos e o ovário costuma ser ínfero, formando baga ou cápsula?",
+        "ifYes": "Myrtaceae",
+        "ifNo": "Rubiaceae"
+      }
+    ]
+  },
+  {
+    "family": "Asteraceae",
+    "steps": [
+      {
+        "id": "start",
+        "question": "As flores pequenas estão reunidas em capítulo com invólucro de brácteas?",
+        "ifYes": "fruit_check",
+        "ifNo": "Solanaceae"
+      },
+      {
+        "id": "fruit_check",
+        "question": "O fruto é seco, do tipo aquênio/cipsela, às vezes com papilho?",
+        "ifYes": "Asteraceae",
+        "ifNo": "Solanaceae"
+      }
+    ]
+  },
+  {
+    "family": "Orchidaceae",
+    "steps": [
+      {
+        "id": "start",
+        "question": "A planta é herbácea, muitas vezes epífita, com raízes aéreas ou pseudobulbos?",
+        "ifYes": "flower_check",
+        "ifNo": "Poaceae"
+      },
+      {
+        "id": "flower_check",
+        "question": "A flor é zigomorfa, com labelo evidente e coluna central fundindo estames e estilete?",
+        "ifYes": "Orchidaceae",
+        "ifNo": "Poaceae"
+      }
+    ]
+  },
+  {
+    "family": "Poaceae",
+    "steps": [
+      {
+        "id": "start",
+        "question": "Os colmos têm nós bem visíveis e folhas estreitas com bainha aberta ou fechada?",
+        "ifYes": "spikelet_check",
+        "ifNo": "Orchidaceae"
+      },
+      {
+        "id": "spikelet_check",
+        "question": "As flores são discretas e organizadas em espiguetas protegidas por glumas?",
+        "ifYes": "Poaceae",
+        "ifNo": "Orchidaceae"
+      }
+    ]
+  },
+  {
+    "family": "Rubiaceae",
+    "steps": [
+      {
+        "id": "start",
+        "question": "As folhas são opostas e existe uma pequena estrutura entre os pecíolos (estípula interpeciolar)?",
+        "ifYes": "ovary_check",
+        "ifNo": "Myrtaceae"
+      },
+      {
+        "id": "ovary_check",
+        "question": "As flores têm corola tubular e o ovário geralmente é ínfero, formando baga, drupa ou cápsula?",
+        "ifYes": "Rubiaceae",
+        "ifNo": "Myrtaceae"
+      }
+    ]
+  },
+  {
+    "family": "Euphorbiaceae",
+    "steps": [
+      {
+        "id": "start",
+        "question": "As flores são unissexuadas e pequenas, e o caule pode exsudar látex ou resina?",
+        "ifYes": "fruit_check",
+        "ifNo": "Moraceae"
+      },
+      {
+        "id": "fruit_check",
+        "question": "O fruto é cápsula tricoca ou se divide em três partes quando maduro?",
+        "ifYes": "Euphorbiaceae",
+        "ifNo": "Moraceae"
+      }
+    ]
+  },
+  {
+    "family": "Lauraceae",
+    "steps": [
+      {
+        "id": "start",
+        "question": "As folhas simples alternas são aromáticas quando amassadas e podem mostrar três nervuras principais?",
+        "ifYes": "flower_check",
+        "ifNo": "Myrtaceae"
+      },
+      {
+        "id": "flower_check",
+        "question": "As flores são pequenas, pouco vistosas, e o fruto é drupáceo apoiado por uma pequena cúpula ou receptáculo engrossado?",
+        "ifYes": "Lauraceae",
+        "ifNo": "Myrtaceae"
+      }
+    ]
+  },
+  {
+    "family": "Melastomataceae",
+    "steps": [
+      {
+        "id": "start",
+        "question": "As folhas opostas apresentam nervação acródroma, com 3 a 7 nervuras fortes desde a base?",
+        "ifYes": "anther_check",
+        "ifNo": "Myrtaceae"
+      },
+      {
+        "id": "anther_check",
+        "question": "Os estames têm anteras alongadas que se abrem por poros no ápice?",
+        "ifYes": "Melastomataceae",
+        "ifNo": "Myrtaceae"
+      }
+    ]
+  },
+  {
+    "family": "Moraceae",
+    "steps": [
+      {
+        "id": "start",
+        "question": "A planta libera látex branco e apresenta estípulas grandes ou cicatrizes anelares nos ramos?",
+        "ifYes": "fruit_check",
+        "ifNo": "Euphorbiaceae"
+      },
+      {
+        "id": "fruit_check",
+        "question": "Os frutos formam sicônio (figo) ou infrutescência carnosa composta?",
+        "ifYes": "Moraceae",
+        "ifNo": "Euphorbiaceae"
+      }
+    ]
+  },
+  {
+    "family": "Solanaceae",
+    "steps": [
+      {
+        "id": "start",
+        "question": "As flores têm corola gamopétala com 5 lobos e 5 estames presos ao tubo floral?",
+        "ifYes": "fruit_check",
+        "ifNo": "Bignoniaceae"
+      },
+      {
+        "id": "fruit_check",
+        "question": "O fruto costuma ser baga ou cápsula, e as folhas geralmente são simples e alternas?",
+        "ifYes": "Solanaceae",
+        "ifNo": "Bignoniaceae"
+      }
+    ]
+  },
+  {
+    "family": "Bignoniaceae",
+    "steps": [
+      {
+        "id": "start",
+        "question": "A planta é liana, arbusto ou árvore com flores tubulares vistosas?",
+        "ifYes": "leaf_check",
+        "ifNo": "Solanaceae"
+      },
+      {
+        "id": "leaf_check",
+        "question": "As folhas são opostas, muitas vezes compostas ou com gavinhas, e o fruto é cápsula alongada?",
+        "ifYes": "Bignoniaceae",
+        "ifNo": "Solanaceae"
+      }
+    ]
+  },
+  {
+    "family": "Meliaceae",
+    "steps": [
+      {
+        "id": "start",
+        "question": "A planta lenhosa tem folhas alternas pinadas, sem estípulas, e sabor amargo na casca ou folhas?",
+        "ifYes": "flower_check",
+        "ifNo": "Fabaceae"
+      },
+      {
+        "id": "flower_check",
+        "question": "As flores pequenas mostram um tubo estaminal bem definido e o fruto é cápsula ou baga?",
+        "ifYes": "Meliaceae",
+        "ifNo": "Fabaceae"
+      }
+    ]
+  },
+  {
+    "family": "Sapotaceae",
+    "steps": [
+      {
+        "id": "start",
+        "question": "A planta exsuda látex branco e tem folhas simples, alternas, coriáceas e inteiras?",
+        "ifYes": "fruit_check",
+        "ifNo": "Apocynaceae"
+      },
+      {
+        "id": "fruit_check",
+        "question": "O fruto é carnoso, com poucas sementes grandes, lisas e brilhantes?",
+        "ifYes": "Sapotaceae",
+        "ifNo": "Apocynaceae"
+      }
+    ]
+  },
+  {
+    "family": "Apocynaceae",
+    "steps": [
+      {
+        "id": "start",
+        "question": "A planta tem látex branco abundante e folhas opostas ou verticiladas na maior parte dos ramos?",
+        "ifYes": "fruit_check",
+        "ifNo": "Sapotaceae"
+      },
+      {
+        "id": "fruit_check",
+        "question": "As flores têm corola tubular ou rotácea e o fruto pode formar dois folículos alongados?",
+        "ifYes": "Apocynaceae",
+        "ifNo": "Sapotaceae"
+      }
+    ]
+  }
+]

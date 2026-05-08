@@ -89,74 +89,104 @@ const SettingsSchema = CollectionSchema(
       name: r'exportFilenameFormat',
       type: IsarType.string,
     ),
-    r'hasCompletedOnboarding': PropertySchema(
+    r'fontScale': PropertySchema(
       id: 14,
+      name: r'fontScale',
+      type: IsarType.double,
+    ),
+    r'hasCompletedOnboarding': PropertySchema(
+      id: 15,
       name: r'hasCompletedOnboarding',
       type: IsarType.bool,
     ),
+    r'highContrastMode': PropertySchema(
+      id: 16,
+      name: r'highContrastMode',
+      type: IsarType.bool,
+    ),
+    r'inatAccessToken': PropertySchema(
+      id: 17,
+      name: r'inatAccessToken',
+      type: IsarType.string,
+    ),
+    r'inatUsername': PropertySchema(
+      id: 18,
+      name: r'inatUsername',
+      type: IsarType.string,
+    ),
     r'lastCloudBackup': PropertySchema(
-      id: 15,
+      id: 19,
       name: r'lastCloudBackup',
       type: IsarType.dateTime,
     ),
     r'lastLocalBackup': PropertySchema(
-      id: 16,
+      id: 20,
       name: r'lastLocalBackup',
       type: IsarType.dateTime,
     ),
     r'lastRegistryNumber': PropertySchema(
-      id: 17,
+      id: 21,
       name: r'lastRegistryNumber',
       type: IsarType.long,
     ),
     r'localeCode': PropertySchema(
-      id: 18,
+      id: 22,
       name: r'localeCode',
       type: IsarType.string,
     ),
     r'mapCacheRadius': PropertySchema(
-      id: 19,
+      id: 23,
       name: r'mapCacheRadius',
       type: IsarType.double,
     ),
     r'mapProvider': PropertySchema(
-      id: 20,
+      id: 24,
       name: r'mapProvider',
       type: IsarType.string,
       enumMap: _SettingsmapProviderEnumValueMap,
     ),
     r'mapboxToken': PropertySchema(
-      id: 21,
+      id: 25,
       name: r'mapboxToken',
       type: IsarType.string,
     ),
     r'paginationSize': PropertySchema(
-      id: 22,
+      id: 26,
       name: r'paginationSize',
       type: IsarType.long,
     ),
     r'photoCompressionQuality': PropertySchema(
-      id: 23,
+      id: 27,
       name: r'photoCompressionQuality',
       type: IsarType.long,
     ),
+    r'plantnetApiKey': PropertySchema(
+      id: 28,
+      name: r'plantnetApiKey',
+      type: IsarType.string,
+    ),
     r'preserveExif': PropertySchema(
-      id: 24,
+      id: 29,
       name: r'preserveExif',
       type: IsarType.bool,
     ),
+    r'rainModeEnabled': PropertySchema(
+      id: 30,
+      name: r'rainModeEnabled',
+      type: IsarType.bool,
+    ),
     r'transcriptionEnabled': PropertySchema(
-      id: 25,
+      id: 31,
       name: r'transcriptionEnabled',
       type: IsarType.bool,
     ),
     r'transcriptionLocale': PropertySchema(
-      id: 26,
+      id: 32,
       name: r'transcriptionLocale',
       type: IsarType.string,
     ),
     r'userInitials': PropertySchema(
-      id: 27,
+      id: 33,
       name: r'userInitials',
       type: IsarType.string,
     )
@@ -193,6 +223,18 @@ int _settingsEstimateSize(
   bytesCount += 3 + object.deviceName.length * 3;
   bytesCount += 3 + object.duplicateHandling.length * 3;
   bytesCount += 3 + object.exportFilenameFormat.length * 3;
+  {
+    final value = object.inatAccessToken;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.inatUsername;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.localeCode.length * 3;
   bytesCount += 3 + object.mapProvider.name.length * 3;
   {
@@ -201,6 +243,7 @@ int _settingsEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  bytesCount += 3 + object.plantnetApiKey.length * 3;
   bytesCount += 3 + object.transcriptionLocale.length * 3;
   bytesCount += 3 + object.userInitials.length * 3;
   return bytesCount;
@@ -226,20 +269,26 @@ void _settingsSerialize(
   writer.writeString(offsets[11], object.duplicateHandling);
   writer.writeBool(offsets[12], object.enableThumbnailCache);
   writer.writeString(offsets[13], object.exportFilenameFormat);
-  writer.writeBool(offsets[14], object.hasCompletedOnboarding);
-  writer.writeDateTime(offsets[15], object.lastCloudBackup);
-  writer.writeDateTime(offsets[16], object.lastLocalBackup);
-  writer.writeLong(offsets[17], object.lastRegistryNumber);
-  writer.writeString(offsets[18], object.localeCode);
-  writer.writeDouble(offsets[19], object.mapCacheRadius);
-  writer.writeString(offsets[20], object.mapProvider.name);
-  writer.writeString(offsets[21], object.mapboxToken);
-  writer.writeLong(offsets[22], object.paginationSize);
-  writer.writeLong(offsets[23], object.photoCompressionQuality);
-  writer.writeBool(offsets[24], object.preserveExif);
-  writer.writeBool(offsets[25], object.transcriptionEnabled);
-  writer.writeString(offsets[26], object.transcriptionLocale);
-  writer.writeString(offsets[27], object.userInitials);
+  writer.writeDouble(offsets[14], object.fontScale);
+  writer.writeBool(offsets[15], object.hasCompletedOnboarding);
+  writer.writeBool(offsets[16], object.highContrastMode);
+  writer.writeString(offsets[17], object.inatAccessToken);
+  writer.writeString(offsets[18], object.inatUsername);
+  writer.writeDateTime(offsets[19], object.lastCloudBackup);
+  writer.writeDateTime(offsets[20], object.lastLocalBackup);
+  writer.writeLong(offsets[21], object.lastRegistryNumber);
+  writer.writeString(offsets[22], object.localeCode);
+  writer.writeDouble(offsets[23], object.mapCacheRadius);
+  writer.writeString(offsets[24], object.mapProvider.name);
+  writer.writeString(offsets[25], object.mapboxToken);
+  writer.writeLong(offsets[26], object.paginationSize);
+  writer.writeLong(offsets[27], object.photoCompressionQuality);
+  writer.writeString(offsets[28], object.plantnetApiKey);
+  writer.writeBool(offsets[29], object.preserveExif);
+  writer.writeBool(offsets[30], object.rainModeEnabled);
+  writer.writeBool(offsets[31], object.transcriptionEnabled);
+  writer.writeString(offsets[32], object.transcriptionLocale);
+  writer.writeString(offsets[33], object.userInitials);
 }
 
 Settings _settingsDeserialize(
@@ -266,23 +315,29 @@ Settings _settingsDeserialize(
   object.duplicateHandling = reader.readString(offsets[11]);
   object.enableThumbnailCache = reader.readBool(offsets[12]);
   object.exportFilenameFormat = reader.readString(offsets[13]);
-  object.hasCompletedOnboarding = reader.readBool(offsets[14]);
+  object.fontScale = reader.readDouble(offsets[14]);
+  object.hasCompletedOnboarding = reader.readBool(offsets[15]);
+  object.highContrastMode = reader.readBool(offsets[16]);
   object.id = id;
-  object.lastCloudBackup = reader.readDateTimeOrNull(offsets[15]);
-  object.lastLocalBackup = reader.readDateTimeOrNull(offsets[16]);
-  object.lastRegistryNumber = reader.readLong(offsets[17]);
-  object.localeCode = reader.readString(offsets[18]);
-  object.mapCacheRadius = reader.readDouble(offsets[19]);
+  object.inatAccessToken = reader.readStringOrNull(offsets[17]);
+  object.inatUsername = reader.readStringOrNull(offsets[18]);
+  object.lastCloudBackup = reader.readDateTimeOrNull(offsets[19]);
+  object.lastLocalBackup = reader.readDateTimeOrNull(offsets[20]);
+  object.lastRegistryNumber = reader.readLong(offsets[21]);
+  object.localeCode = reader.readString(offsets[22]);
+  object.mapCacheRadius = reader.readDouble(offsets[23]);
   object.mapProvider =
-      _SettingsmapProviderValueEnumMap[reader.readStringOrNull(offsets[20])] ??
+      _SettingsmapProviderValueEnumMap[reader.readStringOrNull(offsets[24])] ??
           MapProvider.openStreetMap;
-  object.mapboxToken = reader.readStringOrNull(offsets[21]);
-  object.paginationSize = reader.readLong(offsets[22]);
-  object.photoCompressionQuality = reader.readLong(offsets[23]);
-  object.preserveExif = reader.readBool(offsets[24]);
-  object.transcriptionEnabled = reader.readBool(offsets[25]);
-  object.transcriptionLocale = reader.readString(offsets[26]);
-  object.userInitials = reader.readString(offsets[27]);
+  object.mapboxToken = reader.readStringOrNull(offsets[25]);
+  object.paginationSize = reader.readLong(offsets[26]);
+  object.photoCompressionQuality = reader.readLong(offsets[27]);
+  object.plantnetApiKey = reader.readString(offsets[28]);
+  object.preserveExif = reader.readBool(offsets[29]);
+  object.rainModeEnabled = reader.readBool(offsets[30]);
+  object.transcriptionEnabled = reader.readBool(offsets[31]);
+  object.transcriptionLocale = reader.readString(offsets[32]);
+  object.userInitials = reader.readString(offsets[33]);
   return object;
 }
 
@@ -325,34 +380,46 @@ P _settingsDeserializeProp<P>(
     case 13:
       return (reader.readString(offset)) as P;
     case 14:
-      return (reader.readBool(offset)) as P;
-    case 15:
-      return (reader.readDateTimeOrNull(offset)) as P;
-    case 16:
-      return (reader.readDateTimeOrNull(offset)) as P;
-    case 17:
-      return (reader.readLong(offset)) as P;
-    case 18:
-      return (reader.readString(offset)) as P;
-    case 19:
       return (reader.readDouble(offset)) as P;
+    case 15:
+      return (reader.readBool(offset)) as P;
+    case 16:
+      return (reader.readBool(offset)) as P;
+    case 17:
+      return (reader.readStringOrNull(offset)) as P;
+    case 18:
+      return (reader.readStringOrNull(offset)) as P;
+    case 19:
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 20:
+      return (reader.readDateTimeOrNull(offset)) as P;
+    case 21:
+      return (reader.readLong(offset)) as P;
+    case 22:
+      return (reader.readString(offset)) as P;
+    case 23:
+      return (reader.readDouble(offset)) as P;
+    case 24:
       return (_SettingsmapProviderValueEnumMap[
               reader.readStringOrNull(offset)] ??
           MapProvider.openStreetMap) as P;
-    case 21:
-      return (reader.readStringOrNull(offset)) as P;
-    case 22:
-      return (reader.readLong(offset)) as P;
-    case 23:
-      return (reader.readLong(offset)) as P;
-    case 24:
-      return (reader.readBool(offset)) as P;
     case 25:
-      return (reader.readBool(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 26:
-      return (reader.readString(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 27:
+      return (reader.readLong(offset)) as P;
+    case 28:
+      return (reader.readString(offset)) as P;
+    case 29:
+      return (reader.readBool(offset)) as P;
+    case 30:
+      return (reader.readBool(offset)) as P;
+    case 31:
+      return (reader.readBool(offset)) as P;
+    case 32:
+      return (reader.readString(offset)) as P;
+    case 33:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1605,11 +1672,83 @@ extension SettingsQueryFilter
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> fontScaleEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'fontScale',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> fontScaleGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'fontScale',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> fontScaleLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'fontScale',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> fontScaleBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'fontScale',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterFilterCondition>
       hasCompletedOnboardingEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'hasCompletedOnboarding',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      highContrastModeEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'highContrastMode',
         value: value,
       ));
     });
@@ -1663,6 +1802,311 @@ extension SettingsQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      inatAccessTokenIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'inatAccessToken',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      inatAccessTokenIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'inatAccessToken',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      inatAccessTokenEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'inatAccessToken',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      inatAccessTokenGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'inatAccessToken',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      inatAccessTokenLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'inatAccessToken',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      inatAccessTokenBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'inatAccessToken',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      inatAccessTokenStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'inatAccessToken',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      inatAccessTokenEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'inatAccessToken',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      inatAccessTokenContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'inatAccessToken',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      inatAccessTokenMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'inatAccessToken',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      inatAccessTokenIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'inatAccessToken',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      inatAccessTokenIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'inatAccessToken',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> inatUsernameIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'inatUsername',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      inatUsernameIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'inatUsername',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> inatUsernameEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'inatUsername',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      inatUsernameGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'inatUsername',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> inatUsernameLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'inatUsername',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> inatUsernameBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'inatUsername',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      inatUsernameStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'inatUsername',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> inatUsernameEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'inatUsername',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> inatUsernameContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'inatUsername',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> inatUsernameMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'inatUsername',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      inatUsernameIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'inatUsername',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      inatUsernameIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'inatUsername',
+        value: '',
       ));
     });
   }
@@ -2458,11 +2902,156 @@ extension SettingsQueryFilter
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> plantnetApiKeyEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'plantnetApiKey',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      plantnetApiKeyGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'plantnetApiKey',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      plantnetApiKeyLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'plantnetApiKey',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> plantnetApiKeyBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'plantnetApiKey',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      plantnetApiKeyStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'plantnetApiKey',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      plantnetApiKeyEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'plantnetApiKey',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      plantnetApiKeyContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'plantnetApiKey',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> plantnetApiKeyMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'plantnetApiKey',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      plantnetApiKeyIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'plantnetApiKey',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      plantnetApiKeyIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'plantnetApiKey',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterFilterCondition> preserveExifEqualTo(
       bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'preserveExif',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      rainModeEnabledEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'rainModeEnabled',
         value: value,
       ));
     });
@@ -2931,6 +3520,18 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByFontScale() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'fontScale', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByFontScaleDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'fontScale', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy>
       sortByHasCompletedOnboarding() {
     return QueryBuilder.apply(this, (query) {
@@ -2942,6 +3543,42 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
       sortByHasCompletedOnboardingDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hasCompletedOnboarding', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByHighContrastMode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'highContrastMode', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByHighContrastModeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'highContrastMode', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByInatAccessToken() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'inatAccessToken', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByInatAccessTokenDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'inatAccessToken', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByInatUsername() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'inatUsername', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByInatUsernameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'inatUsername', Sort.desc);
     });
   }
 
@@ -3056,6 +3693,18 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByPlantnetApiKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plantnetApiKey', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByPlantnetApiKeyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plantnetApiKey', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByPreserveExif() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'preserveExif', Sort.asc);
@@ -3065,6 +3714,18 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByPreserveExifDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'preserveExif', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByRainModeEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'rainModeEnabled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByRainModeEnabledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'rainModeEnabled', Sort.desc);
     });
   }
 
@@ -3284,6 +3945,18 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByFontScale() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'fontScale', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByFontScaleDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'fontScale', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy>
       thenByHasCompletedOnboarding() {
     return QueryBuilder.apply(this, (query) {
@@ -3298,6 +3971,18 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByHighContrastMode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'highContrastMode', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByHighContrastModeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'highContrastMode', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -3307,6 +3992,30 @@ extension SettingsQuerySortThenBy
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByInatAccessToken() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'inatAccessToken', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByInatAccessTokenDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'inatAccessToken', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByInatUsername() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'inatUsername', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByInatUsernameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'inatUsername', Sort.desc);
     });
   }
 
@@ -3421,6 +4130,18 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByPlantnetApiKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plantnetApiKey', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByPlantnetApiKeyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plantnetApiKey', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByPreserveExif() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'preserveExif', Sort.asc);
@@ -3430,6 +4151,18 @@ extension SettingsQuerySortThenBy
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByPreserveExifDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'preserveExif', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByRainModeEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'rainModeEnabled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByRainModeEnabledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'rainModeEnabled', Sort.desc);
     });
   }
 
@@ -3570,10 +4303,37 @@ extension SettingsQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Settings, Settings, QDistinct> distinctByFontScale() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'fontScale');
+    });
+  }
+
   QueryBuilder<Settings, Settings, QDistinct>
       distinctByHasCompletedOnboarding() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'hasCompletedOnboarding');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByHighContrastMode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'highContrastMode');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByInatAccessToken(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'inatAccessToken',
+          caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByInatUsername(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'inatUsername', caseSensitive: caseSensitive);
     });
   }
 
@@ -3635,9 +4395,23 @@ extension SettingsQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Settings, Settings, QDistinct> distinctByPlantnetApiKey(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'plantnetApiKey',
+          caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QDistinct> distinctByPreserveExif() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'preserveExif');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByRainModeEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'rainModeEnabled');
     });
   }
 
@@ -3760,10 +4534,34 @@ extension SettingsQueryProperty
     });
   }
 
+  QueryBuilder<Settings, double, QQueryOperations> fontScaleProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'fontScale');
+    });
+  }
+
   QueryBuilder<Settings, bool, QQueryOperations>
       hasCompletedOnboardingProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'hasCompletedOnboarding');
+    });
+  }
+
+  QueryBuilder<Settings, bool, QQueryOperations> highContrastModeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'highContrastMode');
+    });
+  }
+
+  QueryBuilder<Settings, String?, QQueryOperations> inatAccessTokenProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'inatAccessToken');
+    });
+  }
+
+  QueryBuilder<Settings, String?, QQueryOperations> inatUsernameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'inatUsername');
     });
   }
 
@@ -3824,9 +4622,21 @@ extension SettingsQueryProperty
     });
   }
 
+  QueryBuilder<Settings, String, QQueryOperations> plantnetApiKeyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'plantnetApiKey');
+    });
+  }
+
   QueryBuilder<Settings, bool, QQueryOperations> preserveExifProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'preserveExif');
+    });
+  }
+
+  QueryBuilder<Settings, bool, QQueryOperations> rainModeEnabledProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'rainModeEnabled');
     });
   }
 

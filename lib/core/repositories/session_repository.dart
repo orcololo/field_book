@@ -3,7 +3,9 @@
 import 'package:isar/isar.dart';
 import 'package:logger/logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
 import '../../models/collection_session.dart';
+import '../../models/gps_point.dart';
 import '../../models/plant_record.dart';
 import '../database/isar_service.dart';
 import 'dart:math';
@@ -213,5 +215,27 @@ class SessionRepository {
         .tripNameContains(lowerQuery, caseSensitive: false)
         .sortByStartDateDesc()
         .findAll();
+  }
+
+  Future<CollectionSession?> appendTrackPoint(String sessionUuid, GpsPoint point) async {
+    final isar = await _isar;
+    CollectionSession? updatedSession;
+
+    await isar.writeTxn(() async {
+      final session = await isar.collectionSessions
+          .filter()
+          .uuidEqualTo(sessionUuid)
+          .findFirst();
+
+      if (session == null) {
+        return;
+      }
+
+      session.track = [...session.track, point];
+      await isar.collectionSessions.put(session);
+      updatedSession = session;
+    });
+
+    return updatedSession;
   }
 }

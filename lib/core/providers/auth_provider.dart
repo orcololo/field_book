@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../network/api_client.dart';
+import '../network/api_endpoints.dart';
 import '../services/auth_service.dart';
 
 part 'auth_provider.g.dart';
@@ -44,17 +45,17 @@ class AuthNotifier extends _$AuthNotifier {
   Future<void> _checkExistingSession() async {
     final authService = ref.read(authServiceProvider);
     final hasSession = await authService.hasSession();
-    if (hasSession) {
-      // We have tokens, assume authenticated until a 401 clears them
-      state = const AuthAuthenticated(
-        UserProfile(
-          id: '',
-          name: '',
-          email: '',
-          role: 'collector',
-        ),
-      );
-    } else {
+    if (!hasSession) {
+      state = const AuthUnauthenticated();
+      return;
+    }
+    try {
+      final api = ref.read(apiClientProvider);
+      final data = await api.get<Map<String, dynamic>>(ApiEndpoints.userProfile);
+      state = AuthAuthenticated(UserProfile.fromJson(data));
+    } catch (_) {
+      // Token exists but profile fetch failed (expired/invalid) — clear session.
+      await authService.logout();
       state = const AuthUnauthenticated();
     }
   }

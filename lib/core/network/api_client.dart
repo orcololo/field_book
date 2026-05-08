@@ -2,15 +2,16 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../config/app_config.dart';
 import 'auth_interceptor.dart';
 import 'connectivity_interceptor.dart';
 import 'token_storage.dart';
 
 part 'api_client.g.dart';
 
-/// Default API base URL — point to your backend.
-/// Override with environment-specific value if needed.
-const String _defaultBaseUrl = 'http://10.0.2.2:3000'; // Android emulator → host
+// Configure the API URL at build time:
+//   flutter run --dart-define=API_BASE_URL=http://192.168.1.100:3000
+//   flutter build apk --dart-define=API_BASE_URL=https://api.fieldbook.app
 
 @Riverpod(keepAlive: true)
 TokenStorage tokenStorage(Ref ref) {
@@ -23,7 +24,7 @@ Dio dio(Ref ref) {
 
   final dio = Dio(
     BaseOptions(
-      baseUrl: _defaultBaseUrl,
+      baseUrl: AppConfig.apiBaseUrl,
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 30),
       sendTimeout: const Duration(seconds: 30),

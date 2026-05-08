@@ -2,8 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../../models/plant_record.dart';
 import '../../../models/plant_category.dart';
+import '../../../models/sync_metadata.dart';
 import '../../../core/theme/folium_theme.dart';
 import 'package:intl/intl.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Modern plant card with eco-design aesthetic
 class ModernPlantCard extends StatelessWidget {
@@ -29,71 +31,84 @@ class ModernPlantCard extends StatelessWidget {
   }
 
   Widget _buildFullCard(BuildContext context) {
+    final isConflict = plant.syncMetadata.syncStatus == SyncStatus.conflict;
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.symmetric(
-          horizontal: FoliumTheme.space16,
-          vertical: FoliumTheme.space8,
-        ),
-        decoration: FoliumTheme.cardDecoration(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Image section
-            if (showImage && plant.photoPaths.isNotEmpty)
-              _buildImageSection(context),
-
-            // Content section
-            Padding(
-              padding: const EdgeInsets.all(FoliumTheme.space16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Scientific name
-                  Text(
-                    plant.scientificName,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: FoliumTheme.primaryMain,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-
-                  // Common name
-                  if (plant.commonName.isNotEmpty) ...[
-                    const SizedBox(height: FoliumTheme.space4),
-                    Text(
-                      plant.commonName,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: FoliumTheme.onSurfaceVariant,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-
-                  const SizedBox(height: FoliumTheme.space12),
-
-                  // Metadata row
-                  _buildMetadataRow(context),
-
-                  // Identifier badge
-                  if (plant.registryIdentifier != null) ...[
-                    const SizedBox(height: FoliumTheme.space12),
-                    _buildIdentifierBadge(context),
-                  ],
-                ],
-              ),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            margin: const EdgeInsets.symmetric(
+              horizontal: FoliumTheme.space16,
+              vertical: FoliumTheme.space8,
             ),
-          ],
-        ),
+            decoration: FoliumTheme.cardDecoration(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Image section
+                if (showImage && plant.photoPaths.isNotEmpty)
+                  _buildImageSection(context),
+
+                // Content section
+                Padding(
+                  padding: const EdgeInsets.all(FoliumTheme.space16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Scientific name
+                      Text(
+                        plant.scientificName,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: FoliumTheme.primaryMain,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+
+                      // Common name
+                      if (plant.commonName.isNotEmpty) ...[
+                        const SizedBox(height: FoliumTheme.space4),
+                        Text(
+                          plant.commonName,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: FoliumTheme.onSurfaceVariant,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+
+                      const SizedBox(height: FoliumTheme.space12),
+
+                      // Metadata row
+                      _buildMetadataRow(context),
+
+                      // Identifier badge
+                      if (plant.registryIdentifier != null) ...[
+                        const SizedBox(height: FoliumTheme.space12),
+                        _buildIdentifierBadge(context),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (isConflict)
+            Positioned(
+              top: 4,
+              left: FoliumTheme.space16 + 4,
+              child: _buildConflictBadge(context),
+            ),
+        ],
       ),
     );
   }
 
   Widget _buildCompactCard(BuildContext context) {
+    final isConflict = plant.syncMetadata.syncStatus == SyncStatus.conflict;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -124,7 +139,16 @@ class ModernPlantCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 )
               : null,
-          trailing: _buildCategoryIcon(context),
+          trailing: isConflict
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildConflictBadge(context),
+                    const SizedBox(width: FoliumTheme.space8),
+                    _buildCategoryIcon(context),
+                  ],
+                )
+              : _buildCategoryIcon(context),
         ),
       ),
     );
@@ -215,6 +239,7 @@ class ModernPlantCard extends StatelessWidget {
   }
 
   Widget _buildMetadataRow(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         // Category icon
@@ -235,6 +260,22 @@ class ModernPlantCard extends StatelessWidget {
             style: Theme.of(
               context,
             ).textTheme.bodySmall?.copyWith(color: FoliumTheme.tertiaryMain),
+          ),
+          const SizedBox(width: FoliumTheme.space8),
+        ],
+        if (plant.iNaturalistId?.isNotEmpty ?? false) ...[
+          const Icon(
+            Icons.outbox_outlined,
+            size: 16,
+            color: FoliumTheme.primaryMain,
+          ),
+          const SizedBox(width: FoliumTheme.space4),
+          Text(
+            l10n.inaturalistSyncBadge,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: FoliumTheme.primaryMain,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ],
@@ -299,8 +340,7 @@ class ModernPlantCard extends StatelessWidget {
     );
   }
 
-  Widget _buildIdentifierBadge(BuildContext context) {
-    return Container(
+  Widget _buildIdentifierBadge(BuildContext context) {    return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: FoliumTheme.space12,
         vertical: FoliumTheme.space4,
@@ -320,6 +360,37 @@ class ModernPlantCard extends StatelessWidget {
               color: FoliumTheme.onSecondaryContainer,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildConflictBadge(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: FoliumTheme.space8,
+        vertical: FoliumTheme.space4,
+      ),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.errorContainer,
+        borderRadius: BorderRadius.circular(FoliumTheme.radiusFull),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.sync_problem_outlined,
+            size: 12,
+            color: Theme.of(context).colorScheme.onErrorContainer,
+          ),
+          const SizedBox(width: FoliumTheme.space4),
+          Text(
+            'Conflito',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: Theme.of(context).colorScheme.onErrorContainer,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
