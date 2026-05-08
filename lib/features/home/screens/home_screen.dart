@@ -153,7 +153,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               icon: Icon(Icons.delete_outline, color: colorScheme.error),
               onPressed: _selectedIds.isEmpty
                   ? null
-                  : () => _bulkDelete(context, l10n),
+                  : () => _bulkDelete(l10n),
             ),
             IconButton(
               tooltip: l10n.exportSelected,
@@ -354,8 +354,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
-  Future<void> _bulkDelete(BuildContext context, AppLocalizations l10n) async {
+  Future<void> _bulkDelete(AppLocalizations l10n) async {
     final messenger = ScaffoldMessenger.of(context);
+    final errorColor = Theme.of(context).colorScheme.error;
     final initialConfirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -376,7 +377,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ],
       ),
     );
-    if (initialConfirmed != true || !mounted) return;
+    if (!mounted) return;
+    if (initialConfirmed != true) return;
     final confirmed = await RainModeGuard.confirmDestructiveAction(
       context: context,
       rainModeEnabled: ref.read(rainModeEnabledProvider),
@@ -390,9 +392,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       cancelLabel: l10n.cancel,
       confirmLabel: l10n.delete,
       countdownLabel: l10n.rainModeCountdownLabel,
-      confirmColor: Theme.of(context).colorScheme.error,
+      confirmColor: errorColor,
     );
-    if (confirmed != true || !mounted) return;
+    if (!mounted) return;
+    if (confirmed != true) return;
     final plantRepo = ref.read(plantRepositoryProvider);
     await plantRepo.bulkDelete(_selectedIds.toList());
     if (!mounted) return;
