@@ -52,7 +52,7 @@ class ConflictResolutionScreen extends ConsumerWidget {
                   itemBuilder: (context, index) => _ConflictRecordCard(
                     plant: records[index],
                   ),
-                  separatorBuilder: (_, __) =>
+                  separatorBuilder: (_, _) =>
                       const SizedBox(height: FoliumTheme.space16),
                   itemCount: records.length,
                 ),
