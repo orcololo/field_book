@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../models/collection_session.dart';
@@ -66,6 +67,19 @@ class IsarService extends IsarServiceInterface {
   @override
   Future<void> close() async {
     await _isar?.close();
+    _isar = null;
+  }
+
+  /// Injects a pre-opened Isar instance for testing.
+  /// This bypasses [_initIsar] so tests can run against a named in-memory DB.
+  @visibleForTesting
+  static void overrideIsarForTesting(Isar testIsar) {
+    _isar = testIsar;
+  }
+
+  /// Clears the injected test Isar so the singleton resets after each test.
+  @visibleForTesting
+  static void resetIsarAfterTesting() {
     _isar = null;
   }
 
