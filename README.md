@@ -92,6 +92,29 @@ Folium (_Latin for "leaf"_) is a modern, offline-first mobile application for do
 - **3 Languages**: Portuguese (BR, default), English, Spanish
 - **~130 Localized Keys**: Navigation, forms, categories, actions, errors, permissions, onboarding, backup, identifiers, audio
 
+### 🔐 Authentication & Cloud Sync
+
+- **Email/password sign-up & sign-in**: Account creation and authentication via the app's NestJS API
+- **Google sign-in**: One-tap sign-in via `google_sign_in`
+- **Persistent sessions**: Tokens stored via `flutter_secure_storage`; auto-refresh on expiry
+- **Two-way sync**: Push local Isar changes to API, pull remote changes; conflict resolution UI for divergent records
+- **Sync status indicator**: AppBar icon shows sync state (idle, syncing, error)
+
+### 🔬 Identification & Enrichment
+
+- **Dichotomous Key**: Multi-step taxonomic key flow for species identification in the field
+- **PlantNet integration**: Image-based plant identification via the PlantNet API (configurable API key)
+- **iNaturalist integration**: Auto-fill from observations + push records to iNaturalist
+- **OCR for label digitization**: Camera-based text recognition (`google_mlkit_text_recognition`) with review dialog
+- **Weather & moon phase**: Auto-fill weather and moon-phase metadata at collection time
+- **Geocoding**: Reverse-geocode GPS to municipality / locality
+- **Herbarium label generation**: PDF labels for physical specimens
+
+### 🚀 Quick Capture
+
+- **One-tap entry**: GPS + camera + auto-generated registry ID in a single screen
+- **Rain mode**: Reduces destructive-action accidents in poor field conditions (countdown unlock)
+
 ### 🎨 Modern Design
 
 - **Eco-Modern Theme**: Nature-inspired palette — Forest Green `#3D7A52`, Earth Brown `#6D4C41`, Sky Blue `#0288D1`
@@ -124,6 +147,12 @@ Folium (_Latin for "leaf"_) is a modern, offline-first mobile application for do
 | 14  | **Settings**              | Comprehensive app configuration                                                |
 | 15  | **Export/Import**         | JSON, CSV, Darwin Core export; JSON import                                     |
 | 16  | **Identifier Management** | Batch assignment, export/import identifiers                                    |
+| 17  | **Login / Register**      | Email/password + Google sign-in (gated by `auth/`)                             |
+| 18  | **Dichotomous Key**       | Step-by-step taxonomic identification flow                                     |
+| 19  | **Quick Capture**         | One-tap plant entry: GPS + camera + auto-identifier                            |
+| 20  | **Conflict Resolution**   | Sync conflict review and per-record resolution                                 |
+| 21  | **Templates**             | Collection-template management                                                 |
+| 22  | **iNaturalist Auth**      | API token configuration for iNaturalist push                                   |
 
 ---
 
@@ -198,55 +227,66 @@ flutter test          # Unit & widget tests
 ```
 lib/
 ├── core/                        # Core infrastructure
+│   ├── config/                 # Compile-time configuration (API endpoints, build flavors)
 │   ├── database/               # Isar DB (mobile/web platform split)
 │   │   └── platforms/          # isar_service_mobile.dart, _web.dart
-│   ├── errors/                 # Error handling
-│   ├── repositories/           # Data access layer
-│   │   ├── plant_repository    # PlantRecord CRUD, FTS, GPS search
-│   │   ├── session_repository  # Session CRUD, share codes, archiving
-│   │   └── saved_search_repo   # Saved search persistence
-│   ├── services/               # Business logic
-│   │   ├── audio_transcription # Whisper ML + SpeechToText
-│   │   ├── export_import       # JSON, CSV, Darwin Core
-│   │   ├── google_drive_backup # Cloud backup via Drive API
-│   │   ├── identifier_export   # Identifier JSON/CSV/XLSX
-│   │   ├── location_service    # GPS + permissions
-│   │   ├── map_service         # FMTC tile caching
-│   │   ├── photo_service       # Camera, gallery, compression
-│   │   ├── registry_identifier # Thread-safe ID generation
-│   │   └── settings_service    # Riverpod AsyncNotifier
-│   ├── sync/                   # Sync infrastructure (planned)
+│   ├── errors/                 # AppError sealed class + error handler
+│   ├── network/                # Dio client, interceptors, token storage
+│   │   ├── api_client.dart
+│   │   ├── api_endpoints.dart
+│   │   ├── auth_interceptor.dart
+│   │   ├── connectivity_interceptor.dart
+│   │   └── token_storage.dart
+│   ├── providers/              # Cross-cutting @riverpod providers (auth, sync, rain mode, taxon)
+│   ├── repositories/           # 4 repositories (plant, session, saved_search, template)
+│   ├── services/               # 22 services — see lib/core/AGENTS.md for the full list
+│   ├── sync/                   # sync_service.dart (push/pull orchestration, conflict resolution)
 │   ├── theme/                  # FoliumTheme (light + dark)
-│   └── utils/                  # BotanicalValidator, GeoUtils
-├── features/                    # Feature modules (12)
+│   └── utils/                  # BotanicalValidator, GeoUtils, biome_detector
+├── features/                    # 16 feature modules
+│   ├── auth/                   # Login, register
+│   ├── export_import/
 │   ├── home/                   # 5-tab navigation hub
+│   ├── identification/         # Dichotomous key for species ID
+│   ├── map/                    # Map view + offline maps
 │   ├── onboarding/             # 5-page guided tutorial
-│   ├── plant_form/             # 6-tab plant creation (1632 lines)
-│   ├── plant_detail/           # Hero image detail view (989 lines)
+│   ├── photo_gallery/          # Cross-plant photo grid + fullscreen viewer
+│   ├── plant_detail/           # Hero image detail view
 │   ├── plant_edit/             # Quick taxonomy editor
+│   ├── plant_form/             # 6-tab plant creation
+│   ├── quick_capture/          # Fast plant entry with GPS + camera
 │   ├── search/                 # Dual-mode search + filters
 │   ├── sessions/               # Session form + detail + sharing
-│   ├── map/                    # Map view + offline maps
-│   ├── photo_gallery/          # Gallery grid + fullscreen viewer
+│   ├── settings/               # Settings + identifier management + templates + iNaturalist auth
 │   ├── statistics/             # Charts and analytics
-│   ├── export_import/          # Export/import data
-│   └── settings/               # Settings + identifier management
-├── models/                      # Isar data models
+│   └── sync/                   # Conflict resolution UI
+├── models/                      # 15 Isar models
+│   ├── collection_method.dart
+│   ├── collection_session.dart
+│   ├── collection_template.dart
+│   ├── determination.dart
+│   ├── gps_point.dart
+│   ├── measurement.dart        # @embedded
+│   ├── municipality_bounding_box_cache.dart
+│   ├── phenological_state.dart
+│   ├── photo_metadata.dart     # @embedded
+│   ├── plant_category.dart     # enum
 │   ├── plant_record.dart       # Core plant model (30+ fields)
-│   ├── collection_session.dart # Session with team & sharing
-│   ├── measurement.dart        # Embedded: label, value, unit
-│   ├── photo_metadata.dart     # Embedded: EXIF, GPS, file size
-│   ├── saved_search.dart       # Persisted search queries
-│   ├── settings.dart           # Singleton app settings
-│   ├── sync_metadata.dart      # Embedded: sync status (planned)
-│   └── plant_category.dart     # Enum: 8 categories
+│   ├── saved_search.dart
+│   ├── settings.dart
+│   ├── sync_metadata.dart      # @embedded
+│   └── taxon_cache.dart
 ├── shared/                      # Shared components
-│   ├── constants/              # App-wide constants
+│   ├── constants/              # biome_templates, app constants
 │   ├── utils/                  # Shared utilities
 │   └── widgets/                # Reusable widgets
-│       ├── modern/             # ModernPlantCard, GlassAppBar, etc.
+│       ├── modern/             # ModernPlantCard, GlassAppBar, SyncStatusIcon, etc.
 │       ├── audio/              # AudioRecorder, AudioPlayer
-│       └── map_widget.dart     # Reusable FlutterMap
+│       ├── fenologia_fournier_widget.dart
+│       ├── ocr_review_dialog.dart
+│       ├── plantnet_results_sheet.dart
+│       ├── rain_mode_guard.dart
+│       └── map_widget.dart
 └── l10n/                        # Localization (pt, en, es)
 ```
 
@@ -305,15 +345,16 @@ See [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) for complete documentation.
 | **State**              | `flutter_riverpod`, `riverpod_annotation`                                                 |
 | **Database**           | `isar`, `isar_flutter_libs`                                                               |
 | **Images**             | `image_picker`, `flutter_image_compress`, `exif`, `photo_view`, `cached_network_image`    |
-| **Location/Maps**      | `geolocator`, `permission_handler`, `flutter_map`, `flutter_map_tile_caching`, `latlong2` |
-| **Data Export/Import** | `csv`, `excel`, `archive`, `file_picker`                                                  |
+| **Location/Maps**      | `geolocator`, `geocoding`, `permission_handler`, `flutter_map`, `flutter_map_tile_caching`, `latlong2` |
+| **Data Export/Import** | `csv`, `excel`, `archive`, `file_picker`, `pdf`, `printing`                               |
 | **Audio**              | `record`, `audioplayers`, `speech_to_text`, `whisper_flutter_new`                         |
 | **Charts**             | `fl_chart`                                                                                |
-| **Cloud**              | `connectivity_plus`, `googleapis`, `googleapis_auth`, `google_sign_in`                    |
-| **QR Code**            | `qr_flutter`, `mobile_scanner`                                                            |
+| **Cloud / Auth**       | `connectivity_plus`, `googleapis`, `googleapis_auth`, `google_sign_in`, `flutter_secure_storage` |
+| **QR Code / OCR**      | `qr_flutter`, `mobile_scanner`, `google_mlkit_text_recognition`                           |
 | **UI**                 | `introduction_screen`, `infinite_scroll_pagination`, `flutter_svg`                        |
 | **Storage**            | `path_provider`, `shared_preferences`                                                     |
-| **Utility**            | `uuid`, `share_plus`, `intl`, `logger`                                                    |
+| **Networking**         | `dio`, `http`                                                                             |
+| **Utility**            | `uuid`, `share_plus`, `intl`, `logger`, `url_launcher`                                    |
 
 ---
 
@@ -378,8 +419,6 @@ See [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) for complete documentation.
 - Performance optimizations
 - Data integrity improvements
 
-See [RELEASE_NOTES_v1.8.0.md](RELEASE_NOTES_v1.8.0.md) for detailed release notes.
-
 ---
 
 ## 🤝 Contributing
@@ -422,14 +461,23 @@ For issues, questions, or feedback:
 
 ## 🗺️ Roadmap
 
-### Planned Features
+### Recently shipped (since v1.8.0)
+
+- ☁️ Server-based sync via NestJS API (auth, push/pull, conflict resolution)
+- 🔬 PlantNet, iNaturalist, OCR, weather, moon phase integrations
+- 🌳 Dichotomous key for taxonomic identification
+- ⚡ Quick Capture entry mode
+- 🌧️ Rain mode (destructive-action guard)
+
+### Planned
 
 - 🍎 iOS version with glassmorphic design
-- 🔄 Server-based sync and real-time collaboration (sync infrastructure already stubbed)
-- 📱 QR code generation and scanning for specimens (dependencies already included)
+- 👥 Real-time collaboration (multi-user session editing)
 - 📊 Custom report generation
-- 🏛️ Integration with herbarium databases (speciesLink, GBIF)
+- 🏛️ Direct integration with herbarium databases (speciesLink, GBIF)
 - ☁️ Dropbox backup support
+
+See `ROADMAP.md` for the full sequenced backlog and `docs/superpowers/specs/2026-05-08-folium-correction-and-polish-design.md` for the active correction pass.
 
 ---
 
