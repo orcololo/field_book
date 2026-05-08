@@ -74,34 +74,34 @@ class _FenologiaFournierWidgetState extends State<FenologiaFournierWidget> {
           padding: const EdgeInsets.only(bottom: 4.0),
           child: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
         ),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: List.generate(5, (index) {
-              return Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: Column(
-                  children: [
-                    Text(index.toString(), style: const TextStyle(fontSize: 12)),
-                    SizedBox(
-                      width: 48,
-                      height: 48, // 48dp min tap target
-                      child: Radio<int>(
-                        value: index,
-                        groupValue: value,
-                        onChanged: (v) {
-                          if (v != null) {
-                            onChanged(v);
-                            _notifyChange();
-                          }
-                        },
+        RadioGroup<int>(
+          groupValue: value,
+          onChanged: (v) {
+            if (v != null) {
+              onChanged(v);
+              _notifyChange();
+            }
+          },
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: List.generate(5, (index) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: Column(
+                    children: [
+                      Text(index.toString(), style: const TextStyle(fontSize: 12)),
+                      SizedBox(
+                        width: 48,
+                        height: 48, // 48dp min tap target
+                        child: Radio<int>(value: index),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }),
+                    ],
+                  ),
+                );
+              }),
+            ),
           ),
         ),
         const SizedBox(height: FoliumTheme.space12),
