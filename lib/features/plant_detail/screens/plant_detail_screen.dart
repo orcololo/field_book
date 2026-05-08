@@ -230,7 +230,7 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
           child: FilledButton.icon(
             onPressed: _isSendingToInaturalist
                 ? null
-                : () => _pushToInaturalist(context, ref, l10n),
+                : () => _pushToInaturalist(ref, l10n),
             icon: _isSendingToInaturalist
                 ? const SizedBox(
                     width: 18,
@@ -1658,19 +1658,21 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
   }
 
   Future<void> _pushToInaturalist(
-    BuildContext context,
     WidgetRef ref,
     AppLocalizations l10n,
   ) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final errorColor = Theme.of(context).colorScheme.error;
+    final navigator = Navigator.of(context);
     final service = ref.read(inaturalistServiceProvider);
     final hasToken = await service.hasToken();
 
     if (!hasToken) {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
+      if (!mounted) return;
+      messenger.showSnackBar(
         SnackBar(content: Text(l10n.inaturalistRequiresToken)),
       );
-      await Navigator.of(context).push(
+      await navigator.push(
         MaterialPageRoute(builder: (_) => const InaturalistAuthScreen()),
       );
       return;
@@ -1681,20 +1683,20 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
     try {
       await service.createObservation(plant);
       final updated = await ref.read(plantRepositoryProvider).getByUuid(plant.uuid);
-      if (updated != null && mounted) {
+      if (!mounted) return;
+      if (updated != null) {
         setState(() => _currentPlant = updated);
       }
 
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         SnackBar(content: Text(l10n.inaturalistPushSuccess)),
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         SnackBar(
           content: Text(l10n.inaturalistPushError(e.toString())),
-          backgroundColor: Theme.of(context).colorScheme.error,
+          backgroundColor: errorColor,
         ),
       );
     } finally {
