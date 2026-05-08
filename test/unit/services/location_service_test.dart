@@ -19,6 +19,10 @@ class _FakeGeolocator extends GeolocatorPlatform {
   LocationPermission permissionAfterRequest = LocationPermission.whileInUse;
 
   Position? fakePosition;
+  Exception? positionException;
+
+  // Captures the LocationSettings passed to getCurrentPosition for assertions.
+  LocationSettings? capturedSettings;
 
   int openAppSettingsCalls = 0;
   int openLocationSettingsCalls = 0;
@@ -37,6 +41,8 @@ class _FakeGeolocator extends GeolocatorPlatform {
   Future<Position> getCurrentPosition({
     LocationSettings? locationSettings,
   }) async {
+    capturedSettings = locationSettings;
+    if (positionException != null) throw positionException!;
     if (fakePosition == null) {
       throw Exception('No fake position configured');
     }
@@ -171,6 +177,30 @@ void main() {
     test('throws when permission is permanently denied', () async {
       fake.serviceEnabled = true;
       fake.permission = LocationPermission.deniedForever;
+
+      await expectLater(
+        svc.getCurrentLocation(),
+        throwsA(isA<Exception>()),
+      );
+    });
+
+    test('passes LocationAccuracy.high to the platform', () async {
+      fake.serviceEnabled = true;
+      fake.permission = LocationPermission.whileInUse;
+      fake.fakePosition = _fakePosition();
+
+      await svc.getCurrentLocation();
+
+      expect(
+        fake.capturedSettings?.accuracy,
+        LocationAccuracy.high,
+      );
+    });
+
+    test('propagates exception thrown by getCurrentPosition', () async {
+      fake.serviceEnabled = true;
+      fake.permission = LocationPermission.whileInUse;
+      fake.positionException = Exception('platform error');
 
       await expectLater(
         svc.getCurrentLocation(),

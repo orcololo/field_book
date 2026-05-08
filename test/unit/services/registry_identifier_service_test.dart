@@ -230,6 +230,15 @@ void main() {
         throwsA(isA<Exception>()),
       );
     });
+
+    test('concurrent calls produce distinct identifiers', () async {
+      // isar.writeTxn() serializes concurrent transactions, so 10 parallel
+      // calls each get a unique, non-overlapping identifier.
+      final results = await Future.wait([
+        for (var i = 0; i < 10; i++) svc.generateNextIdentifier(),
+      ]);
+      expect(results.toSet().length, 10);
+    });
   });
 
   // ---------------------------------------------------------------------------

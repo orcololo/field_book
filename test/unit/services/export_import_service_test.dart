@@ -271,6 +271,16 @@ void main() {
       final lines = csv.trim().split('\n');
       expect(lines.length, 3);
     });
+
+    test('lat/lng are formatted to 6 decimal places', () async {
+      final plant = _plant()
+        ..latitude = -3.1
+        ..longitude = -60.0;
+      final csv = await svc.exportToDarwinCore(plants: [plant]);
+
+      expect(csv, contains('-3.100000'));
+      expect(csv, contains('-60.000000'));
+    });
   });
 
   // ── importFromJson (needs real Isar) ───────────────────────────────────────
@@ -364,6 +374,24 @@ void main() {
 
       expect(result.skipped, 1);
       expect(result.errors, isNotEmpty);
+    });
+
+    test('JSON round-trip preserves uuid and scientificName', () async {
+      // Export a single PlantRecord to JSON, then import it back and verify the
+      // plant is retrievable from Isar with the original values.
+      final original = _plant(
+        uuid: 'round-trip-uuid-1',
+        scientificName: 'Heliconia bihai',
+      );
+      final jsonStr = await svc.exportToJson(plants: [original]);
+      final result = await svc.importFromJson(jsonStr);
+
+      expect(result.imported, 1);
+      expect(result.errors, isEmpty);
+
+      final saved = await PlantRepository().getByUuid('round-trip-uuid-1');
+      expect(saved, isNotNull);
+      expect(saved!.scientificName, 'Heliconia bihai');
     });
   });
 

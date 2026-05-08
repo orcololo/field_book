@@ -481,6 +481,196 @@ void main() {
           .findFirst();
       expect(updated?.scientificName, 'Updated Name');
     });
+
+    test('partial batch: one created, one error → pushed:1 errors:1', () async {
+      // Seed two pending plants. Give each a distinct registryIdentifier to
+      // avoid Isar's unique-index constraint on that field (null counts as a
+      // unique value in Isar 3).
+      final plant1 = _minimalPlant(uuid: 'partial-1')
+        ..registryIdentifier = 'P-partial-1'
+        ..syncMetadata.syncStatus = SyncStatus.pending;
+      final plant2 = _minimalPlant(uuid: 'partial-2')
+        ..registryIdentifier = 'P-partial-2'
+        ..syncMetadata.syncStatus = SyncStatus.pending;
+      await isar.writeTxn(() async {
+        await isar.plantRecords.put(plant1);
+        await isar.plantRecords.put(plant2);
+      });
+
+      // Server returns one success and one error in the same batch.
+      when(
+        () => mockDio.post<Map<String, dynamic>>(
+          ApiEndpoints.syncPush,
+          data: any(named: 'data'),
+        ),
+      ).thenAnswer(
+        (_) async => Response<Map<String, dynamic>>(
+          data: {
+            'data': {
+              'registries': [
+                {'status': 'created', 'serverId': 'srv-p1', 'syncVersion': 1},
+                {'status': 'error', 'message': 'validation failed'},
+              ],
+              'sessions': [],
+            },
+          },
+          statusCode: 200,
+          requestOptions: RequestOptions(path: ''),
+        ),
+      );
+
+      when(
+        () => mockDio.get<Map<String, dynamic>>(
+          ApiEndpoints.syncPull,
+          queryParameters: any(named: 'queryParameters'),
+        ),
+      ).thenAnswer(
+        (_) async => _dioResponse({
+          'data': {'registries': [], 'sessions': [], 'hasMore': false},
+        }),
+      );
+
+      final result = await svc.sync(deviceId: 'test-device');
+
+      expect(result.pushed, 1);
+      expect(result.errors, 1);
+    });
+
+    test('idempotency: second sync does not push already-synced plant', () async {
+      final plant = _minimalPlant(uuid: 'idem-1');
+      plant.syncMetadata.syncStatus = SyncStatus.pending;
+      await isar.writeTxn(() => isar.plantRecords.put(plant));
+
+      // Mock POST for the first (and only expected) push.
+      when(
+        () => mockDio.post<Map<String, dynamic>>(
+          ApiEndpoints.syncPush,
+          data: any(named: 'data'),
+        ),
+      ).thenAnswer(
+        (_) async => Response<Map<String, dynamic>>(
+          data: {
+            'data': {
+              'registries': [
+                {'status': 'created', 'serverId': 'srv-idem-1', 'syncVersion': 1},
+              ],
+              'sessions': [],
+            },
+          },
+          statusCode: 200,
+          requestOptions: RequestOptions(path: ''),
+        ),
+      );
+
+      when(
+        () => mockDio.get<Map<String, dynamic>>(
+          ApiEndpoints.syncPull,
+          queryParameters: any(named: 'queryParameters'),
+        ),
+      ).thenAnswer(
+        (_) async => _dioResponse({
+          'data': {'registries': [], 'sessions': [], 'hasMore': false},
+        }),
+      );
+
+      // First sync — plant is pending, should be pushed.
+      final first = await svc.sync(deviceId: 'test-device');
+      expect(first.pushed, 1);
+
+      // Second sync — plant is now synced, nothing to push.
+      final second = await svc.sync(deviceId: 'test-device');
+      expect(second.pushed, 0);
+      expect(second.errors, 0);
+
+      // POST was called exactly once across both syncs.
+      verify(
+        () => mockDio.post<Map<String, dynamic>>(
+          ApiEndpoints.syncPush,
+          data: any(named: 'data'),
+        ),
+      ).called(1);
+    });
+
+    test('401 response counts as error with no refresh/retry', () async {
+      // FIXME: this is wrong but matches current implementation. See "Deferred follow-ups" in 2026-05-08-phase3-test-foundation.md
+      // SyncService has no token-refresh or retry logic. A 401 from the push
+      // endpoint is caught by the outer exception handler and counted as an
+      // error. Fix: add an auth interceptor (or refresh-and-retry wrapper) so
+      // that a 401 triggers a token refresh and a single retry before giving up.
+      final plant = _minimalPlant(uuid: 'auth-plant-1');
+      plant.syncMetadata.syncStatus = SyncStatus.pending;
+      await isar.writeTxn(() => isar.plantRecords.put(plant));
+
+      when(
+        () => mockDio.post<Map<String, dynamic>>(
+          ApiEndpoints.syncPush,
+          data: any(named: 'data'),
+        ),
+      ).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(path: ApiEndpoints.syncPush),
+          response: Response(
+            statusCode: 401,
+            requestOptions: RequestOptions(path: ApiEndpoints.syncPush),
+          ),
+          type: DioExceptionType.badResponse,
+        ),
+      );
+
+      when(
+        () => mockDio.get<Map<String, dynamic>>(
+          ApiEndpoints.syncPull,
+          queryParameters: any(named: 'queryParameters'),
+        ),
+      ).thenAnswer(
+        (_) async => _dioResponse({
+          'data': {'registries': [], 'sessions': [], 'hasMore': false},
+        }),
+      );
+
+      final result = await svc.sync(deviceId: 'test-device');
+
+      expect(result.errors, greaterThan(0));
+    });
+
+    test('network failure leaves plant in pending state', () async {
+      final plant = _minimalPlant(uuid: 'net-fail-1');
+      plant.syncMetadata.syncStatus = SyncStatus.pending;
+      await isar.writeTxn(() => isar.plantRecords.put(plant));
+
+      when(
+        () => mockDio.post<Map<String, dynamic>>(
+          ApiEndpoints.syncPush,
+          data: any(named: 'data'),
+        ),
+      ).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(path: ApiEndpoints.syncPush),
+          type: DioExceptionType.connectionError,
+        ),
+      );
+
+      when(
+        () => mockDio.get<Map<String, dynamic>>(
+          ApiEndpoints.syncPull,
+          queryParameters: any(named: 'queryParameters'),
+        ),
+      ).thenAnswer(
+        (_) async => _dioResponse({
+          'data': {'registries': [], 'sessions': [], 'hasMore': false},
+        }),
+      );
+
+      await svc.sync(deviceId: 'test-device');
+
+      // After a network failure the plant must still be pending so it is
+      // retried on the next sync.
+      final after = await isar.plantRecords
+          .filter()
+          .uuidEqualTo('net-fail-1')
+          .findFirst();
+      expect(after?.syncMetadata.syncStatus, SyncStatus.pending);
+    });
   });
 
   // ── conflict resolution (Isar) ────────────────────────────────────────────
