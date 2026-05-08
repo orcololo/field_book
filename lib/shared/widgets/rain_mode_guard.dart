@@ -99,7 +99,7 @@ class RainModeGuard extends ConsumerWidget {
       barrierLabel: actionLabel,
       barrierColor: Colors.black.withValues(alpha: 0.55),
       transitionDuration: const Duration(milliseconds: 220),
-      pageBuilder: (_, __, ___) => _RainModeUnlockOverlay(
+      pageBuilder: (_, _, _) => _RainModeUnlockOverlay(
         overlayTitle: overlayTitle,
         overlayMessage: overlayMessage,
         unlockHint: unlockHint,
