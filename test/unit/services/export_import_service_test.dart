@@ -310,7 +310,7 @@ void main() {
     });
 
     test('imports multiple plants', () async {
-      // FIXME: this is wrong but matches current implementation.
+      // FIXME: this is wrong but matches current implementation. See "Deferred follow-ups" in 2026-05-08-phase3-test-foundation.md
       // importFromJson silently skips plants 2..N when registryIdentifier is
       // null for all of them, because PlantRecord has a unique index on
       // registryIdentifier and Isar treats null as a unique value (Isar 3

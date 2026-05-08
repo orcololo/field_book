@@ -129,6 +129,8 @@ dev_dependencies:
 
   # Testing
   mocktail: ^1.0.0
+  image_picker_platform_interface: ^2.11.0
+  path_provider_platform_interface: ^2.1.0
   integration_test:
     sdk: flutter
   

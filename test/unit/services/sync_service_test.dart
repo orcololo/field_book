@@ -146,11 +146,11 @@ void main() {
     late MockConnectivity mockConn;
     late MockDio mockDio;
     late SyncService svc;
-    late Isar _isar;
-    late Directory _dir;
+    late Isar isar;
+    late Directory dir;
 
     setUp(() async {
-      (_isar, _dir) = await openTestIsar();
+      (isar, dir) = await openTestIsar();
       mockConn = MockConnectivity();
       mockDio = MockDio();
       svc = SyncService(
@@ -164,7 +164,7 @@ void main() {
       ).thenAnswer((_) async => ConnectivityResult.wifi);
     });
 
-    tearDown(() => closeTestIsar(_isar, _dir));
+    tearDown(() => closeTestIsar(isar, dir));
 
     test(
       'returns 0 pushed/pulled when DB is empty and pull returns empty lists',
@@ -207,7 +207,7 @@ void main() {
       // Save a pending plant to Isar
       final plant = _minimalPlant(uuid: 'pending-push-1');
       plant.syncMetadata.syncStatus = SyncStatus.pending;
-      await _isar.writeTxn(() => _isar.plantRecords.put(plant));
+      await isar.writeTxn(() => isar.plantRecords.put(plant));
 
       // Mock POST /sync/push → server accepted the plant
       when(
@@ -253,7 +253,7 @@ void main() {
     });
 
     test('pull with one remote plant returns pulled: 1', () async {
-      // FIXME: this is wrong but matches current implementation.
+      // FIXME: this is wrong but matches current implementation. See "Deferred follow-ups" in 2026-05-08-phase3-test-foundation.md
       // _upsertPlantFromRemote creates a new PlantRecord() and then calls
       // _applyRemoteDataToPlant which accesses plant.createdAt (a late field)
       // before it is initialized, throwing LateInitializationError. The outer
@@ -294,7 +294,7 @@ void main() {
     });
 
     test('pull with one remote session returns pulled: 1', () async {
-      // FIXME: this is wrong but matches current implementation.
+      // FIXME: this is wrong but matches current implementation. See "Deferred follow-ups" in 2026-05-08-phase3-test-foundation.md
       // _upsertSessionFromRemote accesses session.createdAt (a late field) on
       // a freshly-created CollectionSession() before it is initialized,
       // throwing LateInitializationError. Fix: same as plant — initialise
@@ -334,7 +334,7 @@ void main() {
     test('push returns conflict when server responds conflict', () async {
       final plant = _minimalPlant(uuid: 'conflict-push-1');
       plant.syncMetadata.syncStatus = SyncStatus.pending;
-      await _isar.writeTxn(() => _isar.plantRecords.put(plant));
+      await isar.writeTxn(() => isar.plantRecords.put(plant));
 
       when(
         () => mockDio.post<Map<String, dynamic>>(
@@ -402,7 +402,7 @@ void main() {
         ..scientificName = 'Old Name'
         ..syncMetadata.syncStatus = SyncStatus.synced
         ..syncMetadata.serverId = 'srv-existing-1';
-      await _isar.writeTxn(() => _isar.plantRecords.put(existing));
+      await isar.writeTxn(() => isar.plantRecords.put(existing));
 
       when(
         () => mockDio.get<Map<String, dynamic>>(
@@ -475,7 +475,7 @@ void main() {
       expect(result.errors, 0);
 
       // Verify the plant was updated in Isar
-      final updated = await _isar.plantRecords
+      final updated = await isar.plantRecords
           .filter()
           .uuidEqualTo('existing-plant-uuid')
           .findFirst();
@@ -486,12 +486,12 @@ void main() {
   // ── conflict resolution (Isar) ────────────────────────────────────────────
 
   group('conflict resolution', () {
-    late Isar _isar;
-    late Directory _dir;
+    late Isar isar;
+    late Directory dir;
     late SyncService svc;
 
     setUp(() async {
-      (_isar, _dir) = await openTestIsar();
+      (isar, dir) = await openTestIsar();
       svc = SyncService(
         api: ApiClient(MockDio()),
         mediaUpload: MockMediaUploadService(),
@@ -499,9 +499,9 @@ void main() {
       );
     });
 
-    tearDown(() => closeTestIsar(_isar, _dir));
+    tearDown(() => closeTestIsar(isar, dir));
 
-    PlantRecord _conflictPlant({String? conflictData}) {
+    PlantRecord conflictPlant({String? conflictData}) {
       final plant = _minimalPlant(uuid: 'conflict-plant-1');
       plant.syncMetadata
         ..syncStatus = SyncStatus.conflict
@@ -512,24 +512,24 @@ void main() {
     }
 
     test('keepLocalConflict marks plant as synced', () async {
-      final plant = _conflictPlant();
-      await _isar.writeTxn(() => _isar.plantRecords.put(plant));
+      final plant = conflictPlant();
+      await isar.writeTxn(() => isar.plantRecords.put(plant));
 
       await svc.keepLocalConflict(plant);
 
-      final updated = await _isar.plantRecords.get(plant.id);
+      final updated = await isar.plantRecords.get(plant.id);
       expect(updated?.syncMetadata.syncStatus, SyncStatus.synced);
       expect(updated?.syncMetadata.conflictData, isNull);
     });
 
     test('keepLocalConflict with conflict data preserves syncVersion', () async {
       final conflictData = '{"_id":"srv-x","syncVersion":7}';
-      final plant = _conflictPlant(conflictData: conflictData);
-      await _isar.writeTxn(() => _isar.plantRecords.put(plant));
+      final plant = conflictPlant(conflictData: conflictData);
+      await isar.writeTxn(() => isar.plantRecords.put(plant));
 
       await svc.keepLocalConflict(plant);
 
-      final updated = await _isar.plantRecords.get(plant.id);
+      final updated = await isar.plantRecords.get(plant.id);
       expect(updated?.syncMetadata.syncStatus, SyncStatus.synced);
       expect(updated?.syncMetadata.syncVersion, 7);
     });
@@ -541,12 +541,12 @@ void main() {
     });
 
     test('acceptServerConflict with empty conflictData falls back to keepLocal', () async {
-      final plant = _conflictPlant(conflictData: null);
-      await _isar.writeTxn(() => _isar.plantRecords.put(plant));
+      final plant = conflictPlant(conflictData: null);
+      await isar.writeTxn(() => isar.plantRecords.put(plant));
 
       await svc.acceptServerConflict(plant);
 
-      final updated = await _isar.plantRecords.get(plant.id);
+      final updated = await isar.plantRecords.get(plant.id);
       expect(updated?.syncMetadata.syncStatus, SyncStatus.synced);
     });
 
@@ -555,23 +555,23 @@ void main() {
           '"uuid":"conflict-plant-1","scientificName":"Remote Species",'
           '"dateCollected":"2025-06-01T00:00:00.000","deviceId":"srv-dev",'
           '"isDraft":false}';
-      final plant = _conflictPlant(conflictData: conflictData);
-      await _isar.writeTxn(() => _isar.plantRecords.put(plant));
+      final plant = conflictPlant(conflictData: conflictData);
+      await isar.writeTxn(() => isar.plantRecords.put(plant));
 
       await svc.acceptServerConflict(plant);
 
-      final updated = await _isar.plantRecords.get(plant.id);
+      final updated = await isar.plantRecords.get(plant.id);
       expect(updated?.scientificName, 'Remote Species');
       expect(updated?.syncMetadata.syncStatus, SyncStatus.synced);
     });
 
     test('resolveAllConflictsKeepMostRecent resolves conflict plant', () async {
-      final plant = _conflictPlant(conflictData: '{"_id":"srv-z","syncVersion":2}');
-      await _isar.writeTxn(() => _isar.plantRecords.put(plant));
+      final plant = conflictPlant(conflictData: '{"_id":"srv-z","syncVersion":2}');
+      await isar.writeTxn(() => isar.plantRecords.put(plant));
 
       await svc.resolveAllConflictsKeepMostRecent();
 
-      final updated = await _isar.plantRecords.get(plant.id);
+      final updated = await isar.plantRecords.get(plant.id);
       expect(updated?.syncMetadata.syncStatus, SyncStatus.synced);
     });
 
@@ -585,20 +585,20 @@ void main() {
           '"localModifiedAt":"${serverModified.toIso8601String()}",'
           '"dateCollected":"2025-06-01T00:00:00.000","deviceId":"srv-dev","isDraft":false}';
 
-      final plant = _conflictPlant(conflictData: conflictData);
+      final plant = conflictPlant(conflictData: conflictData);
       plant.syncMetadata.localModifiedAt = localModified;
-      await _isar.writeTxn(() => _isar.plantRecords.put(plant));
+      await isar.writeTxn(() => isar.plantRecords.put(plant));
 
       await svc.resolveAllConflictsKeepMostRecent();
 
-      final updated = await _isar.plantRecords.get(plant.id);
+      final updated = await isar.plantRecords.get(plant.id);
       expect(updated?.scientificName, 'Server Wins');
       expect(updated?.syncMetadata.syncStatus, SyncStatus.synced);
     });
 
     test('resolvePlantConflictWithData applies provided data', () async {
-      final plant = _conflictPlant();
-      await _isar.writeTxn(() => _isar.plantRecords.put(plant));
+      final plant = conflictPlant();
+      await isar.writeTxn(() => isar.plantRecords.put(plant));
 
       final resolvedData = {
         '_id': 'srv-resolved',
@@ -612,7 +612,7 @@ void main() {
 
       await svc.resolvePlantConflictWithData(plant, resolvedData);
 
-      final updated = await _isar.plantRecords.get(plant.id);
+      final updated = await isar.plantRecords.get(plant.id);
       expect(updated?.scientificName, 'Resolved Species');
       expect(updated?.syncMetadata.syncVersion, 9);
       expect(updated?.syncMetadata.syncStatus, SyncStatus.synced);

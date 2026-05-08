@@ -305,7 +305,8 @@ void main() {
 
   // ---------------------------------------------------------------------------
   group('addDeviceToSession', () {
-    // FIXME: production bug — Isar deserializes List<String> as a fixed-length
+    // FIXME: this is wrong but matches current implementation. See "Deferred follow-ups" in 2026-05-08-phase3-test-foundation.md
+    // production bug — Isar deserializes List<String> as a fixed-length
     // list. session.sharedWith.add(deviceId) throws UnsupportedError at
     // runtime. Fix: copy the list in addDeviceToSession:
     //   session.sharedWith = [...session.sharedWith, deviceId];

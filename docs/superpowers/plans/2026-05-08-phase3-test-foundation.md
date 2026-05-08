@@ -853,4 +853,18 @@ This list is intentionally seeded — append to it during execution.
 - **Sync collaborator tests** are scheduled for Phase 5 § 5.0, after Phase 4 splits `sync_service.dart` into `SyncPusher`, `SyncPuller`, `ConflictDetector`, `IsarToApiMapper`.
 - **CI integration** of `flutter test --coverage` with a coverage gate at 70% — out of scope; tracked under the roadmap's CI/CD bucket.
 
+*(Bugs discovered during Phase 3 execution — appended per bug-on-discovery policy:)*
+
+- **[BUG] `SessionRepository.addDeviceToSession` fixed-length list crash** (`test/unit/repositories/session_repository_test.dart`): `session.sharedWith` is deserialized by Isar as a fixed-length `List<String>`. Calling `.add(deviceId)` on it throws `UnsupportedError` at runtime. Fix: replace `.add()` with list spread — `session.sharedWith = [...session.sharedWith, deviceId];` — inside `addDeviceToSession`.
+
+- **[BUG] `PhotoService` missing `ImagePicker` injection seam** (`test/unit/services/photo_service_test.dart`): `PhotoService` constructs `ImagePicker()` inline (`final ImagePicker _picker = ImagePicker()`). No constructor parameter is accepted, so the picker cannot be mocked in unit tests. Consequence: `takePhoto`, `pickFromGallery`, `pickMultipleFromGallery` are untestable in unit tests (coverage is 20%). Fix: accept `ImagePicker? picker` in the constructor and default to `ImagePicker()`.
+
+- **[BUG] `SyncService._upsertPlantFromRemote` `LateInitializationError` on `createdAt`** (`test/unit/services/sync_service_test.dart`): When pulling a brand-new plant from the server, `_upsertPlantFromRemote` constructs `PlantRecord()` and immediately passes it to `_applyRemoteDataToPlant`, which reads `plant.createdAt` (a `late DateTime` field) before it is initialized. This throws `LateInitializationError`. Fix: set `plant.createdAt = DateTime.now()` for new records before the `_applyRemoteDataToPlant` call.
+
+- **[BUG] `SyncService._upsertSessionFromRemote` `LateInitializationError` on `createdAt`** (`test/unit/services/sync_service_test.dart`): Same root cause as the plant case above — `CollectionSession()` is constructed fresh and `session.createdAt` is accessed before initialization. Fix: same as plant — initialize `createdAt` before use.
+
+- **[BUG] `ExportImportService.importFromJson` drops plants 2..N when all have `null` `registryIdentifier`** (`test/unit/services/export_import_service_test.dart`): Isar 3 treats `null` as a unique value for unique-indexed nullable fields. When multiple imported plants all have `registryIdentifier = null`, only the first succeeds; subsequent ones hit the unique constraint inside the per-plant `try/catch` and silently increment `skipped`. Fix: generate a unique stub identifier (e.g., a UUID-derived placeholder) for plants whose `registryIdentifier` is null, or relax the unique index to allow multiple `null`s.
+
+- **[DEVIATION] `IsarService` `@visibleForTesting` seam** (`lib/core/database/platforms/isar_service_mobile.dart`): The plan said "no production-code changes." A single `@visibleForTesting` static setter (`overrideIsarForTesting`) was added to `IsarServiceMobile` to allow the test harness to inject an in-memory `Isar` instance. This is a zero-behavioral-change annotation-only addition necessary for the entire test suite to function; without it there is no testable seam. Accepted as a necessary exception to the "no production changes" constraint.
+
 (Bugs discovered during execution append below this line.)
