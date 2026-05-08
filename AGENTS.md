@@ -19,9 +19,9 @@ field_book/
 │   ├── shared/           # Reusable widgets, utils, constants
 │   └── l10n/             # ARB i18n (pt, en, es)
 ├── docs/superpowers/     # Specs and plans for ongoing correction passes
-├── test/                 # Flutter tests: unit/, widget/, integration/, golden/ (skeleton — empty)
+├── test/                 # Flutter tests: unit/, widget/, integration/, golden/ (leaf dirs empty; widget_test.dart smoke test only)
 ├── android/ ios/ web/    # Platform shells — rarely edited directly
-└── .github/              # Agent docs and prompts (legacy refs to backend pending refresh)
+└── .github/              # Agent docs, prompts, and CI (see NOTES)
 ```
 
 ## WHERE TO LOOK
@@ -37,7 +37,7 @@ field_book/
 | Add i18n string | `lib/l10n/app_en.arb` + equivalent pt/es |
 | Add HTTP client/interceptor | `lib/core/network/` |
 | Sync orchestration / mapper | `lib/core/sync/sync_service.dart` |
-| Add a test | `test/{unit,widget,integration,golden}/` (empty as of 2026-05-08) |
+| Add a test | `test/{unit,widget,integration,golden}/` |
 
 ## ARCHITECTURE: FLUTTER
 
