@@ -159,7 +159,7 @@ void main() {
       expect(await repo.searchByName('nonexistent'), isEmpty);
     });
 
-    test('returns empty for empty query', () async {
+    test('returns all records for empty query (current buggy behavior)', () async {
       // FIXME: this is wrong but matches current implementation. See "Deferred follow-ups" in 2026-05-08-phase3-test-foundation.md
       // searchByName('') uses Isar's nameContains('') which matches all records
       // rather than returning an empty list. A search function should return an
