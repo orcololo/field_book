@@ -1,7 +1,7 @@
 # Field Book — Roadmap & Next Steps
 
-> Last updated: March 17, 2026  
-> Current state: Mature Flutter frontend (offline-first), early NestJS backend with basic modules, sync infrastructure not yet connected
+> Last updated: 2026-05-08
+> Current state: Mature Flutter frontend (offline-first); HTTP/auth/sync infrastructure shipped; sync service is wired and conflict resolution UI exists; backend lives in a sibling repository (`../backend/`).
 
 ---
 
@@ -9,11 +9,12 @@
 
 | Area | Maturity | Notes |
 |------|----------|-------|
-| Flutter Frontend | ★★★★☆ | 11 feature modules, Isar local DB, export/import, maps, audio transcription |
-| NestJS Backend | ★★☆☆☆ | Auth, CRUD modules, R2 upload, Swagger — but shallow test coverage |
-| Sync (Flutter ↔ API) | ★☆☆☆☆ | Backend endpoints exist but Flutter has no HTTP client at all |
+| Flutter Frontend | ★★★★☆ | 16 feature modules, Isar local DB, export/import, maps, audio transcription, OCR, weather/moon enrichments |
+| Sync (Flutter ↔ API) | ★★★☆☆ | Dio HTTP client + auth interceptor + token storage in place; AuthNotifier wired; SyncService orchestrator + conflict resolution UI shipped |
+| Backend | n/a | Lives in sibling repository (`../backend/`); see that project's docs for backend maturity |
 | CI/CD | ☆☆☆☆☆ | No GitHub Actions, manual builds and releases |
-| Testing | ★☆☆☆☆ | Minimal — 2 backend unit specs, 1 e2e spec; Flutter test dirs exist but sparse |
+| Testing | ★☆☆☆☆ | Flutter `test/{unit,widget,integration,golden}/` directories present but empty — Phase 3 of the 2026-05-08 correction pass populates them |
+| Code quality | ★★★★★ | `flutter analyze` clean (Phase 1 of the 2026-05-08 correction pass) |
 
 ---
 
@@ -22,34 +23,34 @@
 The app is 100% offline today. This phase bridges it to the API.
 
 ### 1.1 Flutter HTTP Client Layer
-- [ ] Add `dio` dependency to `pubspec.yaml`
-- [ ] Create `lib/core/network/api_client.dart` — base Dio instance with base URL, timeouts, content-type
-- [ ] Create `lib/core/network/auth_interceptor.dart` — attach JWT access token to every request, auto-refresh on 401
-- [ ] Create `lib/core/network/connectivity_interceptor.dart` — queue requests when offline (leverage existing `connectivity_plus`)
-- [ ] Store tokens securely with `flutter_secure_storage`
-- [ ] Create `lib/core/network/api_endpoints.dart` — centralized endpoint constants
+- [x] Add `dio` dependency to `pubspec.yaml`
+- [x] Create `lib/core/network/api_client.dart` — base Dio instance with base URL, timeouts, content-type
+- [x] Create `lib/core/network/auth_interceptor.dart` — attach JWT access token to every request, auto-refresh on 401
+- [x] Create `lib/core/network/connectivity_interceptor.dart` — queue requests when offline (leverage existing `connectivity_plus`)
+- [x] Store tokens securely with `flutter_secure_storage`
+- [x] Create `lib/core/network/api_endpoints.dart` — centralized endpoint constants
 
 ### 1.2 Auth Integration on Flutter
-- [ ] Create `lib/core/services/auth_service.dart` — login, Google sign-in, refresh, logout calls
-- [ ] Create `AuthNotifier` Riverpod provider managing auth state (unauthenticated → authenticated → expired)
-- [ ] Add login/register screens (or gate in onboarding flow)
-- [ ] Persist auth state across app restarts (secure storage)
-- [ ] Handle token expiry gracefully — silent refresh or redirect to login
+- [x] Create `lib/core/services/auth_service.dart` — login, Google sign-in, refresh, logout calls
+- [x] Create `AuthNotifier` Riverpod provider managing auth state (unauthenticated → authenticated → expired)
+- [x] Add login/register screens (or gate in onboarding flow)
+- [x] Persist auth state across app restarts (secure storage)
+- [x] Handle token expiry gracefully — silent refresh or redirect to login
 
 ### 1.3 Sync Service on Flutter
-- [ ] Create `lib/core/sync/sync_service.dart` — orchestrate push/pull cycles
-- [ ] Map Isar `PlantRecord` fields → API `SyncRegistryItemDto` JSON (47 fields)
-- [ ] Map Isar `CollectionSession` fields → API `SyncSessionItemDto` JSON
-- [ ] Implement conflict resolution UI — show diff, let user pick version
+- [x] Create `lib/core/sync/sync_service.dart` — orchestrate push/pull cycles
+- [x] Map Isar `PlantRecord` fields → API `SyncRegistryItemDto` JSON (47 fields)
+- [x] Map Isar `CollectionSession` fields → API `SyncSessionItemDto` JSON
+- [x] Implement conflict resolution UI — show diff, let user pick version
 - [ ] Create `lib/core/sync/sync_queue.dart` — track pending changes (created/updated/deleted since last sync)
-- [ ] Add sync status indicator in app bar or settings
+- [x] Add sync status indicator in app bar or settings
 - [ ] Background sync with `workmanager` or periodic timer
 
 ### 1.4 Media Upload Coordination
-- [ ] Before sync push, upload local photos to R2 via upload endpoint
-- [ ] Replace local file paths with R2 URLs in registry data before pushing
+- [x] Before sync push, upload local photos to R2 via upload endpoint
+- [x] Replace local file paths with R2 URLs in registry data before pushing
 - [ ] Handle partial upload failures (retry queue)
-- [ ] Download remote images on pull for offline access (cache with `cached_network_image`)
+- [x] Download remote images on pull for offline access (cache with `cached_network_image`)
 - [ ] Audio file upload support (field recordings, transcriptions)
 
 ---
@@ -218,10 +219,10 @@ The app is 100% offline today. This phase bridges it to the API.
 
 | Priority | Items | Impact | Effort |
 |----------|-------|--------|--------|
-| **P0 — Now** | Flutter HTTP client, Auth integration, Sync service | Unlocks cloud features | Medium |
-| **P1 — Soon** | Backend testing, CI/CD pipelines, Media upload coordination | Reliability & velocity | Medium |
-| **P2 — Next** | Session sharing via backend, Species enrichment, Security hardening | Collaboration & data quality | Large |
-| **P3 — Later** | Notifications, Reporting, Web dashboard | User engagement | Large |
+| **P0 — Now** | Flutter test foundation (Phase 3 of correction pass), oversized-screen refactor (Phase 4) | Code quality & velocity | Large |
+| **P1 — Soon** | CI/CD pipelines, Background sync (`workmanager`), Audio upload to R2 | Reliability & feature parity | Medium |
+| **P2 — Next** | Session sharing via backend, Species enrichment, Security hardening, Sync queue extraction | Collaboration & data quality | Large |
+| **P3 — Later** | Notifications, Reporting, Web dashboard, iOS build | User engagement, platform reach | Large |
 | **P4 — Wishlist** | AI plant ID, GBIF publishing, Hardware integration | Differentiation | Very Large |
 
 ---
@@ -230,10 +231,11 @@ The app is 100% offline today. This phase bridges it to the API.
 
 | Item | Location | Severity |
 |------|----------|----------|
-| No HTTP client in Flutter | `lib/core/` | **Critical** — blocks all cloud features |
-| Sync module is basic | `backend/src/modules/sync/` | **High** — conflict resolution needs real-world testing |
-| Only 3 backend test files | `backend/src/`, `backend/test/` | **High** — refactoring risky without coverage |
-| No CI/CD | `.github/workflows/` | **Medium** — manual process prone to errors |
+| Conflict resolution needs real-world testing | `lib/core/sync/sync_service.dart`, `lib/features/sync/` | **High** — the orchestrator is in place but stress-test gaps remain |
+| No Flutter test coverage | `test/{unit,widget,integration,golden}/` | **High** — directories exist but empty; Phase 3 of the 2026-05-08 correction pass populates them |
+| Oversized screens | `plant_form_screen.dart` (3531), `plant_detail_screen.dart` (2175), `plant_edit_screen.dart` (1651), `settings_screen.dart` (2124) | **Medium** — Phase 4 of the correction pass refactors these |
+| No CI/CD | `.github/workflows/` | **Medium** — manual builds and releases |
+| Sync queue not externalized | `lib/core/sync/` | **Low** — queueing logic embedded in sync_service.dart; could move to sync_queue.dart for testability |
+| Background sync not wired | `lib/core/sync/` | **Low** — no `workmanager` integration; manual sync only |
 | Google Drive backup vs R2 sync overlap | `lib/core/services/google_drive_backup_service.dart` | **Low** — two backup mechanisms, clarify which is primary |
-| Hardcoded rate limits | `backend/src/app.module.ts` | **Low** — should be env-configurable per route |
-| No database migrations strategy | `backend/` | **Medium** — schema changes need coordination |
+| Audio upload to R2 not implemented | `lib/core/services/media_upload_service.dart` | **Low** — audio recordings are local-only |
