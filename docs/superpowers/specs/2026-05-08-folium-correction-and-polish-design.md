@@ -12,7 +12,7 @@ Folium (`field_book/`) is a mature offline-first botanical field collection app:
 
 A focused audit (2026-05-08) found that the project's stated documentation is significantly behind its actual state and that the real work is consolidation, not greenfield:
 
-- `flutter analyze`: **14 info-level issues** (8 real async-context bugs, 2 deprecated Radio API uses, 4 cosmetic).
+- `flutter analyze`: **14 info-level issues** (9 real async-context bugs, 2 deprecated Radio API uses, 3 cosmetic).
 - **4 screens >1500 lines** (`plant_form_screen.dart` 3,531; `plant_detail_screen.dart` 2,175; `settings_screen.dart` 2,124; `plant_edit_screen.dart` 1,651). All but `settings_screen.dart` are monoliths in a single `State` class. `settings_screen.dart` is already class-decomposed and only needs splitting into separate files.
 - **Test coverage effectively zero**: `test/{unit,widget,integration,golden}/` directories exist but are empty; only `test/widget_test.dart` (smoke test) is real.
 - **Doc drift**: `ROADMAP.md` (last updated 2026-03-17) lists as P0 work that is already in `lib/` (HTTP client, auth integration, sync service, conflict resolution UI, media upload). `README.md` (v1.8.0) does not mention 5 features, 12 services, and 7 models that exist in code. `RELEASE_NOTES_v1.8.0.md` is linked from README but does not exist.
@@ -57,7 +57,7 @@ Rationale: bugs first because they are the cheapest win and remove flake risk be
 
 Fix all 14 `flutter analyze` issues. No behavior change.
 
-### 1.1 — `use_build_context_synchronously` (8 instances)
+### 1.1 — `use_build_context_synchronously` (9 instances)
 
 | File | Lines |
 |------|-------|
@@ -83,10 +83,10 @@ Verify the `mounted` check refers to the same widget whose `BuildContext` we'd o
 
 `lib/shared/widgets/fenologia_fournier_widget.dart:92, 93` use the post-3.32-deprecated `Radio.groupValue` and `Radio.onChanged`. Migrate to `RadioGroup<T>` ancestor + child `Radio<T>` widgets.
 
-### 1.3 — `unnecessary_underscores` (4 instances)
+### 1.3 — `unnecessary_underscores` (3 instances)
 
-- `lib/features/sync/screens/conflict_resolution_screen.dart:55`
-- `lib/shared/widgets/rain_mode_guard.dart:102` (×2)
+- `lib/features/sync/screens/conflict_resolution_screen.dart:55` (column 41)
+- `lib/shared/widgets/rain_mode_guard.dart:102` (columns 24 and 28)
 
 Trivial: rename `__` to `_`.
 
