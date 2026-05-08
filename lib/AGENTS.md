@@ -8,21 +8,23 @@ All Flutter application code. Architecture: features (screens only) + core (stat
 
 ```
 lib/
-├── features/             # One dir per feature — contains screens/ only
-│   ├── auth/
+├── features/             # One dir per feature — contains screens/ only (16 features)
+│   ├── auth/             # Login, register
+│   ├── export_import/
 │   ├── home/             # Plant list, main navigation
-│   ├── plant_form/       # Create/edit plant record
+│   ├── identification/   # Dichotomous key
+│   ├── map/
+│   ├── onboarding/
+│   ├── photo_gallery/
 │   ├── plant_detail/
 │   ├── plant_edit/
+│   ├── plant_form/       # Create/edit plant record
 │   ├── quick_capture/    # Fast entry with GPS + camera
-│   ├── sessions/         # Collection session management
-│   ├── map/
 │   ├── search/
-│   ├── photo_gallery/
-│   ├── statistics/
-│   ├── export_import/
+│   ├── sessions/         # Collection session management
 │   ├── settings/
-│   └── onboarding/
+│   ├── statistics/
+│   └── sync/             # Conflict resolution UI
 ├── core/                 # See core/AGENTS.md
 ├── models/               # Isar @collection models
 ├── shared/widgets/       # Reusable UI components
