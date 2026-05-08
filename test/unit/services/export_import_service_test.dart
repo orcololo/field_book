@@ -7,6 +7,9 @@ import 'package:isar/isar.dart';
 import 'package:field_book/core/repositories/plant_repository.dart';
 import 'package:field_book/core/repositories/session_repository.dart';
 import 'package:field_book/core/services/export_import_service.dart';
+import 'package:field_book/models/collection_session.dart';
+import 'package:field_book/models/determination.dart';
+import 'package:field_book/models/gps_point.dart';
 import 'package:field_book/models/plant_category.dart';
 import 'package:field_book/models/plant_record.dart';
 
@@ -361,6 +364,324 @@ void main() {
 
       expect(result.skipped, 1);
       expect(result.errors, isNotEmpty);
+    });
+  });
+
+  // ── exportToJsonString (Isar — delegates to exportToJson) ─────────────────
+
+  group('exportToJsonString', () {
+    late Isar isar;
+    late Directory dir;
+    late ExportImportService svc;
+
+    setUp(() async {
+      (isar, dir) = await openTestIsar();
+      svc = ExportImportService(PlantRepository(), SessionRepository());
+    });
+
+    tearDown(() => closeTestIsar(isar, dir));
+
+    test('returns valid JSON with version 1.0', () async {
+      final result = await svc.exportToJsonString(includeSessions: false);
+      final decoded = jsonDecode(result) as Map<String, dynamic>;
+
+      expect(decoded['version'], '1.0');
+      expect(decoded['plants'], isEmpty);
+    });
+
+    test('includeSessions: true adds sessions key', () async {
+      final result = await svc.exportToJsonString(includeSessions: true);
+      final decoded = jsonDecode(result) as Map<String, dynamic>;
+
+      expect(decoded.containsKey('sessions'), isTrue);
+    });
+  });
+
+  // ── exportToJson with includeSessions ─────────────────────────────────────
+
+  group('exportToJson includeSessions', () {
+    late Isar isar;
+    late Directory dir;
+    late ExportImportService svc;
+
+    setUp(() async {
+      (isar, dir) = await openTestIsar();
+      svc = ExportImportService(PlantRepository(), SessionRepository());
+    });
+
+    tearDown(() => closeTestIsar(isar, dir));
+
+    test('empty DB produces sessions: [] key', () async {
+      final json = await svc.exportToJson(plants: [], includeSessions: true);
+      final decoded = jsonDecode(json) as Map<String, dynamic>;
+
+      expect(decoded.containsKey('sessions'), isTrue);
+      expect((decoded['sessions'] as List).isEmpty, isTrue);
+    });
+
+    test('encodes saved session uuid and tripName', () async {
+      final session = CollectionSession()
+        ..uuid = 'ses-encode-1'
+        ..tripName = 'Expedition Alpha'
+        ..startDate = DateTime(2025, 6, 1)
+        ..createdAt = DateTime(2025, 6, 1);
+      await isar.writeTxn(() => isar.collectionSessions.put(session));
+
+      final json = await svc.exportToJson(plants: [], includeSessions: true);
+      final decoded = jsonDecode(json) as Map<String, dynamic>;
+      final sessions = decoded['sessions'] as List;
+
+      expect(sessions.length, 1);
+      expect((sessions.first as Map)['uuid'], 'ses-encode-1');
+      expect((sessions.first as Map)['tripName'], 'Expedition Alpha');
+    });
+
+    test('_buildTrackGeoJson returns LineString for session with track', () async {
+      final session = CollectionSession()
+        ..uuid = 'ses-geo-1'
+        ..tripName = 'Track Trip'
+        ..startDate = DateTime(2025, 6, 1)
+        ..track = [
+          GpsPoint()
+            ..latitude = -3.1
+            ..longitude = -60.0
+            ..altitude = 80.0
+            ..timestamp = DateTime(2025, 6, 1),
+          GpsPoint()
+            ..latitude = -3.2
+            ..longitude = -60.1
+            ..altitude = null
+            ..timestamp = DateTime(2025, 6, 1, 1),
+        ]
+        ..createdAt = DateTime(2025, 6, 1);
+      await isar.writeTxn(() => isar.collectionSessions.put(session));
+
+      final json = await svc.exportToJson(plants: [], includeSessions: true);
+      final decoded = jsonDecode(json) as Map<String, dynamic>;
+      final s = (decoded['sessions'] as List).first as Map<String, dynamic>;
+      final geoJson = s['trackGeoJson'] as Map<String, dynamic>;
+
+      expect(geoJson['type'], 'LineString');
+      expect((geoJson['coordinates'] as List).length, 2);
+      // First point has altitude → 3 coords; second has no altitude → 2 coords
+      expect((geoJson['coordinates'] as List).first, hasLength(3));
+      expect((geoJson['coordinates'] as List).last, hasLength(2));
+    });
+
+    test('session with empty track has null trackGeoJson', () async {
+      final session = CollectionSession()
+        ..uuid = 'ses-notrack-1'
+        ..tripName = 'No Track'
+        ..startDate = DateTime(2025, 6, 1)
+        ..createdAt = DateTime(2025, 6, 1);
+      await isar.writeTxn(() => isar.collectionSessions.put(session));
+
+      final json = await svc.exportToJson(plants: [], includeSessions: true);
+      final decoded = jsonDecode(json) as Map<String, dynamic>;
+      final s = (decoded['sessions'] as List).first as Map<String, dynamic>;
+
+      expect(s['trackGeoJson'], isNull);
+    });
+
+    test('encodes session endDate and teamMembers', () async {
+      final session = CollectionSession()
+        ..uuid = 'ses-full-1'
+        ..tripName = 'Full Session'
+        ..startDate = DateTime(2025, 6, 1)
+        ..endDate = DateTime(2025, 6, 10)
+        ..teamMembers = ['Alice', 'Bob']
+        ..isArchived = true
+        ..createdAt = DateTime(2025, 6, 1);
+      await isar.writeTxn(() => isar.collectionSessions.put(session));
+
+      final json = await svc.exportToJson(plants: [], includeSessions: true);
+      final decoded = jsonDecode(json) as Map<String, dynamic>;
+      final s = (decoded['sessions'] as List).first as Map<String, dynamic>;
+
+      expect(s['endDate'], isNotNull);
+      expect(s['teamMembers'], ['Alice', 'Bob']);
+      expect(s['isArchived'], isTrue);
+    });
+  });
+
+  // ── importFromJsonString ───────────────────────────────────────────────────
+
+  group('importFromJsonString', () {
+    late Isar isar;
+    late Directory dir;
+    late ExportImportService svc;
+
+    setUp(() async {
+      (isar, dir) = await openTestIsar();
+      svc = ExportImportService(PlantRepository(), SessionRepository());
+    });
+
+    tearDown(() => closeTestIsar(isar, dir));
+
+    test('imports plant when no sessions key in JSON', () async {
+      final jsonStr = _wrapPlants([_plantJson(uuid: 'str-plant-1')]);
+      final result = await svc.importFromJsonString(jsonStr);
+
+      expect(result.imported, 1);
+    });
+
+    test('imports session when sessions key present', () async {
+      final jsonStr = jsonEncode({
+        'version': '1.0',
+        'exportDate': DateTime.now().toIso8601String(),
+        'plantCount': 0,
+        'plants': [],
+        'sessions': [
+          {
+            'uuid': 'ses-import-1',
+            'tripName': 'Imported Trip',
+            'startDate': '2025-07-01T00:00:00.000',
+            'endDate': null,
+            'teamMembers': [],
+            'notes': null,
+            'shareCode': null,
+            'track': [],
+            'isArchived': false,
+            'createdAt': '2025-07-01T00:00:00.000',
+          },
+        ],
+      });
+
+      final result = await svc.importFromJsonString(jsonStr);
+
+      expect(result.imported, 0);
+      final saved = await SessionRepository().getByUuid('ses-import-1');
+      expect(saved, isNotNull);
+      expect(saved!.tripName, 'Imported Trip');
+    });
+
+    test('updates existing session on re-import', () async {
+      Map<String, dynamic> buildSession(String name) => {
+        'uuid': 'ses-update-1',
+        'tripName': name,
+        'startDate': '2025-07-01T00:00:00.000',
+        'teamMembers': [],
+        'track': [],
+        'isArchived': false,
+        'createdAt': '2025-07-01T00:00:00.000',
+      };
+
+      String buildJson(String name) => jsonEncode({
+        'version': '1.0',
+        'exportDate': DateTime.now().toIso8601String(),
+        'plantCount': 0,
+        'plants': [],
+        'sessions': [buildSession(name)],
+      });
+
+      await svc.importFromJsonString(buildJson('Original'));
+      await svc.importFromJsonString(buildJson('Updated'));
+
+      final saved = await SessionRepository().getByUuid('ses-update-1');
+      expect(saved?.tripName, 'Updated');
+    });
+
+    test('session with track points is imported correctly', () async {
+      final jsonStr = jsonEncode({
+        'version': '1.0',
+        'exportDate': DateTime.now().toIso8601String(),
+        'plantCount': 0,
+        'plants': [],
+        'sessions': [
+          {
+            'uuid': 'ses-track-import-1',
+            'tripName': 'Track Import',
+            'startDate': '2025-07-01T00:00:00.000',
+            'teamMembers': [],
+            'track': [
+              {
+                'latitude': -3.1,
+                'longitude': -60.0,
+                'altitude': 80.0,
+                'timestamp': '2025-07-01T00:00:00.000',
+              },
+              {
+                'latitude': -3.2,
+                'longitude': -60.1,
+                'altitude': null,
+                'timestamp': '2025-07-01T01:00:00.000',
+              },
+            ],
+            'isArchived': false,
+            'createdAt': '2025-07-01T00:00:00.000',
+          },
+        ],
+      });
+
+      await svc.importFromJsonString(jsonStr);
+
+      final saved = await SessionRepository().getByUuid('ses-track-import-1');
+      expect(saved?.track.length, 2);
+    });
+
+    test('invalid JSON returns error from plant import path', () async {
+      final result = await svc.importFromJsonString('not json at all');
+      expect(result.errors, isNotEmpty);
+    });
+  });
+
+  // ── _buildIdentificationRemarks via exportToDarwinCore ────────────────────
+
+  group('exportToDarwinCore with determinations', () {
+    late ExportImportService svc;
+
+    setUp(() {
+      svc = ExportImportService(PlantRepository(), SessionRepository());
+    });
+
+    test('single determination populates identificationRemarks', () async {
+      final plant = _plant()
+        ..determinations = [
+          Determination()
+            ..determinedBy = 'Dr. Silva'
+            ..determinedAt = DateTime(2025, 1, 15)
+            ..scientificName = 'Mimosa pudica var. hispida'
+            ..family = 'Fabaceae'
+            ..notes = 'vegetative only'
+            ..basis = 'morphology',
+        ];
+      final csv = await svc.exportToDarwinCore(plants: [plant]);
+
+      expect(csv, contains('Dr. Silva'));
+      expect(csv, contains('Fabaceae'));
+      expect(csv, contains('morphology'));
+    });
+
+    test('multiple determinations are separated by pipe', () async {
+      final plant = _plant()
+        ..determinations = [
+          Determination()
+            ..determinedBy = 'First Expert'
+            ..determinedAt = DateTime(2025, 1, 1)
+            ..scientificName = 'Species A',
+          Determination()
+            ..determinedBy = 'Second Expert'
+            ..determinedAt = DateTime(2025, 6, 1)
+            ..scientificName = 'Species B',
+        ];
+      final csv = await svc.exportToDarwinCore(plants: [plant]);
+
+      expect(csv, contains('First Expert'));
+      expect(csv, contains('Second Expert'));
+      expect(csv, contains(' | '));
+    });
+
+    test('determination with no family or notes omits brackets', () async {
+      final plant = _plant()
+        ..determinations = [
+          Determination()
+            ..determinedBy = ''
+            ..determinedAt = DateTime(2025, 3, 1)
+            ..scientificName = 'Bare Determination',
+        ];
+      final csv = await svc.exportToDarwinCore(plants: [plant]);
+
+      expect(csv, contains('Bare Determination'));
     });
   });
 }
