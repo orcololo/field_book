@@ -105,7 +105,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.errorSearchMsg(e.toString())),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -398,7 +398,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                   ? Icons.search
                                   : Icons.search_off,
                               size: 64,
-                              color: Colors.grey.shade400,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
                             const SizedBox(height: 16),
                             Text(

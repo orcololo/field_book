@@ -353,7 +353,7 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.map_outlined, size: 64, color: Colors.grey),
+                      Icon(Icons.map_outlined, size: 64, color: Theme.of(context).colorScheme.onSurfaceVariant),
                       const SizedBox(height: 16),
                        Text(
                          l10n.noLocationSet,

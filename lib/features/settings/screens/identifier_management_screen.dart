@@ -8,6 +8,7 @@ import '../../../core/services/settings_service.dart';
 import '../../../core/services/identifier_export_import_service.dart';
 import '../../../models/plant_record.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../core/theme/folium_theme.dart';
 import '../../../shared/widgets/modern/modern_app_bar.dart';
 import '../../plant_detail/screens/plant_detail_screen.dart';
 
@@ -55,7 +56,7 @@ class _IdentifierManagementScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.errorLoadingPlants2(e.toString())),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -72,7 +73,7 @@ class _IdentifierManagementScreenState
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.selectAtLeastOnePlant),
-          backgroundColor: Colors.orange,
+          backgroundColor: FoliumTheme.warning,
         ),
       );
       return;
@@ -101,7 +102,7 @@ class _IdentifierManagementScreenState
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l10n.errorGeneratingPreview(e.toString())),
-              backgroundColor: Colors.red,
+              backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
         }
@@ -162,11 +163,11 @@ class _IdentifierManagementScreenState
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.blue.shade200),
+                  border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4)),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.info_outline, color: Colors.blue.shade700),
+                    Icon(Icons.info_outline, color: Theme.of(context).colorScheme.primary),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -239,7 +240,7 @@ class _IdentifierManagementScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.identifiersAssigned(successCount)),
-            backgroundColor: Colors.green,
+            backgroundColor: FoliumTheme.success,
           ),
         );
       }
@@ -255,7 +256,7 @@ class _IdentifierManagementScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.errorAssigningIdentifiers(e.toString())),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -323,7 +324,7 @@ class _IdentifierManagementScreenState
         messenger.showSnackBar(
           SnackBar(
             content: Text(l10n.exportCompletedSuccess),
-            backgroundColor: Colors.green,
+            backgroundColor: FoliumTheme.success,
           ),
         );
       }
@@ -332,7 +333,7 @@ class _IdentifierManagementScreenState
         messenger.showSnackBar(
           SnackBar(
             content: Text(l10n.errorExporting(e.toString())),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -351,7 +352,7 @@ class _IdentifierManagementScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(result.detailedMessage),
-            backgroundColor: result.success ? Colors.green : Colors.red,
+            backgroundColor: result.success ? FoliumTheme.success : Theme.of(context).colorScheme.error,
           ),
         );
 
@@ -365,7 +366,7 @@ class _IdentifierManagementScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.errorImporting2(e.toString())),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -438,7 +439,7 @@ class _IdentifierManagementScreenState
             Icon(
               Icons.check_circle_outline,
               size: 80,
-              color: Colors.green.shade300,
+              color: FoliumTheme.success,
             ),
             const SizedBox(height: 16),
             Text(

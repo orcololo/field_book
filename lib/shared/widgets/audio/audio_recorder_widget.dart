@@ -184,7 +184,9 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
                 Icon(
                   _isRecording ? Icons.mic : Icons.mic_none,
                   size: 48,
-                  color: _isRecording ? Colors.red : Colors.grey,
+                  color: _isRecording
+                      ? Theme.of(context).colorScheme.error
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 if (_isRecording) ...[
                   const SizedBox(width: 16),

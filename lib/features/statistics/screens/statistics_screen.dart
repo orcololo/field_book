@@ -120,7 +120,7 @@ class StatisticsScreen extends ConsumerWidget {
                       Icon(
                         Icons.bar_chart,
                         size: 48,
-                        color: Colors.grey.shade400,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(height: 16),
                       Text(

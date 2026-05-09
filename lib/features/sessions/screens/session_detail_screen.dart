@@ -276,7 +276,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                 value: 'delete',
                 child: Row(
                   children: [
-                    const Icon(Icons.delete, color: Colors.red),
+                    Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
                     const SizedBox(width: 8),
                     Text(
                       l10n.excluir,
@@ -407,13 +407,13 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                         Chip(
                           label: Text(l10n.archivedLabel),
                           avatar: const Icon(Icons.archive, size: 16),
-                          backgroundColor: Colors.grey.shade300,
+                          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                         ),
                       if (_session.shareCode != null)
                         Chip(
                           label: Text(l10n.sharedLabel),
                           avatar: const Icon(Icons.share, size: 16),
-                          backgroundColor: Colors.blue.shade100,
+                          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
                         ),
                       if (_session.sharedWith.isNotEmpty)
                         Chip(
@@ -533,7 +533,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                         Icon(
                           Icons.eco_outlined,
                           size: 48,
-                          color: Colors.grey.shade400,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                         const SizedBox(height: 16),
                         Text(

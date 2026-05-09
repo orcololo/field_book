@@ -2154,10 +2154,10 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.straighten,
                         size: 64,
-                        color: Colors.grey,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(height: 16),
                       Text(
@@ -2447,10 +2447,10 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.photo_camera,
                         size: 64,
-                        color: Colors.grey,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(height: 16),
                       Text(
@@ -2730,7 +2730,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
           'Grave notas de voz durante a coleta',
           style: Theme.of(
             context,
-          ).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade600),
+          ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
         const SizedBox(height: 24),
 
@@ -2758,7 +2758,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
           Center(
             child: Column(
               children: [
-                Icon(Icons.audiotrack, size: 48, color: Colors.grey.shade400),
+                Icon(Icons.audiotrack, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant),
                 const SizedBox(height: 8),
                 Text(
                   'Nenhuma nota de áudio gravada',

@@ -184,8 +184,8 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.downloadCompletedSuccess),
-            backgroundColor: Colors.green,
+              content: Text(l10n.downloadCompletedSuccess),
+              backgroundColor: FoliumTheme.success,
           ),
         );
       }
@@ -194,8 +194,8 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.errorDownloadMapMsg(e.toString())),
-            backgroundColor: Colors.red,
+              content: Text(l10n.errorDownloadMapMsg(e.toString())),
+              backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -245,7 +245,7 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AppLocalizations.of(context)!.cacheClearedSuccess),
-              backgroundColor: Colors.green,
+              backgroundColor: FoliumTheme.success,
             ),
           );
         }
@@ -254,7 +254,7 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AppLocalizations.of(context)!.errorClearCacheMsg(e.toString())),
-              backgroundColor: Colors.red,
+              backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
         }

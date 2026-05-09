@@ -9,6 +9,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../models/plant_record.dart';
 import '../../settings/screens/inaturalist_auth_screen.dart';
 import '../../../shared/widgets/modern/modern_app_bar.dart';
+import '../../../core/theme/folium_theme.dart';
 
 class ExportImportScreen extends ConsumerStatefulWidget {
   final List<PlantRecord>? preSelectedPlants;
@@ -79,7 +80,7 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.exportSuccessMsg),
-            backgroundColor: Colors.green,
+            backgroundColor: FoliumTheme.success,
           ),
         );
       }
@@ -89,7 +90,7 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.errorExportMsg(e.toString())),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -115,7 +116,7 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.errorImportMsg(e.toString())),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -205,7 +206,7 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
           children: [
             Icon(
               result.hasErrors ? Icons.warning : Icons.check_circle,
-              color: result.hasErrors ? Colors.orange : Colors.green,
+              color: result.hasErrors ? FoliumTheme.warning : FoliumTheme.success,
             ),
             const SizedBox(width: 8),
             Text(l10n.importResultTitle),
@@ -216,10 +217,10 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildResultRow(l10n.importedLabel, result.imported, Colors.green),
-              _buildResultRow(l10n.updatedLabel, result.updated, Colors.blue),
+              _buildResultRow(l10n.importedLabel, result.imported, FoliumTheme.success),
+              _buildResultRow(l10n.updatedLabel, result.updated, FoliumTheme.info),
               if (result.skipped > 0)
-                _buildResultRow(l10n.skippedLabel, result.skipped, Colors.orange),
+                _buildResultRow(l10n.skippedLabel, result.skipped, FoliumTheme.warning),
               if (result.errors.isNotEmpty) ...[
                 const SizedBox(height: 16),
                 Text(
@@ -321,7 +322,7 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primaryContainer,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
+                        border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)),
                       ),
                       child: Row(
                         children: [
@@ -478,13 +479,13 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.amber.shade50,
-                      border: Border.all(color: Colors.amber),
+                      color: FoliumTheme.warningContainer,
+                      border: Border.all(color: FoliumTheme.warning),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.info_outline, color: Colors.amber, size: 20),
+                        const Icon(Icons.info_outline, color: FoliumTheme.warning, size: 20),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
