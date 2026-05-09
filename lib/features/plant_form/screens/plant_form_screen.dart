@@ -5,6 +5,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:io';
 import 'dart:async';
+import 'dart:convert';
 import '../../../models/plant_record.dart';
 import '../../../models/plant_category.dart';
 import '../../../models/collection_method.dart';
@@ -36,8 +37,15 @@ import '../../../shared/widgets/rain_mode_guard.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/providers/rain_mode_provider.dart';
 import '../../../shared/widgets/modern/modern_app_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const _uuid = Uuid();
+
+/// SharedPreferences key for the pre-camera form-state snapshot.
+/// Written before launching the camera; cleared when camera returns normally.
+/// On Android, the Activity may be killed while the camera is in the
+/// foreground — on the next launch this snapshot restores all form fields.
+const _kPlantFormSnapshotKey = 'folium_plant_form_snapshot';
 
 enum _OcrImageSource { camera, gallery }
 
@@ -318,8 +326,11 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     }
 
     if (plant == null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (!mounted) return;
         _suggestTemplateFromCurrentGps();
+        await _tryRestoreFromSnapshot();
+        await _tryRecoverLostPhoto();
       });
     }
   }
@@ -3308,7 +3319,256 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     }
   }
 
+  // ── Camera form-state snapshot (Android activity recreation recovery) ──────
+
+  /// Serialises the entire form state into a plain JSON-encodable map.
+  Map<String, dynamic> _captureSnapshot() => {
+    'scientificName': _scientificNameController.text,
+    'commonName': _commonNameController.text,
+    'family': _familyController.text,
+    'genus': _genusController.text,
+    'species': _speciesController.text,
+    'habitat': _habitatController.text,
+    'notes': _notesController.text,
+    'identifier': _identifierController.text,
+    'locality': _localityController.text,
+    'municipality': _municipalityController.text,
+    'state': _stateController.text,
+    'country': _countryController.text,
+    'raiz': _raizController.text,
+    'caule': _cauleController.text,
+    'cauleTipoCasca': _cauleTipoCascaController.text,
+    'cauleCor': _cauleCorController.text,
+    'cauleTamanho': _cauleTamanhoController.text,
+    'cauleTamanhoUnidade': _cauleTamanhoUnidade,
+    'cauleCircunferencia': _cauleCircunferenciaController.text,
+    'cauleCircunferenciaUnidade': _cauleCircunferenciaUnidade,
+    'cauleTemSeiva': _cauleTemSeiva,
+    'cauleDescricaoSeiva': _cauleDescricaoSeivaController.text,
+    'folhaDescricao': _folhaDescricaoController.text,
+    'folhaBainha': _folhaBainhaController.text,
+    'folhaPeciolo': _folhaPecioloController.text,
+    'folhaLamina': _folhaLaminaController.text,
+    'florDescricao': _florDescricaoController.text,
+    'florInflorescencia': _florInflorescenciaController.text,
+    'florCor': _florCorController.text,
+    'florTamanho': _florTamanhoController.text,
+    'florTamanhoUnidade': _florTamanhoUnidade,
+    'frutoDescricao': _frutoDescricaoController.text,
+    'frutoCor': _frutoCorController.text,
+    'frutoFormato': _frutoFormatoController.text,
+    'frutoTamanho': _frutoTamanhoController.text,
+    'frutoTamanhoUnidade': _frutoTamanhoUnidade,
+    'sementeDescricao': _sementeDescricaoController.text,
+    'sementeCor': _sementeCorController.text,
+    'sementeFormato': _sementeFormatoController.text,
+    'sementeTamanho': _sementeTamanhoController.text,
+    'sementeTamanhoUnidade': _sementeTamanhoUnidade,
+    'altitude': _altitudeController.text,
+    'temperature': _temperatureController.text,
+    'humidity': _humidityController.text,
+    'weatherNotes': _weatherNotesController.text,
+    'windSpeed': _windSpeedController.text,
+    'weatherCondition': _weatherCondition,
+    'moonPhase': _moonPhase,
+    'collectorName': _collectorNameController.text,
+    'collectorNumber': _collectorNumberController.text,
+    'numberOfIndividuals': _numberOfIndividualsController.text,
+    'substrate': _substrateController.text,
+    'associatedTaxa': _associatedTaxaController.text,
+    'vegetationType': _vegetationTypeController.text,
+    'topography': _topographyController.text,
+    'determinationQualifier': _determinationQualifierController.text,
+    'phenologyFournier': _phenologyFournier,
+    'selectedCategory': _selectedCategory?.name,
+    'phenologicalState': _phenologicalState?.name,
+    'collectionMethod': _collectionMethod?.name,
+    'selectedSessionId': _selectedSessionId,
+    'dateCollected': _dateCollected.toIso8601String(),
+    'latitude': _latitude,
+    'longitude': _longitude,
+    'photoPaths': _photoPaths,
+    'audioNotePaths': _audioNotePaths,
+    'audioTranscripts': _audioTranscripts,
+    'measurements': _measurements
+        .map((m) => {'label': m.label, 'value': m.value, 'unit': m.unit})
+        .toList(),
+  };
+
+  /// Restores all mutable form fields from a previously captured snapshot map.
+  void _restoreFromSnapshot(Map<String, dynamic> data) {
+    _scientificNameController.text = (data['scientificName'] as String?) ?? '';
+    _commonNameController.text = (data['commonName'] as String?) ?? '';
+    _familyController.text = (data['family'] as String?) ?? '';
+    _genusController.text = (data['genus'] as String?) ?? '';
+    _speciesController.text = (data['species'] as String?) ?? '';
+    _habitatController.text = (data['habitat'] as String?) ?? '';
+    _notesController.text = (data['notes'] as String?) ?? '';
+    _identifierController.text = (data['identifier'] as String?) ?? '';
+    _localityController.text = (data['locality'] as String?) ?? '';
+    _municipalityController.text = (data['municipality'] as String?) ?? '';
+    _stateController.text = (data['state'] as String?) ?? '';
+    _countryController.text = (data['country'] as String?) ?? '';
+    _raizController.text = (data['raiz'] as String?) ?? '';
+    _cauleController.text = (data['caule'] as String?) ?? '';
+    _cauleTipoCascaController.text = (data['cauleTipoCasca'] as String?) ?? '';
+    _cauleCorController.text = (data['cauleCor'] as String?) ?? '';
+    _cauleTamanhoController.text = (data['cauleTamanho'] as String?) ?? '';
+    _cauleTamanhoUnidade = (data['cauleTamanhoUnidade'] as String?) ?? 'cm';
+    _cauleCircunferenciaController.text =
+        (data['cauleCircunferencia'] as String?) ?? '';
+    _cauleCircunferenciaUnidade =
+        (data['cauleCircunferenciaUnidade'] as String?) ?? 'cm';
+    _cauleTemSeiva = (data['cauleTemSeiva'] as bool?) ?? false;
+    _cauleDescricaoSeivaController.text =
+        (data['cauleDescricaoSeiva'] as String?) ?? '';
+    _folhaDescricaoController.text =
+        (data['folhaDescricao'] as String?) ?? '';
+    _folhaBainhaController.text = (data['folhaBainha'] as String?) ?? '';
+    _folhaPecioloController.text = (data['folhaPeciolo'] as String?) ?? '';
+    _folhaLaminaController.text = (data['folhaLamina'] as String?) ?? '';
+    _florDescricaoController.text =
+        (data['florDescricao'] as String?) ?? '';
+    _florInflorescenciaController.text =
+        (data['florInflorescencia'] as String?) ?? '';
+    _florCorController.text = (data['florCor'] as String?) ?? '';
+    _florTamanhoController.text = (data['florTamanho'] as String?) ?? '';
+    _florTamanhoUnidade = (data['florTamanhoUnidade'] as String?) ?? 'cm';
+    _frutoDescricaoController.text =
+        (data['frutoDescricao'] as String?) ?? '';
+    _frutoCorController.text = (data['frutoCor'] as String?) ?? '';
+    _frutoFormatoController.text = (data['frutoFormato'] as String?) ?? '';
+    _frutoTamanhoController.text = (data['frutoTamanho'] as String?) ?? '';
+    _frutoTamanhoUnidade = (data['frutoTamanhoUnidade'] as String?) ?? 'cm';
+    _sementeDescricaoController.text =
+        (data['sementeDescricao'] as String?) ?? '';
+    _sementeCorController.text = (data['sementeCor'] as String?) ?? '';
+    _sementeFormatoController.text =
+        (data['sementeFormato'] as String?) ?? '';
+    _sementeTamanhoController.text =
+        (data['sementeTamanho'] as String?) ?? '';
+    _sementeTamanhoUnidade = (data['sementeTamanhoUnidade'] as String?) ?? 'mm';
+    _altitudeController.text = (data['altitude'] as String?) ?? '';
+    _temperatureController.text = (data['temperature'] as String?) ?? '';
+    _humidityController.text = (data['humidity'] as String?) ?? '';
+    _weatherNotesController.text = (data['weatherNotes'] as String?) ?? '';
+    _windSpeedController.text = (data['windSpeed'] as String?) ?? '';
+    _weatherCondition = data['weatherCondition'] as String?;
+    _moonPhase = data['moonPhase'] as String?;
+    _collectorNameController.text = (data['collectorName'] as String?) ?? '';
+    _collectorNumberController.text =
+        (data['collectorNumber'] as String?) ?? '';
+    _numberOfIndividualsController.text =
+        (data['numberOfIndividuals'] as String?) ?? '';
+    _substrateController.text = (data['substrate'] as String?) ?? '';
+    _associatedTaxaController.text =
+        (data['associatedTaxa'] as String?) ?? '';
+    _vegetationTypeController.text =
+        (data['vegetationType'] as String?) ?? '';
+    _topographyController.text = (data['topography'] as String?) ?? '';
+    _determinationQualifierController.text =
+        (data['determinationQualifier'] as String?) ?? '';
+    _phenologyFournier = data['phenologyFournier'] as String?;
+
+    final categoryName = data['selectedCategory'] as String?;
+    if (categoryName != null) {
+      try {
+        _selectedCategory = PlantCategory.values.byName(categoryName);
+      } catch (_) {}
+    }
+    final phenoName = data['phenologicalState'] as String?;
+    if (phenoName != null) {
+      try {
+        _phenologicalState = PhenologicalState.values.byName(phenoName);
+      } catch (_) {}
+    }
+    final methodName = data['collectionMethod'] as String?;
+    if (methodName != null) {
+      try {
+        _collectionMethod = CollectionMethod.values.byName(methodName);
+      } catch (_) {}
+    }
+
+    _selectedSessionId = data['selectedSessionId'] as String?;
+
+    final dateStr = data['dateCollected'] as String?;
+    if (dateStr != null) {
+      final parsed = DateTime.tryParse(dateStr);
+      if (parsed != null) _dateCollected = parsed;
+    }
+
+    _latitude = (data['latitude'] as num?)?.toDouble();
+    _longitude = (data['longitude'] as num?)?.toDouble();
+
+    _photoPaths = List<String>.from((data['photoPaths'] as List?) ?? []);
+    _audioNotePaths =
+        List<String>.from((data['audioNotePaths'] as List?) ?? []);
+    _audioTranscripts =
+        List<String>.from((data['audioTranscripts'] as List?) ?? []);
+
+    final measurementsRaw = data['measurements'] as List?;
+    if (measurementsRaw != null) {
+      _measurements = measurementsRaw.map((raw) {
+        final m = raw as Map<String, dynamic>;
+        return Measurement()
+          ..label = (m['label'] as String?) ?? ''
+          ..value = (m['value'] as num?)?.toDouble() ?? 0.0
+          ..unit = (m['unit'] as String?) ?? '';
+      }).toList();
+    }
+  }
+
+  /// Persists current form state to SharedPreferences before launching camera.
+  Future<void> _saveSnapshotToPrefs() async {
+    if (!Platform.isAndroid) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        _kPlantFormSnapshotKey,
+        jsonEncode(_captureSnapshot()),
+      );
+    } catch (e) {
+      // Non-fatal: worst case is empty form on activity kill, same as before.
+      debugPrint('PlantForm: failed to save snapshot: $e');
+    }
+  }
+
+  /// On init, checks if a pre-camera snapshot exists and restores form state.
+  /// Only applies to new-plant forms (editing plants are persisted in Isar).
+  Future<void> _tryRestoreFromSnapshot() async {
+    if (widget.plant != null || !mounted) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_kPlantFormSnapshotKey);
+      if (raw == null) return;
+      // Clear immediately — if restore fails we don't want a corrupt loop.
+      await prefs.remove(_kPlantFormSnapshotKey);
+      final data = jsonDecode(raw) as Map<String, dynamic>;
+      if (mounted) setState(() => _restoreFromSnapshot(data));
+    } catch (e) {
+      debugPrint('PlantForm: failed to restore snapshot: $e');
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove(_kPlantFormSnapshotKey);
+      } catch (_) {}
+    }
+  }
+
+  /// Checks image_picker for a photo that was captured before the Activity
+  /// was killed (Android activity recreation recovery).
+  Future<void> _tryRecoverLostPhoto() async {
+    if (!mounted) return;
+    final recovered = await _photoService.retrieveLostPhoto();
+    if (recovered != null && mounted) {
+      setState(() => _photoPaths.add(recovered.path));
+    }
+  }
+
   Future<void> _takePhoto() async {
+    // Persist all form state before handing off to the camera.  If Android
+    // kills this Activity while the camera is in the foreground, the snapshot
+    // will be read back in initState on the next launch.
+    await _saveSnapshotToPrefs();
     try {
       final photo = await _photoService.takePhoto();
       if (photo != null && mounted) {
@@ -3326,6 +3586,16 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
+      }
+    } finally {
+      // Camera returned normally (or was cancelled / threw) — the snapshot
+      // is no longer needed.  If the Activity was killed the finally block
+      // never runs, which is intentional: the snapshot stays in prefs and
+      // will be consumed on the next launch.
+      if (Platform.isAndroid) {
+        SharedPreferences.getInstance()
+            .then((p) => p.remove(_kPlantFormSnapshotKey))
+            .ignore();
       }
     }
   }
@@ -3494,6 +3764,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
   }
 
   Future<void> _pickFromGallery() async {
+    await _saveSnapshotToPrefs();
     try {
       final photos = await _photoService.pickMultipleFromGallery();
       if (photos.isNotEmpty && mounted) {
@@ -3511,6 +3782,12 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
+      }
+    } finally {
+      if (Platform.isAndroid) {
+        SharedPreferences.getInstance()
+            .then((p) => p.remove(_kPlantFormSnapshotKey))
+            .ignore();
       }
     }
   }

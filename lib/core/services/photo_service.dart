@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:logger/logger.dart';
@@ -110,6 +111,21 @@ class PhotoService {
       return File(compressedFile.path);
     } catch (e) {
       rethrow;
+    }
+  }
+
+  /// Recovers a photo that was being captured when the Android Activity was
+  /// killed (e.g. system low-memory while camera was open).  Returns the
+  /// processed [File] or null if there is nothing to recover.
+  Future<File?> retrieveLostPhoto() async {
+    if (!Platform.isAndroid) return null;
+    try {
+      final LostDataResponse response = await _picker.retrieveLostData();
+      if (response.isEmpty || response.file == null) return null;
+      return await _processAndSavePhoto(File(response.file!.path));
+    } catch (e) {
+      debugPrint('PhotoService.retrieveLostPhoto: $e');
+      return null;
     }
   }
 

@@ -81,6 +81,14 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
   void initState() {
     super.initState();
     _acquireGps();
+    // Recover any photo captured before the Activity was killed on Android.
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      final recovered = await _photoService.retrieveLostPhoto();
+      if (recovered != null && mounted) {
+        setState(() => _photoPaths.add(recovered.path));
+      }
+    });
   }
 
   @override
