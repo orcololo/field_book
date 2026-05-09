@@ -95,9 +95,19 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       await _tryRestoreSnapshot();
-      final recovered = await _photoService.retrieveLostPhotos();
-      if (recovered.isNotEmpty && mounted) {
-        setState(() => _photoPaths.addAll(recovered.map((f) => f.path)));
+      // Only recover a lost photo if QuickCapture was the screen that opened
+      // the camera.  Clear the owner key unconditionally so a stale value
+      // never leaks into a later session on a different screen.
+      if (Platform.isAndroid) {
+        final prefs = await SharedPreferences.getInstance();
+        final owner = prefs.getString(kRecoveryOwnerKey);
+        await prefs.remove(kRecoveryOwnerKey);
+        if (owner == 'quick_capture_camera') {
+          final recovered = await _photoService.retrieveLostPhotos();
+          if (recovered.isNotEmpty && mounted) {
+            setState(() => _photoPaths.addAll(recovered.map((f) => f.path)));
+          }
+        }
       }
     });
   }
@@ -224,6 +234,8 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
     // in initState will recover everything.
     if (Platform.isAndroid) {
       await _saveSnapshot();
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(kRecoveryOwnerKey, 'quick_capture_camera');
     }
     try {
       final file = await _photoService.takePhoto();
@@ -237,11 +249,11 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
         ).showSnackBar(SnackBar(content: Text(e.toString())));
       }
     } finally {
-      // Clear the snapshot now that the camera has returned normally.
+      // Clear snapshot and owner key now that the camera has returned normally.
       if (Platform.isAndroid) {
-        SharedPreferences.getInstance()
-            .then((p) => p.remove(_kQuickCaptureSnapshotKey))
-            .ignore();
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove(_kQuickCaptureSnapshotKey);
+        await prefs.remove(kRecoveryOwnerKey);
       }
     }
   }

@@ -8,6 +8,14 @@ import 'package:uuid/uuid.dart';
 
 const _uuid = Uuid();
 
+/// SharedPreferences key written just before the OS camera/gallery Activity is
+/// launched so that each screen's recovery logic can confirm it is the one that
+/// opened the picker before consuming any recovered photo.  The value is one of:
+///   'plant_form_camera'   — PlantForm specimen camera or gallery
+///   'plant_form_ocr'      — PlantForm OCR camera or gallery
+///   'quick_capture_camera' — QuickCapture camera
+const kRecoveryOwnerKey = 'folium_recovery_owner';
+
 class PhotoService {
   static final _log = Logger(printer: PrettyPrinter(methodCount: 0));
   final ImagePicker _picker = ImagePicker();

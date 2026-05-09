@@ -46,10 +46,6 @@ const _uuid = Uuid();
 /// On Android, the Activity may be killed while the camera is in the
 /// foreground — on the next launch this snapshot restores all form fields.
 const _kPlantFormSnapshotKey = 'folium_plant_form_snapshot';
-// Set to true while the OCR camera/gallery picker is open so that a recovered
-// lost photo is not incorrectly added to the specimen photo list on Activity
-// recreation.
-const _kPlantFormOcrPendingKey = 'folium_plant_form_ocr_pending';
 
 enum _OcrImageSource { camera, gallery }
 
@@ -3270,15 +3266,22 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
   /// was killed (Android activity recreation recovery).
   Future<void> _tryRecoverLostPhoto() async {
     if (!mounted) return;
-    // Read and UNCONDITIONALLY clear the OCR-pending flag.  Clearing it here
-    // regardless of whether any photo was actually recovered prevents a stale
-    // flag from surviving into a later legitimate camera session and wrongly
-    // discarding a real specimen photo.
-    final prefs = Platform.isAndroid ? await SharedPreferences.getInstance() : null;
-    final isOcrPending = prefs?.getBool(_kPlantFormOcrPendingKey) ?? false;
-    if (isOcrPending) {
-      await prefs?.remove(_kPlantFormOcrPendingKey);
-    }
+    if (!Platform.isAndroid) return;
+
+    final prefs = await SharedPreferences.getInstance();
+
+    // Read and UNCONDITIONALLY clear the recovery-owner key and snapshot.
+    // Clearing them here regardless of whether any photo was actually recovered
+    // prevents stale values from surviving into a later session and causing
+    // wrong-screen recovery or spurious form restoration.
+    final owner = prefs.getString(kRecoveryOwnerKey);
+    await prefs.remove(kRecoveryOwnerKey);
+    await prefs.remove(_kPlantFormSnapshotKey);
+
+    // Only proceed if PlantForm was the screen that opened the camera/gallery.
+    if (owner != 'plant_form_camera' && owner != 'plant_form_ocr') return;
+
+    final isOcrPending = owner == 'plant_form_ocr';
 
     final recovered = await _photoService.retrieveLostPhotos();
     if (recovered.isNotEmpty && mounted) {
@@ -3298,6 +3301,10 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     // kills this Activity while the camera is in the foreground, the snapshot
     // will be read back in initState on the next launch.
     await _saveSnapshotToPrefs();
+    if (Platform.isAndroid) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(kRecoveryOwnerKey, 'plant_form_camera');
+    }
     try {
       final photo = await _photoService.takePhoto();
       if (photo != null && mounted) {
@@ -3317,14 +3324,14 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         );
       }
     } finally {
-      // Camera returned normally (or was cancelled / threw) — the snapshot
-      // is no longer needed.  If the Activity was killed the finally block
-      // never runs, which is intentional: the snapshot stays in prefs and
-      // will be consumed on the next launch.
+      // Camera returned normally (or was cancelled / threw) — the snapshot and
+      // owner key are no longer needed.  If the Activity was killed the finally
+      // block never runs, which is intentional: both values stay in prefs and
+      // will be consumed by _tryRecoverLostPhoto() on the next launch.
       if (Platform.isAndroid) {
-        SharedPreferences.getInstance()
-            .then((p) => p.remove(_kPlantFormSnapshotKey))
-            .ignore();
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove(_kPlantFormSnapshotKey);
+        await prefs.remove(kRecoveryOwnerKey);
       }
     }
   }
@@ -3345,7 +3352,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     });
 
     try {
-      // Persist form state and flag the OCR in-flight so that if Android
+      // Persist form state and mark the OCR pick in-flight so that if Android
       // kills this Activity while the picker/camera is open, the recovered
       // photo is correctly identified as an OCR temp and not added to the
       // specimen photo list.  Both writes are awaited so that they are
@@ -3353,7 +3360,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
       if (Platform.isAndroid) {
         await _saveSnapshotToPrefs();
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool(_kPlantFormOcrPendingKey, true);
+        await prefs.setString(kRecoveryOwnerKey, 'plant_form_ocr');
       }
 
       imageFile = imageSource == _OcrImageSource.camera
@@ -3396,10 +3403,14 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         );
       }
     } finally {
+      // Clear snapshot and owner key whether the OCR succeeded or was
+      // cancelled / threw.  This prevents either value from persisting into a
+      // later camera session and causing wrong-screen recovery or spurious
+      // form restoration.
       if (Platform.isAndroid) {
-        SharedPreferences.getInstance()
-            .then((p) => p.remove(_kPlantFormOcrPendingKey))
-            .ignore();
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove(_kPlantFormSnapshotKey);
+        await prefs.remove(kRecoveryOwnerKey);
       }
       if (imageFile != null) {
         await _photoService.deletePhoto(imageFile.path);
@@ -3510,6 +3521,10 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
 
   Future<void> _pickFromGallery() async {
     await _saveSnapshotToPrefs();
+    if (Platform.isAndroid) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(kRecoveryOwnerKey, 'plant_form_camera');
+    }
     try {
       final photos = await _photoService.pickMultipleFromGallery();
       if (photos.isNotEmpty && mounted) {
@@ -3530,9 +3545,9 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
       }
     } finally {
       if (Platform.isAndroid) {
-        SharedPreferences.getInstance()
-            .then((p) => p.remove(_kPlantFormSnapshotKey))
-            .ignore();
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove(_kPlantFormSnapshotKey);
+        await prefs.remove(kRecoveryOwnerKey);
       }
     }
   }
