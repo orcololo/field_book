@@ -113,18 +113,39 @@ class PhotoService {
     }
   }
 
-  /// Recovers a photo that was being captured when the Android Activity was
-  /// killed (e.g. system low-memory while camera was open).  Returns the
-  /// processed [File] or null if there is nothing to recover.
-  Future<File?> retrieveLostPhoto() async {
-    if (!Platform.isAndroid) return null;
+  /// Recovers photos that were being captured when the Android Activity was
+  /// killed (e.g. system low-memory while camera or multi-image gallery picker
+  /// was open).  Handles both the single-capture path (`response.file`) and
+  /// the multi-image gallery path (`response.files`) so no photo is silently
+  /// lost regardless of which picker triggered the Activity recreation.
+  ///
+  /// Returns a (possibly empty) list of processed [File]s.
+  Future<List<File>> retrieveLostPhotos() async {
+    if (!Platform.isAndroid) return [];
     try {
       final LostDataResponse response = await _picker.retrieveLostData();
-      if (response.isEmpty || response.file == null) return null;
-      return await _processAndSavePhoto(File(response.file!.path));
+      if (response.isEmpty) return [];
+
+      final List<XFile> xfiles;
+      if (response.files != null && response.files!.isNotEmpty) {
+        // Multi-image gallery pick was interrupted.
+        xfiles = response.files!;
+      } else if (response.file != null) {
+        // Single camera or gallery pick was interrupted.
+        xfiles = [response.file!];
+      } else {
+        return [];
+      }
+
+      final result = <File>[];
+      for (final xfile in xfiles) {
+        final processed = await _processAndSavePhoto(File(xfile.path));
+        if (processed != null) result.add(processed);
+      }
+      return result;
     } catch (e) {
-      debugPrint('PhotoService.retrieveLostPhoto: $e');
-      return null;
+      debugPrint('PhotoService.retrieveLostPhotos: $e');
+      return [];
     }
   }
 

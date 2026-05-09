@@ -95,9 +95,9 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       await _tryRestoreSnapshot();
-      final recovered = await _photoService.retrieveLostPhoto();
-      if (recovered != null && mounted) {
-        setState(() => _photoPaths.add(recovered.path));
+      final recovered = await _photoService.retrieveLostPhotos();
+      if (recovered.isNotEmpty && mounted) {
+        setState(() => _photoPaths.addAll(recovered.map((f) => f.path)));
       }
     });
   }
@@ -480,7 +480,7 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
       return ActionChip(
         avatar: Icon(Icons.gps_fixed, size: 16, color: colorScheme.secondary),
         label: Text(
-          '${_latitude!.toStringAsFixed(4)}, ${_longitude!.toStringAsFixed(4)}',
+          '${_latitude!.toStringAsFixed(6)}, ${_longitude!.toStringAsFixed(6)}',
           style: const TextStyle(fontSize: 11),
         ),
         tooltip: l10n.gpsAcquired,

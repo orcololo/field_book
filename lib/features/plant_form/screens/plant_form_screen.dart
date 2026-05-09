@@ -3270,17 +3270,25 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
   /// was killed (Android activity recreation recovery).
   Future<void> _tryRecoverLostPhoto() async {
     if (!mounted) return;
+    // Read and UNCONDITIONALLY clear the OCR-pending flag.  Clearing it here
+    // regardless of whether any photo was actually recovered prevents a stale
+    // flag from surviving into a later legitimate camera session and wrongly
+    // discarding a real specimen photo.
     final prefs = Platform.isAndroid ? await SharedPreferences.getInstance() : null;
     final isOcrPending = prefs?.getBool(_kPlantFormOcrPendingKey) ?? false;
-    final recovered = await _photoService.retrieveLostPhoto();
-    if (recovered != null && mounted) {
+    if (isOcrPending) {
+      await prefs?.remove(_kPlantFormOcrPendingKey);
+    }
+
+    final recovered = await _photoService.retrieveLostPhotos();
+    if (recovered.isNotEmpty && mounted) {
       if (isOcrPending) {
-        // Photo was taken for OCR, not as a specimen photo. Discard it and
-        // clear the flag — the user can re-run the OCR scan manually.
-        prefs?.remove(_kPlantFormOcrPendingKey);
-        _photoService.deletePhoto(recovered.path).ignore();
+        // Photos were taken for OCR, not as specimen photos. Discard them.
+        for (final file in recovered) {
+          _photoService.deletePhoto(file.path).ignore();
+        }
       } else {
-        setState(() => _photoPaths.add(recovered.path));
+        setState(() => _photoPaths.addAll(recovered.map((f) => f.path)));
       }
     }
   }
@@ -3340,12 +3348,12 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
       // Persist form state and flag the OCR in-flight so that if Android
       // kills this Activity while the picker/camera is open, the recovered
       // photo is correctly identified as an OCR temp and not added to the
-      // specimen photo list.
+      // specimen photo list.  Both writes are awaited so that they are
+      // guaranteed to complete before the external Activity is launched.
       if (Platform.isAndroid) {
         await _saveSnapshotToPrefs();
-        SharedPreferences.getInstance()
-            .then((p) => p.setBool(_kPlantFormOcrPendingKey, true))
-            .ignore();
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool(_kPlantFormOcrPendingKey, true);
       }
 
       imageFile = imageSource == _OcrImageSource.camera
