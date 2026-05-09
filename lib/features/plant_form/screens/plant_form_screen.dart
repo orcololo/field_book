@@ -179,7 +179,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 6, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
     final plantRepo = ref.read(plantRepositoryProvider);
     _validator = BotanicalValidator(plantRepo);
     _identifierService = RegistryIdentifierService(plantRepository: plantRepo);
@@ -784,7 +784,6 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         _selectedCategory != null ||
         _selectedSessionId != null ||
         _photoPaths.isNotEmpty ||
-        _measurements.isNotEmpty ||
         _audioNotePaths.isNotEmpty ||
         _latitude != null ||
         _longitude != null;
@@ -899,7 +898,6 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
               Tab(text: l10n.basicInfo),
               Tab(text: l10n.locationInfo),
               Tab(text: l10n.habitatInfo),
-              Tab(text: l10n.measurementsInfo),
               Tab(text: l10n.photosInfo),
               Tab(text: l10n.audioSection),
             ],
@@ -922,7 +920,6 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                     _buildBasicInfoTab(l10n),
                     _buildLocationTab(l10n),
                     _buildHabitatTab(l10n),
-                    _buildMeasurementsTab(l10n),
                     _buildPhotosTab(l10n),
                     _buildAudioTab(l10n),
                   ],
@@ -2152,294 +2149,6 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildMeasurementsTab(AppLocalizations l10n) {
-    return Column(
-      children: [
-        Expanded(
-          child: _measurements.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.straighten,
-                        size: 64,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Nenhuma medição ainda',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Toque no botão + abaixo para adicionar medições',
-                      ),
-                    ],
-                  ),
-                )
-              : ReorderableListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: _measurements.length,
-                  onReorder: (oldIndex, newIndex) {
-                    setState(() {
-                      if (newIndex > oldIndex) {
-                        newIndex -= 1;
-                      }
-                      final item = _measurements.removeAt(oldIndex);
-                      _measurements.insert(newIndex, item);
-                    });
-                  },
-                  itemBuilder: (context, index) {
-                    final measurement = _measurements[index];
-                    return Card(
-                      key: ValueKey('measurement_$index'),
-                      margin: const EdgeInsets.only(bottom: 8),
-                      child: ListTile(
-                        leading: const Icon(Icons.straighten),
-                        title: Text(measurement.label),
-                        subtitle: Text(
-                          '${measurement.value} ${measurement.unit}',
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit, size: 20),
-                              onPressed: () => _editMeasurement(index),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete, size: 20),
-                              color: Theme.of(context).colorScheme.error,
-                              onPressed: () => _removeMeasurement(index),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 4,
-                offset: const Offset(0, -2),
-              ),
-            ],
-          ),
-          child: SafeArea(
-            child: FilledButton.icon(
-              onPressed: _addMeasurement,
-              icon: const Icon(Icons.add),
-              label: const Text('Adicionar Medição'),
-              style: FilledButton.styleFrom(
-                minimumSize: const Size.fromHeight(48),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _addMeasurement() async {
-    final result = await _showMeasurementDialog();
-    if (result != null && mounted) {
-      setState(() {
-        _measurements.add(result);
-      });
-    }
-  }
-
-  Future<void> _editMeasurement(int index) async {
-    final result = await _showMeasurementDialog(
-      initialMeasurement: _measurements[index],
-    );
-    if (result != null && mounted) {
-      setState(() {
-        _measurements[index] = result;
-      });
-    }
-  }
-
-  void _removeMeasurement(int index) {
-    setState(() {
-      _measurements.removeAt(index);
-    });
-  }
-
-  Future<Measurement?> _showMeasurementDialog({
-    Measurement? initialMeasurement,
-  }) async {
-    final l10n = AppLocalizations.of(context)!;
-    final labelController = TextEditingController(
-      text: initialMeasurement?.label ?? '',
-    );
-    final valueController = TextEditingController(
-      text: initialMeasurement?.value.toString() ?? '',
-    );
-    String selectedUnit = initialMeasurement?.unit ?? 'cm';
-
-    return showDialog<Measurement>(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: Text(
-            initialMeasurement == null
-                ? l10n.addMeasurement
-                : l10n.editMeasurement,
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: labelController,
-                  decoration: InputDecoration(
-                    labelText: l10n.measurementDescriptionRequired,
-                    hintText: l10n.measurementDescriptionHint,
-                    border: const OutlineInputBorder(),
-                    prefixIcon: const Icon(Icons.label),
-                  ),
-                  textCapitalization: TextCapitalization.words,
-                  autofocus: initialMeasurement == null,
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: valueController,
-                  decoration: InputDecoration(
-                    labelText: l10n.measurementValueRequired,
-                    hintText: l10n.measurementValueHint,
-                    border: const OutlineInputBorder(),
-                    prefixIcon: const Icon(Icons.numbers),
-                  ),
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                    signed: false,
-                  ),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  initialValue: selectedUnit,
-                  decoration: InputDecoration(
-                    labelText: l10n.unitLabel,
-                    border: const OutlineInputBorder(),
-                    prefixIcon: const Icon(Icons.straighten),
-                  ),
-                  items: const [
-                    DropdownMenuItem(
-                      value: 'mm',
-                      child: Text('Milímetros (mm)'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'cm',
-                      child: Text('Centímetros (cm)'),
-                    ),
-                    DropdownMenuItem(value: 'm', child: Text('Metros (m)')),
-                    DropdownMenuItem(
-                      value: 'in',
-                      child: Text('Polegadas (in)'),
-                    ),
-                    DropdownMenuItem(value: 'ft', child: Text('Pés (ft)')),
-                    DropdownMenuItem(
-                      value: 'mg',
-                      child: Text('Miligramas (mg)'),
-                    ),
-                    DropdownMenuItem(value: 'g', child: Text('Gramas (g)')),
-                    DropdownMenuItem(
-                      value: 'kg',
-                      child: Text('Quilogramas (kg)'),
-                    ),
-                    DropdownMenuItem(value: 'oz', child: Text('Onças (oz)')),
-                    DropdownMenuItem(value: 'lb', child: Text('Libras (lb)')),
-                    DropdownMenuItem(value: '°C', child: Text('Celsius (°C)')),
-                    DropdownMenuItem(
-                      value: '°F',
-                      child: Text('Fahrenheit (°F)'),
-                    ),
-                    DropdownMenuItem(
-                      value: '%',
-                      child: Text('Porcentagem (%)'),
-                    ),
-                    DropdownMenuItem(value: 'count', child: Text('Contagem')),
-                  ],
-                  onChanged: (value) {
-                    setDialogState(() {
-                      selectedUnit = value!;
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(l10n.cancel),
-            ),
-            FilledButton(
-              onPressed: () {
-                final label = labelController.text.trim();
-                if (label.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.enterDescription)),
-                  );
-                  return;
-                }
-
-                final valueText = valueController.text.trim();
-                if (valueText.isEmpty) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(l10n.enterValue)));
-                  return;
-                }
-
-                final value = double.tryParse(valueText);
-                if (value == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.enterValidNumber)),
-                  );
-                  return;
-                }
-
-                if (value < 0) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(l10n.negativeValue)));
-                  return;
-                }
-
-                if (value > 999999) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(l10n.valueTooBig)));
-                  return;
-                }
-
-                final measurement = Measurement()
-                  ..label = label
-                  ..value = value
-                  ..unit = selectedUnit;
-
-                Navigator.of(context).pop(measurement);
-              },
-              child: Text(l10n.save),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
