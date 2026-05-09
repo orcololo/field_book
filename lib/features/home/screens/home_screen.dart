@@ -526,10 +526,10 @@ class _PlantsTabState extends ConsumerState<_PlantsTab> {
           return ListView.builder(
             itemCount: 3,
             padding: EdgeInsets.only(
-              top: widget.hasConflictBanner ? 16 : 80,
+              top: widget.hasConflictBanner ? 16 : MediaQuery.of(context).padding.top + 64,
               left: 0,
               right: 0,
-              bottom: 100, // Account for bottom navigation bar
+              bottom: MediaQuery.of(context).padding.bottom + 80,
             ),
             itemBuilder: (context, index) {
               return ShimmerLoading(child: ShimmerPlaceholders.plantCard(context: context));
@@ -539,7 +539,7 @@ class _PlantsTabState extends ConsumerState<_PlantsTab> {
 
         if (snapshot.hasError) {
           return Padding(
-            padding: EdgeInsets.only(top: widget.hasConflictBanner ? 16 : 80),
+            padding: EdgeInsets.only(top: widget.hasConflictBanner ? 16 : MediaQuery.of(context).padding.top + 64),
             child: EmptyStates.error(
               context: context,
               message: '${l10n.errorOccurred}: ${snapshot.error}',
@@ -558,7 +558,7 @@ class _PlantsTabState extends ConsumerState<_PlantsTab> {
 
         if (plants.isEmpty) {
           return Padding(
-            padding: EdgeInsets.only(top: widget.hasConflictBanner ? 16 : 80),
+            padding: EdgeInsets.only(top: widget.hasConflictBanner ? 16 : MediaQuery.of(context).padding.top + 64),
             child: EmptyStates.noPlants(context: context),
           );
         }
@@ -571,10 +571,10 @@ class _PlantsTabState extends ConsumerState<_PlantsTab> {
           child: ListView.builder(
             itemCount: plants.length,
             padding: EdgeInsets.only(
-              top: widget.hasConflictBanner ? 16 : 80,
+              top: widget.hasConflictBanner ? 16 : MediaQuery.of(context).padding.top + 64,
               left: 0,
               right: 0,
-              bottom: 100, // Account for bottom navigation bar
+              bottom: MediaQuery.of(context).padding.bottom + 80,
             ),
             itemBuilder: (context, index) {
               final plant = plants[index];
@@ -668,11 +668,11 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return ListView.builder(
             itemCount: 3,
-            padding: const EdgeInsets.only(
-              top: 80,
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).padding.top + 64,
               left: FoliumTheme.space16,
               right: FoliumTheme.space16,
-              bottom: 100, // Account for bottom navigation bar
+              bottom: MediaQuery.of(context).padding.bottom + 80,
             ),
             itemBuilder: (context, index) {
               return ShimmerLoading(child: ShimmerPlaceholders.listItem(context: context));
@@ -684,7 +684,7 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
 
         if (sessions.isEmpty) {
           return Padding(
-            padding: const EdgeInsets.only(top: 80),
+            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 64),
             child: EmptyStates.noSessions(context: context),
           );
         }
@@ -696,11 +696,11 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
           },
           child: ListView.builder(
             itemCount: sessions.length,
-            padding: const EdgeInsets.only(
-              top: 80,
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).padding.top + 64,
               left: FoliumTheme.space16,
               right: FoliumTheme.space16,
-              bottom: 100, // Account for bottom navigation bar
+              bottom: MediaQuery.of(context).padding.bottom + 80,
             ),
             itemBuilder: (context, index) {
               final session = sessions[index];

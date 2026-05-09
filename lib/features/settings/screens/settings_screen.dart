@@ -31,8 +31,8 @@ class SettingsScreen extends ConsumerWidget {
       body: settingsAsync.when(
         loading: () => ListView.builder(
           itemCount: 5,
-          padding: const EdgeInsets.only(
-            top: 100,
+          padding: EdgeInsets.only(
+            top: MediaQuery.of(context).padding.top + 64,
             left: FoliumTheme.space16,
             right: FoliumTheme.space16,
           ),
@@ -69,12 +69,11 @@ class SettingsScreen extends ConsumerWidget {
         data: (settings) => CustomScrollView(
           slivers: [
             SliverPadding(
-              padding: const EdgeInsets.only(
+              padding: EdgeInsets.only(
                 left: FoliumTheme.space16,
                 right: FoliumTheme.space16,
-                top: 96, // Account for glass app bar
-                bottom:
-                    140, // Extra bottom padding for navigation bar + safe area + overflow fix
+                top: MediaQuery.of(context).padding.top + 64,
+                bottom: MediaQuery.of(context).padding.bottom + 80,
               ),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([

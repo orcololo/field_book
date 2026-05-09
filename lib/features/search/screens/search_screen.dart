@@ -159,7 +159,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       body: Column(
         children: [
           // Top spacing for glass app bar
-          const SizedBox(height: 80),
+          SizedBox(height: MediaQuery.of(context).padding.top + 64),
           
           // Search Bar
           ModernSearchBar(
