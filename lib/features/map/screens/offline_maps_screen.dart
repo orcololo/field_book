@@ -40,6 +40,7 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
     try {
       await MapService.initialize();
       final stats = await MapService.getCacheStats();
+      if (!mounted) return;
       
       setState(() {
         _cachedTiles = stats['tileCount'] as int;
@@ -47,6 +48,7 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
     }
   }
@@ -173,6 +175,7 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
       await for (final progress in store.download.startForeground(
         region: downloadable,
       )) {
+        if (!mounted) return;
         setState(() {
           _downloadProgress = progress.percentageProgress / 100;
         });
@@ -200,13 +203,15 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
         );
       }
     } finally {
-      setState(() {
-        _isDownloading = false;
-        _downloadProgress = 0.0;
-        _downloadingRegionName = null;
-        _northEast = null;
-        _southWest = null;
-      });
+      if (mounted) {
+        setState(() {
+          _isDownloading = false;
+          _downloadProgress = 0.0;
+          _downloadingRegionName = null;
+          _northEast = null;
+          _southWest = null;
+        });
+      }
     }
   }
 

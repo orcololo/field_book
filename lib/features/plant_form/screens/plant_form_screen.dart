@@ -377,6 +377,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
       _scientificNameController.text,
       excludeId: widget.plant?.uuid,
     );
+    if (!mounted) return;
 
     setState(() {
       _duplicateWarnings = duplicates;
@@ -443,27 +444,25 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     final colorScheme = Theme.of(context).colorScheme;
     try {
       final identifier = await _identifierService.generateNextIdentifier();
+      if (!mounted) return;
       setState(() {
         _identifierController.text = identifier;
       });
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.identifierGenerated(identifier)),
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.identifierGenerated(identifier)),
+          duration: const Duration(seconds: 2),
+        ),
+      );
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.errorGeneratingIdentifier(e.toString())),
-            backgroundColor: colorScheme.error,
-          ),
-        );
-      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.errorGeneratingIdentifier(e.toString())),
+          backgroundColor: colorScheme.error,
+        ),
+      );
     }
   }
 

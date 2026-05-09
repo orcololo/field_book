@@ -42,24 +42,24 @@ class _IdentifierManagementScreenState
     try {
       final plantRepo = ref.read(plantRepositoryProvider);
       final plants = await plantRepo.getPlantsWithoutIdentifier();
+      if (!mounted) return;
 
       setState(() {
         _plantsWithoutIdentifiers = plants;
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
       });
-      if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.errorLoadingPlants2(e.toString())),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
-      }
+      final l10n = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.errorLoadingPlants2(e.toString())),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
     }
   }
 
@@ -129,7 +129,8 @@ class _IdentifierManagementScreenState
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-              Flexible(
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 300),
                 child: ListView.builder(
                   shrinkWrap: true,
                   itemCount: selectedPlants.length,
@@ -230,36 +231,34 @@ class _IdentifierManagementScreenState
         }
       }
 
+      if (!mounted) return;
       setState(() {
         _isAssigning = false;
         _selectedPlantIds.clear();
       });
 
-      if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.identifiersAssigned(successCount)),
-            backgroundColor: FoliumTheme.success,
-          ),
-        );
-      }
+      final l10n = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.identifiersAssigned(successCount)),
+          backgroundColor: FoliumTheme.success,
+        ),
+      );
 
       // Reload list
       await _loadPlantsWithoutIdentifiers();
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isAssigning = false;
       });
-      if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.errorAssigningIdentifiers(e.toString())),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
-      }
+      final l10n = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.errorAssigningIdentifiers(e.toString())),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
     }
   }
 

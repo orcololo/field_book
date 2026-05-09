@@ -92,23 +92,23 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         results = results.where((p) => p.dateCollected.isBefore(_endDate!)).toList();
       }
 
+      if (!mounted) return;
       setState(() {
         _searchResults = results;
         _isSearching = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isSearching = false;
       });
-      if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.errorSearchMsg(e.toString())),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
-      }
+      final l10n = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.errorSearchMsg(e.toString())),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
     }
   }
 
@@ -134,6 +134,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     );
 
     if (picked != null) {
+      if (!mounted) return;
       setState(() {
         if (isStartDate) {
           _startDate = picked;

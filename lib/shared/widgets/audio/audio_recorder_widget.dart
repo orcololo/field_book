@@ -75,6 +75,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
           _configForQuality(quality),
           path: _recordingPath!,
         );
+        if (!mounted) return;
 
         setState(() {
           _isRecording = true;
@@ -84,18 +85,16 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
 
         _startTimer();
       } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Permissão de microfone negada')),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao iniciar gravação: $e')),
+          const SnackBar(content: Text('Permissão de microfone negada')),
         );
       }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao iniciar gravação: $e')),
+      );
     }
   }
 
@@ -116,24 +115,27 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
 
   Future<void> _pauseRecording() async {
     await _audioRecorder.pause();
+    if (!mounted) return;
     setState(() => _isPaused = true);
   }
 
   Future<void> _resumeRecording() async {
     await _audioRecorder.resume();
+    if (!mounted) return;
     setState(() => _isPaused = false);
   }
 
   Future<void> _stopRecording() async {
     _timer?.cancel();
     final path = await _audioRecorder.stop();
+    if (!mounted) return;
 
     setState(() {
       _isRecording = false;
       _isPaused = false;
     });
 
-    if (path != null && mounted) {
+    if (path != null) {
       widget.onRecordingComplete(path);
 
       // Reset for next recording
@@ -147,12 +149,14 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
   Future<void> _cancelRecording() async {
     _timer?.cancel();
     await _audioRecorder.stop();
+    if (!mounted) return;
 
     // Delete the file
     if (_recordingPath != null) {
       final file = File(_recordingPath!);
       if (file.existsSync()) {
         await file.delete();
+        if (!mounted) return;
       }
     }
 
