@@ -111,8 +111,11 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
         final prefs = await SharedPreferences.getInstance();
         final owner = prefs.getString(kRecoveryOwnerKey);
         if (owner == 'quick_capture_camera') {
-          await prefs.remove(kRecoveryOwnerKey);
+          // Retrieve first, then clear the key — if retrieval fails internally
+          // the plugin has already consumed the data, but clearing after ensures
+          // we don't prematurely discard the key before any future retry path.
           final recovered = await _photoService.retrieveLostPhotos();
+          await prefs.remove(kRecoveryOwnerKey);
           if (recovered.isNotEmpty && mounted) {
             setState(() => _photoPaths.addAll(recovered.map((f) => f.path)));
           }

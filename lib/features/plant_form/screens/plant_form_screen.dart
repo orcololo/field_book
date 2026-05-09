@@ -3220,6 +3220,11 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
 
     _latitude = (data['latitude'] as num?)?.toDouble();
     _longitude = (data['longitude'] as num?)?.toDouble();
+    // Coordinates are only valid as a pair — clear both if either is missing.
+    if (_latitude == null || _longitude == null) {
+      _latitude = null;
+      _longitude = null;
+    }
 
     _photoPaths = List<String>.from((data['photoPaths'] as List?) ?? []);
     _audioNotePaths =
@@ -3297,13 +3302,15 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     // would cause the real owner to skip recovery and permanently lose the photo.
     if (owner != 'plant_form_camera' && owner != 'plant_form_ocr') return;
 
-    // We own both keys — remove them so they can't be replayed on a later launch.
-    await prefs.remove(kRecoveryOwnerKey);
+    // We own the snapshot key — remove it so it can't be replayed on a later launch.
+    // The recovery owner key is cleared AFTER retrieval so that, if the plugin
+    // call fails internally, a subsequent launch can still attempt recovery.
     await prefs.remove(_kPlantFormSnapshotKey);
 
     final isOcrPending = owner == 'plant_form_ocr';
 
     final recovered = await _photoService.retrieveLostPhotos();
+    await prefs.remove(kRecoveryOwnerKey);
     if (recovered.isNotEmpty && mounted) {
       if (isOcrPending) {
         // Photos were taken for OCR, not as specimen photos. Discard them.
@@ -3508,18 +3515,12 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         _dateCollected = parsedDate;
       }
 
-      if (parsedLatitude != null) {
+      // Only update coordinates from OCR if both values are present —
+      // a partial extraction neither updates nor clears existing GPS data,
+      // preventing a mixed (lat-from-OCR, lon-from-existing) pair.
+      if (parsedLatitude != null && parsedLongitude != null) {
         _latitude = parsedLatitude;
-      }
-
-      if (parsedLongitude != null) {
         _longitude = parsedLongitude;
-      }
-
-      // Coordinates are only valid as a pair — clear both if either is missing.
-      if (_latitude == null || _longitude == null) {
-        _latitude = null;
-        _longitude = null;
       }
     });
   }
