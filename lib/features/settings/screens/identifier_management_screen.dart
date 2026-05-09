@@ -160,7 +160,7 @@ class _IdentifierManagementScreenState
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
+                  color: Theme.of(context).colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.blue.shade200),
                 ),
@@ -173,7 +173,7 @@ class _IdentifierManagementScreenState
                         'Esta operação não pode ser desfeita.',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.blue.shade900,
+                          color: Theme.of(context).colorScheme.onPrimaryContainer,
                         ),
                       ),
                     ),
@@ -376,6 +376,7 @@ class _IdentifierManagementScreenState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: ModernAppBar(
         title: l10n.manageIdentifiersTitle,
         actions: [
@@ -402,11 +403,20 @@ class _IdentifierManagementScreenState
             ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _plantsWithoutIdentifiers.isEmpty
-              ? _buildEmptyState()
-              : _buildPlantList(),
+      body: Column(
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).padding.top + 64,
+          ),
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _plantsWithoutIdentifiers.isEmpty
+                    ? _buildEmptyState()
+                    : _buildPlantList(),
+          ),
+        ],
+      ),
       floatingActionButton: _selectedPlantIds.isNotEmpty
           ? FloatingActionButton.extended(
               onPressed: _isAssigning ? null : _showAssignmentPreview,
@@ -442,10 +452,10 @@ class _IdentifierManagementScreenState
             const SizedBox(height: 8),
             Text(
               l10n.noPlantsWithoutIdentifiers,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade600,
-              ),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -529,7 +539,7 @@ class _IdentifierManagementScreenState
                       l10n.collectedOn('${plant.dateCollected.day}/${plant.dateCollected.month}/${plant.dateCollected.year}'),
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey.shade600,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],

@@ -148,6 +148,7 @@ class _TemplatesScreenState extends ConsumerState<TemplatesScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: ModernAppBar(
         title: l10n.collectionTemplatesTitle,
         showBackButton: true,
@@ -157,88 +158,97 @@ class _TemplatesScreenState extends ConsumerState<TemplatesScreen> {
         icon: const Icon(Icons.add),
         label: Text(l10n.newCollectionTemplate),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: _loadTemplates,
-              child: ListView.separated(
-                padding: const EdgeInsets.all(FoliumTheme.space16),
-                itemCount: _templates.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: FoliumTheme.space12),
-                itemBuilder: (context, index) {
-                  final template = _templates[index];
+      body: Column(
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).padding.top + 64,
+          ),
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : RefreshIndicator(
+                    onRefresh: _loadTemplates,
+                    child: ListView.separated(
+                      padding: const EdgeInsets.all(FoliumTheme.space16),
+                      itemCount: _templates.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: FoliumTheme.space12),
+                      itemBuilder: (context, index) {
+                        final template = _templates[index];
 
-                  return Container(
-                    decoration: FoliumTheme.cardDecoration(),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.all(FoliumTheme.space16),
-                      leading: CircleAvatar(
-                        backgroundColor: template.isBuiltIn
-                            ? Theme.of(context).colorScheme.primaryContainer
-                            : Theme.of(context).colorScheme.secondaryContainer,
-                        child: Icon(
-                          template.isBuiltIn ? Icons.eco : Icons.edit_note,
-                          color: template.isBuiltIn
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).colorScheme.secondary,
-                        ),
-                      ),
-                      title: Text(
-                        template.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      subtitle: Padding(
-                        padding: const EdgeInsets.only(top: FoliumTheme.space8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(_localizedBiomeName(l10n, template.biome)),
-                            const SizedBox(height: FoliumTheme.space4),
-                            Text(
-                              _buildTemplatePreview(template, l10n),
-                              maxLines: 3,
+                        return Container(
+                          decoration: FoliumTheme.cardDecoration(),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.all(FoliumTheme.space16),
+                            leading: CircleAvatar(
+                              backgroundColor: template.isBuiltIn
+                                  ? Theme.of(context).colorScheme.primaryContainer
+                                  : Theme.of(context).colorScheme.secondaryContainer,
+                              child: Icon(
+                                template.isBuiltIn ? Icons.eco : Icons.edit_note,
+                                color: template.isBuiltIn
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                            title: Text(
+                              template.name,
+                              maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                          ],
-                        ),
-                      ),
-                      trailing: PopupMenuButton<String>(
-                        onSelected: (value) {
-                          switch (value) {
-                            case 'edit':
-                              _openTemplateDialog(template: template);
-                              break;
-                            case 'duplicate':
-                              _duplicateTemplate(template);
-                              break;
-                            case 'delete':
-                              _deleteTemplate(template);
-                              break;
-                          }
-                        },
-                        itemBuilder: (context) => [
-                          PopupMenuItem<String>(
-                            value: 'edit',
-                            child: Text(l10n.edit),
-                          ),
-                          PopupMenuItem<String>(
-                            value: 'duplicate',
-                            child: Text(l10n.duplicateCollectionTemplate),
-                          ),
-                          if (!template.isBuiltIn)
-                            PopupMenuItem<String>(
-                              value: 'delete',
-                              child: Text(l10n.delete),
+                            subtitle: Padding(
+                              padding: const EdgeInsets.only(top: FoliumTheme.space8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(_localizedBiomeName(l10n, template.biome)),
+                                  const SizedBox(height: FoliumTheme.space4),
+                                  Text(
+                                    _buildTemplatePreview(template, l10n),
+                                    maxLines: 3,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
                             ),
-                        ],
-                      ),
+                            trailing: PopupMenuButton<String>(
+                              onSelected: (value) {
+                                switch (value) {
+                                  case 'edit':
+                                    _openTemplateDialog(template: template);
+                                    break;
+                                  case 'duplicate':
+                                    _duplicateTemplate(template);
+                                    break;
+                                  case 'delete':
+                                    _deleteTemplate(template);
+                                    break;
+                                }
+                              },
+                              itemBuilder: (context) => [
+                                PopupMenuItem<String>(
+                                  value: 'edit',
+                                  child: Text(l10n.edit),
+                                ),
+                                PopupMenuItem<String>(
+                                  value: 'duplicate',
+                                  child: Text(l10n.duplicateCollectionTemplate),
+                                ),
+                                if (!template.isBuiltIn)
+                                  PopupMenuItem<String>(
+                                    value: 'delete',
+                                    child: Text(l10n.delete),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-            ),
+                  ),
+          ),
+        ],
+      ),
     );
   }
 

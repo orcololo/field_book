@@ -81,6 +81,7 @@ class _DichotomousKeyScreenState extends ConsumerState<DichotomousKeyScreen> {
     final keysAsync = ref.watch(dichotomousKeysProvider);
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: ModernAppBar(
         title: l10n.dichotomousKeyTitle,
         actions: [
@@ -91,184 +92,192 @@ class _DichotomousKeyScreenState extends ConsumerState<DichotomousKeyScreen> {
           ),
         ],
       ),
-      body: keysAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  l10n.dichotomousKeyLoadError(error.toString()),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 12),
-                FilledButton(
-                  onPressed: () => ref.invalidate(dichotomousKeysProvider),
-                  child: Text(l10n.tryAgain),
-                ),
-              ],
-            ),
+      body: Column(
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).padding.top + 64,
           ),
-        ),
-        data: (keys) {
-          if (keys.isEmpty) {
-            return Center(child: Text(l10n.dichotomousKeyEmpty));
-          }
-
-          final screenState = _deriveState(keys);
-          final currentRoute = screenState.currentRoute;
-          final currentKey = keys[currentRoute.family]!;
-          final currentStep = currentKey.stepById[currentRoute.stepId]!;
-          final currentBranchLabel = currentKey.family ==
-                  DichotomousKeyService.generalKeyFamily
-              ? l10n.dichotomousKeyGeneralBranch
-              : currentKey.family;
-
-          return ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              Card(
+          Expanded(
+            child: keysAsync.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, _) => Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(24),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        l10n.dichotomousKeyHowToUse,
-                        style: Theme.of(context).textTheme.titleMedium,
+                        l10n.dichotomousKeyLoadError(error.toString()),
+                        textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 8),
-                      Text(l10n.dichotomousKeyIntro),
+                      const SizedBox(height: 12),
+                      FilledButton(
+                        onPressed: () => ref.invalidate(dichotomousKeysProvider),
+                        child: Text(l10n.tryAgain),
+                      ),
                     ],
                   ),
                 ),
               ),
-              if (_trail.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                Text(
-                  l10n.dichotomousKeyTrail,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: _trail.asMap().entries.map((entry) {
-                      final item = entry.value;
-                      return Padding(
-                        padding: EdgeInsets.only(
-                          right: entry.key == _trail.length - 1 ? 0 : 8,
-                        ),
-                        child: Chip(
-                          label: Text(
-                            '${entry.key + 1}. ${item.question} • ${item.answerYes ? l10n.yes : l10n.no}',
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      );
-                    }).toList(growable: false),
-                  ),
-                ),
-              ],
-              const SizedBox(height: 16),
-              if (screenState.resultFamily != null)
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.dichotomousKeySuggestedFamily,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          screenState.resultFamily!,
-                          style:
-                              Theme.of(context).textTheme.headlineSmall,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(l10n.dichotomousKeyResultHelp),
-                        const SizedBox(height: 16),
-                        FilledButton.icon(
-                          onPressed: () => Navigator.pop(
-                            context,
-                            screenState.resultFamily,
-                          ),
-                          icon: const Icon(Icons.check_circle_outline),
-                          label: Text(l10n.dichotomousKeyUseFamily),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-              else
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.dichotomousKeyCurrentBranch(currentBranchLabel),
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          l10n.dichotomousKeyQuestionCounter(_trail.length + 1),
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          currentStep.question,
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                        const SizedBox(height: 24),
-                        Row(
+              data: (keys) {
+                if (keys.isEmpty) {
+                  return Center(child: Text(l10n.dichotomousKeyEmpty));
+                }
+
+                final screenState = _deriveState(keys);
+                final currentRoute = screenState.currentRoute;
+                final currentKey = keys[currentRoute.family]!;
+                final currentStep = currentKey.stepById[currentRoute.stepId]!;
+                final currentBranchLabel = currentKey.family ==
+                        DichotomousKeyService.generalKeyFamily
+                    ? l10n.dichotomousKeyGeneralBranch
+                    : currentKey.family;
+
+                return ListView(
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: FilledButton.icon(
-                                onPressed: () => _answerQuestion(
-                                  keys,
-                                  currentRoute,
-                                  currentStep,
-                                  true,
-                                ),
-                                icon: const Icon(Icons.check),
-                                label: Text(l10n.yes),
-                              ),
+                            Text(
+                              l10n.dichotomousKeyHowToUse,
+                              style: Theme.of(context).textTheme.titleMedium,
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: OutlinedButton.icon(
-                                onPressed: () => _answerQuestion(
-                                  keys,
-                                  currentRoute,
-                                  currentStep,
-                                  false,
-                                ),
-                                icon: const Icon(Icons.close),
-                                label: Text(l10n.no),
-                              ),
-                            ),
+                            const SizedBox(height: 8),
+                            Text(l10n.dichotomousKeyIntro),
                           ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-              const SizedBox(height: 16),
-              OutlinedButton.icon(
-                onPressed: _trail.isEmpty ? null : _goBackStep,
-                icon: const Icon(Icons.arrow_back),
-                label: Text(l10n.dichotomousKeyBackStep),
-              ),
-            ],
-          );
-        },
+                    if (_trail.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      Text(
+                        l10n.dichotomousKeyTrail,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 8),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: _trail.asMap().entries.map((entry) {
+                            final item = entry.value;
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                right: entry.key == _trail.length - 1 ? 0 : 8,
+                              ),
+                              child: Chip(
+                                label: Text(
+                                  '${entry.key + 1}. ${item.question} • ${item.answerYes ? l10n.yes : l10n.no}',
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            );
+                          }).toList(growable: false),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 16),
+                    if (screenState.resultFamily != null)
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l10n.dichotomousKeySuggestedFamily,
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                screenState.resultFamily!,
+                                style: Theme.of(context).textTheme.headlineSmall,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(l10n.dichotomousKeyResultHelp),
+                              const SizedBox(height: 16),
+                              FilledButton.icon(
+                                onPressed: () => Navigator.pop(
+                                  context,
+                                  screenState.resultFamily,
+                                ),
+                                icon: const Icon(Icons.check_circle_outline),
+                                label: Text(l10n.dichotomousKeyUseFamily),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    else
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l10n.dichotomousKeyCurrentBranch(currentBranchLabel),
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                l10n.dichotomousKeyQuestionCounter(_trail.length + 1),
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                currentStep.question,
+                                style: Theme.of(context).textTheme.headlineSmall,
+                              ),
+                              const SizedBox(height: 24),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: FilledButton.icon(
+                                      onPressed: () => _answerQuestion(
+                                        keys,
+                                        currentRoute,
+                                        currentStep,
+                                        true,
+                                      ),
+                                      icon: const Icon(Icons.check),
+                                      label: Text(l10n.yes),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: OutlinedButton.icon(
+                                      onPressed: () => _answerQuestion(
+                                        keys,
+                                        currentRoute,
+                                        currentStep,
+                                        false,
+                                      ),
+                                      icon: const Icon(Icons.close),
+                                      label: Text(l10n.no),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: 16),
+                    OutlinedButton.icon(
+                      onPressed: _trail.isEmpty ? null : _goBackStep,
+                      icon: const Icon(Icons.arrow_back),
+                      label: Text(l10n.dichotomousKeyBackStep),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -76,10 +76,10 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.3),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.edit, color: Colors.white),
+              color: Colors.black.withValues(alpha: 0.3),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.edit, color: Colors.white),
             ),
             onPressed: () async {
               final result = await Navigator.of(context).push(
@@ -285,7 +285,7 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
           child: Icon(
             Icons.eco,
             size: 100,
-            color: Colors.white.withValues(alpha: 0.5),
+            color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.5),
           ),
         ),
       );

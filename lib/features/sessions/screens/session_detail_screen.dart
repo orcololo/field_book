@@ -72,7 +72,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
             child: Text(l10n.deleteSessionConfirm),
           ),
         ],
@@ -229,6 +229,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
         gpsTrackState.isTracking && gpsTrackState.sessionUuid == _session.uuid;
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: ModernAppBar(
         title: _session.tripName,
         actions: [
@@ -277,7 +278,12 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                   children: [
                     const Icon(Icons.delete, color: Colors.red),
                     const SizedBox(width: 8),
-                    Text(l10n.excluir, style: const TextStyle(color: Colors.red)),
+                    Text(
+                      l10n.excluir,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -289,6 +295,9 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          SizedBox(
+            height: MediaQuery.of(context).padding.top + 64,
+          ),
           // Session Info Card
           Card(
             child: Padding(
@@ -330,6 +339,8 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                         Expanded(
                           child: Text(
                             _session.location!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ),
@@ -527,7 +538,9 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                         const SizedBox(height: 16),
                         Text(
                           l10n.noPlantsCollectedInSession,
-                          style: TextStyle(color: Colors.grey.shade600),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                       ],

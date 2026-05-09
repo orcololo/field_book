@@ -44,10 +44,14 @@ class _InaturalistAuthScreenState extends ConsumerState<InaturalistAuthScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: ModernAppBar(title: l10n.inaturalistAuthTitle),
       body: ListView(
         padding: const EdgeInsets.all(FoliumTheme.space16),
         children: [
+          SizedBox(
+            height: MediaQuery.of(context).padding.top + 64,
+          ),
           Container(
             padding: const EdgeInsets.all(FoliumTheme.space16),
             decoration: FoliumTheme.cardDecoration(),

@@ -875,6 +875,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         await _attemptExitWithoutSaving(l10n);
       },
       child: Scaffold(
+        extendBodyBehindAppBar: true,
         appBar: ModernAppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
@@ -897,15 +898,26 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         ),
         body: Form(
           key: _formKey,
-          child: TabBarView(
-            controller: _tabController,
+          child: Column(
             children: [
-              _buildBasicInfoTab(l10n),
-              _buildLocationTab(l10n),
-              _buildHabitatTab(l10n),
-              _buildMeasurementsTab(l10n),
-              _buildPhotosTab(l10n),
-              _buildAudioTab(l10n),
+              SizedBox(
+                height: MediaQuery.of(context).padding.top +
+                    64 +
+                    kTextTabBarHeight,
+              ),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildBasicInfoTab(l10n),
+                    _buildLocationTab(l10n),
+                    _buildHabitatTab(l10n),
+                    _buildMeasurementsTab(l10n),
+                    _buildPhotosTab(l10n),
+                    _buildAudioTab(l10n),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -1157,7 +1169,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                 Icons.lightbulb,
                 color: Theme.of(context).colorScheme.tertiary,
               ),
-              title: Text(l10n.suggestionWithName(_suggestedFamily!)),
+              title: Text(l10n.suggestionWithName(_suggestedFamily!), maxLines: 1, overflow: TextOverflow.ellipsis),
               subtitle: Text(l10n.basedOnGenus),
               trailing: TextButton(
                 onPressed: () {
@@ -1449,7 +1461,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
             ...sessions.map((session) {
               return DropdownMenuItem(
                 value: session.uuid,
-                child: Text(session.tripName),
+                child: Text(session.tripName, maxLines: 1, overflow: TextOverflow.ellipsis),
               );
             }),
           ],
@@ -2750,7 +2762,9 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                 const SizedBox(height: 8),
                 Text(
                   'Nenhuma nota de áudio gravada',
-                  style: TextStyle(color: Colors.grey.shade600),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),

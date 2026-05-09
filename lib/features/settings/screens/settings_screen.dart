@@ -1699,7 +1699,7 @@ class _RegistryNumberDialogState extends State<_RegistryNumberDialog> {
           const SizedBox(height: 16),
           Text(
             l10n.changeNumberWarning,
-            style: const TextStyle(fontSize: 12, color: Colors.orange),
+            style: const TextStyle(fontSize: 12, color: FoliumTheme.warning),
           ),
         ],
       ),

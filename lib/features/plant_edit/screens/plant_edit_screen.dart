@@ -666,6 +666,7 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: ModernAppBar(
         title: l10n.editPlant,
         showBackButton: true,
@@ -690,6 +691,9 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            SizedBox(
+              height: MediaQuery.of(context).padding.top + 64,
+            ),
             // Scientific Name
             Autocomplete<TaxonSuggestion>(
               displayStringForOption: (option) => option.name,
@@ -911,7 +915,7 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
                 color: colorScheme.tertiaryContainer,
                 child: ListTile(
                   leading: Icon(Icons.lightbulb, color: colorScheme.tertiary),
-                  title: Text(l10n.suggestionWithName(_suggestedFamily!)),
+                  title: Text(l10n.suggestionWithName(_suggestedFamily!), maxLines: 1, overflow: TextOverflow.ellipsis),
                   subtitle: Text(l10n.basedOnGenus),
                   trailing: TextButton(
                     onPressed: () {

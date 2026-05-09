@@ -116,8 +116,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         ),
         child: Text(
           l10n.onboardingNext,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: colorScheme.onPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -133,8 +133,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         ),
         child: Text(
           l10n.onboardingDone,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: colorScheme.onPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),

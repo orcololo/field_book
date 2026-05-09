@@ -70,12 +70,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       backgroundColor: colorScheme.surface,
       appBar: ModernAppBar(
         title: l10n.createAccount,
         showBackButton: true,
       ),
       body: SafeArea(
+        top: false,
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: FoliumTheme.space24),
           child: Form(
@@ -83,6 +85,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                SizedBox(
+                  height: MediaQuery.of(context).padding.top + 64,
+                ),
                 const SizedBox(height: FoliumTheme.space24),
                 TextFormField(
                   controller: _nameController,

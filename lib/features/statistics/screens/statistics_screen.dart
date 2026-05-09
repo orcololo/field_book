@@ -125,7 +125,9 @@ class StatisticsScreen extends ConsumerWidget {
                       const SizedBox(height: 16),
                       Text(
                         l10n.noPlantsYet,
-                        style: TextStyle(color: Colors.grey.shade600),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ],
                   ),
@@ -219,7 +221,9 @@ class StatisticsScreen extends ConsumerWidget {
                   padding: const EdgeInsets.all(32.0),
                   child: Text(
                     l10n.noActivityRecorded,
-                    style: TextStyle(color: Colors.grey.shade600),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -311,7 +315,9 @@ class StatisticsScreen extends ConsumerWidget {
                   padding: const EdgeInsets.all(32.0),
                   child: Text(
                     l10n.noRecentActivity,
-                    style: TextStyle(color: Colors.grey.shade600),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -534,7 +540,10 @@ class _StatCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               title,
-              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
           ],

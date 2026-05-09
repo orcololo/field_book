@@ -232,8 +232,8 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
               // Results count
               Text(
                 l10n.mapPlantsCount(_filteredPlants.length),
-                style: const TextStyle(
-                  color: Colors.grey,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: 12,
                 ),
               ),
@@ -315,6 +315,7 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: ModernAppBar(
         title: l10n.mapPlantsTitle,
         actions: [
@@ -354,10 +355,12 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
                     children: [
                       const Icon(Icons.map_outlined, size: 64, color: Colors.grey),
                       const SizedBox(height: 16),
-                      Text(
-                        l10n.noLocationSet,
-                        style: const TextStyle(color: Colors.grey),
-                      ),
+                       Text(
+                         l10n.noLocationSet,
+                         style: TextStyle(
+                           color: Theme.of(context).colorScheme.onSurfaceVariant,
+                         ),
+                       ),
                     ],
                   ),
                 )

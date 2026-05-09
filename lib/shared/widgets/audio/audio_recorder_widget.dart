@@ -228,8 +228,8 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
                     icon: const Icon(Icons.stop),
                     iconSize: 32,
                     style: IconButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
+                      backgroundColor: Theme.of(context).colorScheme.error,
+                      foregroundColor: Theme.of(context).colorScheme.onError,
                     ),
                     tooltip: 'Parar',
                   ),

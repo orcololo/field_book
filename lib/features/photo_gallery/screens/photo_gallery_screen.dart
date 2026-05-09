@@ -117,6 +117,7 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: ModernAppBar(
         title: l10n.photoGallery,
         actions: [
@@ -143,78 +144,87 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _filteredPhotos.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.photo_library,
-                    size: 64,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    l10n.noPhotosFound,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : Column(
-              children: [
-                if (_filterByCategory != null ||
-                    _filterStartDate != null ||
-                    _filterEndDate != null)
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    color: colorScheme.tertiaryContainer,
-                    child: Row(
+      body: Column(
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).padding.top + 64,
+          ),
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _filteredPhotos.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Expanded(
-                          child: Text(
-                            l10n.activeFilters(_getActiveFiltersText(context)),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: colorScheme.onTertiaryContainer,
-                            ),
-                          ),
+                        Icon(
+                          Icons.photo_library,
+                          size: 64,
+                          color: colorScheme.onSurfaceVariant,
                         ),
-                        TextButton(
-                          onPressed: () {
-                            setState(() {
-                              _filterByCategory = null;
-                              _filterStartDate = null;
-                              _filterEndDate = null;
-                              _applyFiltersAndSort();
-                            });
-                          },
-                          child: Text(l10n.clearFilters),
+                        const SizedBox(height: 16),
+                        Text(
+                          l10n.noPhotosFound,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                Expanded(
-                  child: GridView.builder(
-                    padding: const EdgeInsets.all(4),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          crossAxisSpacing: 4,
-                          mainAxisSpacing: 4,
+                  )
+                : Column(
+                    children: [
+                      if (_filterByCategory != null ||
+                          _filterStartDate != null ||
+                          _filterEndDate != null)
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          color: colorScheme.tertiaryContainer,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  l10n.activeFilters(_getActiveFiltersText(context)),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: colorScheme.onTertiaryContainer,
+                                  ),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _filterByCategory = null;
+                                    _filterStartDate = null;
+                                    _filterEndDate = null;
+                                    _applyFiltersAndSort();
+                                  });
+                                },
+                                child: Text(l10n.clearFilters),
+                              ),
+                            ],
+                          ),
                         ),
-                    itemCount: _filteredPhotos.length,
-                    itemBuilder: (context, index) =>
-                        _buildPhotoTile(_filteredPhotos[index], index),
+                      Expanded(
+                        child: GridView.builder(
+                          padding: const EdgeInsets.all(4),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 4,
+                                mainAxisSpacing: 4,
+                              ),
+                          itemCount: _filteredPhotos.length,
+                          itemBuilder: (context, index) =>
+                              _buildPhotoTile(_filteredPhotos[index], index),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
+          ),
+        ],
+      ),
     );
   }
 

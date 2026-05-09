@@ -189,14 +189,14 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                         ),
                       ),
                     if (widget.onDelete != null)
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'delete',
                         child: Row(
                           children: [
-                            Icon(Icons.delete, color: Colors.red),
+                            Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
                             SizedBox(width: 8),
                             Text('Excluir',
-                                style: TextStyle(color: Colors.red)),
+                                style: TextStyle(color: Theme.of(context).colorScheme.error)),
                           ],
                         ),
                       ),

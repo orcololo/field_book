@@ -224,10 +224,10 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                 const SizedBox(height: 16),
                 Text(
                   l10n.errorsLabel,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
-                  ),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                 ),
                 const SizedBox(height: 8),
                 ...result.errors.map((error) => Padding(
@@ -276,6 +276,7 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: ModernAppBar(
         title: l10n.exportImportTitle,
         showBackButton: true,
@@ -283,6 +284,9 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          SizedBox(
+            height: MediaQuery.of(context).padding.top + 64,
+          ),
           // Export Section
           Card(
             child: Padding(
@@ -303,7 +307,9 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                   const SizedBox(height: 8),
                   Text(
                     l10n.exportBackupHint,
-                    style: const TextStyle(color: Colors.grey),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                   if (widget.preSelectedPlants != null) ...[
                     const SizedBox(height: 8),
@@ -313,17 +319,23 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.blue.withValues(alpha: 0.1),
+                        color: Theme.of(context).colorScheme.primaryContainer,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.filter_list, color: Colors.blue, size: 16),
+                          Icon(
+                            Icons.filter_list,
+                            color: Theme.of(context).colorScheme.onPrimaryContainer,
+                            size: 16,
+                          ),
                           const SizedBox(width: 8),
                           Text(
                             l10n.exportingNPlants(widget.preSelectedPlants!.length),
-                            style: const TextStyle(color: Colors.blue),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimaryContainer,
+                            ),
                           ),
                         ],
                       ),
@@ -457,7 +469,9 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                   const SizedBox(height: 8),
                   Text(
                     l10n.importFromJson,
-                    style: const TextStyle(color: Colors.grey),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   
@@ -553,9 +567,9 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
         const SizedBox(height: 4),
         Text(
           description,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
-            color: Colors.grey,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
       ],

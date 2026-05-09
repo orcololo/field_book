@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart' as fmtc;
+import '../../../core/theme/folium_theme.dart';
 import '../../../core/services/map_service.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/modern/modern_app_bar.dart';
@@ -110,12 +111,15 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
             const SizedBox(height: 16),
             Text(
               l10n.zoomLevelsLabel,
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
               l10n.downloadWarnMsg,
-              style: const TextStyle(fontSize: 12, color: Colors.orange),
+              style: const TextStyle(fontSize: 12, color: FoliumTheme.warning),
             ),
           ],
         ),
@@ -222,7 +226,8 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: Theme.of(context).colorScheme.error,
+              foregroundColor: Theme.of(context).colorScheme.onError,
             ),
             child: Text(l10n.clearCacheConfirmBtn),
           ),
@@ -270,6 +275,7 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: ModernAppBar(
         title: l10n.offlineMapsTitle,
         showBackButton: true,
@@ -284,6 +290,9 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
       ),
       body: Column(
         children: [
+          SizedBox(
+            height: MediaQuery.of(context).padding.top + 64,
+          ),
           // Map for area selection
           Expanded(
             flex: 2,
@@ -383,7 +392,9 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
                               const SizedBox(height: 8),
                               Text(
                                 '${(_downloadProgress * 100).toStringAsFixed(0)}%',
-                                style: const TextStyle(color: Colors.grey),
+                                 style: TextStyle(
+                                   color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                 ),
                               ),
                             ],
                           ),
@@ -483,8 +494,8 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
                                         icon: const Icon(Icons.delete),
                                         label: Text(l10n.clearCacheLabel),
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.red,
-                                          foregroundColor: Colors.white,
+                                          backgroundColor: Theme.of(context).colorScheme.error,
+                                          foregroundColor: Theme.of(context).colorScheme.onError,
                                         ),
                                       ),
                                     ),

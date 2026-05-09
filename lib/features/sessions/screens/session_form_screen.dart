@@ -154,6 +154,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
     final isEditing = widget.session != null;
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: ModernAppBar(
         title: isEditing ? l10n.editSessionTitle : l10n.newSession,
       ),
@@ -162,6 +163,9 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            SizedBox(
+              height: MediaQuery.of(context).padding.top + 64,
+            ),
             // Trip Name
             TextFormField(
               controller: _tripNameController,
@@ -220,7 +224,9 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
                       : l10n.notSpecified,
                   style: TextStyle(
                     fontWeight: _endDate != null ? FontWeight.bold : null,
-                    color: _endDate == null ? Colors.grey : null,
+                    color: _endDate == null
+                        ? Theme.of(context).colorScheme.onSurfaceVariant
+                        : null,
                   ),
                 ),
                 trailing: Row(
@@ -296,7 +302,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
                       title: Text(member, maxLines: 1, overflow: TextOverflow.ellipsis),
                       trailing: IconButton(
                         icon: const Icon(Icons.remove_circle_outline),
-                        color: Colors.red,
+                        color: Theme.of(context).colorScheme.error,
                         onPressed: () => _removeTeamMember(member),
                       ),
                     );
@@ -310,7 +316,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
                 child: Text(
                   l10n.noTeamMembersAdded,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     fontStyle: FontStyle.italic,
                   ),
                 ),

@@ -215,6 +215,7 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: ModernAppBar(
         title: l10n.quickCapture,
         showBackButton: true,
@@ -226,11 +227,15 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
         ],
       ),
       body: SafeArea(
+        top: false,
         child: Form(
           key: _formKey,
           child: ListView(
             padding: const EdgeInsets.all(FoliumTheme.space16),
             children: [
+              SizedBox(
+                height: MediaQuery.of(context).padding.top + 64,
+              ),
               // ── Photo strip ──
               _buildPhotoSection(l10n, colorScheme),
               const SizedBox(height: FoliumTheme.space16),

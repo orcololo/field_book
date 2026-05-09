@@ -50,6 +50,8 @@ class ModernAppBar extends StatelessWidget implements PreferredSizeWidget {
               : null),
       title: Text(
         title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w600,
               color: Theme.of(context).colorScheme.onSurface,
