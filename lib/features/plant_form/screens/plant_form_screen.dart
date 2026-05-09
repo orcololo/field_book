@@ -325,16 +325,20 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
       _collectionMethod = plant.collectionMethod;
     }
 
-    // Always register the recovery callback — even in edit mode we need to
-    // recover any photo that was captured before the Activity was killed.
-    // Snapshot restore is still gated on plant == null (edit-mode base data
-    // lives in Isar and doesn't need snapshot replay).
+    // Always register the post-frame callback.  It must:
+    //   1. (new mode only) Suggest a collection template from current GPS.
+    //   2. Restore any pre-camera snapshot — applies to BOTH new AND edit mode.
+    //      _takePhoto(), _pickFromGallery(), and _scanLabelWithOcr() persist the
+    //      full form state before opening the picker in every mode, so if the
+    //      Activity is killed while the camera is open in edit mode the unsaved
+    //      field changes would otherwise be lost.
+    //   3. Recover any lost photo (ownership-gated; runs in both modes).
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       if (plant == null) {
         _suggestTemplateFromCurrentGps();
-        await _tryRestoreFromSnapshot();
       }
+      await _tryRestoreFromSnapshot();
       await _tryRecoverLostPhoto();
     });
   }
@@ -3246,9 +3250,11 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
   }
 
   /// On init, checks if a pre-camera snapshot exists and restores form state.
-  /// Only applies to new-plant forms (editing plants are persisted in Isar).
+  /// Called for both new-plant and edit-plant forms: the snapshot is written
+  /// before every camera/gallery/OCR launch regardless of mode, so unsaved
+  /// field changes must be replayed even in edit mode.
   Future<void> _tryRestoreFromSnapshot() async {
-    if (widget.plant != null || !mounted) return;
+    if (!mounted) return;
     try {
       final prefs = await SharedPreferences.getInstance();
       final raw = prefs.getString(_kPlantFormSnapshotKey);

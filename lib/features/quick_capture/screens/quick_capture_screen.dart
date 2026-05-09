@@ -98,6 +98,9 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       await _tryRestoreSnapshot();
+      // Guard against disposal during the async snapshot restore — without this
+      // check _acquireGps() would call setState() on a disposed widget.
+      if (!mounted) return;
       // Only acquire GPS if the snapshot didn't already provide coordinates.
       if (_latitude == null) _acquireGps();
       // Only recover a lost photo if QuickCapture opened the camera.
