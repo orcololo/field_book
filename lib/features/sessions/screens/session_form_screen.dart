@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../../../core/repositories/session_repository.dart';
 import '../../../models/collection_session.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/modern/modern_app_bar.dart';
 
 const _uuid = Uuid();
 
@@ -153,9 +154,8 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
     final isEditing = widget.session != null;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(isEditing ? l10n.editSessionTitle : l10n.newSession),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      appBar: ModernAppBar(
+        title: isEditing ? l10n.editSessionTitle : l10n.newSession,
       ),
       body: Form(
         key: _formKey,

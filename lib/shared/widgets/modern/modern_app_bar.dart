@@ -52,7 +52,7 @@ class ModernAppBar extends StatelessWidget implements PreferredSizeWidget {
         title,
         style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w600,
-              color: FoliumTheme.onSurface,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
       ),
       actions: actions,
@@ -161,7 +161,7 @@ class SectionHeader extends StatelessWidget {
                   title,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: FoliumTheme.onSurface,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                 ),
                 if (subtitle != null) ...[
@@ -169,7 +169,7 @@ class SectionHeader extends StatelessWidget {
                   Text(
                     subtitle!,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: FoliumTheme.onSurfaceVariant,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                   ),
                 ],

@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/services/settings_service.dart';
 import '../../../core/theme/folium_theme.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/modern/modern_app_bar.dart';
 
 class InaturalistAuthScreen extends ConsumerStatefulWidget {
   const InaturalistAuthScreen({super.key});
@@ -43,7 +44,7 @@ class _InaturalistAuthScreenState extends ConsumerState<InaturalistAuthScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.inaturalistAuthTitle)),
+      appBar: ModernAppBar(title: l10n.inaturalistAuthTitle),
       body: ListView(
         padding: const EdgeInsets.all(FoliumTheme.space16),
         children: [

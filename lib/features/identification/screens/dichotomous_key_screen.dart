@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/services/dichotomous_key_service.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/modern/modern_app_bar.dart';
 
 class DichotomousKeyScreen extends ConsumerStatefulWidget {
   const DichotomousKeyScreen({super.key});
@@ -80,8 +81,8 @@ class _DichotomousKeyScreenState extends ConsumerState<DichotomousKeyScreen> {
     final keysAsync = ref.watch(dichotomousKeysProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.dichotomousKeyTitle),
+      appBar: ModernAppBar(
+        title: l10n.dichotomousKeyTitle,
         actions: [
           IconButton(
             onPressed: _trail.isEmpty ? null : _restart,

@@ -729,14 +729,14 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
                           width: 56,
                           height: 56,
                           decoration: BoxDecoration(
-                            color: FoliumTheme.tertiaryContainer,
+                            color: colorScheme.tertiaryContainer,
                             borderRadius: BorderRadius.circular(
                               FoliumTheme.radiusSmall,
                             ),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.folder,
-                            color: FoliumTheme.tertiaryMain,
+                            color: colorScheme.tertiary,
                             size: 28,
                           ),
                         ),
@@ -751,7 +751,7 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
                                 style: Theme.of(context).textTheme.titleMedium
                                     ?.copyWith(
                                       fontWeight: FontWeight.w600,
-                                      color: FoliumTheme.onSurface,
+                                      color: colorScheme.onSurface,
                                     ),
                               ),
                               const SizedBox(height: FoliumTheme.space4),
@@ -759,17 +759,17 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
                                 '${session.startDate.day}/${session.startDate.month}/${session.startDate.year}',
                                 style: Theme.of(context).textTheme.bodySmall
                                     ?.copyWith(
-                                      color: FoliumTheme.onSurfaceVariant,
+                                      color: colorScheme.onSurfaceVariant,
                                     ),
                               ),
                               if (session.location != null) ...[
                                 const SizedBox(height: FoliumTheme.space4),
                                 Row(
                                   children: [
-                                    const Icon(
+                                    Icon(
                                       Icons.location_on,
                                       size: 14,
-                                      color: FoliumTheme.onSurfaceVariant,
+                                      color: colorScheme.onSurfaceVariant,
                                     ),
                                     const SizedBox(width: FoliumTheme.space4),
                                     Expanded(
@@ -780,7 +780,7 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
                                             .bodySmall
                                             ?.copyWith(
                                               color:
-                                                  FoliumTheme.onSurfaceVariant,
+                                                  colorScheme.onSurfaceVariant,
                                             ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,

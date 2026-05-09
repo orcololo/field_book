@@ -8,6 +8,7 @@ import '../../../core/services/settings_service.dart';
 import '../../../core/services/identifier_export_import_service.dart';
 import '../../../models/plant_record.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/modern/modern_app_bar.dart';
 import '../../plant_detail/screens/plant_detail_screen.dart';
 
 class IdentifierManagementScreen extends ConsumerStatefulWidget {
@@ -373,8 +374,8 @@ class _IdentifierManagementScreenState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.manageIdentifiersTitle),
+      appBar: ModernAppBar(
+        title: l10n.manageIdentifiersTitle,
         actions: [
           IconButton(
             icon: const Icon(Icons.upload_file),

@@ -4,6 +4,7 @@ import 'dart:io';
 import '../../../models/plant_record.dart';
 import '../../../core/repositories/plant_repository.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/modern/modern_app_bar.dart';
 import '../../plant_detail/screens/plant_detail_screen.dart';
 import 'photo_viewer_screen.dart';
 
@@ -116,8 +117,8 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.photoGallery),
+      appBar: ModernAppBar(
+        title: l10n.photoGallery,
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list),

@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -292,7 +290,7 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.upload, color: Theme.of(context).primaryColor),
+                      Icon(Icons.upload, color: Theme.of(context).colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
                         l10n.exportData,
@@ -338,43 +336,39 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                   ),
                   const SizedBox(height: 8),
                   
-                  ListTile(
-                    title: const Text('JSON'),
-                    subtitle: Text(l10n.jsonFormatSubtitle),
-                    leading: Radio<ExportFormat>(
-                      value: ExportFormat.json,
-                      groupValue: _selectedFormat,
-                      onChanged: (value) {
-                        setState(() => _selectedFormat = value!);
-                      },
+                  RadioGroup<ExportFormat>(
+                    groupValue: _selectedFormat,
+                    onChanged: (value) {
+                      if (value != null) setState(() => _selectedFormat = value);
+                    },
+                    child: Column(
+                      children: [
+                        ListTile(
+                          title: const Text('JSON'),
+                          subtitle: Text(l10n.jsonFormatSubtitle),
+                          leading: const Radio<ExportFormat>(
+                            value: ExportFormat.json,
+                          ),
+                          onTap: () => setState(() => _selectedFormat = ExportFormat.json),
+                        ),
+                        ListTile(
+                          title: const Text('CSV'),
+                          subtitle: Text(l10n.csvFormatSubtitle),
+                          leading: const Radio<ExportFormat>(
+                            value: ExportFormat.csv,
+                          ),
+                          onTap: () => setState(() => _selectedFormat = ExportFormat.csv),
+                        ),
+                        ListTile(
+                          title: const Text('Darwin Core'),
+                          subtitle: Text(l10n.darwinCoreFormatSubtitle),
+                          leading: const Radio<ExportFormat>(
+                            value: ExportFormat.darwinCore,
+                          ),
+                          onTap: () => setState(() => _selectedFormat = ExportFormat.darwinCore),
+                        ),
+                      ],
                     ),
-                    onTap: () => setState(() => _selectedFormat = ExportFormat.json),
-                  ),
-                  
-                  ListTile(
-                    title: const Text('CSV'),
-                    subtitle: Text(l10n.csvFormatSubtitle),
-                    leading: Radio<ExportFormat>(
-                      value: ExportFormat.csv,
-                      groupValue: _selectedFormat,
-                      onChanged: (value) {
-                        setState(() => _selectedFormat = value!);
-                      },
-                    ),
-                    onTap: () => setState(() => _selectedFormat = ExportFormat.csv),
-                  ),
-                  
-                  ListTile(
-                    title: const Text('Darwin Core'),
-                    subtitle: Text(l10n.darwinCoreFormatSubtitle),
-                    leading: Radio<ExportFormat>(
-                      value: ExportFormat.darwinCore,
-                      groupValue: _selectedFormat,
-                      onChanged: (value) {
-                        setState(() => _selectedFormat = value!);
-                      },
-                    ),
-                    onTap: () => setState(() => _selectedFormat = ExportFormat.darwinCore),
                   ),
                   
                   // Options
@@ -450,7 +444,7 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.download, color: Theme.of(context).primaryColor),
+                      Icon(Icons.download, color: Theme.of(context).colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
                         l10n.importData,
@@ -519,7 +513,7 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.help_outline, color: Theme.of(context).primaryColor),
+                      Icon(Icons.help_outline, color: Theme.of(context).colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
                         l10n.aboutFormats,

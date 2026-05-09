@@ -9,6 +9,7 @@ import '../../../models/plant_record.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/rain_mode_guard.dart';
 import '../../../core/providers/rain_mode_provider.dart';
+import '../../../shared/widgets/modern/modern_app_bar.dart';
 import 'session_form_screen.dart';
 import '../../plant_detail/screens/plant_detail_screen.dart';
 
@@ -228,9 +229,8 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
         gpsTrackState.isTracking && gpsTrackState.sessionUuid == _session.uuid;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_session.tripName),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      appBar: ModernAppBar(
+        title: _session.tripName,
         actions: [
           IconButton(icon: const Icon(Icons.edit), onPressed: _editSession),
           PopupMenuButton<String>(

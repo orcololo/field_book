@@ -21,6 +21,7 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -30,13 +31,13 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                FoliumTheme.surface.withValues(alpha: 0.7),
-                FoliumTheme.surface.withValues(alpha: 0.5),
+                colorScheme.surface.withValues(alpha: 0.7),
+                colorScheme.surface.withValues(alpha: 0.5),
               ],
             ),
             border: Border(
               bottom: BorderSide(
-                color: FoliumTheme.outline.withValues(alpha: 0.1),
+                color: colorScheme.outline.withValues(alpha: 0.1),
                 width: 1,
               ),
             ),
@@ -53,10 +54,10 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
                   // Back button or logo
                   if (showBackButton)
                     IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.arrow_back_ios_new,
                         size: 20,
-                        color: FoliumTheme.onSurface,
+                        color: colorScheme.onSurface,
                       ),
                       onPressed: onBack ?? () => Navigator.of(context).pop(),
                     )
@@ -212,7 +213,7 @@ class GlassAppBarFrosted extends StatelessWidget
                       title!,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: FoliumTheme.onSurface,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   ] else
