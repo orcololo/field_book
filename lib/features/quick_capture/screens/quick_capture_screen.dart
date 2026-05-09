@@ -199,42 +199,50 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
 
   /// Reads any previously-persisted snapshot and restores all form fields.
   /// The snapshot is deleted immediately so it cannot be replayed on a
-  /// subsequent cold start.
+  /// subsequent cold start.  The decode is wrapped in try/catch so that a
+  /// corrupted snapshot does not abort the rest of the initState callback
+  /// (GPS acquisition and photo recovery must still run even if restore fails).
   Future<void> _tryRestoreSnapshot() async {
     if (!Platform.isAndroid) return;
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString(_kQuickCaptureSnapshotKey);
     if (raw == null || raw.isEmpty) return;
+    // Clear immediately — prevents replay and keeps key absent on failure path.
     await prefs.remove(_kQuickCaptureSnapshotKey);
-    final data = jsonDecode(raw) as Map<String, dynamic>;
-    if (!mounted) return;
-    setState(() {
-      _scientificNameController.text = data['scientificName'] as String? ?? '';
-      _commonNameController.text = data['commonName'] as String? ?? '';
-      _notesController.text = data['notes'] as String? ?? '';
-      _localityController.text = data['locality'] as String? ?? '';
-      _municipalityController.text = data['municipality'] as String? ?? '';
-      _stateController.text = data['state'] as String? ?? '';
-      _countryController.text = data['country'] as String? ?? '';
-      _altitudeController.text = data['altitude'] as String? ?? '';
-      _temperatureController.text = data['temperature'] as String? ?? '';
-      _humidityController.text = data['humidity'] as String? ?? '';
-      _weatherNotesController.text = data['weatherNotes'] as String? ?? '';
-      _latitude = (data['latitude'] as num?)?.toDouble();
-      _longitude = (data['longitude'] as num?)?.toDouble();
-      final categoryName = data['category'] as String?;
-      if (categoryName != null) {
-        _category = PlantCategory.values.firstWhere(
-          (c) => c.name == categoryName,
-          orElse: () => PlantCategory.herbs,
+    try {
+      final data = jsonDecode(raw) as Map<String, dynamic>;
+      if (!mounted) return;
+      setState(() {
+        _scientificNameController.text = data['scientificName'] as String? ?? '';
+        _commonNameController.text = data['commonName'] as String? ?? '';
+        _notesController.text = data['notes'] as String? ?? '';
+        _localityController.text = data['locality'] as String? ?? '';
+        _municipalityController.text = data['municipality'] as String? ?? '';
+        _stateController.text = data['state'] as String? ?? '';
+        _countryController.text = data['country'] as String? ?? '';
+        _altitudeController.text = data['altitude'] as String? ?? '';
+        _temperatureController.text = data['temperature'] as String? ?? '';
+        _humidityController.text = data['humidity'] as String? ?? '';
+        _weatherNotesController.text = data['weatherNotes'] as String? ?? '';
+        _latitude = (data['latitude'] as num?)?.toDouble();
+        _longitude = (data['longitude'] as num?)?.toDouble();
+        final categoryName = data['category'] as String?;
+        if (categoryName != null) {
+          _category = PlantCategory.values.firstWhere(
+            (c) => c.name == categoryName,
+            orElse: () => PlantCategory.herbs,
+          );
+        }
+        _weatherCondition = data['weatherCondition'] as String?;
+        _moonPhase = data['moonPhase'] as String?;
+        _photoPaths.addAll(
+          (data['photoPaths'] as List?)?.cast<String>() ?? [],
         );
-      }
-      _weatherCondition = data['weatherCondition'] as String?;
-      _moonPhase = data['moonPhase'] as String?;
-      _photoPaths.addAll(
-        (data['photoPaths'] as List?)?.cast<String>() ?? [],
-      );
-    });
+      });
+    } catch (e) {
+      // Corrupt or stale snapshot — key already removed above.
+      debugPrint('QuickCapture: failed to restore snapshot: $e');
+    }
   }
 
   Future<void> _takePhoto() async {

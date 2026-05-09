@@ -335,10 +335,14 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     //   3. Recover any lost photo (ownership-gated; runs in both modes).
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
-      if (plant == null) {
+      // Restore first so we know whether a pre-camera snapshot was consumed.
+      // Template suggestion is only shown for new plants AND only when there
+      // is no snapshot — if the snapshot already restored form fields, showing
+      // the template dialog afterwards could overwrite the recovered state.
+      final restored = await _tryRestoreFromSnapshot();
+      if (plant == null && !restored) {
         _suggestTemplateFromCurrentGps();
       }
-      await _tryRestoreFromSnapshot();
       await _tryRecoverLostPhoto();
     });
   }
@@ -3253,22 +3257,27 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
   /// Called for both new-plant and edit-plant forms: the snapshot is written
   /// before every camera/gallery/OCR launch regardless of mode, so unsaved
   /// field changes must be replayed even in edit mode.
-  Future<void> _tryRestoreFromSnapshot() async {
-    if (!mounted) return;
+  ///
+  /// Returns `true` if a snapshot was found and successfully applied,
+  /// `false` otherwise (no snapshot, parse failure, or widget unmounted).
+  Future<bool> _tryRestoreFromSnapshot() async {
+    if (!mounted) return false;
     try {
       final prefs = await SharedPreferences.getInstance();
       final raw = prefs.getString(_kPlantFormSnapshotKey);
-      if (raw == null) return;
+      if (raw == null) return false;
       // Clear immediately — if restore fails we don't want a corrupt loop.
       await prefs.remove(_kPlantFormSnapshotKey);
       final data = jsonDecode(raw) as Map<String, dynamic>;
       if (mounted) setState(() => _restoreFromSnapshot(data));
+      return true;
     } catch (e) {
       debugPrint('PlantForm: failed to restore snapshot: $e');
       try {
         final prefs = await SharedPreferences.getInstance();
         await prefs.remove(_kPlantFormSnapshotKey);
       } catch (_) {}
+      return false;
     }
   }
 
