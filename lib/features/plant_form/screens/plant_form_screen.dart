@@ -325,14 +325,18 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
       _collectionMethod = plant.collectionMethod;
     }
 
-    if (plant == null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        if (!mounted) return;
+    // Always register the recovery callback — even in edit mode we need to
+    // recover any photo that was captured before the Activity was killed.
+    // Snapshot restore is still gated on plant == null (edit-mode base data
+    // lives in Isar and doesn't need snapshot replay).
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      if (plant == null) {
         _suggestTemplateFromCurrentGps();
         await _tryRestoreFromSnapshot();
-        await _tryRecoverLostPhoto();
-      });
-    }
+      }
+      await _tryRecoverLostPhoto();
+    });
   }
 
   void _onScientificNameChanged() {

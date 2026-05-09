@@ -88,13 +88,18 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
   @override
   void initState() {
     super.initState();
-    _acquireGps();
-    // On Android, restore any form state persisted before the Activity was
-    // killed while the camera was open, then recover any photo captured during
-    // that session.
+    // Defer snapshot restoration, GPS acquisition, and photo recovery to the
+    // post-frame callback so they run in a guaranteed sequence:
+    //   1. Restore snapshot (fills _latitude/_longitude and all text fields).
+    //   2. Acquire GPS only if the snapshot did NOT provide coordinates —
+    //      prevents a new GPS fix from overwriting restored specimen coords
+    //      after an Activity kill.
+    //   3. Recover any lost photo from the interrupted camera session.
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       await _tryRestoreSnapshot();
+      // Only acquire GPS if the snapshot didn't already provide coordinates.
+      if (_latitude == null) _acquireGps();
       // Only recover a lost photo if QuickCapture opened the camera.
       // Do NOT clear the owner key unless it belongs to this screen — clearing
       // a key owned by another screen (e.g. PlantForm) would prevent that screen
