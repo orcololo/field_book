@@ -4,6 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../../../core/repositories/plant_repository.dart';
 import '../../../core/repositories/session_repository.dart';
+import '../../../core/theme/folium_theme.dart';
 import '../../../models/plant_record.dart';
 import '../../../models/plant_category.dart';
 import '../../../l10n/app_localizations.dart';
@@ -49,7 +50,7 @@ class StatisticsScreen extends ConsumerWidget {
                         title: l10n.totalPlants,
                         value: '${stats['totalPlants'] ?? 0}',
                         icon: Icons.eco,
-                        color: Colors.green,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -58,7 +59,7 @@ class StatisticsScreen extends ConsumerWidget {
                         title: l10n.sessions,
                         value: '${stats['totalSessions'] ?? 0}',
                         icon: Icons.folder,
-                        color: Colors.blue,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                   ],
@@ -71,7 +72,7 @@ class StatisticsScreen extends ConsumerWidget {
                         title: l10n.drafts,
                         value: '${stats['draftPlants'] ?? 0}',
                         icon: Icons.edit_note,
-                        color: Colors.orange,
+                        color: FoliumTheme.warning,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -80,7 +81,7 @@ class StatisticsScreen extends ConsumerWidget {
                         title: l10n.thisMonth,
                         value: '${stats['thisMonth'] ?? 0}',
                         icon: Icons.calendar_today,
-                        color: Colors.purple,
+                        color: Theme.of(context).colorScheme.tertiary,
                       ),
                     ),
                   ],
@@ -545,6 +546,8 @@ class _StatCard extends StatelessWidget {
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

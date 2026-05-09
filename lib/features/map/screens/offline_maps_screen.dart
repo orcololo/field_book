@@ -351,8 +351,8 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
                               _southWest!,
                               LatLng(_southWest!.latitude, _northEast!.longitude),
                             ],
-                            color: Colors.blue.withValues(alpha: 0.2),
-                            borderColor: Colors.blue,
+                            color: FoliumTheme.info.withValues(alpha: 0.2),
+                            borderColor: FoliumTheme.info,
                             borderStrokeWidth: 2,
                             isFilled: true,
                           ),
@@ -410,15 +410,15 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
                     left: 16,
                     right: 16,
                     child: Card(
-                      color: Colors.blue.shade700,
+                      color: Theme.of(context).colorScheme.primary,
                       child: Padding(
                         padding: const EdgeInsets.all(12),
                         child: Text(
                           _northEast == null
                               ? l10n.selectFirstAreaCorner
                               : l10n.selectOppositeAreaCorner,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
                             fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.center,

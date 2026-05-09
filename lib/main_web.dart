@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'core/theme/folium_theme.dart';
 
 void main() {
   runApp(const WebNotSupportedApp());
@@ -13,7 +14,7 @@ class WebNotSupportedApp extends StatelessWidget {
       title: 'Caderno de Campo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.green,
+          seedColor: FoliumTheme.primaryMain,
           brightness: Brightness.light,
         ),
         useMaterial3: true,
@@ -28,7 +29,7 @@ class WebNotSupportedApp extends StatelessWidget {
                 Icon(
                   Icons.warning_amber_rounded,
                   size: 100,
-                  color: Colors.orange.shade700,
+                  color: FoliumTheme.warning,
                 ),
                 const SizedBox(height: 32),
                 const Text(
