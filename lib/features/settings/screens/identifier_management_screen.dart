@@ -140,6 +140,8 @@ class _IdentifierManagementScreenState
                       contentPadding: EdgeInsets.zero,
                       title: Text(
                         plant.scientificName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(fontSize: 14),
                       ),
                       trailing: Text(
@@ -390,10 +392,12 @@ class _IdentifierManagementScreenState
           if (_selectedPlantIds.isNotEmpty)
             TextButton.icon(
               onPressed: _isAssigning ? null : _showAssignmentPreview,
-              icon: const Icon(Icons.check, color: Colors.white),
+              icon: Icon(Icons.check, color: Theme.of(context).colorScheme.onPrimary),
               label: Text(
                 '${_selectedPlantIds.length}',
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
               ),
             ),
         ],
@@ -508,13 +512,19 @@ class _IdentifierManagementScreenState
                 },
                 title: Text(
                   plant.scientificName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (plant.commonName.isNotEmpty)
-                      Text(plant.commonName),
+                      Text(
+                        plant.commonName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     Text(
                       l10n.collectedOn('${plant.dateCollected.day}/${plant.dateCollected.month}/${plant.dateCollected.year}'),
                       style: TextStyle(

@@ -334,6 +334,8 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
               children: [
                 Text(
                   plant.scientificName,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -350,6 +352,8 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
                   const SizedBox(height: FoliumTheme.space8),
                   Text(
                     plant.commonName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: Colors.white.withValues(alpha: 0.9),
                       fontStyle: FontStyle.italic,
@@ -761,8 +765,16 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
                         color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
-                    title: Text(_displayRecordIdentifier(linkedPlant)),
-                    subtitle: Text(_buildLinkedPlantSubtitle(linkedPlant)),
+                    title: Text(
+                      _displayRecordIdentifier(linkedPlant),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    subtitle: Text(
+                      _buildLinkedPlantSubtitle(linkedPlant),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {
                       Navigator.push(
@@ -1989,9 +2001,13 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
                                   ),
                                   title: Text(
                                     _displayRecordIdentifier(candidate),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                   subtitle: Text(
                                     _buildLinkedPlantSubtitle(candidate),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                   onTap: () async {
                                     await ref
@@ -2082,12 +2098,16 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
                     ),
                     title: Text(
                       relatedPlant.scientificName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontWeight: FontWeight.w500),
                     ),
                     subtitle: Text(
                       relatedPlant.commonName.isEmpty
                           ? _formatDate(relatedPlant.dateCollected)
                           : '${relatedPlant.commonName} • ${_formatDate(relatedPlant.dateCollected)}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {

@@ -123,7 +123,7 @@ class FoliumTheme {
     final Color schemeOnSurface = highContrast ? Colors.black : onSurface;
     final Color schemeOutline = highContrast ? Colors.black : outline;
     final Color schemeSurfaceContainer = highContrast ? Colors.white : surfaceContainer;
-    final Color schemeSurfaceVariant = highContrast ? Colors.white : surfaceVariant;
+    final Color schemeSurfaceContainerHighest = highContrast ? Colors.white : surfaceContainerHighest;
 
     return ThemeData(
       useMaterial3: true,
@@ -245,7 +245,7 @@ class FoliumTheme {
       // Input Decoration
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: schemeSurfaceVariant,
+        fillColor: schemeSurfaceContainerHighest,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMedium),
           borderSide: highContrast ? const BorderSide(color: Colors.black, width: 2) : BorderSide.none,
@@ -385,7 +385,7 @@ class FoliumTheme {
     final Color schemeOnSurface = highContrast ? Colors.white : darkOnSurface;
     final Color schemeOutline = highContrast ? Colors.white : darkOutline;
     final Color schemeSurfaceContainer = highContrast ? Colors.black : darkSurfaceContainer;
-    final Color schemeSurfaceVariant = highContrast ? Colors.black : darkSurfaceVariant;
+    final Color schemeSurfaceContainerHighest = highContrast ? Colors.black : darkSurfaceContainerHighest;
 
     return ThemeData(
       useMaterial3: true,
@@ -508,7 +508,7 @@ class FoliumTheme {
       // Input Decoration
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: schemeSurfaceVariant,
+        fillColor: schemeSurfaceContainerHighest,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMedium),
           borderSide: highContrast ? const BorderSide(color: Colors.white, width: 2) : BorderSide.none,

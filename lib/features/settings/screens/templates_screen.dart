@@ -184,7 +184,11 @@ class _TemplatesScreenState extends ConsumerState<TemplatesScreen> {
                               : Theme.of(context).colorScheme.secondary,
                         ),
                       ),
-                      title: Text(template.name),
+                      title: Text(
+                        template.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       subtitle: Padding(
                         padding: const EdgeInsets.only(top: FoliumTheme.space8),
                         child: Column(

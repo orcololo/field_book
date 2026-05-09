@@ -177,9 +177,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 }
 
                 return Padding(
-                  padding: const EdgeInsets.fromLTRB(
+                  padding: EdgeInsets.fromLTRB(
                     FoliumTheme.space16,
-                    88,
+                    MediaQuery.of(context).padding.top + 64,
                     FoliumTheme.space16,
                     0,
                   ),

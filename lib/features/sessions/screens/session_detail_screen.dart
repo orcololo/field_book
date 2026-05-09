@@ -546,10 +546,16 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                       ),
                       title: Text(
                         plant.scientificName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       subtitle: plant.commonName.isNotEmpty
-                          ? Text(plant.commonName)
+                          ? Text(
+                              plant.commonName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            )
                           : null,
                       trailing: Text(
                         '${plant.dateCollected.day}/${plant.dateCollected.month}',

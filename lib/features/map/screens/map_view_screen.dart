@@ -418,7 +418,9 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
                                   ),
                                   child: Icon(
                                     _getCategoryIcon(plant.category),
-                                    color: Colors.white,
+                                    color: _getCategoryColor(plant.category).computeLuminance() > 0.4
+                                        ? Colors.black87
+                                        : Colors.white,
                                     size: 20,
                                   ),
                                 ),

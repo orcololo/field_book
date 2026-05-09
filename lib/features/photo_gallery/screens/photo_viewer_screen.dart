@@ -148,6 +148,8 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
             children: [
               Text(
                 photo.plant.scientificName,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -157,6 +159,8 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
               if (photo.plant.commonName.isNotEmpty)
                 Text(
                   photo.plant.commonName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 16,

@@ -409,6 +409,8 @@ class SettingsScreen extends ConsumerWidget {
                         title: Text(l10n.deviceId),
                         subtitle: Text(
                           settings.deviceId,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontFamily: 'monospace',
                             fontSize: 12,
@@ -1145,7 +1147,11 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
               Icons.account_circle,
               color: colorScheme.primary,
             ),
-            title: Text(l10n.signedInAs(backupService.currentUserEmail!)),
+            title: Text(
+              l10n.signedInAs(backupService.currentUserEmail!),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
             trailing: TextButton(
               onPressed: () async {
                 await backupService.signOut();
@@ -1881,11 +1887,15 @@ class _AccountSection extends ConsumerWidget {
                 authState.user.name.isNotEmpty
                     ? authState.user.name
                     : authState.user.email,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               subtitle: Text(
                 authState.user.email.isNotEmpty
                     ? authState.user.email
                     : l10n.connected,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             const Divider(height: 1),

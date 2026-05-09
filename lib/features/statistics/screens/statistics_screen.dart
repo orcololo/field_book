@@ -324,14 +324,18 @@ class StatisticsScreen extends ConsumerWidget {
                   return ListTile(
                     leading: CircleAvatar(
                       backgroundColor: _getCategoryColor(plant.category),
-                      child: const Icon(
+                      child: Icon(
                         Icons.eco,
-                        color: Colors.white,
+                        color: _getCategoryColor(plant.category).computeLuminance() > 0.4
+                            ? Colors.black87
+                            : Colors.white,
                         size: 20,
                       ),
                     ),
                     title: Text(
                       plant.scientificName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontSize: 14),
                     ),
                     subtitle: Text(
@@ -419,15 +423,16 @@ class StatisticsScreen extends ConsumerWidget {
 
     return stats.entries.map((entry) {
       final percentage = (entry.value / total * 100).toStringAsFixed(1);
+      final sectionColor = _getCategoryColor(entry.key);
       return PieChartSectionData(
-        color: _getCategoryColor(entry.key),
+        color: sectionColor,
         value: entry.value.toDouble(),
         title: '$percentage%',
         radius: 60,
-        titleStyle: const TextStyle(
+        titleStyle: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: Colors.white,
+          color: sectionColor.computeLuminance() > 0.4 ? Colors.black87 : Colors.white,
         ),
       );
     }).toList();

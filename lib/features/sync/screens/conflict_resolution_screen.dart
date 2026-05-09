@@ -18,6 +18,7 @@ class ConflictResolutionScreen extends ConsumerWidget {
     final conflictsAsync = ref.watch(conflictRecordsProvider);
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: GlassAppBarFrosted(
         showBackButton: true,
         title: l10n.conflictResolutionTitle,
@@ -40,6 +41,7 @@ class ConflictResolutionScreen extends ConsumerWidget {
 
           return Column(
             children: [
+              SizedBox(height: MediaQuery.of(context).padding.top + 64),
               _BulkResolveCard(records: records),
               Expanded(
                 child: ListView.separated(
@@ -150,6 +152,8 @@ class _ConflictRecordCard extends ConsumerWidget {
                     children: [
                       Text(
                         plant.scientificName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w700,
                               color: colorScheme.primary,
@@ -160,6 +164,8 @@ class _ConflictRecordCard extends ConsumerWidget {
                           padding: const EdgeInsets.only(top: FoliumTheme.space4),
                           child: Text(
                             plant.registryIdentifier!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ),
