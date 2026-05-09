@@ -1202,12 +1202,12 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
                       }
                     },
               icon: _isBackingUp
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 18,
                       height: 18,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.white,
+                        color: colorScheme.onPrimary,
                       ),
                     )
                   : const Icon(Icons.cloud_upload),
@@ -1216,7 +1216,7 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: colorScheme.primary,
-                foregroundColor: Colors.white,
+                foregroundColor: colorScheme.onPrimary,
                 padding: const EdgeInsets.symmetric(
                   vertical: FoliumTheme.space12,
                 ),
@@ -1278,7 +1278,7 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,
-              foregroundColor: Colors.white,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
             ),
             child: Text(l10n.confirm),
           ),

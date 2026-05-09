@@ -293,7 +293,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
                         radius: 16,
                         child: Icon(Icons.person, size: 16),
                       ),
-                      title: Text(member),
+                      title: Text(member, maxLines: 1, overflow: TextOverflow.ellipsis),
                       trailing: IconButton(
                         icon: const Icon(Icons.remove_circle_outline),
                         color: Colors.red,

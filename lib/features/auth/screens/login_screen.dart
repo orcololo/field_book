@@ -191,13 +191,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ),
                   child: _isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
+                      ? SizedBox(
+                           height: 20,
+                           width: 20,
+                           child: CircularProgressIndicator(
+                             strokeWidth: 2,
+                             color: Theme.of(context).colorScheme.onPrimary,
+                           ),
                         )
                       : Text(l10n.loginButton),
                 ),

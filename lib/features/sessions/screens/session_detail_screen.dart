@@ -448,7 +448,13 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                               child: Icon(Icons.person, size: 16),
                             ),
                             const SizedBox(width: 12),
-                            Text(member),
+                            Expanded(
+                              child: Text(
+                                member,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
                           ],
                         ),
                       );

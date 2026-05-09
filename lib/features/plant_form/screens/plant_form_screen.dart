@@ -2529,13 +2529,13 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                                     ? null
                                     : _identifyWithPlantNet,
                                 icon: isIdentifying
-                                    ? const SizedBox(
-                                        width: 18,
-                                        height: 18,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: Colors.white,
-                                        ),
+                                     ? SizedBox(
+                                          width: 18,
+                                          height: 18,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Theme.of(context).colorScheme.onPrimary,
+                                         ),
                                       )
                                     : const Icon(Icons.auto_awesome),
                                 label: Text(

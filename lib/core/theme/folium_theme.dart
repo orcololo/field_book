@@ -34,7 +34,6 @@ class FoliumTheme {
 
   // Surface & Background
   static const Color surface = Color(0xFFFAFAFA);
-  static const Color surfaceVariant = Color(0xFFF5F5F5);
   static const Color surfaceContainer = Color(0xFFFFFFFF);
   static const Color surfaceContainerHighest = Color(0xFFECEFF1);
   static const Color onSurface = Color(0xFF1C1B1F);
@@ -352,7 +351,6 @@ class FoliumTheme {
 
   // ========== DARK THEME COLORS ==========
   static const Color darkSurface = Color(0xFF121212);
-  static const Color darkSurfaceVariant = Color(0xFF1E1E1E);
   static const Color darkSurfaceContainer = Color(0xFF1E1E1E);
   static const Color darkSurfaceContainerHighest = Color(0xFF2C2C2C);
   static const Color darkOnSurface = Color(0xFFE6E1E5);

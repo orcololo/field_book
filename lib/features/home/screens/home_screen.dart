@@ -748,6 +748,8 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
                             children: [
                               Text(
                                 session.tripName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: Theme.of(context).textTheme.titleMedium
                                     ?.copyWith(
                                       fontWeight: FontWeight.w600,

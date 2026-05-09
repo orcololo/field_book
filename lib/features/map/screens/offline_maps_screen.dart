@@ -368,6 +368,9 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
                               const SizedBox(height: 16),
                               Text(
                                 l10n.downloadingRegion(_downloadingRegionName ?? ''),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
