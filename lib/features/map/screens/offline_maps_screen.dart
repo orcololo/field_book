@@ -322,7 +322,7 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
                             height: 40,
                             child: const Icon(
                               Icons.location_on,
-                              color: Colors.red,
+                              color: FoliumTheme.warning,
                               size: 40,
                             ),
                           ),
@@ -333,7 +333,7 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
                               height: 40,
                               child: const Icon(
                                 Icons.location_on,
-                                color: Colors.blue,
+                                color: FoliumTheme.info,
                                 size: 40,
                               ),
                             ),

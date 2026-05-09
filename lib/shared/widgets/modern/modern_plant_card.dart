@@ -249,7 +249,14 @@ class ModernPlantCard extends StatelessWidget {
         // Category icon
         Icon(_getCategoryIcon(), size: 16, color: colorScheme.onSurfaceVariant),
         const SizedBox(width: FoliumTheme.space4),
-        Text(_getCategoryLabel(), style: Theme.of(context).textTheme.bodySmall),
+        Flexible(
+          child: Text(
+            _getCategoryLabel(),
+            style: Theme.of(context).textTheme.bodySmall,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
         const Spacer(),
         // Location icon
         if (plant.latitude != null && plant.longitude != null) ...[
@@ -275,12 +282,14 @@ class ModernPlantCard extends StatelessWidget {
           ),
           const SizedBox(width: FoliumTheme.space4),
           Text(
-            l10n.inaturalistSyncBadge,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: colorScheme.primary,
-              fontWeight: FontWeight.w600,
+              l10n.inaturalistSyncBadge,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: colorScheme.primary,
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-          ),
         ],
       ],
     );

@@ -67,7 +67,7 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
       backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.black.withValues(alpha: 0.5),
+        backgroundColor: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.5),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.close, color: Colors.white),
