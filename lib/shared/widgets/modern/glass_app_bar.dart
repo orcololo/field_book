@@ -211,19 +211,19 @@ class GlassAppBarFrosted extends StatelessWidget
                   if (title != null) ...[
                     if (showBackButton)
                       const SizedBox(width: FoliumTheme.space8),
-                    Text(
-                      title!,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(context).colorScheme.onSurface,
+                    Expanded(
+                      child: Text(
+                        title!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
                     ),
                   ] else
-                    _buildBranding(context),
-
-                  const Spacer(),
+                    Expanded(child: _buildBranding(context)),
 
                   if (actions != null) ...actions!,
                 ],

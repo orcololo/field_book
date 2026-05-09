@@ -198,7 +198,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               horizontal: FoliumTheme.space16,
               vertical: FoliumTheme.space8,
             ),
-            child: Row(
+            child: Wrap(
+              spacing: FoliumTheme.space8,
+              runSpacing: FoliumTheme.space8,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Text(
                   l10n.searchByLabel,
@@ -207,41 +210,33 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                         fontWeight: FontWeight.w600,
                       ),
                 ),
-                const SizedBox(width: FoliumTheme.space12),
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  child: ChoiceChip(
-                    label: const Text('Nome'),
-                    selected: _searchMode == 'name',
-                    selectedColor: colorScheme.primaryContainer,
-                    onSelected: (selected) {
-                      if (selected) {
-                        setState(() {
-                          _searchMode = 'name';
-                          _searchController.clear();
-                        });
-                        _performSearch();
-                      }
-                    },
-                  ),
+                ChoiceChip(
+                  label: const Text('Nome'),
+                  selected: _searchMode == 'name',
+                  selectedColor: colorScheme.primaryContainer,
+                  onSelected: (selected) {
+                    if (selected) {
+                      setState(() {
+                        _searchMode = 'name';
+                        _searchController.clear();
+                      });
+                      _performSearch();
+                    }
+                  },
                 ),
-                const SizedBox(width: FoliumTheme.space8),
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  child: ChoiceChip(
-                    label: const Text('Identificador'),
-                    selected: _searchMode == 'identifier',
-                    selectedColor: colorScheme.primaryContainer,
-                    onSelected: (selected) {
-                      if (selected) {
-                        setState(() {
-                          _searchMode = 'identifier';
-                          _searchController.clear();
-                        });
-                        _performSearch();
-                      }
-                    },
-                  ),
+                ChoiceChip(
+                  label: const Text('Identificador'),
+                  selected: _searchMode == 'identifier',
+                  selectedColor: colorScheme.primaryContainer,
+                  onSelected: (selected) {
+                    if (selected) {
+                      setState(() {
+                        _searchMode = 'identifier';
+                        _searchController.clear();
+                      });
+                      _performSearch();
+                    }
+                  },
                 ),
               ],
             ),
