@@ -281,7 +281,8 @@ class ModernPlantCard extends StatelessWidget {
             color: colorScheme.primary,
           ),
           const SizedBox(width: FoliumTheme.space4),
-          Text(
+          Flexible(
+            child: Text(
               l10n.inaturalistSyncBadge,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: colorScheme.primary,
@@ -290,6 +291,7 @@ class ModernPlantCard extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
+          ),
         ],
       ],
     );

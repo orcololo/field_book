@@ -100,33 +100,40 @@ class ModernSearchBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(FoliumTheme.radiusMedium),
         boxShadow: FoliumTheme.elevation1,
       ),
-      child: TextField(
-        controller: controller,
-        onChanged: onChanged,
-        style: Theme.of(context).textTheme.bodyMedium,
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: controller,
+              onChanged: onChanged,
+              style: Theme.of(context).textTheme.bodyMedium,
+              decoration: InputDecoration(
+                hintText: hintText,
+                hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                    ),
+                prefixIcon: leading ??
+                    Icon(
+                      Icons.search,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                suffixIcon: controller?.text.isNotEmpty == true
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, size: 20),
+                        onPressed: onClear,
+                        color: colorScheme.onSurfaceVariant,
+                      )
+                    : null,
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: FoliumTheme.space16,
+                  vertical: FoliumTheme.space12,
+                ),
               ),
-          prefixIcon: leading ??
-              Icon(
-                Icons.search,
-                color: colorScheme.onSurfaceVariant,
-              ),
-          suffixIcon: controller?.text.isNotEmpty == true
-              ? IconButton(
-                  icon: const Icon(Icons.clear, size: 20),
-                  onPressed: onClear,
-                  color: colorScheme.onSurfaceVariant,
-                )
-              : null,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: FoliumTheme.space16,
-            vertical: FoliumTheme.space12,
+            ),
           ),
-        ),
+          if (actions != null) ...actions!,
+        ],
       ),
     );
   }

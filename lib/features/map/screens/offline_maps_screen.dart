@@ -460,7 +460,8 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
                                        mainAxisAlignment:
                                            MainAxisAlignment.spaceBetween,
                                        children: [
-                                         Text(l10n.cachedTilesLabel),
+                                         Expanded(child: Text(l10n.cachedTilesLabel)),
+                                         const SizedBox(width: 8),
                                          Text(
                                            _cachedTiles.toString(),
                                            style: const TextStyle(
@@ -475,7 +476,8 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
                                        mainAxisAlignment:
                                            MainAxisAlignment.spaceBetween,
                                        children: [
-                                         Text(l10n.usedSpaceLabel),
+                                         Expanded(child: Text(l10n.usedSpaceLabel)),
+                                         const SizedBox(width: 8),
                                          Text(
                                            _formatBytes(_cacheSize),
                                            style: const TextStyle(
