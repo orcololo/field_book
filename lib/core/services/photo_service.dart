@@ -5,7 +5,6 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
-import 'package:path/path.dart' as path;
 
 const _uuid = Uuid();
 
@@ -80,9 +79,9 @@ class PhotoService {
         await photosDir.create(recursive: true);
       }
 
-      // Generate unique filename
-      final extension = path.extension(sourceFile.path);
-      final filename = '${_uuid.v4()}$extension';
+      // Generate unique filename. The output is always JPEG regardless of the
+      // source format (PNG, HEIC, etc.), so the extension is fixed to '.jpg'.
+      final filename = '${_uuid.v4()}.jpg';
       final targetPath = '${photosDir.path}/$filename';
 
       // Compress and save

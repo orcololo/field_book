@@ -1690,6 +1690,7 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
       return;
     }
 
+    if (!mounted) return;
     setState(() => _isSendingToInaturalist = true);
 
     try {
@@ -1929,7 +1930,11 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
                   if (record.uuid != plant.uuid) record.uuid: record,
               };
 
-              setModalState(() => results = merged.values.toList());
+              // Guard: the bottom sheet may have been dismissed while the
+              // async searches were in flight.
+              if (context.mounted) {
+                setModalState(() => results = merged.values.toList());
+              }
             }
 
             return Padding(

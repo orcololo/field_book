@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/repositories/plant_repository.dart';
@@ -19,6 +21,12 @@ import '../../../models/plant_record.dart';
 import '../../../shared/widgets/modern/modern_app_bar.dart';
 
 const _uuid = Uuid();
+
+/// SharedPreferences key for the QuickCapture form snapshot.  Written just
+/// before the camera is opened on Android so that form state survives an
+/// Activity kill; cleared immediately on restoration or when the camera
+/// returns normally.
+const _kQuickCaptureSnapshotKey = 'folium_quick_capture_snapshot';
 
 class _LocationSnapshot {
   final String locality;
@@ -81,9 +89,12 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
   void initState() {
     super.initState();
     _acquireGps();
-    // Recover any photo captured before the Activity was killed on Android.
+    // On Android, restore any form state persisted before the Activity was
+    // killed while the camera was open, then recover any photo captured during
+    // that session.
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
+      await _tryRestoreSnapshot();
       final recovered = await _photoService.retrieveLostPhoto();
       if (recovered != null && mounted) {
         setState(() => _photoPaths.add(recovered.path));
@@ -140,7 +151,80 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
     }
   }
 
+  /// Persists all form fields to SharedPreferences so they can be restored if
+  /// Android kills this Activity while the camera is open.
+  Future<void> _saveSnapshot() async {
+    if (!Platform.isAndroid) return;
+    final data = jsonEncode({
+      'scientificName': _scientificNameController.text,
+      'commonName': _commonNameController.text,
+      'notes': _notesController.text,
+      'locality': _localityController.text,
+      'municipality': _municipalityController.text,
+      'state': _stateController.text,
+      'country': _countryController.text,
+      'altitude': _altitudeController.text,
+      'temperature': _temperatureController.text,
+      'humidity': _humidityController.text,
+      'weatherNotes': _weatherNotesController.text,
+      'latitude': _latitude,
+      'longitude': _longitude,
+      'category': _category.name,
+      'weatherCondition': _weatherCondition,
+      'moonPhase': _moonPhase,
+      'photoPaths': _photoPaths,
+    });
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_kQuickCaptureSnapshotKey, data);
+  }
+
+  /// Reads any previously-persisted snapshot and restores all form fields.
+  /// The snapshot is deleted immediately so it cannot be replayed on a
+  /// subsequent cold start.
+  Future<void> _tryRestoreSnapshot() async {
+    if (!Platform.isAndroid) return;
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_kQuickCaptureSnapshotKey);
+    if (raw == null || raw.isEmpty) return;
+    await prefs.remove(_kQuickCaptureSnapshotKey);
+    final data = jsonDecode(raw) as Map<String, dynamic>;
+    if (!mounted) return;
+    setState(() {
+      _scientificNameController.text = data['scientificName'] as String? ?? '';
+      _commonNameController.text = data['commonName'] as String? ?? '';
+      _notesController.text = data['notes'] as String? ?? '';
+      _localityController.text = data['locality'] as String? ?? '';
+      _municipalityController.text = data['municipality'] as String? ?? '';
+      _stateController.text = data['state'] as String? ?? '';
+      _countryController.text = data['country'] as String? ?? '';
+      _altitudeController.text = data['altitude'] as String? ?? '';
+      _temperatureController.text = data['temperature'] as String? ?? '';
+      _humidityController.text = data['humidity'] as String? ?? '';
+      _weatherNotesController.text = data['weatherNotes'] as String? ?? '';
+      _latitude = (data['latitude'] as num?)?.toDouble();
+      _longitude = (data['longitude'] as num?)?.toDouble();
+      final categoryName = data['category'] as String?;
+      if (categoryName != null) {
+        _category = PlantCategory.values.firstWhere(
+          (c) => c.name == categoryName,
+          orElse: () => PlantCategory.herbs,
+        );
+      }
+      _weatherCondition = data['weatherCondition'] as String?;
+      _moonPhase = data['moonPhase'] as String?;
+      _photoPaths.addAll(
+        (data['photoPaths'] as List?)?.cast<String>() ?? [],
+      );
+    });
+  }
+
   Future<void> _takePhoto() async {
+    // Persist form state before handing control to the camera. If Android
+    // kills this Activity while the camera is open, _tryRestoreSnapshot()
+    // in initState will recover everything.
+    if (Platform.isAndroid) {
+      await _saveSnapshot();
+    }
     try {
       final file = await _photoService.takePhoto();
       if (file != null && mounted) {
@@ -151,6 +235,13 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    } finally {
+      // Clear the snapshot now that the camera has returned normally.
+      if (Platform.isAndroid) {
+        SharedPreferences.getInstance()
+            .then((p) => p.remove(_kQuickCaptureSnapshotKey))
+            .ignore();
       }
     }
   }
@@ -461,7 +552,12 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
                       top: 4,
                       right: 4,
                       child: GestureDetector(
-                        onTap: () => setState(() => _photoPaths.remove(path)),
+                        onTap: () async {
+                          await _photoService.deletePhoto(path);
+                          if (mounted) {
+                            setState(() => _photoPaths.remove(path));
+                          }
+                        },
                         child: Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(

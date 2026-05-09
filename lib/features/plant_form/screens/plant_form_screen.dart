@@ -46,6 +46,10 @@ const _uuid = Uuid();
 /// On Android, the Activity may be killed while the camera is in the
 /// foreground — on the next launch this snapshot restores all form fields.
 const _kPlantFormSnapshotKey = 'folium_plant_form_snapshot';
+// Set to true while the OCR camera/gallery picker is open so that a recovered
+// lost photo is not incorrectly added to the specimen photo list on Activity
+// recreation.
+const _kPlantFormOcrPendingKey = 'folium_plant_form_ocr_pending';
 
 enum _OcrImageSource { camera, gallery }
 
@@ -3266,9 +3270,18 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
   /// was killed (Android activity recreation recovery).
   Future<void> _tryRecoverLostPhoto() async {
     if (!mounted) return;
+    final prefs = Platform.isAndroid ? await SharedPreferences.getInstance() : null;
+    final isOcrPending = prefs?.getBool(_kPlantFormOcrPendingKey) ?? false;
     final recovered = await _photoService.retrieveLostPhoto();
     if (recovered != null && mounted) {
-      setState(() => _photoPaths.add(recovered.path));
+      if (isOcrPending) {
+        // Photo was taken for OCR, not as a specimen photo. Discard it and
+        // clear the flag — the user can re-run the OCR scan manually.
+        prefs?.remove(_kPlantFormOcrPendingKey);
+        _photoService.deletePhoto(recovered.path).ignore();
+      } else {
+        setState(() => _photoPaths.add(recovered.path));
+      }
     }
   }
 
@@ -3324,6 +3337,17 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     });
 
     try {
+      // Persist form state and flag the OCR in-flight so that if Android
+      // kills this Activity while the picker/camera is open, the recovered
+      // photo is correctly identified as an OCR temp and not added to the
+      // specimen photo list.
+      if (Platform.isAndroid) {
+        await _saveSnapshotToPrefs();
+        SharedPreferences.getInstance()
+            .then((p) => p.setBool(_kPlantFormOcrPendingKey, true))
+            .ignore();
+      }
+
       imageFile = imageSource == _OcrImageSource.camera
           ? await _photoService.takePhoto()
           : await _photoService.pickFromGallery();
@@ -3364,6 +3388,11 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         );
       }
     } finally {
+      if (Platform.isAndroid) {
+        SharedPreferences.getInstance()
+            .then((p) => p.remove(_kPlantFormOcrPendingKey))
+            .ignore();
+      }
       if (imageFile != null) {
         await _photoService.deletePhoto(imageFile.path);
       }
