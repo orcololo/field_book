@@ -209,7 +209,7 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
               color: result.hasErrors ? FoliumTheme.warning : FoliumTheme.success,
             ),
             const SizedBox(width: 8),
-            Text(l10n.importResultTitle),
+            Expanded(child: Text(l10n.importResultTitle)),
           ],
         ),
         content: SingleChildScrollView(

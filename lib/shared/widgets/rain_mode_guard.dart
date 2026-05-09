@@ -206,7 +206,7 @@ class _RainModeUnlockOverlayState extends State<_RainModeUnlockOverlay> {
           child: Material(
             color: Colors.transparent,
             child: Container(
-              width: 360,
+              constraints: const BoxConstraints(maxWidth: 360),
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 color: colorScheme.surface.withValues(alpha: 0.94),

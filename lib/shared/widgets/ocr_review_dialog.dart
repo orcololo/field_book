@@ -53,7 +53,7 @@ class _OcrReviewDialogState extends State<OcrReviewDialog> {
     return AlertDialog(
       title: Text(l10n.ocrReviewTitle),
       content: SizedBox(
-        width: 520,
+        width: double.maxFinite,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
