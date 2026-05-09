@@ -388,7 +388,11 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
     if (_latitude != null) {
       return ActionChip(
         avatar: Icon(Icons.gps_fixed, size: 16, color: colorScheme.secondary),
-        label: Text(l10n.gpsAcquired, style: const TextStyle(fontSize: 12)),
+        label: Text(
+          '${_latitude!.toStringAsFixed(4)}, ${_longitude!.toStringAsFixed(4)}',
+          style: const TextStyle(fontSize: 11),
+        ),
+        tooltip: l10n.gpsAcquired,
         backgroundColor: colorScheme.secondaryContainer,
         onPressed: _acquireGps,
       );
