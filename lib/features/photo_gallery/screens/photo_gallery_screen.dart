@@ -44,12 +44,14 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
         }
       }
 
+      if (!mounted) return;
       setState(() {
         _allPhotos = photos;
         _applyFiltersAndSort();
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

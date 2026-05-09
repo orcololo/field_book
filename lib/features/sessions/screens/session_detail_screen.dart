@@ -362,15 +362,19 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ),
-                      FilledButton.icon(
-                        onPressed: () => _toggleTrack(isTrackingCurrentSession),
-                        icon: Icon(
-                          isTrackingCurrentSession ? Icons.pause : Icons.play_arrow,
-                        ),
-                        label: Text(
-                          isTrackingCurrentSession
-                              ? l10n.pauseTrack
-                              : l10n.startTrack,
+                      Flexible(
+                        fit: FlexFit.loose,
+                        child: FilledButton.icon(
+                          onPressed: () => _toggleTrack(isTrackingCurrentSession),
+                          icon: Icon(
+                            isTrackingCurrentSession ? Icons.pause : Icons.play_arrow,
+                          ),
+                          label: Text(
+                            isTrackingCurrentSession
+                                ? l10n.pauseTrack
+                                : l10n.startTrack,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ),
                     ],

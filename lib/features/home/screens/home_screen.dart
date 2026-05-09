@@ -333,6 +333,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     builder: (context) => const SessionFormScreen(),
                   ),
                 );
+                if (!mounted) return;
                 if (result == true) {
                   setState(() {}); // Refresh the list
                 }
@@ -450,6 +451,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   final result = await Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const PlantFormScreen()),
                   );
+                  if (!mounted) return;
                   if (result == true) setState(() {});
                 },
               ),
@@ -473,6 +475,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       builder: (_) => const QuickCaptureScreen(),
                     ),
                   );
+                  if (!mounted) return;
                   if (result == true) setState(() {});
                 },
               ),

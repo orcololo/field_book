@@ -181,10 +181,10 @@ class _InaturalistAuthScreenState extends ConsumerState<InaturalistAuthScreen> {
         username: null,
       );
 
+      if (!mounted) return;
       _tokenController.clear();
       _usernameController.clear();
 
-      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.inaturalistCredentialsCleared)),
       );

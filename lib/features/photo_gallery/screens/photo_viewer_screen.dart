@@ -48,12 +48,17 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
       if (file.existsSync()) {
         final bytes = await file.readAsBytes();
         final data = await readExifFromBytes(bytes);
+        if (!mounted) return;
         setState(() {
           _exifData = data;
           _loadingExif = false;
         });
+      } else {
+        if (!mounted) return;
+        setState(() => _loadingExif = false);
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _exifData = null;
         _loadingExif = false;

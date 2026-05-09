@@ -62,19 +62,18 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
       locale: const Locale('pt', 'BR'),
     );
 
-    if (picked != null) {
-      setState(() {
-        if (isStartDate) {
-          _startDate = picked;
-          // If end date is before start date, clear it
-          if (_endDate != null && _endDate!.isBefore(_startDate)) {
-            _endDate = null;
-          }
-        } else {
-          _endDate = picked;
+    if (picked == null || !mounted) return;
+    setState(() {
+      if (isStartDate) {
+        _startDate = picked;
+        // If end date is before start date, clear it
+        if (_endDate != null && _endDate!.isBefore(_startDate)) {
+          _endDate = null;
         }
-      });
-    }
+      } else {
+        _endDate = picked;
+      }
+    });
   }
 
   void _addTeamMember() {
