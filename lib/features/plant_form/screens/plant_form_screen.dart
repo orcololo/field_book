@@ -3269,17 +3269,17 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     if (!Platform.isAndroid) return;
 
     final prefs = await SharedPreferences.getInstance();
-
-    // Read and UNCONDITIONALLY clear the recovery-owner key and snapshot.
-    // Clearing them here regardless of whether any photo was actually recovered
-    // prevents stale values from surviving into a later session and causing
-    // wrong-screen recovery or spurious form restoration.
     final owner = prefs.getString(kRecoveryOwnerKey);
+
+    // Only proceed — and only then clear the key — if PlantForm is the owner.
+    // Unconditionally clearing would wipe the key before QuickCapture (or any
+    // other screen launched during the same Android session) can see it, which
+    // would cause the real owner to skip recovery and permanently lose the photo.
+    if (owner != 'plant_form_camera' && owner != 'plant_form_ocr') return;
+
+    // We own both keys — remove them so they can't be replayed on a later launch.
     await prefs.remove(kRecoveryOwnerKey);
     await prefs.remove(_kPlantFormSnapshotKey);
-
-    // Only proceed if PlantForm was the screen that opened the camera/gallery.
-    if (owner != 'plant_form_camera' && owner != 'plant_form_ocr') return;
 
     final isOcrPending = owner == 'plant_form_ocr';
 

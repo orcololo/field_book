@@ -95,14 +95,15 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       await _tryRestoreSnapshot();
-      // Only recover a lost photo if QuickCapture was the screen that opened
-      // the camera.  Clear the owner key unconditionally so a stale value
-      // never leaks into a later session on a different screen.
+      // Only recover a lost photo if QuickCapture opened the camera.
+      // Do NOT clear the owner key unless it belongs to this screen — clearing
+      // a key owned by another screen (e.g. PlantForm) would prevent that screen
+      // from recovering its own lost photo.
       if (Platform.isAndroid) {
         final prefs = await SharedPreferences.getInstance();
         final owner = prefs.getString(kRecoveryOwnerKey);
-        await prefs.remove(kRecoveryOwnerKey);
         if (owner == 'quick_capture_camera') {
+          await prefs.remove(kRecoveryOwnerKey);
           final recovered = await _photoService.retrieveLostPhotos();
           if (recovered.isNotEmpty && mounted) {
             setState(() => _photoPaths.addAll(recovered.map((f) => f.path)));
