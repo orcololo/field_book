@@ -266,11 +266,15 @@ class ModernPlantCard extends StatelessWidget {
             color: colorScheme.tertiary,
           ),
           const SizedBox(width: FoliumTheme.space4),
-          Text(
-            'GPS',
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: colorScheme.tertiary),
+          Flexible(
+            child: Text(
+              '${plant.latitude!.toStringAsFixed(4)}, ${plant.longitude!.toStringAsFixed(4)}',
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: colorScheme.tertiary),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           const SizedBox(width: FoliumTheme.space8),
         ],

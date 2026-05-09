@@ -226,6 +226,11 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
         _weatherNotesController.text = data['weatherNotes'] as String? ?? '';
         _latitude = (data['latitude'] as num?)?.toDouble();
         _longitude = (data['longitude'] as num?)?.toDouble();
+        // Coordinates are only valid as a pair — clear both if either is missing.
+        if (_latitude == null || _longitude == null) {
+          _latitude = null;
+          _longitude = null;
+        }
         final categoryName = data['category'] as String?;
         if (categoryName != null) {
           _category = PlantCategory.values.firstWhere(

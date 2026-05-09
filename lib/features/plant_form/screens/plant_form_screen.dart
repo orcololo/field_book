@@ -76,6 +76,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final _formKey = GlobalKey<FormState>();
+  final _mapWidgetKey = GlobalKey<MapWidgetState>();
 
   // Form fields
   late TextEditingController _scientificNameController;
@@ -1650,10 +1651,9 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                     Text(l10n.locationMap),
                     const Spacer(),
                     if (_latitude != null && _longitude != null)
-                      TextButton.icon(
+                        TextButton.icon(
                         onPressed: () {
-                          // Center map on current location
-                          setState(() {});
+                          _mapWidgetKey.currentState?.recenter();
                         },
                         icon: const Icon(Icons.my_location, size: 16),
                         label: Text(l10n.recenter),
@@ -1668,6 +1668,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                 height: 250,
                 child: _latitude != null && _longitude != null
                     ? MapWidget(
+                        key: _mapWidgetKey,
                         latitude: _latitude,
                         longitude: _longitude,
                         zoom: 15.0,
@@ -3513,6 +3514,12 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
 
       if (parsedLongitude != null) {
         _longitude = parsedLongitude;
+      }
+
+      // Coordinates are only valid as a pair — clear both if either is missing.
+      if (_latitude == null || _longitude == null) {
+        _latitude = null;
+        _longitude = null;
       }
     });
   }

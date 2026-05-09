@@ -25,12 +25,23 @@ class MapWidget extends StatefulWidget {
   });
 
   @override
-  State<MapWidget> createState() => _MapWidgetState();
+  State<MapWidget> createState() => MapWidgetState();
 }
 
-class _MapWidgetState extends State<MapWidget> {
+class MapWidgetState extends State<MapWidget> {
   late MapController _mapController;
   LatLng? _selectedLocation;
+
+  /// Moves the map back to the widget's current latitude/longitude.
+  void recenter() {
+    if (widget.latitude != null && widget.longitude != null) {
+      final target = LatLng(widget.latitude!, widget.longitude!);
+      setState(() {
+        _selectedLocation = target;
+      });
+      _mapController.move(target, widget.zoom);
+    }
+  }
 
   @override
   void initState() {

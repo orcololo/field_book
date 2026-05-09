@@ -441,7 +441,7 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
               if (plant.latitude != null && plant.longitude != null)
                 _buildStatusChip(
                   context,
-                  'GPS',
+                  '${plant.latitude!.toStringAsFixed(4)}, ${plant.longitude!.toStringAsFixed(4)}',
                   colorScheme.secondaryContainer,
                   colorScheme.secondary,
                   icon: Icons.location_on,
