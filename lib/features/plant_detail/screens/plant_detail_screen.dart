@@ -2050,7 +2050,7 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.link, color: Theme.of(context).primaryColor),
+                    Icon(Icons.link, color: Theme.of(context).colorScheme.primary),
                     const SizedBox(width: 8),
                     Text(
                       l10n.relatedPlants,

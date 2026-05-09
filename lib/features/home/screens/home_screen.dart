@@ -532,7 +532,7 @@ class _PlantsTabState extends ConsumerState<_PlantsTab> {
               bottom: 100, // Account for bottom navigation bar
             ),
             itemBuilder: (context, index) {
-              return ShimmerLoading(child: ShimmerPlaceholders.plantCard());
+              return ShimmerLoading(child: ShimmerPlaceholders.plantCard(context: context));
             },
           );
         }
@@ -675,7 +675,7 @@ class _SessionsTabState extends ConsumerState<_SessionsTab> {
               bottom: 100, // Account for bottom navigation bar
             ),
             itemBuilder: (context, index) {
-              return ShimmerLoading(child: ShimmerPlaceholders.listItem());
+              return ShimmerLoading(child: ShimmerPlaceholders.listItem(context: context));
             },
           );
         }

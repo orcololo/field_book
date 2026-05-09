@@ -148,8 +148,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: FoliumTheme.surface,
+      backgroundColor: colorScheme.surface,
       extendBodyBehindAppBar: true,
       appBar: GlassAppBarFrosted(
         title: l10n.search,
@@ -180,7 +181,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               IconButton(
                 icon: Icon(
                   _showFilters ? Icons.filter_alt : Icons.filter_alt_outlined,
-                  color: _showFilters ? FoliumTheme.primaryMain : FoliumTheme.onSurfaceVariant,
+                  color: _showFilters ? colorScheme.primary : colorScheme.onSurfaceVariant,
                 ),
                 onPressed: () {
                   setState(() {
@@ -202,7 +203,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 Text(
                   l10n.searchByLabel,
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: FoliumTheme.onSurfaceVariant,
+                        color: colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w600,
                       ),
                 ),
@@ -212,7 +213,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   child: ChoiceChip(
                     label: const Text('Nome'),
                     selected: _searchMode == 'name',
-                    selectedColor: FoliumTheme.primaryContainer,
+                    selectedColor: colorScheme.primaryContainer,
                     onSelected: (selected) {
                       if (selected) {
                         setState(() {
@@ -230,7 +231,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   child: ChoiceChip(
                     label: const Text('Identificador'),
                     selected: _searchMode == 'identifier',
-                    selectedColor: FoliumTheme.primaryContainer,
+                    selectedColor: colorScheme.primaryContainer,
                     onSelected: (selected) {
                       if (selected) {
                         setState(() {
@@ -407,7 +408,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                       ? 'Digite pelo menos 2 caracteres para buscar'
                                       : 'Nenhuma planta encontrada',
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: FoliumTheme.onSurfaceVariant,
+                                color: colorScheme.onSurfaceVariant,
                               ),
                             ),
                             if (_searchController.text.isNotEmpty) ...[

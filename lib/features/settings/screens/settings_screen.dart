@@ -37,7 +37,7 @@ class SettingsScreen extends ConsumerWidget {
             right: FoliumTheme.space16,
           ),
           itemBuilder: (context, index) {
-            return ShimmerLoading(child: ShimmerPlaceholders.listItem());
+            return ShimmerLoading(child: ShimmerPlaceholders.listItem(context: context));
           },
         ),
         error: (error, stack) {
@@ -497,15 +497,16 @@ class _LanguageTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsNotifierProvider.notifier);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(FoliumTheme.space8),
         decoration: BoxDecoration(
-          color: FoliumTheme.tertiaryContainer,
+          color: colorScheme.tertiaryContainer,
           borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
         ),
-        child: const Icon(Icons.language, color: FoliumTheme.tertiaryMain),
+        child: Icon(Icons.language, color: colorScheme.tertiary),
       ),
       title: Text(l10n.language),
       subtitle: Text(_getLanguageName(l10n, settings.localeCode)),
@@ -1134,15 +1135,16 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final backupService = ref.read(googleDriveBackupServiceProvider);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Column(
       children: [
         // Signed-in status
         if (backupService.isSignedIn && backupService.currentUserEmail != null)
           ListTile(
-            leading: const Icon(
+            leading: Icon(
               Icons.account_circle,
-              color: FoliumTheme.primaryMain,
+              color: colorScheme.primary,
             ),
             title: Text(l10n.signedInAs(backupService.currentUserEmail!)),
             trailing: TextButton(
@@ -1186,7 +1188,7 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
                           messenger.showSnackBar(
                             SnackBar(
                               content: Text(l10n.backupFailed(errorMsg)),
-                              backgroundColor: FoliumTheme.error,
+                              backgroundColor: colorScheme.error,
                             ),
                           );
                         }
@@ -1208,7 +1210,7 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
                 _isBackingUp ? l10n.backupInProgress : l10n.backupNow,
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: FoliumTheme.primaryMain,
+                backgroundColor: colorScheme.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   vertical: FoliumTheme.space12,
@@ -1238,8 +1240,8 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
                 _isRestoring ? l10n.restoreInProgress : l10n.restoreFromCloud,
               ),
               style: OutlinedButton.styleFrom(
-                foregroundColor: FoliumTheme.primaryMain,
-                side: const BorderSide(color: FoliumTheme.primaryMain),
+                foregroundColor: colorScheme.primary,
+                side: BorderSide(color: colorScheme.primary),
                 padding: const EdgeInsets.symmetric(
                   vertical: FoliumTheme.space12,
                 ),
@@ -1270,7 +1272,7 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: FoliumTheme.primaryMain,
+              backgroundColor: Theme.of(context).colorScheme.primary,
               foregroundColor: Colors.white,
             ),
             child: Text(l10n.confirm),
@@ -1294,7 +1296,7 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
       cancelLabel: l10n.cancel,
       confirmLabel: l10n.confirm,
       countdownLabel: l10n.rainModeCountdownLabel,
-      confirmColor: FoliumTheme.primaryMain,
+      confirmColor: Theme.of(context).colorScheme.primary,
     );
 
     if (confirmed != true || !mounted) return;
@@ -1321,7 +1323,7 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
       if (mounted) {
         final errorMsg = _localizeError(e.toString(), l10n);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMsg), backgroundColor: FoliumTheme.error),
+          SnackBar(content: Text(errorMsg), backgroundColor: Theme.of(context).colorScheme.error),
         );
       }
     } finally {
@@ -1415,21 +1417,22 @@ class _UserInitialsTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsNotifierProvider.notifier);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(FoliumTheme.space8),
         decoration: BoxDecoration(
-          color: FoliumTheme.primaryContainer,
+          color: colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
         ),
-        child: const Icon(Icons.person, color: FoliumTheme.primaryMain),
+        child: Icon(Icons.person, color: colorScheme.primary),
       ),
       title: Text(l10n.userInitialsTitle),
       subtitle: Text(settings.userInitials),
-      trailing: const Icon(
+      trailing: Icon(
         Icons.chevron_right,
-        color: FoliumTheme.onSurfaceVariant,
+        color: colorScheme.onSurfaceVariant,
       ),
       onTap: () async {
         final result = await showDialog<String>(
@@ -1463,16 +1466,16 @@ class _LastRegistryNumberTile extends ConsumerWidget {
       leading: Container(
         padding: const EdgeInsets.all(FoliumTheme.space8),
         decoration: BoxDecoration(
-          color: FoliumTheme.secondaryContainer,
+          color: Theme.of(context).colorScheme.secondaryContainer,
           borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
         ),
-        child: const Icon(Icons.tag, color: FoliumTheme.secondaryMain),
+        child: Icon(Icons.tag, color: Theme.of(context).colorScheme.secondary),
       ),
       title: Text(l10n.lastRegistryNumberTitle),
       subtitle: Text('${settings.lastRegistryNumber} • ${l10n.nextLabel(nextId)}'),
-      trailing: const Icon(
+      trailing: Icon(
         Icons.chevron_right,
-        color: FoliumTheme.onSurfaceVariant,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
       ),
       onTap: () async {
         final result = await showDialog<int>(
@@ -1511,7 +1514,7 @@ class _AutoGenerateIdentifierTile extends ConsumerWidget {
       title: Text(l10n.autoGenerateTitle),
       subtitle: Text(l10n.autoGenerateSubtitle),
       value: settings.autoGenerateIdentifier,
-      activeTrackColor: FoliumTheme.primaryContainer,
+      activeTrackColor: Theme.of(context).colorScheme.primaryContainer,
       onChanged: (value) async {
         final updatedSettings = settings..autoGenerateIdentifier = value;
         await notifier.updateSettings(updatedSettings);
@@ -1786,23 +1789,24 @@ class _IdentifierManagementTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(FoliumTheme.space8),
         decoration: BoxDecoration(
-          color: FoliumTheme.tertiaryContainer,
+          color: colorScheme.tertiaryContainer,
           borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
         ),
-        child: const Icon(
+        child: Icon(
           Icons.playlist_add_check,
-          color: FoliumTheme.tertiaryMain,
+          color: colorScheme.tertiary,
         ),
       ),
       title: Text(l10n.manageIdentifiers),
       subtitle: Text(l10n.manageIdentifiersSubtitle),
-      trailing: const Icon(
+      trailing: Icon(
         Icons.chevron_right,
-        color: FoliumTheme.onSurfaceVariant,
+        color: colorScheme.onSurfaceVariant,
       ),
       onTap: () {
         Navigator.push(
@@ -1822,21 +1826,22 @@ class _CollectionTemplatesTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(FoliumTheme.space8),
         decoration: BoxDecoration(
-          color: FoliumTheme.primaryContainer,
+          color: colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
         ),
-        child: const Icon(Icons.library_books, color: FoliumTheme.primaryMain),
+        child: Icon(Icons.library_books, color: colorScheme.primary),
       ),
       title: Text(l10n.collectionTemplatesTitle),
       subtitle: Text(l10n.collectionTemplatesSubtitle),
-      trailing: const Icon(
+      trailing: Icon(
         Icons.chevron_right,
-        color: FoliumTheme.onSurfaceVariant,
+        color: colorScheme.onSurfaceVariant,
       ),
       onTap: () {
         Navigator.push(
@@ -1856,6 +1861,7 @@ class _AccountSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final authState = ref.watch(authNotifierProvider);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
       decoration: FoliumTheme.cardDecoration(),
@@ -1888,10 +1894,10 @@ class _AccountSection extends ConsumerWidget {
               leading: Container(
                 padding: const EdgeInsets.all(FoliumTheme.space8),
                 decoration: BoxDecoration(
-                  color: FoliumTheme.error.withValues(alpha: 0.1),
+                  color: colorScheme.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
                 ),
-                child: Icon(Icons.logout, color: FoliumTheme.error),
+                child: Icon(Icons.logout, color: colorScheme.error),
               ),
               title: Text(l10n.signOut),
               onTap: () async {
@@ -1903,16 +1909,16 @@ class _AccountSection extends ConsumerWidget {
               leading: Container(
                 padding: const EdgeInsets.all(FoliumTheme.space8),
                 decoration: BoxDecoration(
-                  color: FoliumTheme.primaryContainer,
+                  color: colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
                 ),
-                child: const Icon(Icons.login, color: FoliumTheme.primaryMain),
+                child: Icon(Icons.login, color: colorScheme.primary),
               ),
               title: Text(l10n.signIn),
               subtitle: Text(l10n.syncCloud),
-              trailing: const Icon(
+              trailing: Icon(
                 Icons.chevron_right,
-                color: FoliumTheme.onSurfaceVariant,
+                color: colorScheme.onSurfaceVariant,
               ),
               onTap: () {
                 Navigator.push(
@@ -1938,6 +1944,7 @@ class _SyncSection extends ConsumerWidget {
     final authState = ref.watch(authNotifierProvider);
     final syncState = ref.watch(syncNotifierProvider);
     final isAuthenticated = authState is AuthAuthenticated;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
       decoration: FoliumTheme.cardDecoration(),
@@ -1949,10 +1956,10 @@ class _SyncSection extends ConsumerWidget {
               padding: const EdgeInsets.all(FoliumTheme.space8),
               decoration: BoxDecoration(
                 color: syncState.isSyncing
-                    ? FoliumTheme.primaryContainer
+                    ? colorScheme.primaryContainer
                     : isAuthenticated
                     ? FoliumTheme.successContainer
-                    : FoliumTheme.surfaceVariant,
+                    : colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
               ),
               child: syncState.isSyncing
@@ -1965,7 +1972,7 @@ class _SyncSection extends ConsumerWidget {
                       Icons.sync,
                       color: isAuthenticated
                           ? FoliumTheme.success
-                          : FoliumTheme.onSurfaceVariant,
+                          : colorScheme.onSurfaceVariant,
                     ),
             ),
             title: Text(
@@ -1979,9 +1986,9 @@ class _SyncSection extends ConsumerWidget {
                   : l10n.neverSynced,
             ),
             trailing: isAuthenticated && !syncState.isSyncing
-                ? const Icon(
+                ? Icon(
                     Icons.chevron_right,
-                    color: FoliumTheme.onSurfaceVariant,
+                    color: colorScheme.onSurfaceVariant,
                   )
                 : null,
             onTap: isAuthenticated && !syncState.isSyncing
@@ -1998,10 +2005,10 @@ class _SyncSection extends ConsumerWidget {
               leading: Container(
                 padding: const EdgeInsets.all(FoliumTheme.space8),
                 decoration: BoxDecoration(
-                  color: FoliumTheme.error.withValues(alpha: 0.1),
+                  color: colorScheme.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
                 ),
-                child: Icon(Icons.error_outline, color: FoliumTheme.error),
+                child: Icon(Icons.error_outline, color: colorScheme.error),
               ),
               title: Text(l10n.syncErrorTitle),
               subtitle: Text(
@@ -2017,12 +2024,12 @@ class _SyncSection extends ConsumerWidget {
               leading: Container(
                 padding: const EdgeInsets.all(FoliumTheme.space8),
                 decoration: BoxDecoration(
-                  color: FoliumTheme.primaryContainer,
+                  color: colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.info_outline,
-                  color: FoliumTheme.primaryMain,
+                  color: colorScheme.primary,
                 ),
               ),
               title: Text(l10n.lastSyncResult),

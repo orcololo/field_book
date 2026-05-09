@@ -16,6 +16,7 @@ import '../../../core/theme/folium_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/plant_category.dart';
 import '../../../models/plant_record.dart';
+import '../../../shared/widgets/modern/modern_app_bar.dart';
 
 const _uuid = Uuid();
 
@@ -214,10 +215,10 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.quickCapture),
+      appBar: ModernAppBar(
+        title: l10n.quickCapture,
+        showBackButton: true,
         actions: [
-          // GPS indicator in app bar
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: _buildGpsChip(l10n, colorScheme),

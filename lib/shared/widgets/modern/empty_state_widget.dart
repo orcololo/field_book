@@ -166,7 +166,7 @@ class EmptyStates {
       message: l10n.createSessionMsg,
       actionLabel: l10n.newSession,
       onAction: onCreateSession,
-      iconColor: FoliumTheme.tertiaryMain,
+      iconColor: Theme.of(context).colorScheme.tertiary,
     );
   }
 
@@ -216,7 +216,7 @@ class EmptyStates {
       message: message,
       actionLabel: onRetry != null ? l10n.tryAgain : null,
       onAction: onRetry,
-      iconColor: FoliumTheme.error,
+      iconColor: Theme.of(context).colorScheme.error,
     );
   }
 }

@@ -35,6 +35,7 @@ import '../../../shared/widgets/audio/audio_player_widget.dart';
 import '../../../shared/widgets/rain_mode_guard.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/providers/rain_mode_provider.dart';
+import '../../../shared/widgets/modern/modern_app_bar.dart';
 
 const _uuid = Uuid();
 
@@ -874,12 +875,12 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         await _attemptExitWithoutSaving(l10n);
       },
       child: Scaffold(
-        appBar: AppBar(
+        appBar: ModernAppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => _attemptExitWithoutSaving(l10n),
           ),
-          title: Text(isEditing ? l10n.editPlant : l10n.newPlant),
+          title: isEditing ? l10n.editPlant : l10n.newPlant,
           bottom: TabBar(
             controller: _tabController,
             isScrollable: true,
@@ -892,6 +893,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
               Tab(text: l10n.audioSection),
             ],
           ),
+          bottomHeight: 48,
         ),
         body: Form(
           key: _formKey,

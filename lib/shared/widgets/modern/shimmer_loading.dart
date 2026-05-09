@@ -77,7 +77,13 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
 class ShimmerPlaceholders {
   ShimmerPlaceholders._();
 
-  static Widget plantCard() {
+  /// Placeholder color used in shimmer skeleton shapes.
+  /// Uses a neutral color that the ShimmerLoading animation overlays.
+  static Color _placeholderColor(BuildContext context) =>
+      Theme.of(context).colorScheme.surfaceContainerHighest;
+
+  static Widget plantCard({required BuildContext context}) {
+    final placeholder = _placeholderColor(context);
     return Container(
       margin: const EdgeInsets.symmetric(
         horizontal: FoliumTheme.space16,
@@ -90,9 +96,9 @@ class ShimmerPlaceholders {
           // Image placeholder
           Container(
             height: 200,
-            decoration: const BoxDecoration(
-              color: FoliumTheme.surfaceVariant,
-              borderRadius: BorderRadius.vertical(
+            decoration: BoxDecoration(
+              color: placeholder,
+              borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(FoliumTheme.radiusMedium),
               ),
             ),
@@ -107,7 +113,7 @@ class ShimmerPlaceholders {
                   width: double.infinity,
                   height: 20,
                   decoration: BoxDecoration(
-                    color: FoliumTheme.surfaceVariant,
+                    color: placeholder,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -117,7 +123,7 @@ class ShimmerPlaceholders {
                   width: 150,
                   height: 16,
                   decoration: BoxDecoration(
-                    color: FoliumTheme.surfaceVariant,
+                    color: placeholder,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -129,7 +135,7 @@ class ShimmerPlaceholders {
                       width: 80,
                       height: 14,
                       decoration: BoxDecoration(
-                        color: FoliumTheme.surfaceVariant,
+                        color: placeholder,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -138,7 +144,7 @@ class ShimmerPlaceholders {
                       width: 60,
                       height: 14,
                       decoration: BoxDecoration(
-                        color: FoliumTheme.surfaceVariant,
+                        color: placeholder,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -152,7 +158,8 @@ class ShimmerPlaceholders {
     );
   }
 
-  static Widget listItem() {
+  static Widget listItem({required BuildContext context}) {
+    final placeholder = _placeholderColor(context);
     return Container(
       margin: const EdgeInsets.symmetric(
         horizontal: FoliumTheme.space16,
@@ -167,7 +174,7 @@ class ShimmerPlaceholders {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: FoliumTheme.surfaceVariant,
+              color: placeholder,
               borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
             ),
           ),
@@ -181,7 +188,7 @@ class ShimmerPlaceholders {
                   width: double.infinity,
                   height: 16,
                   decoration: BoxDecoration(
-                    color: FoliumTheme.surfaceVariant,
+                    color: placeholder,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -190,7 +197,7 @@ class ShimmerPlaceholders {
                   width: 100,
                   height: 14,
                   decoration: BoxDecoration(
-                    color: FoliumTheme.surfaceVariant,
+                    color: placeholder,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -202,7 +209,8 @@ class ShimmerPlaceholders {
     );
   }
 
-  static Widget gridItem() {
+  static Widget gridItem({required BuildContext context}) {
+    final placeholder = _placeholderColor(context);
     return Container(
       decoration: FoliumTheme.cardDecoration(),
       child: Column(
@@ -211,9 +219,9 @@ class ShimmerPlaceholders {
           // Image
           Expanded(
             child: Container(
-              decoration: const BoxDecoration(
-                color: FoliumTheme.surfaceVariant,
-                borderRadius: BorderRadius.vertical(
+              decoration: BoxDecoration(
+                color: placeholder,
+                borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(FoliumTheme.radiusMedium),
                 ),
               ),
@@ -229,7 +237,7 @@ class ShimmerPlaceholders {
                   width: double.infinity,
                   height: 14,
                   decoration: BoxDecoration(
-                    color: FoliumTheme.surfaceVariant,
+                    color: placeholder,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -238,7 +246,7 @@ class ShimmerPlaceholders {
                   width: 60,
                   height: 12,
                   decoration: BoxDecoration(
-                    color: FoliumTheme.surfaceVariant,
+                    color: placeholder,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),

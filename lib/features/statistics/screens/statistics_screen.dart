@@ -18,11 +18,11 @@ class StatisticsScreen extends ConsumerWidget {
     final sessionRepo = ref.watch(sessionRepositoryProvider);
 
     return ListView(
-      padding: const EdgeInsets.only(
-        top: 80, // Account for glass app bar
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + 64, // safe area + glass app bar
         left: 16,
         right: 16,
-        bottom: 100, // Account for bottom navigation
+        bottom: MediaQuery.of(context).padding.bottom + 80, // safe area + bottom nav
       ),
       children: [
         // Overview Cards

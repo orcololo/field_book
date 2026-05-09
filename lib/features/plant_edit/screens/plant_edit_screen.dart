@@ -13,6 +13,7 @@ import '../../../core/repositories/plant_repository.dart';
 import '../../../core/services/taxon_service.dart';
 import '../../../core/utils/botanical_validator.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/modern/modern_app_bar.dart';
 
 class PlantEditScreen extends ConsumerStatefulWidget {
   final PlantRecord plant;
@@ -665,8 +666,9 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.editPlant),
+      appBar: ModernAppBar(
+        title: l10n.editPlant,
+        showBackButton: true,
         actions: [
           if (_isSaving)
             const Center(

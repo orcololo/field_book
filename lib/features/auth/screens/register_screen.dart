@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/theme/folium_theme.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/modern/modern_app_bar.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -70,10 +71,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      appBar: AppBar(
-        title: Text(l10n.createAccount),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+      appBar: ModernAppBar(
+        title: l10n.createAccount,
+        showBackButton: true,
       ),
       body: SafeArea(
         child: SingleChildScrollView(

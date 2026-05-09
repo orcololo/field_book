@@ -8,6 +8,7 @@ import '../../../core/theme/folium_theme.dart';
 import '../../../core/utils/biome_detector.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/collection_template.dart';
+import '../../../shared/widgets/modern/modern_app_bar.dart';
 
 const _uuid = Uuid();
 
@@ -147,7 +148,10 @@ class _TemplatesScreenState extends ConsumerState<TemplatesScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.collectionTemplatesTitle)),
+      appBar: ModernAppBar(
+        title: l10n.collectionTemplatesTitle,
+        showBackButton: true,
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openTemplateDialog(),
         icon: const Icon(Icons.add),

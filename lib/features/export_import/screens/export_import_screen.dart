@@ -8,6 +8,7 @@ import '../../../core/repositories/session_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/plant_record.dart';
 import '../../settings/screens/inaturalist_auth_screen.dart';
+import '../../../shared/widgets/modern/modern_app_bar.dart';
 
 class ExportImportScreen extends ConsumerStatefulWidget {
   final List<PlantRecord>? preSelectedPlants;
@@ -275,8 +276,9 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.exportImportTitle),
+      appBar: ModernAppBar(
+        title: l10n.exportImportTitle,
+        showBackButton: true,
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

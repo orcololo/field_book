@@ -52,15 +52,16 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return IntroductionScreen(
-      globalBackgroundColor: FoliumTheme.surface,
+      globalBackgroundColor: colorScheme.surface,
       pages: [
         _buildPage(
           title: l10n.onboardingWelcomeTitle,
           body: l10n.onboardingWelcomeBody,
           icon: Icons.eco_outlined,
-          gradientColors: [FoliumTheme.primaryMain, FoliumTheme.success],
+          gradientColors: [colorScheme.primary, FoliumTheme.success],
           context: context,
         ),
         _buildPage(
@@ -68,8 +69,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           body: l10n.onboardingSessionsBody,
           icon: Icons.folder_outlined,
           gradientColors: [
-            FoliumTheme.secondaryMain,
-            FoliumTheme.secondaryContainer,
+            colorScheme.secondary,
+            colorScheme.secondaryContainer,
           ],
           context: context,
         ),
@@ -78,8 +79,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           body: l10n.onboardingCollectionBody,
           icon: Icons.camera_alt_outlined,
           gradientColors: [
-            FoliumTheme.tertiaryMain,
-            FoliumTheme.tertiaryContainer,
+            colorScheme.tertiary,
+            colorScheme.tertiaryContainer,
           ],
           context: context,
         ),
@@ -88,8 +89,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           body: l10n.onboardingExportBody,
           icon: Icons.upload_file_outlined,
           gradientColors: [
-            FoliumTheme.primaryMain,
-            FoliumTheme.primaryContainer,
+            colorScheme.primary,
+            colorScheme.primaryContainer,
           ],
           context: context,
         ),
@@ -100,7 +101,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       skip: Text(
         l10n.onboardingSkip,
         style: TextStyle(
-          color: FoliumTheme.onSurfaceVariant,
+          color: colorScheme.onSurfaceVariant,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -110,7 +111,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           vertical: FoliumTheme.space12,
         ),
         decoration: BoxDecoration(
-          color: FoliumTheme.primaryMain,
+          color: colorScheme.primary,
           borderRadius: BorderRadius.circular(FoliumTheme.radiusFull),
         ),
         child: Text(
@@ -127,7 +128,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           vertical: FoliumTheme.space12,
         ),
         decoration: BoxDecoration(
-          color: FoliumTheme.primaryMain,
+          color: colorScheme.primary,
           borderRadius: BorderRadius.circular(FoliumTheme.radiusFull),
         ),
         child: Text(
@@ -142,9 +143,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       onSkip: () => _completeOnboarding(context),
       dotsDecorator: DotsDecorator(
         size: const Size(8.0, 8.0),
-        color: FoliumTheme.primaryMain.withValues(alpha: 0.2),
+        color: colorScheme.primary.withValues(alpha: 0.2),
         activeSize: const Size(22.0, 8.0),
-        activeColor: FoliumTheme.primaryMain,
+        activeColor: colorScheme.primary,
         activeShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(FoliumTheme.radiusFull),
         ),
@@ -155,13 +156,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   PageViewModel _buildSetupPage(BuildContext context, AppLocalizations l10n) {
+    final colorScheme = Theme.of(context).colorScheme;
     return PageViewModel(
       titleWidget: Padding(
         padding: const EdgeInsets.only(top: FoliumTheme.space24),
         child: Text(
           l10n.onboardingSetupTitle,
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            color: FoliumTheme.onSurface,
+            color: colorScheme.onSurface,
             fontWeight: FontWeight.w700,
           ),
           textAlign: TextAlign.center,
@@ -174,7 +176,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             Text(
               l10n.onboardingSetupBody,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: FoliumTheme.onSurfaceVariant,
+                color: colorScheme.onSurfaceVariant,
                 height: 1.6,
               ),
               textAlign: TextAlign.center,
@@ -198,8 +200,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(FoliumTheme.radiusMedium),
-                  borderSide: const BorderSide(
-                    color: FoliumTheme.primaryMain,
+                  borderSide: BorderSide(
+                    color: colorScheme.primary,
                     width: 2,
                   ),
                 ),
@@ -227,8 +229,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(FoliumTheme.radiusMedium),
-                  borderSide: const BorderSide(
-                    color: FoliumTheme.primaryMain,
+                  borderSide: BorderSide(
+                    color: colorScheme.primary,
                     width: 2,
                   ),
                 ),
@@ -246,13 +248,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 vertical: FoliumTheme.space12,
               ),
               decoration: BoxDecoration(
-                color: FoliumTheme.primaryContainer,
+                color: colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(FoliumTheme.radiusFull),
               ),
               child: Text(
                 l10n.onboardingIdentifierPreview(_previewIdentifier),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: FoliumTheme.primaryMain,
+                  color: colorScheme.primary,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1.2,
                 ),
@@ -270,11 +272,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [FoliumTheme.secondaryMain, FoliumTheme.primaryMain],
+              colors: [colorScheme.secondary, colorScheme.primary],
             ),
             boxShadow: [
               BoxShadow(
-                color: FoliumTheme.secondaryMain.withValues(alpha: 0.3),
+                color: colorScheme.secondary.withValues(alpha: 0.3),
                 blurRadius: 32,
                 offset: const Offset(0, 12),
               ),
@@ -304,13 +306,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     required List<Color> gradientColors,
     required BuildContext context,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
     return PageViewModel(
       titleWidget: Padding(
         padding: const EdgeInsets.only(top: FoliumTheme.space24),
         child: Text(
           title,
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            color: FoliumTheme.onSurface,
+            color: colorScheme.onSurface,
             fontWeight: FontWeight.w700,
           ),
           textAlign: TextAlign.center,
@@ -321,7 +324,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         child: Text(
           body,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            color: FoliumTheme.onSurfaceVariant,
+            color: colorScheme.onSurfaceVariant,
             height: 1.6,
           ),
           textAlign: TextAlign.center,

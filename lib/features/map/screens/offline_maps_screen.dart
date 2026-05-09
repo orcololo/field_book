@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart' as fmtc;
 import '../../../core/services/map_service.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/modern/modern_app_bar.dart';
 
 class OfflineMapsScreen extends StatefulWidget {
   const OfflineMapsScreen({super.key});
@@ -269,8 +270,9 @@ class _OfflineMapsScreenState extends State<OfflineMapsScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.offlineMapsTitle),
+      appBar: ModernAppBar(
+        title: l10n.offlineMapsTitle,
+        showBackButton: true,
         actions: [
           if (!_isDownloading)
             IconButton(

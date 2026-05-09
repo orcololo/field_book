@@ -87,13 +87,14 @@ class ModernSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.symmetric(
         horizontal: FoliumTheme.space16,
         vertical: FoliumTheme.space8,
       ),
       decoration: BoxDecoration(
-        color: FoliumTheme.surfaceVariant,
+        color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(FoliumTheme.radiusMedium),
         boxShadow: FoliumTheme.elevation1,
       ),
@@ -104,18 +105,18 @@ class ModernSearchBar extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: FoliumTheme.onSurfaceVariant.withValues(alpha: 0.6),
+                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
               ),
           prefixIcon: leading ??
-              const Icon(
+              Icon(
                 Icons.search,
-                color: FoliumTheme.onSurfaceVariant,
+                color: colorScheme.onSurfaceVariant,
               ),
           suffixIcon: controller?.text.isNotEmpty == true
               ? IconButton(
                   icon: const Icon(Icons.clear, size: 20),
                   onPressed: onClear,
-                  color: FoliumTheme.onSurfaceVariant,
+                  color: colorScheme.onSurfaceVariant,
                 )
               : null,
           border: InputBorder.none,

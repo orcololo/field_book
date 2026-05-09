@@ -78,6 +78,7 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget _buildLogo(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
         // Leaf icon with gradient background
@@ -85,11 +86,11 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: FoliumTheme.primaryMain.withValues(alpha: 0.2),
+            color: colorScheme.primary.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
             boxShadow: [
               BoxShadow(
-                color: FoliumTheme.primaryMain.withValues(alpha: 0.3),
+                color: colorScheme.primary.withValues(alpha: 0.3),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -110,8 +111,8 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
         ShaderMask(
           shaderCallback: (bounds) => LinearGradient(
             colors: [
-              FoliumTheme.primaryMain,
-              FoliumTheme.primaryMain.withValues(alpha: 0.8),
+              colorScheme.primary,
+              colorScheme.primary.withValues(alpha: 0.8),
             ],
           ).createShader(bounds),
           child: Text(
@@ -119,7 +120,7 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
               letterSpacing: 0.5,
-              color: Colors.white,
+              color: colorScheme.onPrimary,
             ),
           ),
         ),
@@ -149,6 +150,7 @@ class GlassAppBarFrosted extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
@@ -158,19 +160,19 @@ class GlassAppBarFrosted extends StatelessWidget
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.white.withValues(alpha: 0.8),
-                Colors.white.withValues(alpha: 0.6),
+                colorScheme.surface.withValues(alpha: 0.85),
+                colorScheme.surface.withValues(alpha: 0.65),
               ],
             ),
             border: Border(
               bottom: BorderSide(
-                color: Colors.white.withValues(alpha: 0.3),
+                color: colorScheme.outline.withValues(alpha: 0.2),
                 width: 1.5,
               ),
             ),
             boxShadow: [
               BoxShadow(
-                color: FoliumTheme.primaryMain.withValues(alpha: 0.05),
+                color: colorScheme.primary.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -192,15 +194,15 @@ class GlassAppBarFrosted extends StatelessWidget
                       icon: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: FoliumTheme.primaryMain.withValues(alpha: 0.1),
+                          color: colorScheme.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(
                             FoliumTheme.radiusSmall,
                           ),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.arrow_back_ios_new,
                           size: 18,
-                          color: FoliumTheme.primaryMain,
+                          color: colorScheme.primary,
                         ),
                       ),
                       onPressed: () => Navigator.of(context).pop(),
@@ -232,6 +234,7 @@ class GlassAppBarFrosted extends StatelessWidget
   }
 
   Widget _buildBranding(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
         // Icon with glass effect
@@ -239,11 +242,11 @@ class GlassAppBarFrosted extends StatelessWidget
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: FoliumTheme.primaryMain.withValues(alpha: 0.15),
+            color: colorScheme.primary.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
             boxShadow: [
               BoxShadow(
-                color: FoliumTheme.primaryMain.withValues(alpha: 0.2),
+                color: colorScheme.primary.withValues(alpha: 0.2),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -266,10 +269,10 @@ class GlassAppBarFrosted extends StatelessWidget
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
             letterSpacing: 0.8,
-            color: FoliumTheme.primaryMain,
+            color: colorScheme.primary,
             shadows: [
               Shadow(
-                color: FoliumTheme.primaryMain.withValues(alpha: 0.1),
+                color: colorScheme.primary.withValues(alpha: 0.1),
                 offset: const Offset(0, 2),
                 blurRadius: 4,
               ),

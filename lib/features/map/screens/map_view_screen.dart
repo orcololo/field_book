@@ -9,6 +9,7 @@ import '../../../core/repositories/plant_repository.dart';
 import '../../../core/services/map_service.dart';
 import '../../plant_detail/screens/plant_detail_screen.dart';
 import 'offline_maps_screen.dart';
+import '../../../shared/widgets/modern/modern_app_bar.dart';
 
 class MapViewScreen extends ConsumerStatefulWidget {
   const MapViewScreen({super.key});
@@ -314,8 +315,8 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.mapPlantsTitle),
+      appBar: ModernAppBar(
+        title: l10n.mapPlantsTitle,
         actions: [
           IconButton(
             icon: Badge(

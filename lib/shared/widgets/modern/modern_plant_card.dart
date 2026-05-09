@@ -60,7 +60,7 @@ class ModernPlantCard extends StatelessWidget {
                       Text(
                         plant.scientificName,
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: FoliumTheme.primaryMain,
+                          color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.w600,
                         ),
                         maxLines: 2,
@@ -73,7 +73,7 @@ class ModernPlantCard extends StatelessWidget {
                         Text(
                           plant.commonName,
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: FoliumTheme.onSurfaceVariant,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -123,8 +123,8 @@ class ModernPlantCard extends StatelessWidget {
             vertical: FoliumTheme.space8,
           ),
           leading: showImage && plant.photoPaths.isNotEmpty
-              ? _buildCompactImage()
-              : _buildPlaceholderIcon(),
+              ? _buildCompactImage(context)
+              : _buildPlaceholderIcon(context),
           title: Text(
             plant.scientificName,
             style: Theme.of(context).textTheme.titleSmall,
@@ -169,7 +169,7 @@ class ModernPlantCard extends StatelessWidget {
               File(plant.photoPaths.first),
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
-                return _buildImagePlaceholder();
+                return _buildImagePlaceholder(context);
               },
             ),
 
@@ -199,14 +199,16 @@ class ModernPlantCard extends StatelessWidget {
     );
   }
 
-  Widget _buildImagePlaceholder() {
+  Widget _buildImagePlaceholder(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      color: FoliumTheme.primaryContainer,
-      child: const Icon(Icons.eco, size: 64, color: FoliumTheme.primaryMain),
+      color: colorScheme.primaryContainer,
+      child: Icon(Icons.eco, size: 64, color: colorScheme.primary),
     );
   }
 
-  Widget _buildCompactImage() {
+  Widget _buildCompactImage(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return ClipRRect(
       borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
       child: SizedBox(
@@ -217,8 +219,8 @@ class ModernPlantCard extends StatelessWidget {
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
             return Container(
-              color: FoliumTheme.primaryContainer,
-              child: const Icon(Icons.eco, color: FoliumTheme.primaryMain),
+              color: colorScheme.primaryContainer,
+              child: Icon(Icons.eco, color: colorScheme.primary),
             );
           },
         ),
@@ -226,54 +228,56 @@ class ModernPlantCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPlaceholderIcon() {
+  Widget _buildPlaceholderIcon(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       width: 56,
       height: 56,
       decoration: BoxDecoration(
-        color: FoliumTheme.primaryContainer,
+        color: colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
       ),
-      child: const Icon(Icons.eco, color: FoliumTheme.primaryMain),
+      child: Icon(Icons.eco, color: colorScheme.primary),
     );
   }
 
   Widget _buildMetadataRow(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
         // Category icon
-        Icon(_getCategoryIcon(), size: 16, color: FoliumTheme.onSurfaceVariant),
+        Icon(_getCategoryIcon(), size: 16, color: colorScheme.onSurfaceVariant),
         const SizedBox(width: FoliumTheme.space4),
         Text(_getCategoryLabel(), style: Theme.of(context).textTheme.bodySmall),
         const Spacer(),
         // Location icon
         if (plant.latitude != null && plant.longitude != null) ...[
-          const Icon(
+          Icon(
             Icons.location_on,
             size: 16,
-            color: FoliumTheme.tertiaryMain,
+            color: colorScheme.tertiary,
           ),
           const SizedBox(width: FoliumTheme.space4),
           Text(
             'GPS',
             style: Theme.of(
               context,
-            ).textTheme.bodySmall?.copyWith(color: FoliumTheme.tertiaryMain),
+            ).textTheme.bodySmall?.copyWith(color: colorScheme.tertiary),
           ),
           const SizedBox(width: FoliumTheme.space8),
         ],
         if (plant.iNaturalistId?.isNotEmpty ?? false) ...[
-          const Icon(
+          Icon(
             Icons.outbox_outlined,
             size: 16,
-            color: FoliumTheme.primaryMain,
+            color: colorScheme.primary,
           ),
           const SizedBox(width: FoliumTheme.space4),
           Text(
             l10n.inaturalistSyncBadge,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: FoliumTheme.primaryMain,
+              color: colorScheme.primary,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -283,25 +287,26 @@ class ModernPlantCard extends StatelessWidget {
   }
 
   Widget _buildCategoryBadge(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: FoliumTheme.space12,
         vertical: FoliumTheme.space4,
       ),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.9),
+        color: colorScheme.surface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(FoliumTheme.radiusFull),
         boxShadow: FoliumTheme.elevation1,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(_getCategoryIcon(), size: 14, color: FoliumTheme.primaryMain),
+          Icon(_getCategoryIcon(), size: 14, color: colorScheme.primary),
           const SizedBox(width: FoliumTheme.space4),
           Text(
             _getCategoryLabel(),
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: FoliumTheme.onSurface,
+              color: colorScheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -340,24 +345,26 @@ class ModernPlantCard extends StatelessWidget {
     );
   }
 
-  Widget _buildIdentifierBadge(BuildContext context) {    return Container(
+  Widget _buildIdentifierBadge(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: FoliumTheme.space12,
         vertical: FoliumTheme.space4,
       ),
       decoration: BoxDecoration(
-        color: FoliumTheme.secondaryContainer,
+        color: colorScheme.secondaryContainer,
         borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.tag, size: 14, color: FoliumTheme.secondaryMain),
+          Icon(Icons.tag, size: 14, color: colorScheme.secondary),
           const SizedBox(width: FoliumTheme.space4),
           Text(
             plant.registryIdentifier!,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: FoliumTheme.onSecondaryContainer,
+              color: colorScheme.onSecondaryContainer,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.5,
             ),
@@ -399,13 +406,14 @@ class ModernPlantCard extends StatelessWidget {
   }
 
   Widget _buildCategoryIcon(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(FoliumTheme.space8),
       decoration: BoxDecoration(
-        color: FoliumTheme.primaryContainer,
+        color: colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
       ),
-      child: Icon(_getCategoryIcon(), size: 20, color: FoliumTheme.primaryMain),
+      child: Icon(_getCategoryIcon(), size: 20, color: colorScheme.primary),
     );
   }
 
