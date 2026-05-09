@@ -37,6 +37,7 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
   }
 
   Future<void> _loadPlants() async {
+    if (!mounted) return;
     setState(() => _isLoading = true);
     
     try {
@@ -46,6 +47,7 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
         p.latitude != null && p.longitude != null
       ).toList();
       
+      if (!mounted) return;
       setState(() {
         _plants = plantsWithCoords;
         _applyFilters();
@@ -57,6 +59,7 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
         _centerMapOnPlants();
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
     }
   }
