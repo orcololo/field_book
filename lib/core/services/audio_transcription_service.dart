@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:logger/logger.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:whisper_flutter_new/whisper_flutter_new.dart';
@@ -9,6 +10,9 @@ class AudioTranscriptionService {
   final SpeechToText _speechToText;
   Whisper? _whisper;
   bool _whisperInitialized = false;
+  /// True once a transcription has completed successfully in this session,
+  /// meaning the Whisper model file is already cached on-device.
+  bool _modelCached = false;
 
   AudioTranscriptionService({SpeechToText? speechToText})
       : _speechToText = speechToText ?? SpeechToText();
@@ -28,6 +32,15 @@ class AudioTranscriptionService {
 
       // Initialize Whisper if not already done
       if (!_whisperInitialized) {
+        // The Whisper model is downloaded from HuggingFace on first use.
+        // If the model hasn't been cached yet and the device is offline,
+        // surface a user-friendly error rather than a cryptic download failure.
+        if (!_modelCached) {
+          final connectivity = await Connectivity().checkConnectivity();
+          if (connectivity == ConnectivityResult.none) {
+            throw Exception('noInternetConnection');
+          }
+        }
         _whisper = Whisper(
           model: WhisperModel.small,
           downloadHost: "https://huggingface.co/ggerganov/whisper.cpp/resolve/main",
@@ -44,6 +57,7 @@ class AudioTranscriptionService {
         ),
       );
 
+      _modelCached = true; // Model is now confirmed on-device
       return response.text.trim();
     } catch (e, stackTrace) {
       // Log full error context for debugging
@@ -127,5 +141,6 @@ class AudioTranscriptionService {
   void dispose() {
     _whisper = null;
     _whisperInitialized = false;
+    _modelCached = false;
   }
 }

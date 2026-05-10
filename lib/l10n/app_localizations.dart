@@ -2266,6 +2266,18 @@ abstract class AppLocalizations {
   /// **'Connect to the internet to identify species with PlantNet'**
   String get plantNetNoInternet;
 
+  /// No description provided for @plantNetRequestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'PlantNet request failed. Please try again.'**
+  String get plantNetRequestFailed;
+
+  /// No description provided for @plantNetInvalidResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'PlantNet returned an unexpected response. Please try again.'**
+  String get plantNetInvalidResponse;
+
   /// No description provided for @plantNetIdentifying.
   ///
   /// In en, this message translates to:

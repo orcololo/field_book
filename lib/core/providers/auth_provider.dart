@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -40,6 +43,11 @@ class AuthNotifier extends _$AuthNotifier {
   /// so that in-flight [_checkExistingSession] calls can detect they are stale
   /// and abort before overwriting a newer auth state.
   int _sessionCheckId = 0;
+
+  /// One-shot subscription set when the app is in an unauthenticated state
+  /// due to being offline with valid tokens. Fires [_checkExistingSession]
+  /// automatically once connectivity is restored.
+  StreamSubscription<ConnectivityResult>? _connectivityRetrySubscription;
 
   @override
   AuthState build() {
@@ -89,8 +97,10 @@ class AuthNotifier extends _$AuthNotifier {
         return;
       }
       // Token present but no cache and unreachable — extremely rare edge case
-      // (first launch ever while offline). Show login rather than spin forever.
+      // (first launch ever while offline). Show login rather than spin forever,
+      // but schedule an automatic retry when connectivity is restored.
       state = const AuthUnauthenticated();
+      _scheduleSessionRetryOnConnectivity();
     } catch (_) {
       // Unexpected non-Dio error — still try cache before giving up.
       if (_sessionCheckId != checkId) return;
@@ -102,9 +112,31 @@ class AuthNotifier extends _$AuthNotifier {
       }
       // Do NOT call logout() here — tokens may still be valid.
       // An unexpected error (format exception, null dereference) should not
-      // permanently destroy valid credentials.
+      // permanently destroy valid credentials. Retry once online.
       state = const AuthUnauthenticated();
+      _scheduleSessionRetryOnConnectivity();
     }
+  }
+
+  /// Sets up a one-shot connectivity listener that re-runs [_checkExistingSession]
+  /// when the device comes back online. Used when the app is stuck in
+  /// [AuthUnauthenticated] despite having valid stored tokens (offline startup
+  /// with no cached profile). The listener cancels itself after the first
+  /// non-none connectivity event, or when a user-initiated login supersedes it.
+  void _scheduleSessionRetryOnConnectivity() {
+    _connectivityRetrySubscription?.cancel();
+    _connectivityRetrySubscription = Connectivity().onConnectivityChanged.listen(
+      (result) {
+        if (result != ConnectivityResult.none) {
+          _connectivityRetrySubscription?.cancel();
+          _connectivityRetrySubscription = null;
+          // Only retry if still in unauthenticated state (user may have logged in manually).
+          if (state is AuthUnauthenticated) {
+            _checkExistingSession();
+          }
+        }
+      },
+    );
   }
 
   /// Called by the sync layer when it detects that tokens have been cleared
@@ -112,6 +144,8 @@ class AuthNotifier extends _$AuthNotifier {
   /// Updates auth state without touching token storage (already cleared).
   void invalidateSession() {
     _sessionCheckId++;
+    _connectivityRetrySubscription?.cancel();
+    _connectivityRetrySubscription = null;
     state = const AuthUnauthenticated();
   }
 
@@ -120,6 +154,8 @@ class AuthNotifier extends _$AuthNotifier {
     required String password,
   }) async {
     _sessionCheckId++;
+    _connectivityRetrySubscription?.cancel();
+    _connectivityRetrySubscription = null;
     state = const AuthLoading();
     try {
       final authService = ref.read(authServiceProvider);
@@ -137,6 +173,8 @@ class AuthNotifier extends _$AuthNotifier {
     required String password,
   }) async {
     _sessionCheckId++;
+    _connectivityRetrySubscription?.cancel();
+    _connectivityRetrySubscription = null;
     state = const AuthLoading();
     try {
       final authService = ref.read(authServiceProvider);
@@ -154,6 +192,8 @@ class AuthNotifier extends _$AuthNotifier {
 
   Future<void> googleSignIn() async {
     _sessionCheckId++;
+    _connectivityRetrySubscription?.cancel();
+    _connectivityRetrySubscription = null;
     state = const AuthLoading();
     try {
       final authService = ref.read(authServiceProvider);
@@ -167,6 +207,8 @@ class AuthNotifier extends _$AuthNotifier {
 
   Future<void> logout() async {
     _sessionCheckId++;
+    _connectivityRetrySubscription?.cancel();
+    _connectivityRetrySubscription = null;
     final authService = ref.read(authServiceProvider);
     await authService.logout();
     state = const AuthUnauthenticated();

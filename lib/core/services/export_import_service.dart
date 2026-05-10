@@ -573,7 +573,9 @@ class ExportImportService {
     if (result != null && result.files.single.path != null) {
       final file = File(result.files.single.path!);
       final content = await file.readAsString();
-      return await importFromJson(content);
+      // Use importFromJsonString so that session data embedded in the
+      // backup file is also restored (not just plant records).
+      return await importFromJsonString(content);
     }
 
     return null;

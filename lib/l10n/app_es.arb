@@ -437,6 +437,8 @@
   "plantNetApiKeyNotConfigured": "No configurada",
   "plantNetMissingApiKey": "Configure la API key de PlantNet en ajustes para usar la identificación por imagen",
   "plantNetNoInternet": "Conéctese a internet para identificar especies con PlantNet",
+  "plantNetRequestFailed": "La solicitud a PlantNet falló. Por favor, inténtelo de nuevo.",
+  "plantNetInvalidResponse": "PlantNet devolvió una respuesta inesperada. Por favor, inténtelo de nuevo.",
   "plantNetIdentifying": "Identificando especie...",
   "plantNetIdentificationFailed": "Error al identificar la especie: {error}",
   "@plantNetIdentificationFailed": { "placeholders": { "error": { "type": "String" } } },

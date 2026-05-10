@@ -1183,6 +1183,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Connect to the internet to identify species with PlantNet';
 
   @override
+  String get plantNetRequestFailed =>
+      'PlantNet request failed. Please try again.';
+
+  @override
+  String get plantNetInvalidResponse =>
+      'PlantNet returned an unexpected response. Please try again.';
+
+  @override
   String get plantNetIdentifying => 'Identifying species...';
 
   @override

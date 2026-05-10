@@ -101,7 +101,9 @@ class SyncNotifier extends _$SyncNotifier {
       state = state.copyWith(
         isSyncing: false,
         lastResult: result,
-        lastSyncAt: DateTime.now(),
+        // Only record a new sync timestamp when work was actually done.
+        // A skipped (offline) cycle must not overwrite the previous real timestamp.
+        lastSyncAt: result.skipped ? null : DateTime.now(),
         lastError: result.hasErrors ? result.errorMessages.first : null,
       );
     } catch (e) {

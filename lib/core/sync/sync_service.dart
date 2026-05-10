@@ -26,6 +26,9 @@ class SyncResult {
   final int conflicts;
   final int errors;
   final List<String> errorMessages;
+  /// True when the sync cycle was skipped (e.g., device is offline).
+  /// UI should NOT update "last synced" when this is true.
+  final bool skipped;
 
   const SyncResult({
     this.pushed = 0,
@@ -33,6 +36,7 @@ class SyncResult {
     this.conflicts = 0,
     this.errors = 0,
     this.errorMessages = const [],
+    this.skipped = false,
   });
 
   SyncResult operator +(SyncResult other) => SyncResult(
@@ -41,6 +45,7 @@ class SyncResult {
     conflicts: conflicts + other.conflicts,
     errors: errors + other.errors,
     errorMessages: [...errorMessages, ...other.errorMessages],
+    skipped: skipped && other.skipped,
   );
 
   bool get hasErrors => errors > 0;
@@ -70,7 +75,7 @@ class SyncService {
     final result = await _connectivity.checkConnectivity();
     if (result == ConnectivityResult.none) {
       _log.d('Offline — skipping sync');
-      return const SyncResult();
+      return const SyncResult(skipped: true);
     }
 
     _isSyncing = true;

@@ -2440,8 +2440,9 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         case 'noInternetConnection':
           return l10n.plantNetNoInternet;
         case 'requestFailed':
+          return l10n.plantNetRequestFailed;
         case 'invalidResponse':
-          return error.toString();
+          return l10n.plantNetInvalidResponse;
       }
     }
 
@@ -2616,11 +2617,13 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
       );
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        final message = e.toString().contains('noInternetConnection')
+            ? l10n.noInternetConnection
+            : l10n.errorTranscribeMsg(e.toString());
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.errorTranscribeMsg(e.toString()),
-            ),
+            content: Text(message),
             backgroundColor: Theme.of(context).colorScheme.error,
             duration: const Duration(seconds: 5),
           ),
