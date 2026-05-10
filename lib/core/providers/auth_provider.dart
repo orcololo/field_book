@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -52,9 +53,35 @@ class AuthNotifier extends _$AuthNotifier {
     try {
       final api = ref.read(apiClientProvider);
       final data = await api.get<Map<String, dynamic>>(ApiEndpoints.userProfile);
-      state = AuthAuthenticated(UserProfile.fromJson(data));
+      final profile = UserProfile.fromJson(data);
+      // Keep the local cache fresh for future offline restarts.
+      await authService.cacheProfile(profile);
+      state = AuthAuthenticated(profile);
+    } on DioException catch (e) {
+      final status = e.response?.statusCode;
+      if (status == 401 || status == 403) {
+        // Server explicitly rejected our token — session is invalid.
+        await authService.logout();
+        state = const AuthUnauthenticated();
+        return;
+      }
+      // Any other failure (offline, timeout, 5xx) must NOT log the user out.
+      // Restore the cached profile so the app works offline.
+      final cached = await authService.getCachedProfile();
+      if (cached != null) {
+        state = AuthAuthenticated(cached);
+        return;
+      }
+      // Token present but no cache and unreachable — extremely rare edge case
+      // (first launch ever while offline). Show login rather than spin forever.
+      state = const AuthUnauthenticated();
     } catch (_) {
-      // Token exists but profile fetch failed (expired/invalid) — clear session.
+      // Unexpected non-Dio error — still try cache before giving up.
+      final cached = await authService.getCachedProfile();
+      if (cached != null) {
+        state = AuthAuthenticated(cached);
+        return;
+      }
       await authService.logout();
       state = const AuthUnauthenticated();
     }

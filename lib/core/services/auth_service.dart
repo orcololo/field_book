@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logger/logger.dart';
@@ -33,6 +35,14 @@ class UserProfile {
       role: json['role'] as String? ?? 'collector',
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        '_id': id,
+        'name': name,
+        'email': email,
+        'avatar': avatar,
+        'role': role,
+      };
 }
 
 /// Service handling authentication flows: email/password, Google OAuth,
@@ -61,7 +71,9 @@ class AuthService {
       data: {'name': name, 'email': email, 'password': password},
     );
     await _saveTokens(data);
-    return UserProfile.fromJson(data['user'] as Map<String, dynamic>);
+    final profile = UserProfile.fromJson(data['user'] as Map<String, dynamic>);
+    await _cacheProfile(profile);
+    return profile;
   }
 
   /// Login with email + password.
@@ -74,7 +86,9 @@ class AuthService {
       data: {'email': email, 'password': password},
     );
     await _saveTokens(data);
-    return UserProfile.fromJson(data['user'] as Map<String, dynamic>);
+    final profile = UserProfile.fromJson(data['user'] as Map<String, dynamic>);
+    await _cacheProfile(profile);
+    return profile;
   }
 
   /// Sign in with Google and send the ID token to the backend.
@@ -95,7 +109,9 @@ class AuthService {
       data: {'idToken': idToken},
     );
     await _saveTokens(data);
-    return UserProfile.fromJson(data['user'] as Map<String, dynamic>);
+    final profile = UserProfile.fromJson(data['user'] as Map<String, dynamic>);
+    await _cacheProfile(profile);
+    return profile;
   }
 
   /// Logout: clear tokens locally and disconnect Google.
@@ -112,6 +128,21 @@ class AuthService {
   /// Check if we have stored tokens (fast, no network call).
   Future<bool> hasSession() => _tokenStorage.hasTokens();
 
+  /// Persist an up-to-date profile to local cache (call after a successful
+  /// API fetch so the cache stays fresh for offline restarts).
+  Future<void> cacheProfile(UserProfile profile) => _cacheProfile(profile);
+
+  /// Return the most recently cached profile, or null if never cached.
+  Future<UserProfile?> getCachedProfile() async {
+    final json = await _tokenStorage.getUserProfile();
+    if (json == null) return null;
+    try {
+      return UserProfile.fromJson(jsonDecode(json) as Map<String, dynamic>);
+    } catch (_) {
+      return null;
+    }
+  }
+
   // ── Private ────────────────────────────────────────────
 
   Future<void> _saveTokens(Map<String, dynamic> data) async {
@@ -120,4 +151,7 @@ class AuthService {
       refreshToken: data['refreshToken'] as String,
     );
   }
+
+  Future<void> _cacheProfile(UserProfile profile) =>
+      _tokenStorage.saveUserProfile(jsonEncode(profile.toJson()));
 }
