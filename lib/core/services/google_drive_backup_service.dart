@@ -163,6 +163,12 @@ class GoogleDriveBackupService {
   /// Returns the [ImportResult] with counts.
   /// Throws [RestoreException] on failure.
   Future<ImportResult> restore() async {
+    // Connectivity check — restore requires downloading from Google Drive.
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      throw const RestoreException('noInternetConnection');
+    }
+
     final api = await _getOrCreateDriveApi();
 
     final fileId = await _findBackupFileId(api);

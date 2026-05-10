@@ -171,9 +171,12 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
       Navigator.of(context).pop(true);
     } catch (e) {
       if (!mounted) return;
+      final message = e.toString() == 'noInternetConnection'
+          ? l10n.noInternetConnection
+          : l10n.inaturalistPushError(e.toString());
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(l10n.inaturalistPushError(e.toString())),
+          content: Text(message),
           backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );

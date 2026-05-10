@@ -58,19 +58,19 @@ class SyncNotifier extends _$SyncNotifier {
   void _setupAutoSync() {
     final connectivity = Connectivity();
 
-    final sub = connectivity.onConnectivityChanged.listen((result) {
+    final sub = connectivity.onConnectivityChanged.listen((result) async {
       if (result != ConnectivityResult.none) {
         final authState = ref.read(authNotifierProvider);
         if (authState is AuthAuthenticated) {
-          sync();
+          await _syncIfTokensPresent();
         }
       }
     });
 
-    final timer = Timer.periodic(const Duration(minutes: 15), (_) {
+    final timer = Timer.periodic(const Duration(minutes: 15), (_) async {
       final authState = ref.read(authNotifierProvider);
       if (authState is AuthAuthenticated) {
-        sync();
+        await _syncIfTokensPresent();
       }
     });
 
@@ -78,6 +78,18 @@ class SyncNotifier extends _$SyncNotifier {
       sub.cancel();
       timer.cancel();
     });
+  }
+
+  /// Verify tokens still exist before triggering an automatic sync.
+  /// If they have been cleared externally (e.g., by AuthInterceptor after a
+  /// confirmed server rejection), invalidate the auth state immediately.
+  Future<void> _syncIfTokensPresent() async {
+    final hasTokens = await ref.read(tokenStorageProvider).hasTokens();
+    if (!hasTokens) {
+      ref.read(authNotifierProvider.notifier).invalidateSession();
+      return;
+    }
+    sync();
   }
 
   Future<void> sync({String? deviceId}) async {

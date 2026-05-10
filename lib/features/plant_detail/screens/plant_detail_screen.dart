@@ -1706,9 +1706,12 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
       );
     } catch (e) {
       if (!mounted) return;
+      final message = e.toString() == 'noInternetConnection'
+          ? l10n.noInternetConnection
+          : l10n.inaturalistPushError(e.toString());
       messenger.showSnackBar(
         SnackBar(
-          content: Text(l10n.inaturalistPushError(e.toString())),
+          content: Text(message),
           backgroundColor: errorColor,
         ),
       );

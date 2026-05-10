@@ -36,6 +36,11 @@ AuthService authService(Ref ref) {
 
 @Riverpod(keepAlive: true)
 class AuthNotifier extends _$AuthNotifier {
+  /// Monotonically increasing counter. Incremented on every login/logout/invalidation
+  /// so that in-flight [_checkExistingSession] calls can detect they are stale
+  /// and abort before overwriting a newer auth state.
+  int _sessionCheckId = 0;
+
   @override
   AuthState build() {
     // Check for existing session on startup
@@ -44,8 +49,14 @@ class AuthNotifier extends _$AuthNotifier {
   }
 
   Future<void> _checkExistingSession() async {
+    // Capture the counter so we can detect if a login/logout/invalidation
+    // supersedes this check while it is awaiting async work.
+    final checkId = _sessionCheckId;
+
     final authService = ref.read(authServiceProvider);
     final hasSession = await authService.hasSession();
+    if (_sessionCheckId != checkId) return; // Stale — superseded by newer auth event.
+
     if (!hasSession) {
       state = const AuthUnauthenticated();
       return;
@@ -53,21 +64,26 @@ class AuthNotifier extends _$AuthNotifier {
     try {
       final api = ref.read(apiClientProvider);
       final data = await api.get<Map<String, dynamic>>(ApiEndpoints.userProfile);
+      if (_sessionCheckId != checkId) return;
       final profile = UserProfile.fromJson(data);
       // Keep the local cache fresh for future offline restarts.
       await authService.cacheProfile(profile);
+      if (_sessionCheckId != checkId) return;
       state = AuthAuthenticated(profile);
     } on DioException catch (e) {
+      if (_sessionCheckId != checkId) return;
       final status = e.response?.statusCode;
       if (status == 401 || status == 403) {
         // Server explicitly rejected our token — session is invalid.
         await authService.logout();
+        if (_sessionCheckId != checkId) return;
         state = const AuthUnauthenticated();
         return;
       }
       // Any other failure (offline, timeout, 5xx) must NOT log the user out.
       // Restore the cached profile so the app works offline.
       final cached = await authService.getCachedProfile();
+      if (_sessionCheckId != checkId) return;
       if (cached != null) {
         state = AuthAuthenticated(cached);
         return;
@@ -77,20 +93,33 @@ class AuthNotifier extends _$AuthNotifier {
       state = const AuthUnauthenticated();
     } catch (_) {
       // Unexpected non-Dio error — still try cache before giving up.
+      if (_sessionCheckId != checkId) return;
       final cached = await authService.getCachedProfile();
+      if (_sessionCheckId != checkId) return;
       if (cached != null) {
         state = AuthAuthenticated(cached);
         return;
       }
-      await authService.logout();
+      // Do NOT call logout() here — tokens may still be valid.
+      // An unexpected error (format exception, null dereference) should not
+      // permanently destroy valid credentials.
       state = const AuthUnauthenticated();
     }
+  }
+
+  /// Called by the sync layer when it detects that tokens have been cleared
+  /// externally (e.g., by AuthInterceptor after a confirmed 401 on refresh).
+  /// Updates auth state without touching token storage (already cleared).
+  void invalidateSession() {
+    _sessionCheckId++;
+    state = const AuthUnauthenticated();
   }
 
   Future<void> login({
     required String email,
     required String password,
   }) async {
+    _sessionCheckId++;
     state = const AuthLoading();
     try {
       final authService = ref.read(authServiceProvider);
@@ -107,6 +136,7 @@ class AuthNotifier extends _$AuthNotifier {
     required String email,
     required String password,
   }) async {
+    _sessionCheckId++;
     state = const AuthLoading();
     try {
       final authService = ref.read(authServiceProvider);
@@ -123,6 +153,7 @@ class AuthNotifier extends _$AuthNotifier {
   }
 
   Future<void> googleSignIn() async {
+    _sessionCheckId++;
     state = const AuthLoading();
     try {
       final authService = ref.read(authServiceProvider);
@@ -135,6 +166,7 @@ class AuthNotifier extends _$AuthNotifier {
   }
 
   Future<void> logout() async {
+    _sessionCheckId++;
     final authService = ref.read(authServiceProvider);
     await authService.logout();
     state = const AuthUnauthenticated();

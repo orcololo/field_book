@@ -83,8 +83,20 @@ class AuthInterceptor extends QueuedInterceptor {
       final retryResponse = await _dio.fetch(options);
       return handler.resolve(retryResponse);
     } catch (e) {
-      _log.w('Token refresh failed, clearing tokens');
-      await _tokenStorage.clearTokens();
+      // Only clear the session if the refresh server explicitly rejected it
+      // (non-null response = server was reachable and said no).
+      // Network failures (null response: offline, timeout, DNS) must NOT
+      // invalidate what might still be a valid session — tokens are preserved
+      // so the next online attempt can retry with the same credentials.
+      final isServerRejection = e is DioException && e.response != null;
+      if (isServerRejection) {
+        _log.w('Token refresh rejected by server '
+            '(${e.response?.statusCode}), clearing session');
+        await _tokenStorage.clearTokens();
+      } else {
+        _log.w('Token refresh failed (network/transient error), '
+            'preserving session tokens for next attempt');
+      }
       return handler.next(err);
     }
   }

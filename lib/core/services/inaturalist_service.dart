@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -41,6 +42,12 @@ class InaturalistService {
         _loadSettings = loadSettings;
 
   Future<String?> createObservation(PlantRecord record) async {
+    // Offline guard — iNaturalist API requires a live connection.
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      throw const InaturalistException('noInternetConnection');
+    }
+
     final settings = await _requireSettings();
 
     final request = http.MultipartRequest(
@@ -68,7 +75,12 @@ class InaturalistService {
       request.fields['description'] = description;
     }
 
-    final response = await request.send();
+    final http.StreamedResponse response;
+    try {
+      response = await request.send();
+    } on SocketException {
+      throw const InaturalistException('noInternetConnection');
+    }
     final body = await response.stream.bytesToString();
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
@@ -94,6 +106,12 @@ class InaturalistService {
   }
 
   Future<void> uploadPhoto(String observationId, String photoPath) async {
+    // Offline guard — uploading photos requires a live connection.
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      throw const InaturalistException('noInternetConnection');
+    }
+
     final settings = await _requireSettings();
     final file = File(photoPath);
 
@@ -109,7 +127,12 @@ class InaturalistService {
     request.fields['observation_id'] = observationId;
     request.files.add(await http.MultipartFile.fromPath('file', photoPath));
 
-    final response = await request.send();
+    final http.StreamedResponse response;
+    try {
+      response = await request.send();
+    } on SocketException {
+      throw const InaturalistException('noInternetConnection');
+    }
     final body = await response.stream.bytesToString();
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
