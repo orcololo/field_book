@@ -173,7 +173,8 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
   final _weatherService = WeatherService();
   final _photoService = PhotoService();
   final _ocrService = OcrService();
-  final _audioTranscriptionService = AudioTranscriptionService();
+  // AudioTranscriptionService is obtained from the keepAlive Riverpod provider
+  // so _modelCached persists across screen navigations within the same session.
   late final BotanicalValidator _validator;
   late final RegistryIdentifierService _identifierService;
 
@@ -2589,7 +2590,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
       }
 
       // Use the new file-based transcription
-      final transcript = await _audioTranscriptionService.transcribeFile(
+      final transcript = await ref.read(audioTranscriptionServiceProvider).transcribeFile(
         audioPath: audioPath,
         localeId: settings.transcriptionLocale,
       );

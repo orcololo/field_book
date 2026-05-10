@@ -51,6 +51,12 @@ class AuthNotifier extends _$AuthNotifier {
 
   @override
   AuthState build() {
+    // Cancel any pending connectivity retry if the provider is disposed
+    // (e.g., container teardown in tests or app shutdown).
+    ref.onDispose(() {
+      _connectivityRetrySubscription?.cancel();
+      _connectivityRetrySubscription = null;
+    });
     // Check for existing session on startup
     _checkExistingSession();
     return const AuthLoading();

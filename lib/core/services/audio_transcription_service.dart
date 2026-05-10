@@ -1,9 +1,23 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:whisper_flutter_new/whisper_flutter_new.dart';
+
+part 'audio_transcription_service.g.dart';
+
+/// App-wide singleton so [AudioTranscriptionService._modelCached] persists
+/// across screen navigations. Disposing the provider (app shutdown) calls
+/// [AudioTranscriptionService.dispose].
+@Riverpod(keepAlive: true)
+AudioTranscriptionService audioTranscriptionService(Ref ref) {
+  final service = AudioTranscriptionService();
+  ref.onDispose(service.dispose);
+  return service;
+}
 
 class AudioTranscriptionService {
   static final _log = Logger(printer: PrettyPrinter(methodCount: 2));
@@ -60,6 +74,11 @@ class AudioTranscriptionService {
       _modelCached = true; // Model is now confirmed on-device
       return response.text.trim();
     } catch (e, stackTrace) {
+      // Propagate connectivity errors unchanged so callers can present the
+      // correct user-facing l10n message without string inspection.
+      if (e is Exception && e.toString().contains('noInternetConnection')) {
+        rethrow;
+      }
       // Log full error context for debugging
       _log.e('Audio transcription error', error: e, stackTrace: stackTrace);
       throw Exception('Failed to transcribe audio file: $e');
