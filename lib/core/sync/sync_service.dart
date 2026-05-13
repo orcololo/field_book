@@ -29,6 +29,7 @@ class SyncResult {
   final int conflicts;
   final int errors;
   final List<String> errorMessages;
+
   /// True when the sync cycle was skipped (e.g., device is offline).
   /// UI should NOT update "last synced" when this is true.
   final bool skipped;
@@ -94,7 +95,7 @@ class SyncService {
   Map<String, dynamic> buildPlantConflictLocalData(PlantRecord plant) {
     return {
       ..._plantToSyncJson(plant),
-      '_id': plant.syncMetadata.serverId,
+      'id': plant.syncMetadata.serverId,
       'syncVersion': plant.syncMetadata.syncVersion,
       'updatedAt': plant.updatedAt.toIso8601String(),
       'localModifiedAt': (plant.syncMetadata.localModifiedAt ?? plant.updatedAt)
@@ -113,7 +114,7 @@ class SyncService {
           _decodeConflictData(current.syncMetadata.conflictData)['syncVersion']
               as num?,
       serverId:
-          _decodeConflictData(current.syncMetadata.conflictData)['_id']
+          _decodeConflictData(current.syncMetadata.conflictData)['id']
               as String?,
     );
   }
@@ -133,7 +134,7 @@ class SyncService {
     await _finishConflictResolution(
       current,
       syncVersion: serverData['syncVersion'] as num?,
-      serverId: serverData['_id'] as String?,
+      serverId: serverData['id'] as String?,
     );
   }
 
@@ -149,7 +150,7 @@ class SyncService {
     await _finishConflictResolution(
       current,
       syncVersion: resolvedData['syncVersion'] as num?,
-      serverId: resolvedData['_id'] as String?,
+      serverId: resolvedData['id'] as String?,
     );
   }
 
@@ -172,7 +173,7 @@ class SyncService {
         await _finishConflictResolution(
           plant,
           syncVersion: serverData['syncVersion'] as num?,
-          serverId: serverData['_id'] as String?,
+          serverId: serverData['id'] as String?,
         );
         continue;
       }
@@ -180,7 +181,7 @@ class SyncService {
       await _finishConflictResolution(
         plant,
         syncVersion: serverData['syncVersion'] as num?,
-        serverId: serverData['_id'] as String?,
+        serverId: serverData['id'] as String?,
       );
     }
   }
@@ -698,16 +699,18 @@ class SyncService {
 
     plant
       ..uuid = json['uuid'] as String
-      ..scientificName = json['scientificName'] as String? ??
-          speciesObj?['scientificName'] as String? ?? ''
-      ..commonName = json['commonName'] as String? ??
-          speciesObj?['commonName'] as String? ?? ''
-      ..family = json['family'] as String? ??
-          speciesObj?['family'] as String?
+      ..scientificName =
+          json['scientificName'] as String? ??
+          speciesObj?['scientificName'] as String? ??
+          ''
+      ..commonName =
+          json['commonName'] as String? ??
+          speciesObj?['commonName'] as String? ??
+          ''
+      ..family = json['family'] as String? ?? speciesObj?['family'] as String?
       ..scientificAuthor = json['scientificAuthor'] as String?
       ..taxonStatus = json['taxonStatus'] as String?
-      ..genus = json['genus'] as String? ??
-          speciesObj?['genus'] as String?
+      ..genus = json['genus'] as String? ?? speciesObj?['genus'] as String?
       ..species = _extractSpeciesEpithet(json)
       ..habitat = json['habitat'] as String?
       ..locality = json['locality'] as String?
@@ -786,7 +789,8 @@ class SyncService {
       );
     }
 
-    final categoryRaw = json['category'] as String? ??
+    final categoryRaw =
+        json['category'] as String? ??
         _asStringDynamicMap(json['species'])?['category'] as String?;
     if (categoryRaw != null) {
       plant.category = PlantCategory.values.firstWhere(
