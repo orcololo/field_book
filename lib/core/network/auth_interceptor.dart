@@ -11,10 +11,12 @@ final _log = Logger(printer: PrettyPrinter(methodCount: 0));
 class AuthInterceptor extends QueuedInterceptor {
   final Dio _dio;
   final TokenStorage _tokenStorage;
+  final void Function()? onSessionInvalidated;
 
   AuthInterceptor({
     required Dio dio,
     required TokenStorage tokenStorage,
+    this.onSessionInvalidated,
   })  : _dio = dio,
         _tokenStorage = tokenStorage;
 
@@ -51,6 +53,14 @@ class AuthInterceptor extends QueuedInterceptor {
     // Don't retry refresh endpoint itself
     if (err.requestOptions.path.contains(ApiEndpoints.authRefresh)) {
       await _tokenStorage.clearTokens();
+      onSessionInvalidated?.call();
+      return handler.next(err);
+    }
+
+    // Don't retry a request that already went through one refresh cycle
+    if (err.requestOptions.extra['_authRetried'] == true) {
+      await _tokenStorage.clearTokens();
+      onSessionInvalidated?.call();
       return handler.next(err);
     }
 
@@ -58,6 +68,7 @@ class AuthInterceptor extends QueuedInterceptor {
       final refreshToken = await _tokenStorage.getRefreshToken();
       if (refreshToken == null) {
         await _tokenStorage.clearTokens();
+        onSessionInvalidated?.call();
         return handler.next(err);
       }
 
@@ -69,7 +80,18 @@ class AuthInterceptor extends QueuedInterceptor {
       );
 
       final newAccess = response.data['data']['accessToken'] as String;
-      final newRefresh = response.data['data']['refreshToken'] as String;
+      // Refresh token is delivered via header, not JSON body.
+      final newRefresh = response.headers.value('x-refresh-token');
+      if (newRefresh == null || newRefresh.isEmpty) {
+        // Server responded but omitted the required header — this is a contract
+        // failure, not a transient network error. Invalidate immediately so the
+        // user is prompted to re-authenticate rather than silently retaining
+        // stale tokens that will keep producing 401s.
+        _log.w('Missing X-Refresh-Token header — contract failure, clearing session');
+        await _tokenStorage.clearTokens();
+        onSessionInvalidated?.call();
+        return handler.next(err);
+      }
       await _tokenStorage.saveTokens(
         accessToken: newAccess,
         refreshToken: newRefresh,
@@ -77,22 +99,20 @@ class AuthInterceptor extends QueuedInterceptor {
 
       _log.d('Token refreshed successfully');
 
-      // Retry the original request with new token
+      // Retry the original request exactly once
       final options = err.requestOptions;
+      options.extra['_authRetried'] = true;
       options.headers['Authorization'] = 'Bearer $newAccess';
       final retryResponse = await _dio.fetch(options);
       return handler.resolve(retryResponse);
     } catch (e) {
-      // Only clear the session if the refresh server explicitly rejected it
-      // (non-null response = server was reachable and said no).
-      // Network failures (null response: offline, timeout, DNS) must NOT
-      // invalidate what might still be a valid session — tokens are preserved
-      // so the next online attempt can retry with the same credentials.
-      final isServerRejection = e is DioException && e.response != null;
+      final isServerRejection = e is DioException &&
+          (e.response?.statusCode == 401 || e.response?.statusCode == 403);
       if (isServerRejection) {
         _log.w('Token refresh rejected by server '
             '(${e.response?.statusCode}), clearing session');
         await _tokenStorage.clearTokens();
+        onSessionInvalidated?.call();
       } else {
         _log.w('Token refresh failed (network/transient error), '
             'preserving session tokens for next attempt');

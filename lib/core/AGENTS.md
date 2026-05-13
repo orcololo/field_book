@@ -1,3 +1,6 @@
+<!-- Parent: ../AGENTS.md -->
+<!-- Generated: 2026-05-10 | Updated: 2026-05-13 -->
+
 # CORE — State, Data, Business Logic
 
 ## OVERVIEW
@@ -8,10 +11,10 @@ Everything non-UI: repositories, services, providers, sync, database init, theme
 
 ```
 core/
-├── config/                      # Compile-time configuration (e.g., API endpoints)
+├── config/                      # Compile-time configuration (app_config.dart — API endpoints)
 ├── database/
 │   ├── isar_service.dart        # IsarService singleton — init all schemas here
-│   └── platforms/               # Conditional imports: web vs mobile DB setup
+│   └── platforms/               # Conditional imports: web (isar_service_web) vs mobile (isar_service_mobile) + interface
 ├── repositories/                # 4 repositories
 │   ├── plant_repository.dart    # CRUD + FTS + GPS radius queries
 │   ├── session_repository.dart
@@ -41,12 +44,12 @@ core/
 │   ├── taxon_service.dart
 │   ├── weather_service.dart
 │   └── platforms/               # Platform splits for services
-├── providers/                   # Shared/cross-cutting @riverpod providers
+├── providers/                   # Shared @riverpod providers (auth, rain_mode, sync, taxon)
 ├── sync/                        # Offline sync orchestration
 ├── errors/                      # AppError sealed class + error handler
-├── network/                     # Dio client, interceptors
+├── network/                     # Dio client (api_client), auth + connectivity interceptors, token storage, endpoints
 ├── theme/                       # FoliumTheme — colors, typography, spacing
-└── utils/                       # Pure utility functions
+└── utils/                       # Pure utilities: biome_detector, botanical_validator, geo_utils
 ```
 
 ## WHERE TO LOOK

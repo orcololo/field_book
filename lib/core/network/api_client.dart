@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../config/app_config.dart';
+import '../providers/auth_provider.dart';
 import 'auth_interceptor.dart';
 import 'connectivity_interceptor.dart';
 import 'token_storage.dart';
@@ -37,7 +38,12 @@ Dio dio(Ref ref) {
 
   dio.interceptors.addAll([
     ConnectivityInterceptor(),
-    AuthInterceptor(dio: dio, tokenStorage: tokenStorage),
+    AuthInterceptor(
+      dio: dio,
+      tokenStorage: tokenStorage,
+      onSessionInvalidated: () =>
+          ref.read(authNotifierProvider.notifier).invalidateSession(),
+    ),
   ]);
 
   return dio;
@@ -71,6 +77,16 @@ class ApiClient {
     return response.data!['data'] as T;
   }
 
+  /// POST request that returns the full Dio [Response], including headers.
+  /// Use this for auth endpoints where the refresh token is delivered via
+  /// the [X-Refresh-Token] response header rather than the JSON body.
+  Future<Response<Map<String, dynamic>>> postFull(
+    String path, {
+    Object? data,
+  }) async {
+    return _dio.post<Map<String, dynamic>>(path, data: data);
+  }
+
   /// POST request.
   Future<T> post<T>(
     String path, {
@@ -98,6 +114,11 @@ class ApiClient {
   /// DELETE request — may return void-like responses (204).
   Future<void> delete(String path) async {
     await _dio.delete(path);
+  }
+
+  /// POST request that tolerates 204 No Content responses (e.g., logout).
+  Future<void> postVoid(String path, {Object? data}) async {
+    await _dio.post<void>(path, data: data);
   }
 
   /// Multipart file upload.

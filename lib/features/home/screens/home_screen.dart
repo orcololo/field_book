@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/auth_provider.dart';
 import '../../../core/repositories/plant_repository.dart';
 import '../../../core/repositories/session_repository.dart';
 import '../../../core/theme/folium_theme.dart';
@@ -23,6 +24,7 @@ import '../../search/screens/search_screen.dart';
 import '../../export_import/screens/export_import_screen.dart';
 import '../../map/screens/map_view_screen.dart';
 import '../../quick_capture/screens/quick_capture_screen.dart';
+import '../../auth/screens/login_screen.dart';
 import '../../sync/screens/conflict_resolution_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -51,6 +53,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final syncState = ref.watch(syncNotifierProvider);
+    final authState = ref.watch(authNotifierProvider);
     final conflictRecordsAsync = ref.watch(conflictRecordsProvider);
     final hasConflictBanner = conflictRecordsAsync.valueOrNull?.isNotEmpty ?? false;
     final rainModeEnabled = ref.watch(rainModeEnabledProvider);
@@ -101,7 +104,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               icon: const SyncStatusIcon(),
               onPressed: syncState.isSyncing 
                 ? null 
-                : () => ref.read(syncNotifierProvider.notifier).sync(),
+                : () async {
+                    if (authState is! AuthAuthenticated) {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      );
+                      final freshAuth = ref.read(authNotifierProvider);
+                      if (freshAuth is AuthAuthenticated && mounted) {
+                        ref.read(syncNotifierProvider.notifier).sync();
+                      }
+                    } else {
+                      ref.read(syncNotifierProvider.notifier).sync();
+                    }
+                  },
             ),
             IconButton(
               tooltip: l10n.selectMode,

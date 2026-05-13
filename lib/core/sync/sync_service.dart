@@ -9,7 +9,10 @@ import '../../models/collection_method.dart';
 import '../../models/collection_session.dart';
 import '../../models/determination.dart';
 import '../../models/gps_point.dart';
+import '../../models/measurement.dart';
 import '../../models/phenological_state.dart';
+import '../../models/photo_metadata.dart';
+import '../../models/plant_category.dart';
 import '../../models/plant_record.dart';
 import '../../models/sync_metadata.dart';
 import '../database/isar_service.dart';
@@ -508,6 +511,7 @@ class SyncService {
         },
         'seed': {
           'format': plant.sementeFormato,
+          'color': plant.sementeCor,
           'size': _formatMeasurementWithUnit(
             plant.sementeTamanho,
             plant.sementeTamanhoUnidade,
@@ -533,6 +537,7 @@ class SyncService {
       'location': session.location,
       'teamMembers': session.teamMembers,
       'shareCode': session.shareCode,
+      'sharedWith': session.sharedWith,
       'notes': session.notes,
       'isArchived': session.isArchived,
       'track': session.track
@@ -546,7 +551,7 @@ class SyncService {
           )
           .toList(),
       'localModifiedAt': session.createdAt.toIso8601String(),
-      'syncVersion': 0,
+      'syncVersion': session.syncMetadata.syncVersion,
     };
   }
 
@@ -592,7 +597,10 @@ class SyncService {
     session.syncMetadata
       ..syncStatus = SyncStatus.synced
       ..lastSyncedAt = DateTime.now()
-      ..serverId = result['serverId'] as String?;
+      ..serverId = result['serverId'] as String?
+      ..syncVersion =
+          (result['syncVersion'] as num?)?.toInt() ??
+          session.syncMetadata.syncVersion;
 
     await isar.writeTxn(() async {
       await isar.collectionSessions.put(session);
@@ -664,11 +672,19 @@ class SyncService {
     }
 
     final plant = existing ?? PlantRecord();
+    if (existing == null) {
+      plant.createdAt =
+          DateTime.tryParse(json['createdAt'] as String? ?? '') ??
+          DateTime.now();
+    }
     _applyRemoteDataToPlant(plant, json);
     plant.syncMetadata
       ..syncStatus = SyncStatus.synced
       ..lastSyncedAt = DateTime.now()
-      ..serverId = json['_id'] as String?;
+      ..serverId = json['id'] as String?
+      ..syncVersion =
+          ((json['syncMetadata'] as Map?)?['syncVersion'] as num?)?.toInt() ??
+          plant.syncMetadata.syncVersion;
 
     await isar.writeTxn(() async {
       await isar.plantRecords.put(plant);
@@ -676,15 +692,23 @@ class SyncService {
   }
 
   void _applyRemoteDataToPlant(PlantRecord plant, Map<String, dynamic> json) {
+    // When the backend populates the species ref the taxonomy lives on the
+    // nested species object, not the top-level registry document.
+    final speciesObj = _asStringDynamicMap(json['species']);
+
     plant
       ..uuid = json['uuid'] as String
-      ..scientificName = json['scientificName'] as String? ?? ''
-      ..commonName = json['commonName'] as String? ?? ''
-      ..family = json['family'] as String?
+      ..scientificName = json['scientificName'] as String? ??
+          speciesObj?['scientificName'] as String? ?? ''
+      ..commonName = json['commonName'] as String? ??
+          speciesObj?['commonName'] as String? ?? ''
+      ..family = json['family'] as String? ??
+          speciesObj?['family'] as String?
       ..scientificAuthor = json['scientificAuthor'] as String?
       ..taxonStatus = json['taxonStatus'] as String?
-      ..genus = json['genus'] as String?
-      ..species = json['species'] as String?
+      ..genus = json['genus'] as String? ??
+          speciesObj?['genus'] as String?
+      ..species = _extractSpeciesEpithet(json)
       ..habitat = json['habitat'] as String?
       ..locality = json['locality'] as String?
       ..state = json['state'] as String?
@@ -721,8 +745,7 @@ class SyncService {
       ..iNaturalistSyncedAt = json['iNaturalistSyncedAt'] != null
           ? DateTime.tryParse(json['iNaturalistSyncedAt'] as String)
           : null
-      ..updatedAt = DateTime.now()
-      ..createdAt = plant.createdAt;
+      ..updatedAt = DateTime.now();
 
     final duplicateUuids = json['duplicateUuids'] as List?;
     if (duplicateUuids != null) {
@@ -761,6 +784,41 @@ class SyncService {
         (e) => e.name == methodRaw,
         orElse: () => CollectionMethod.voucherCollected,
       );
+    }
+
+    final categoryRaw = json['category'] as String? ??
+        _asStringDynamicMap(json['species'])?['category'] as String?;
+    if (categoryRaw != null) {
+      plant.category = PlantCategory.values.firstWhere(
+        (e) => e.name == categoryRaw,
+        orElse: () => PlantCategory.herbs,
+      );
+    }
+
+    final measurements = json['measurements'] as List?;
+    if (measurements != null) {
+      plant.measurements = measurements.map((raw) {
+        final m = raw as Map;
+        return Measurement()
+          ..label = m['label'] as String? ?? ''
+          ..value = (m['value'] as num?)?.toDouble() ?? 0.0
+          ..unit = m['unit'] as String? ?? '';
+      }).toList();
+    }
+
+    final photoMetadataList = json['photoMetadata'] as List?;
+    if (photoMetadataList != null) {
+      plant.photoMetadata = photoMetadataList.map((raw) {
+        final p = raw as Map;
+        return PhotoMetadata()
+          ..exifDataJson = p['exifDataJson'] as String? ?? '{}'
+          ..dateTaken = p['dateTaken'] != null
+              ? DateTime.tryParse(p['dateTaken'] as String)
+              : null
+          ..latitude = (p['latitude'] as num?)?.toDouble()
+          ..longitude = (p['longitude'] as num?)?.toDouble()
+          ..fileSize = (p['fileSize'] as num?)?.toInt() ?? 0;
+      }).toList();
     }
 
     plant.updateFtsFields();
@@ -837,6 +895,7 @@ class SyncService {
       final seed = _asStringDynamicMap(morphology['seed']);
       if (seed != null) {
         plant.sementeFormato = seed['format'] as String?;
+        plant.sementeCor = seed['color'] as String?;
         plant.sementeTamanho = _parseMeasurementValue(seed['size'] as String?);
         plant.sementeTamanhoUnidade = _parseMeasurementUnit(
           seed['size'] as String?,
@@ -872,6 +931,19 @@ class SyncService {
       ..sementeFormato = json['sementeFormato'] as String?
       ..sementeTamanho = (json['sementeTamanho'] as num?)?.toDouble()
       ..sementeTamanhoUnidade = json['sementeTamanhoUnidade'] as String?;
+  }
+
+  /// Extracts the species epithet from either a flat string field or a
+  /// populated Species object returned by the server (after `.populate('species')`).
+  String? _extractSpeciesEpithet(Map<String, dynamic> json) {
+    final raw = json['species'];
+    if (raw == null) return null;
+    if (raw is String) return raw;
+    if (raw is Map) {
+      // Populated Species document: { scientificName, genus, species (epithet), ... }
+      return raw['species'] as String?;
+    }
+    return null;
   }
 
   String? _formatMeasurementWithUnit(double? value, String? unit) {
@@ -926,6 +998,11 @@ class SyncService {
     }
 
     final session = existing ?? CollectionSession();
+    if (existing == null) {
+      session.createdAt =
+          DateTime.tryParse(json['createdAt'] as String? ?? '') ??
+          DateTime.now();
+    }
     session
       ..uuid = uuid
       ..tripName = json['tripName'] as String? ?? ''
@@ -936,13 +1013,18 @@ class SyncService {
           ? DateTime.parse(json['endDate'] as String)
           : null
       ..location = json['location'] as String?
+      ..shareCode = json['shareCode'] as String?
       ..notes = json['notes'] as String?
-      ..isArchived = json['isArchived'] as bool? ?? false
-      ..createdAt = session.createdAt;
+      ..isArchived = json['isArchived'] as bool? ?? false;
 
     final teamMembers = json['teamMembers'] as List?;
     if (teamMembers != null) {
       session.teamMembers = teamMembers.cast<String>();
+    }
+
+    final sharedWith = json['sharedWith'] as List?;
+    if (sharedWith != null) {
+      session.sharedWith = sharedWith.cast<String>();
     }
 
     final track = json['track'] as List?;
@@ -962,7 +1044,10 @@ class SyncService {
     session.syncMetadata
       ..syncStatus = SyncStatus.synced
       ..lastSyncedAt = DateTime.now()
-      ..serverId = json['_id'] as String?;
+      ..serverId = json['id'] as String?
+      ..syncVersion =
+          ((json['syncMetadata'] as Map?)?['syncVersion'] as num?)?.toInt() ??
+          session.syncMetadata.syncVersion;
 
     await isar.writeTxn(() async {
       await isar.collectionSessions.put(session);

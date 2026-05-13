@@ -39,6 +39,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             email: _emailController.text.trim(),
             password: _passwordController.text,
           );
+      if (mounted) Navigator.pop(context);
     } on DioException catch (e) {
       if (!mounted) return;
       final l10n = AppLocalizations.of(context)!;
@@ -60,6 +61,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     setState(() => _isLoading = true);
     try {
       await ref.read(authNotifierProvider.notifier).googleSignIn();
+      if (mounted) Navigator.pop(context);
     } catch (e) {
       if (!mounted) return;
       final l10n = AppLocalizations.of(context)!;

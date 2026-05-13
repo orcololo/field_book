@@ -1,0 +1,71 @@
+name: Backend — Deploy to Coolify
+
+on:
+  workflow_run:
+    workflows: ["Backend CI"]
+    types:
+      - completed
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Trigger Coolify Redeploy
+    runs-on: ubuntu-latest
+    # Only deploy if the CI workflow succeeded
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Trigger Coolify deploy
+        id: deploy
+        run: |
+          echo "Triggering Coolify redeploy for backend (uuid: ${{ secrets.COOLIFY_BACKEND_UUID }})..."
+
+          response=$(curl -s -w "\n%{http_code}" \
+            -X GET "${{ secrets.COOLIFY_API_URL }}/api/v1/deploy?uuid=${{ secrets.COOLIFY_BACKEND_UUID }}&force=false" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}" \
+            -H "Accept: application/json")
+
+          http_code=$(echo "$response" | tail -1)
+          body=$(echo "$response" | head -1)
+
+          echo "HTTP $http_code — $body"
+
+          if [ "$http_code" != "200" ]; then
+            echo "::error::Coolify deploy trigger failed with HTTP $http_code: $body"
+            exit 1
+          fi
+
+          echo "Deploy triggered successfully."
+
+      - name: Wait for deployment to start
+        run: sleep 15
+
+      - name: Health check
+        id: health
+        run: |
+          API_BASE="${{ secrets.COOLIFY_BACKEND_PUBLIC_URL }}"
+          MAX_ATTEMPTS=20
+          SLEEP=10
+
+          echo "Waiting for $API_BASE/api/health to return 200..."
+
+          for i in $(seq 1 $MAX_ATTEMPTS); do
+            http_code=$(curl -s -o /dev/null -w "%{http_code}" "$API_BASE/api/health" || true)
+            if [ "$http_code" = "200" ]; then
+              echo "✅ Health check passed (attempt $i)"
+              exit 0
+            fi
+            echo "Attempt $i/$MAX_ATTEMPTS — HTTP $http_code, retrying in ${SLEEP}s..."
+            sleep $SLEEP
+          done
+
+          echo "::error::Health check failed after $MAX_ATTEMPTS attempts"
+          exit 1
+
+      - name: Notify success
+        if: success()
+        run: echo "✅ Backend deployed and healthy."
+
+      - name: Notify failure
+        if: failure()
+        run: echo "::error::Backend deploy failed. Check Coolify logs and GitHub Actions output."

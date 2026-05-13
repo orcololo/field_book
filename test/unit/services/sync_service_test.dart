@@ -253,13 +253,6 @@ void main() {
     });
 
     test('pull with one remote plant returns pulled: 1', () async {
-      // FIXME: this is wrong but matches current implementation. See "Deferred follow-ups" in 2026-05-08-phase3-test-foundation.md
-      // _upsertPlantFromRemote creates a new PlantRecord() and then calls
-      // _applyRemoteDataToPlant which accesses plant.createdAt (a late field)
-      // before it is initialized, throwing LateInitializationError. The outer
-      // _pull() catch block catches it and returns errors: 1. Fix: set
-      // plant.createdAt = DateTime.now() before calling _applyRemoteDataToPlant
-      // on a new (non-existing) record.
       when(
         () => mockDio.get<Map<String, dynamic>>(
           ApiEndpoints.syncPull,
@@ -288,17 +281,11 @@ void main() {
 
       final result = await svc.sync(deviceId: 'test-device');
 
-      // Current (buggy) behaviour: LateInitializationError on createdAt → errors: 1
-      expect(result.errors, 1);
-      expect(result.errorMessages.first, contains('createdAt'));
+      expect(result.pulled, 1);
+      expect(result.errors, 0);
     });
 
     test('pull with one remote session returns pulled: 1', () async {
-      // FIXME: this is wrong but matches current implementation. See "Deferred follow-ups" in 2026-05-08-phase3-test-foundation.md
-      // _upsertSessionFromRemote accesses session.createdAt (a late field) on
-      // a freshly-created CollectionSession() before it is initialized,
-      // throwing LateInitializationError. Fix: same as plant — initialise
-      // createdAt to DateTime.now() for new records before the cascade.
       when(
         () => mockDio.get<Map<String, dynamic>>(
           ApiEndpoints.syncPull,
@@ -326,9 +313,8 @@ void main() {
 
       final result = await svc.sync(deviceId: 'test-device');
 
-      // Current (buggy) behaviour: LateInitializationError on createdAt → errors: 1
-      expect(result.errors, 1);
-      expect(result.errorMessages.first, contains('createdAt'));
+      expect(result.pulled, 1);
+      expect(result.errors, 0);
     });
 
     test('push returns conflict when server responds conflict', () async {

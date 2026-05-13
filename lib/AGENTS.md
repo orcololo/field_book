@@ -1,3 +1,6 @@
+<!-- Parent: ../AGENTS.md -->
+<!-- Generated: 2026-05-10 | Updated: 2026-05-13 -->
+
 # LIB — Flutter App Source
 
 ## OVERVIEW

@@ -93,7 +93,18 @@ class SyncNotifier extends _$SyncNotifier {
   }
 
   Future<void> sync({String? deviceId}) async {
+    // Gate: require an authenticated session. Callers (UI, background timers,
+    // connectivity listeners) all go through this method, so enforcing auth
+    // here is the single authoritative check.
+    final authState = ref.read(authNotifierProvider);
+    if (authState is! AuthAuthenticated) return;
+
     if (state.isSyncing) return;
+
+    // Capture the last successful sync timestamp before mutating state so
+    // that a skipped or partially-failed cycle can restore it rather than
+    // overwriting it with null.
+    final previousLastSyncAt = state.lastSyncAt;
 
     state = state.copyWith(isSyncing: true, lastError: null);
     try {
@@ -101,9 +112,12 @@ class SyncNotifier extends _$SyncNotifier {
       state = state.copyWith(
         isSyncing: false,
         lastResult: result,
-        // Only record a new sync timestamp when work was actually done.
-        // A skipped (offline) cycle must not overwrite the previous real timestamp.
-        lastSyncAt: result.skipped ? null : DateTime.now(),
+        // Only record a new sync timestamp when the cycle completed without
+        // errors. A skipped (offline) or partially-failed cycle must
+        // preserve the previous real timestamp.
+        lastSyncAt: (result.skipped || result.hasErrors)
+            ? previousLastSyncAt
+            : DateTime.now(),
         lastError: result.hasErrors ? result.errorMessages.first : null,
       );
     } catch (e) {

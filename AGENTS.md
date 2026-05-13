@@ -1,7 +1,10 @@
+<!-- Parent: ../AGENTS.md -->
+<!-- Generated: 2026-04-29 | Updated: 2026-05-13 -->
+
 # PROJECT KNOWLEDGE BASE
 
 **Generated:** 2026-04-29
-**Last refreshed:** 2026-05-08
+**Last refreshed:** 2026-05-12
 **App:** Folium — Offline-first botanical field collection app
 
 ## OVERVIEW
@@ -19,7 +22,7 @@ field_book/
 │   ├── shared/           # Reusable widgets, utils, constants
 │   └── l10n/             # ARB i18n (pt, en, es)
 ├── docs/superpowers/     # Specs and plans for ongoing correction passes
-├── test/                 # Flutter tests: unit/, widget/, integration/, golden/ (leaf dirs empty; widget_test.dart smoke test only)
+├── test/                 # Flutter tests: unit/ (repos + services), test_helpers/ (Isar + mocks), widget_test.dart smoke
 ├── android/ ios/ web/    # Platform shells — rarely edited directly
 └── .github/              # Agent docs, prompts, and CI (see NOTES)
 ```
@@ -37,7 +40,7 @@ field_book/
 | Add i18n string | `lib/l10n/app_en.arb` + equivalent pt/es |
 | Add HTTP client/interceptor | `lib/core/network/` |
 | Sync orchestration / mapper | `lib/core/sync/sync_service.dart` |
-| Add a test | `test/{unit,widget,integration,golden}/` |
+| Add a test | `test/unit/{repositories,services}/` — follow existing patterns in `test_helpers/` |
 
 ## ARCHITECTURE: FLUTTER
 
@@ -94,6 +97,6 @@ Generated files (`*.g.dart`) are committed — do not delete them.
 
 - `.github/agents/flutter-app.agent.md` contains role-specific rules — read it before starting work. (`nestjs-backend.agent.md` is legacy and pending refresh; the backend lives in a sibling repository now.)
 - `lib/core/services/platforms/` uses conditional imports to split web/mobile implementations.
-- `test/golden/`, `test/unit/`, `test/widget/`, `test/integration/` are present but empty as of 2026-05-08 — Phase 3 of the correction pass populates them.
+- `test/unit/` has repository and service tests (4 repo + 5 service tests). `test/test_helpers/` provides `IsarTestHelper` and mocks. `test/golden/`, `test/widget/`, `test/integration/` remain empty.
 - `analysis_options.yaml` uses `package:flutter_lints/flutter.yaml` with no additional overrides.
 - `flutter analyze` returns `No issues found!` (Phase 1 of the 2026-05-08 correction pass cleaned 14 baseline issues).
