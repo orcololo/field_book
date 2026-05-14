@@ -250,6 +250,7 @@
   "showTutorialSubtitle": "Reproducir la presentación introductoria",
 
   "backupNow": "Hacer Backup Ahora",
+  "fullBackup": "Backup Completo",
   "restoreFromCloud": "Restaurar de la Nube",
   "backupInProgress": "Backup en progreso...",
   "backupSuccess": "Backup completado exitosamente",

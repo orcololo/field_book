@@ -8,6 +8,8 @@ import 'core/services/map_service.dart';
 import 'core/theme/folium_theme.dart';
 import 'features/home/screens/home_screen.dart';
 import 'features/onboarding/screens/onboarding_screen.dart';
+import 'shared/widgets/connectivity_banner.dart';
+import 'shared/widgets/upload_progress_indicator.dart';
 
 const _defaultLocale = Locale('pt');
 
@@ -104,6 +106,17 @@ class MyApp extends ConsumerWidget {
             highContrast: settings.highContrastMode,
           ),
           
+          // Connectivity banner visible on all screens
+          builder: (context, child) {
+            return Column(
+              children: [
+                const ConnectivityBanner(),
+                const UploadProgressIndicator(),
+                Expanded(child: child ?? const SizedBox.shrink()),
+              ],
+            );
+          },
+
           // Home screen (or onboarding on first launch)
           home: settings.hasCompletedOnboarding
               ? const HomeScreen()

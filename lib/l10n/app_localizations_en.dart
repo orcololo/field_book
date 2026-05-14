@@ -682,6 +682,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupNow => 'Backup Now';
 
   @override
+  String get fullBackup => 'Full Backup';
+
+  @override
   String get restoreFromCloud => 'Restore from Cloud';
 
   @override
@@ -2660,4 +2663,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get identificationHistoryLabel => 'Identification history';
+
+  @override
+  String get pdfFormatSubtitle => 'Formatted report for printing';
+
+  @override
+  String get pdfFormatDesc =>
+      'Formatted PDF report with collection details, ideal for printing or sharing as a document.';
 }

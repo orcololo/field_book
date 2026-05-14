@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dio/dio.dart';
 import 'package:isar/isar.dart';
 import 'package:logger/logger.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 
 import '../../models/collection_method.dart';
 import '../../models/collection_session.dart';
@@ -63,6 +65,10 @@ class SyncService {
 
   bool _isSyncing = false;
   bool get isSyncing => _isSyncing;
+
+  /// Optional callbacks for upload progress tracking.
+  void Function(String filePath, double progress)? onUploadProgress;
+  void Function(String filePath, String status)? onUploadStatusChange;
 
   SyncService({
     required ApiClient api,
@@ -191,6 +197,43 @@ class SyncService {
     }
   }
 
+  // ── Retry Logic ───────────────────────────────────────
+
+  @visibleForTesting
+  Future<T> withRetry<T>(
+    Future<T> Function() action, {
+    int maxAttempts = 3,
+    Duration initialDelay = const Duration(seconds: 2),
+  }) async {
+    int attempt = 0;
+    while (true) {
+      try {
+        attempt++;
+        return await action();
+      } catch (e) {
+        if (attempt >= maxAttempts || !isRetryableError(e)) {
+          rethrow;
+        }
+        final delay = initialDelay * (1 << (attempt - 1));
+        _log.d('Retry attempt $attempt after ${delay.inSeconds}s');
+        await Future.delayed(delay);
+      }
+    }
+  }
+
+  @visibleForTesting
+  bool isRetryableError(Object error) {
+    if (error is DioException) {
+      return error.type == DioExceptionType.connectionTimeout ||
+          error.type == DioExceptionType.sendTimeout ||
+          error.type == DioExceptionType.receiveTimeout ||
+          error.type == DioExceptionType.connectionError ||
+          (error.response?.statusCode != null &&
+              error.response!.statusCode! >= 500);
+    }
+    return false;
+  }
+
   // ── Push ──────────────────────────────────────────────
 
   Future<SyncResult> _push({String? deviceId}) async {
@@ -238,14 +281,14 @@ class SyncService {
     final sessions = pendingSessions.map(_sessionToSyncJson).toList();
 
     try {
-      final data = await _api.post<Map<String, dynamic>>(
+      final data = await withRetry(() => _api.post<Map<String, dynamic>>(
         ApiEndpoints.syncPush,
         data: {
           'registries': registries,
           'sessions': sessions,
           'deviceId': deviceId ?? '',
         },
-      );
+      ));
 
       int pushed = 0;
       int conflicts = 0;
@@ -254,7 +297,7 @@ class SyncService {
 
       // Process registry results
       final regResults = data['registries'] as List? ?? [];
-      for (var i = 0; i < regResults.length; i++) {
+      for (var i = 0; i < regResults.length && i < plantsReadyToPush.length; i++) {
         final result = regResults[i] as Map<String, dynamic>;
         final status = result['status'] as String;
         if (status == 'created' || status == 'updated') {
@@ -271,7 +314,7 @@ class SyncService {
 
       // Process session results
       final sesResults = data['sessions'] as List? ?? [];
-      for (var i = 0; i < sesResults.length; i++) {
+      for (var i = 0; i < sesResults.length && i < pendingSessions.length; i++) {
         final result = sesResults[i] as Map<String, dynamic>;
         final status = result['status'] as String;
         if (status == 'created' || status == 'updated') {
@@ -303,19 +346,20 @@ class SyncService {
     int pulled = 0;
 
     try {
-      // Find the latest sync timestamp across all records
+      // Find the latest sync timestamp without loading full records into memory
       DateTime? since;
-      final allSynced = await isar.plantRecords
+      final syncMetadatas = await isar.plantRecords
           .filter()
           .syncMetadata((q) => q.lastSyncedAtIsNotNull())
+          .syncMetadataProperty()
           .findAll();
-      if (allSynced.isNotEmpty) {
-        allSynced.sort((a, b) {
-          final aDate = a.syncMetadata.lastSyncedAt ?? DateTime(0);
-          final bDate = b.syncMetadata.lastSyncedAt ?? DateTime(0);
-          return bDate.compareTo(aDate);
-        });
-        since = allSynced.first.syncMetadata.lastSyncedAt;
+      if (syncMetadatas.isNotEmpty) {
+        for (final meta in syncMetadatas) {
+          final ts = meta.lastSyncedAt;
+          if (ts != null && (since == null || ts.isAfter(since))) {
+            since = ts;
+          }
+        }
       }
 
       bool hasMore = true;
@@ -325,10 +369,10 @@ class SyncService {
           params['since'] = since.toIso8601String();
         }
 
-        final data = await _api.get<Map<String, dynamic>>(
+        final data = await withRetry(() => _api.get<Map<String, dynamic>>(
           ApiEndpoints.syncPull,
           queryParameters: params,
-        );
+        ));
 
         final regList = data['registries'] as List? ?? [];
         final sesList = data['sessions'] as List? ?? [];
@@ -391,10 +435,12 @@ class SyncService {
         continue;
       }
       try {
+        onUploadStatusChange?.call(path, 'uploading');
         final result = await _mediaUpload.uploadImage(file);
         if (!result.originalUrl.startsWith('http')) {
           _log.w('Upload returned non-URL path (R2_PUBLIC_URL missing?), keeping local: $path');
           updatedPhotoPaths.add(path);
+          onUploadStatusChange?.call(path, 'failed');
           allUploaded = false;
           continue;
         }
@@ -405,9 +451,11 @@ class SyncService {
           'thumbnailKey': result.thumbnailKey ?? result.key,
           'thumbnailUrl': result.thumbnailUrl ?? result.originalUrl,
         }));
+        onUploadStatusChange?.call(path, 'completed');
       } catch (e) {
         _log.w('Failed to upload image $path: $e');
         updatedPhotoPaths.add(path);
+        onUploadStatusChange?.call(path, 'failed');
         allUploaded = false;
       }
     }
@@ -426,17 +474,21 @@ class SyncService {
         continue;
       }
       try {
+        onUploadStatusChange?.call(path, 'uploading');
         final result = await _mediaUpload.uploadAudio(file);
         if (!result.originalUrl.startsWith('http')) {
           _log.w('Audio upload returned non-URL path, keeping local: $path');
           updatedAudioPaths.add(path);
+          onUploadStatusChange?.call(path, 'failed');
           allUploaded = false;
           continue;
         }
         updatedAudioPaths.add(result.originalUrl);
+        onUploadStatusChange?.call(path, 'completed');
       } catch (e) {
         _log.w('Failed to upload audio $path: $e');
         updatedAudioPaths.add(path);
+        onUploadStatusChange?.call(path, 'failed');
         allUploaded = false;
       }
     }

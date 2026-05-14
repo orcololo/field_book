@@ -22,7 +22,7 @@ final mediaUploadServiceProvider = Provider<MediaUploadService>.internal(
 );
 
 typedef MediaUploadServiceRef = ProviderRef<MediaUploadService>;
-String _$syncServiceHash() => r'3bf41d27da9f56dc295e575344d9b3344fc762b7';
+String _$syncServiceHash() => r'4e7553df699c3f57db3ffe3f7c3514f128559e98';
 
 /// See also [syncService].
 @ProviderFor(syncService)

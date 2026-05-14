@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import '../../../core/providers/connectivity_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:io';
 import 'dart:async';
@@ -148,6 +149,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
   String? _weatherCondition;
   String? _moonPhase;
   bool _showOfflineLocationHint = false;
+  bool _showOnlineUpdateBanner = false;
   _LocationSnapshot? _lastLocationSnapshot;
 
   // Botanical field notebook fields
@@ -892,6 +894,17 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isEditing = widget.plant != null;
+    final isOnline = ref.watch(isOnlineValueProvider);
+
+    ref.listen<bool>(isOnlineValueProvider, (previous, next) {
+      if (previous == false && next == true) {
+        if (_showOfflineLocationHint && mounted) {
+          setState(() {
+            _showOnlineUpdateBanner = true;
+          });
+        }
+      }
+    });
 
     return PopScope(
       canPop: false,
@@ -934,9 +947,9 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                   controller: _tabController,
                   children: [
                     _buildBasicInfoTab(l10n),
-                    _buildLocationTab(l10n),
+                    _buildLocationTab(l10n, isOnline),
                     _buildHabitatTab(l10n),
-                    _buildPhotosTab(l10n),
+                    _buildPhotosTab(l10n, isOnline),
                     _buildAudioTab(l10n),
                   ],
                 ),
@@ -1498,10 +1511,51 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     );
   }
 
-  Widget _buildLocationTab(AppLocalizations l10n) {
+  Widget _buildLocationTab(AppLocalizations l10n, bool isOnline) {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        if (_showOnlineUpdateBanner && isOnline)
+          Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.blue.shade200),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.cloud_sync, color: Colors.blue.shade700, size: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Conexão restaurada. Atualizar informações online?',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.blue.shade900,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                TextButton(
+                  onPressed: () {
+                    setState(() => _showOnlineUpdateBanner = false);
+                    if (_latitude != null && _longitude != null) {
+                      _autofillLocation(_latitude!, _longitude!);
+                    }
+                  },
+                  child: const Text('Atualizar'),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, size: 18),
+                  onPressed: () => setState(() => _showOnlineUpdateBanner = false),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+              ],
+            ),
+          ),
         Card(
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -2168,7 +2222,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     );
   }
 
-  Widget _buildPhotosTab(AppLocalizations l10n) {
+  Widget _buildPhotosTab(AppLocalizations l10n, bool isOnline) {
     final settings = ref.watch(settingsNotifierProvider).valueOrNull;
     final hasPlantNetApiKey =
         settings?.plantnetApiKey.trim().isNotEmpty ?? false;
@@ -2259,53 +2313,45 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     if (hasPlantNetApiKey)
-                      FutureBuilder<ConnectivityResult>(
-                        future: Connectivity().checkConnectivity(),
-                        builder: (context, snapshot) {
-                          final hasConnection =
-                              snapshot.data != ConnectivityResult.none;
-
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              FilledButton.icon(
-                                onPressed:
-                                    !hasConnection ||
-                                        _photoPaths.isEmpty ||
-                                        isIdentifying
-                                    ? null
-                                    : _identifyWithPlantNet,
-                                icon: isIdentifying
-                                     ? SizedBox(
-                                          width: 18,
-                                          height: 18,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: Theme.of(context).colorScheme.onPrimary,
-                                         ),
-                                      )
-                                    : const Icon(Icons.auto_awesome),
-                                label: Text(
-                                  isIdentifying
-                                      ? l10n.plantNetIdentifying
-                                      : l10n.plantNetIdentifyButton,
-                                ),
-                              ),
-                              if (!hasConnection) ...[
-                                const SizedBox(height: 8),
-                                Text(
-                                  l10n.plantNetNoInternet,
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurfaceVariant,
-                                      ),
-                                ),
-                              ],
-                            ],
-                          );
-                        },
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          FilledButton.icon(
+                            onPressed:
+                                !isOnline ||
+                                    _photoPaths.isEmpty ||
+                                    isIdentifying
+                                ? null
+                                : _identifyWithPlantNet,
+                            icon: isIdentifying
+                                 ? SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Theme.of(context).colorScheme.onPrimary,
+                                     ),
+                                  )
+                                : const Icon(Icons.auto_awesome),
+                            label: Text(
+                              isIdentifying
+                                  ? l10n.plantNetIdentifying
+                                  : l10n.plantNetIdentifyButton,
+                            ),
+                          ),
+                          if (!isOnline) ...[
+                            const SizedBox(height: 8),
+                            Text(
+                              l10n.plantNetNoInternet,
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                                  ),
+                            ),
+                          ],
+                        ],
                       ),
                     if (hasPlantNetApiKey) const SizedBox(height: 12),
                     Row(
@@ -2852,6 +2898,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     final previousSnapshot = _captureLocationSnapshot();
     setState(() {
       _showOfflineLocationHint = false;
+      _showOnlineUpdateBanner = false;
       _lastLocationSnapshot = previousSnapshot;
       _localityController.text = locationData.locality ?? '';
       _municipalityController.text = locationData.municipality ?? '';

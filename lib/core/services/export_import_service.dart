@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
 import 'package:file_picker/file_picker.dart';
 
@@ -14,7 +17,7 @@ import '../../models/gps_point.dart';
 import '../repositories/plant_repository.dart';
 import '../repositories/session_repository.dart';
 
-enum ExportFormat { json, csv, darwinCore }
+enum ExportFormat { json, csv, darwinCore, pdfReport }
 
 class ExportImportService {
   final PlantRepository _plantRepo;
@@ -26,8 +29,13 @@ class ExportImportService {
   Future<String> exportToJson({
     List<PlantRecord>? plants,
     bool includeSessions = false,
+    DateTime? modifiedAfter,
   }) async {
-    plants ??= await _plantRepo.getPaginated(limit: 100000);
+    if (modifiedAfter != null && plants == null) {
+      plants = await _plantRepo.getModifiedAfter(modifiedAfter);
+    } else {
+      plants ??= await _plantRepo.getPaginated(limit: 100000);
+    }
 
     final List<Map<String, dynamic>> plantsJson = plants.map((plant) {
       return {
@@ -320,6 +328,193 @@ class ExportImportService {
     ], subject: 'Exportação Folium');
   }
 
+  // Save PDF bytes to file and share
+  Future<void> saveAndSharePdfExport(
+    List<int> bytes,
+    String filename,
+  ) async {
+    final directory = await getTemporaryDirectory();
+    final file = File('${directory.path}/$filename');
+    await file.writeAsBytes(bytes);
+
+    await Share.shareXFiles([
+      XFile(file.path, mimeType: 'application/pdf'),
+    ], subject: 'Exportação Folium - Relatório PDF');
+  }
+
+  // Export plants to PDF report
+  Future<List<int>> exportToPdfReport({List<PlantRecord>? plants}) async {
+    plants ??= await _plantRepo.getPaginated(limit: 100000);
+
+    final pdf = pw.Document();
+    final dateFormatter = DateFormat('dd/MM/yyyy');
+    final now = DateTime.now();
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(32),
+        theme: pw.ThemeData.withFont(
+          base: pw.Font.helvetica(),
+          bold: pw.Font.helveticaBold(),
+          italic: pw.Font.helveticaOblique(),
+        ),
+        header: (context) => pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text(
+                  'Relatório de Coletas',
+                  style: pw.TextStyle(
+                    fontSize: 18,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.Text(
+                  'Gerado em: ${dateFormatter.format(now)}',
+                  style: const pw.TextStyle(fontSize: 9),
+                ),
+              ],
+            ),
+            pw.SizedBox(height: 4),
+            pw.Text(
+              '${plants!.length} registro(s)',
+              style: const pw.TextStyle(fontSize: 9),
+            ),
+            pw.Divider(),
+            pw.SizedBox(height: 8),
+          ],
+        ),
+        footer: (context) => pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+          children: [
+            pw.Text(
+              'Folium - Field Book',
+              style: const pw.TextStyle(fontSize: 8),
+            ),
+            pw.Text(
+              'Página ${context.pageNumber} de ${context.pagesCount}',
+              style: const pw.TextStyle(fontSize: 8),
+            ),
+          ],
+        ),
+        build: (context) =>
+            plants!.map((r) => _buildPdfRecordEntry(r, dateFormatter)).toList(),
+      ),
+    );
+
+    return pdf.save();
+  }
+
+  pw.Widget _buildPdfRecordEntry(PlantRecord record, DateFormat dateFormatter) {
+    return pw.Container(
+      margin: const pw.EdgeInsets.only(bottom: 12),
+      padding: const pw.EdgeInsets.all(10),
+      decoration: pw.BoxDecoration(
+        border: pw.Border.all(color: PdfColors.grey300),
+        borderRadius: pw.BorderRadius.circular(4),
+      ),
+      child: pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            children: [
+              pw.Text(
+                record.registryIdentifier ?? record.uuid.substring(0, 8),
+                style: pw.TextStyle(
+                  fontWeight: pw.FontWeight.bold,
+                  fontSize: 11,
+                ),
+              ),
+              pw.Text(
+                dateFormatter.format(record.dateCollected),
+                style: const pw.TextStyle(fontSize: 9),
+              ),
+            ],
+          ),
+          pw.SizedBox(height: 4),
+          pw.Text(
+            record.scientificName,
+            style: pw.TextStyle(
+              fontStyle: pw.FontStyle.italic,
+              fontSize: 11,
+            ),
+          ),
+          if (record.commonName.isNotEmpty)
+            pw.Text(
+              record.commonName,
+              style: const pw.TextStyle(fontSize: 9),
+            ),
+          if (record.family != null)
+            pw.Text(
+              'Família: ${record.family}',
+              style: const pw.TextStyle(fontSize: 9),
+            ),
+          pw.SizedBox(height: 6),
+          pw.Wrap(
+            spacing: 16,
+            runSpacing: 4,
+            children: [
+              if (record.latitude != null)
+                _pdfField('Lat', record.latitude!.toStringAsFixed(6)),
+              if (record.longitude != null)
+                _pdfField('Lon', record.longitude!.toStringAsFixed(6)),
+              if (record.altitude != null)
+                _pdfField('Alt', '${record.altitude!.toStringAsFixed(0)}m'),
+              if (record.locality != null)
+                _pdfField('Local', record.locality!),
+              if (record.municipality != null)
+                _pdfField('Município', record.municipality!),
+              if (record.state != null)
+                _pdfField('Estado', record.state!),
+              if (record.habitat != null)
+                _pdfField('Habitat', record.habitat!),
+              if (record.substrate != null)
+                _pdfField('Substrato', record.substrate!),
+              if (record.phenologicalState != null)
+                _pdfField('Fenologia', record.phenologicalState!.name),
+              if (record.collectionMethod != null)
+                _pdfField('Método', record.collectionMethod!.name),
+              if (record.collectorNumber != null)
+                _pdfField('Nº Coletor', record.collectorNumber!),
+            ],
+          ),
+          if (record.notes != null && record.notes!.isNotEmpty) ...[
+            pw.SizedBox(height: 6),
+            pw.Text(
+              'Notas: ${record.notes}',
+              style: const pw.TextStyle(fontSize: 8),
+              maxLines: 3,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  pw.Widget _pdfField(String label, String value) {
+    return pw.RichText(
+      text: pw.TextSpan(
+        children: [
+          pw.TextSpan(
+            text: '$label: ',
+            style: pw.TextStyle(
+              fontSize: 8,
+              fontWeight: pw.FontWeight.bold,
+            ),
+          ),
+          pw.TextSpan(
+            text: value,
+            style: const pw.TextStyle(fontSize: 8),
+          ),
+        ],
+      ),
+    );
+  }
+
   // Import plants from JSON
   Future<ImportResult> importFromJson(String jsonContent) async {
     try {
@@ -497,8 +692,14 @@ class ExportImportService {
   }
 
   // Export to JSON string (for cloud backup)
-  Future<String> exportToJsonString({bool includeSessions = true}) async {
-    return exportToJson(includeSessions: includeSessions);
+  Future<String> exportToJsonString({
+    bool includeSessions = true,
+    DateTime? modifiedAfter,
+  }) async {
+    return exportToJson(
+      includeSessions: includeSessions,
+      modifiedAfter: modifiedAfter,
+    );
   }
 
   // Import from JSON string with session support (for cloud backup)

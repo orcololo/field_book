@@ -1354,6 +1354,12 @@ abstract class AppLocalizations {
   /// **'Backup Now'**
   String get backupNow;
 
+  /// No description provided for @fullBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Backup'**
+  String get fullBackup;
+
   /// No description provided for @restoreFromCloud.
   ///
   /// In en, this message translates to:
@@ -3927,6 +3933,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'International standard for biodiversity'**
   String get darwinCoreFormatSubtitle;
+
+  /// No description provided for @pdfFormatSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Formatted report for printing'**
+  String get pdfFormatSubtitle;
+
+  /// No description provided for @pdfFormatDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Formatted PDF report with collection details, ideal for printing or sharing as a document.'**
+  String get pdfFormatDesc;
 
   /// No description provided for @includeCollectionSessions.
   ///

@@ -7,6 +7,7 @@ import '../../../models/municipality_bounding_box_cache.dart';
 import '../../../models/plant_record.dart';
 import '../../../models/saved_search.dart';
 import '../../../models/settings.dart';
+import '../../../models/species_cache.dart';
 import '../../../models/taxon_cache.dart';
 import 'isar_service_interface.dart';
 
@@ -39,6 +40,7 @@ class IsarService extends IsarServiceInterface {
         PlantRecordSchema,
         SavedSearchSchema,
         SettingsSchema,
+        SpeciesCacheSchema,
         TaxonCacheSchema,
       ],
       directory: dir.path,

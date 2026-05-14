@@ -1225,6 +1225,56 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
           ),
         ),
 
+        // Full backup button
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: FoliumTheme.space16,
+            vertical: FoliumTheme.space4,
+          ),
+          child: SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: _isBackingUp
+                  ? null
+                  : () async {
+                      final messenger = ScaffoldMessenger.of(context);
+                      setState(() => _isBackingUp = true);
+                      try {
+                        await backupService.fullBackup();
+                        if (mounted) {
+                          messenger.showSnackBar(
+                            SnackBar(
+                              content: Text(l10n.backupSuccess),
+                              backgroundColor: FoliumTheme.success,
+                            ),
+                          );
+                          ref.invalidate(settingsNotifierProvider);
+                        }
+                      } catch (e) {
+                        if (mounted) {
+                          final errorMsg = _localizeError(e.toString(), l10n);
+                          messenger.showSnackBar(
+                            SnackBar(
+                              content: Text(l10n.backupFailed(errorMsg)),
+                              backgroundColor: colorScheme.error,
+                            ),
+                          );
+                        }
+                      } finally {
+                        if (mounted) setState(() => _isBackingUp = false);
+                      }
+                    },
+              icon: const Icon(Icons.cloud_sync),
+              label: const Text('Backup Completo'),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  vertical: FoliumTheme.space12,
+                ),
+              ),
+            ),
+          ),
+        ),
+
         // Restore button
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: FoliumTheme.space16),

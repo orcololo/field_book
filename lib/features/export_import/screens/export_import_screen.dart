@@ -71,6 +71,22 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
           filename = 'field_book_darwin_core_$timestamp.csv';
           mimeType = 'text/csv';
           break;
+
+        case ExportFormat.pdfReport:
+          final pdfBytes = await _exportService.exportToPdfReport(plants: plants);
+          final pdfFilename = 'field_book_$timestamp.pdf';
+          await _exportService.saveAndSharePdfExport(pdfBytes, pdfFilename);
+
+          if (mounted) {
+            final l10n = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.exportSuccessMsg),
+                backgroundColor: FoliumTheme.success,
+              ),
+            );
+          }
+          return;
       }
 
       await _exportService.saveAndShareExport(content, filename, mimeType);
@@ -385,6 +401,14 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                           ),
                           onTap: () => setState(() => _selectedFormat = ExportFormat.darwinCore),
                         ),
+                        ListTile(
+                          title: const Text('PDF'),
+                          subtitle: Text(l10n.pdfFormatSubtitle),
+                          leading: const Radio<ExportFormat>(
+                            value: ExportFormat.pdfReport,
+                          ),
+                          onTap: () => setState(() => _selectedFormat = ExportFormat.pdfReport),
+                        ),
                       ],
                     ),
                   ),
@@ -548,6 +572,8 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                   _buildFormatInfo('CSV', l10n.csvFormatDesc),
                   const SizedBox(height: 12),
                   _buildFormatInfo('Darwin Core', l10n.darwinCoreDesc),
+                  const SizedBox(height: 12),
+                  _buildFormatInfo('PDF', l10n.pdfFormatDesc),
                 ],
               ),
             ),

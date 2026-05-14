@@ -21,13 +21,14 @@ class MapViewScreen extends ConsumerStatefulWidget {
 class _MapViewScreenState extends ConsumerState<MapViewScreen> {
   final MapController _mapController = MapController();
   late final PlantRepository _plantRepo;
-  
+
   List<PlantRecord> _plants = [];
   List<PlantRecord> _filteredPlants = [];
   bool _isLoading = true;
   PlantCategory? _filterCategory;
   bool _showDraftsOnly = false;
   bool _showCompletedOnly = false;
+  PlantRecord? _selectedPlant;
 
   @override
   void initState() {
@@ -390,29 +391,20 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
                               width: 40,
                               height: 40,
                               child: GestureDetector(
-                                onTap: () async {
-                                  // Fetch full plant record
-                                  final fullPlant = await _plantRepo.getById(plant.id);
-                                  if (fullPlant != null) {
-                                    if (context.mounted) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => PlantDetailScreen(
-                                            plant: fullPlant,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  }
+                                onTap: () {
+                                  setState(() {
+                                    _selectedPlant = _selectedPlant?.id == plant.id ? null : plant;
+                                  });
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: _getCategoryColor(plant.category),
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: Colors.white,
-                                      width: 2,
+                                      color: _selectedPlant?.id == plant.id
+                                          ? Colors.yellow
+                                          : Colors.white,
+                                      width: _selectedPlant?.id == plant.id ? 3 : 2,
                                     ),
                                     boxShadow: [
                                       BoxShadow(
@@ -437,6 +429,95 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
                       ],
                     ),
                     
+                    // Plant info popup
+                    if (_selectedPlant != null)
+                      Positioned(
+                        top: MediaQuery.of(context).padding.top + 64,
+                        left: 16,
+                        right: 16,
+                        child: Card(
+                          elevation: 8,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(12),
+                            onTap: () async {
+                              final fullPlant = await _plantRepo.getById(_selectedPlant!.id);
+                              if (fullPlant != null && context.mounted) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PlantDetailScreen(
+                                      plant: fullPlant,
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      color: _getCategoryColor(_selectedPlant!.category),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      _getCategoryIcon(_selectedPlant!.category),
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          _selectedPlant!.scientificName,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontStyle: FontStyle.italic,
+                                            fontSize: 14,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        if (_selectedPlant!.registryIdentifier != null)
+                                          Text(
+                                            _selectedPlant!.registryIdentifier!,
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.chevron_right,
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.close, size: 18),
+                                    onPressed: () {
+                                      setState(() => _selectedPlant = null);
+                                    },
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
                     // Legend
                     Positioned(
                       bottom: 16,

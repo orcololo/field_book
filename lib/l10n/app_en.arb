@@ -253,6 +253,7 @@
   "showTutorialSubtitle": "Replay the introduction walkthrough",
 
   "backupNow": "Backup Now",
+  "fullBackup": "Full Backup",
   "restoreFromCloud": "Restore from Cloud",
   "backupInProgress": "Backup in progress...",
   "backupSuccess": "Backup completed successfully",

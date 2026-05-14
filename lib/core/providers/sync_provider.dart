@@ -12,6 +12,7 @@ import 'auth_provider.dart';
 import '../network/api_client.dart';
 import '../services/media_upload_service.dart';
 import '../sync/sync_service.dart';
+import 'upload_queue_provider.dart';
 
 part 'sync_provider.g.dart';
 
@@ -22,10 +23,37 @@ MediaUploadService mediaUploadService(Ref ref) {
 
 @Riverpod(keepAlive: true)
 SyncService syncService(Ref ref) {
-  return SyncService(
+  final service = SyncService(
     api: ref.read(apiClientProvider),
     mediaUpload: ref.read(mediaUploadServiceProvider),
   );
+
+  final queueNotifier = ref.read(uploadQueueProvider.notifier);
+
+  service.onUploadStatusChange = (filePath, status) {
+    final id = filePath.hashCode.toString();
+    switch (status) {
+      case 'uploading':
+        queueNotifier.addItem(UploadItem(
+          id: id,
+          filePath: filePath,
+          type: filePath.endsWith('.m4a') || filePath.endsWith('.aac')
+              ? 'audio'
+              : 'image',
+          status: UploadStatus.uploading,
+        ));
+        break;
+      case 'completed':
+        queueNotifier.updateItem(id,
+            status: UploadStatus.completed, progress: 1.0);
+        break;
+      case 'failed':
+        queueNotifier.updateItem(id, status: UploadStatus.failed);
+        break;
+    }
+  };
+
+  return service;
 }
 
 final conflictRecordsProvider = StreamProvider<List<PlantRecord>>((ref) async* {
@@ -89,7 +117,7 @@ class SyncNotifier extends _$SyncNotifier {
       ref.read(authNotifierProvider.notifier).invalidateSession();
       return;
     }
-    sync();
+    await sync();
   }
 
   Future<void> sync({String? deviceId}) async {

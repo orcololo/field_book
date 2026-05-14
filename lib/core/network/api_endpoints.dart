@@ -40,6 +40,7 @@ class ApiEndpoints {
 
   // ── Taxa ──────────────────────────────────────────────
   static const String taxaSearch = '$basePath/taxa/search';
+  static const String taxaAll = '$basePath/taxa';
 
   // ── Health ────────────────────────────────────────────
   static const String health = '$basePath/health';

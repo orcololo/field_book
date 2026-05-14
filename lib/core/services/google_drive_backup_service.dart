@@ -7,6 +7,7 @@ import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:googleapis_auth/googleapis_auth.dart' as auth;
 import 'package:logger/logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../repositories/plant_repository.dart';
 import '../repositories/session_repository.dart';
@@ -17,6 +18,8 @@ import '../services/settings_service.dart';
 part 'google_drive_backup_service.g.dart';
 
 const _backupFileName = 'folium_backup.json';
+const _incrementalBackupFileName = 'folium_backup_incremental.json';
+const _lastBackupTimestampKey = 'google_drive_last_backup_timestamp';
 
 class BackupException implements Exception {
   final String message;
@@ -111,7 +114,10 @@ class GoogleDriveBackupService {
 
   // ─── Backup ───────────────────────────────────────────────
 
-  /// Perform a full backup to Google Drive appDataFolder.
+  /// Perform an incremental backup to Google Drive appDataFolder.
+  ///
+  /// Only backs up records modified since the last backup.
+  /// Falls back to full backup if no previous backup timestamp exists.
   ///
   /// Throws [BackupException] on failure.
   Future<void> backup({bool respectWifiSetting = true}) async {
@@ -120,63 +126,189 @@ class GoogleDriveBackupService {
       await _ensureConnectivity();
     }
 
-    // 2. Build JSON payload using existing export infrastructure
-    final exportService = ExportImportService(plantRepo, sessionRepo);
-    final jsonString =
-        await exportService.exportToJsonString(includeSessions: true);
+    // 2. Get last backup timestamp
+    final lastBackupTimestamp = await _getLastBackupTimestamp();
 
-    // 3. Sign in & get Drive API
+    // 3. Build JSON payload — incremental if we have a previous timestamp
+    final exportService = ExportImportService(plantRepo, sessionRepo);
+    final String jsonString;
+
+    if (lastBackupTimestamp != null) {
+      jsonString = await exportService.exportToJsonString(
+        includeSessions: true,
+        modifiedAfter: lastBackupTimestamp,
+      );
+    } else {
+      // First backup is always full
+      jsonString = await exportService.exportToJsonString(
+        includeSessions: true,
+      );
+    }
+
+    // 4. Sign in & get Drive API
     final api = await _getOrCreateDriveApi();
 
-    // 4. Upload / update the backup file
-    final existingFileId = await _findBackupFileId(api);
+    // 5. Determine which file to upload to
+    final targetFileName =
+        lastBackupTimestamp != null ? _incrementalBackupFileName : _backupFileName;
+    final existingFileId = await _findFileId(api, targetFileName);
     final media = drive.Media(
       Stream.value(utf8.encode(jsonString)),
       utf8.encode(jsonString).length,
     );
 
     if (existingFileId != null) {
-      // Update in-place to avoid accumulating files
+      await api.files.update(
+        drive.File()..name = targetFileName,
+        existingFileId,
+        uploadMedia: media,
+      );
+      _log.i('Cloud backup updated ($targetFileName, fileId=$existingFileId)');
+    } else {
+      final fileMetadata = drive.File()
+        ..name = targetFileName
+        ..parents = ['appDataFolder'];
+      await api.files.create(fileMetadata, uploadMedia: media);
+      _log.i('Cloud backup created ($targetFileName)');
+    }
+
+    // 6. Save backup timestamp and update settings
+    await _saveLastBackupTimestamp(DateTime.now());
+    await settingsNotifier.updateLastCloudBackup();
+  }
+
+  /// Perform a full backup to Google Drive appDataFolder.
+  ///
+  /// Exports all data regardless of last backup timestamp.
+  /// Resets the incremental backup state.
+  ///
+  /// Throws [BackupException] on failure.
+  Future<void> fullBackup({bool respectWifiSetting = true}) async {
+    // 1. Connectivity check
+    if (respectWifiSetting) {
+      await _ensureConnectivity();
+    }
+
+    // 2. Build full JSON payload
+    final exportService = ExportImportService(plantRepo, sessionRepo);
+    final jsonString = await exportService.exportToJsonString(
+      includeSessions: true,
+    );
+
+    // 3. Sign in & get Drive API
+    final api = await _getOrCreateDriveApi();
+
+    // 4. Upload full backup
+    final existingFileId = await _findFileId(api, _backupFileName);
+    final media = drive.Media(
+      Stream.value(utf8.encode(jsonString)),
+      utf8.encode(jsonString).length,
+    );
+
+    if (existingFileId != null) {
       await api.files.update(
         drive.File()..name = _backupFileName,
         existingFileId,
         uploadMedia: media,
       );
-      _log.i('Cloud backup updated (fileId=$existingFileId)');
+      _log.i('Full cloud backup updated (fileId=$existingFileId)');
     } else {
-      // Create new
       final fileMetadata = drive.File()
         ..name = _backupFileName
         ..parents = ['appDataFolder'];
       await api.files.create(fileMetadata, uploadMedia: media);
-      _log.i('Cloud backup created');
+      _log.i('Full cloud backup created');
     }
 
-    // 5. Update last backup timestamp
+    // 5. Remove stale incremental file since full backup supersedes it
+    final incrementalFileId =
+        await _findFileId(api, _incrementalBackupFileName);
+    if (incrementalFileId != null) {
+      await api.files.delete(incrementalFileId);
+      _log.i('Removed stale incremental backup');
+    }
+
+    // 6. Save backup timestamp and update settings
+    await _saveLastBackupTimestamp(DateTime.now());
     await settingsNotifier.updateLastCloudBackup();
   }
 
   // ─── Restore ──────────────────────────────────────────────
 
-  /// Restore from the latest Google Drive backup.
+  /// Restore from Google Drive backup.
   ///
-  /// Returns the [ImportResult] with counts.
+  /// First restores the full backup, then merges any incremental data on top.
+  /// Returns the combined [ImportResult] with counts.
   /// Throws [RestoreException] on failure.
   Future<ImportResult> restore() async {
-    // Connectivity check — restore requires downloading from Google Drive.
+    // Connectivity check
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
       throw const RestoreException('noInternetConnection');
     }
 
     final api = await _getOrCreateDriveApi();
+    final exportService = ExportImportService(plantRepo, sessionRepo);
 
-    final fileId = await _findBackupFileId(api);
-    if (fileId == null) {
+    int totalImported = 0;
+    int totalUpdated = 0;
+
+    // 1. Restore full backup first
+    final fullFileId = await _findFileId(api, _backupFileName);
+    if (fullFileId != null) {
+      final fullJson = await _downloadFile(api, fullFileId);
+      final fullResult = await exportService.importFromJsonString(fullJson);
+      totalImported += fullResult.imported;
+      totalUpdated += fullResult.updated;
+      _log.i(
+        'Full backup restored: imported=${fullResult.imported}, '
+        'updated=${fullResult.updated}',
+      );
+    }
+
+    // 2. Merge incremental backup on top
+    final incrementalFileId =
+        await _findFileId(api, _incrementalBackupFileName);
+    if (incrementalFileId != null) {
+      final incrementalJson = await _downloadFile(api, incrementalFileId);
+      final incrementalResult =
+          await exportService.importFromJsonString(incrementalJson);
+      totalImported += incrementalResult.imported;
+      totalUpdated += incrementalResult.updated;
+      _log.i(
+        'Incremental backup merged: imported=${incrementalResult.imported}, '
+        'updated=${incrementalResult.updated}',
+      );
+    }
+
+    if (fullFileId == null && incrementalFileId == null) {
       throw const RestoreException('noBackupFound');
     }
 
-    // Download the file content
+    _log.i(
+      'Cloud restore complete: imported=$totalImported, updated=$totalUpdated',
+    );
+    return ImportResult(imported: totalImported, updated: totalUpdated, skipped: 0, errors: []);
+  }
+
+  // ─── Helpers ──────────────────────────────────────────────
+
+  /// Find a file by name in appDataFolder.
+  Future<String?> _findFileId(drive.DriveApi api, String fileName) async {
+    final fileList = await api.files.list(
+      spaces: 'appDataFolder',
+      q: "name = '$fileName'",
+      $fields: 'files(id, name)',
+    );
+    final files = fileList.files;
+    if (files != null && files.isNotEmpty) {
+      return files.first.id;
+    }
+    return null;
+  }
+
+  /// Download file content as a UTF-8 string.
+  Future<String> _downloadFile(drive.DriveApi api, String fileId) async {
     final response = await api.files.get(
       fileId,
       downloadOptions: drive.DownloadOptions.fullMedia,
@@ -186,31 +318,26 @@ class GoogleDriveBackupService {
     await for (final chunk in response.stream) {
       bytes.addAll(chunk);
     }
-    final jsonString = utf8.decode(bytes);
-
-    // Import using shared infrastructure
-    final exportService = ExportImportService(plantRepo, sessionRepo);
-    final result = await exportService.importFromJsonString(jsonString);
-
-    _log.i(
-        'Cloud restore complete: imported=${result.imported}, updated=${result.updated}');
-    return result;
+    return utf8.decode(bytes);
   }
 
-  // ─── Helpers ──────────────────────────────────────────────
-
-  /// Find the existing backup file in appDataFolder, if any.
-  Future<String?> _findBackupFileId(drive.DriveApi api) async {
-    final fileList = await api.files.list(
-      spaces: 'appDataFolder',
-      q: "name = '$_backupFileName'",
-      $fields: 'files(id, name)',
-    );
-    final files = fileList.files;
-    if (files != null && files.isNotEmpty) {
-      return files.first.id;
+  /// Get the last backup timestamp from SharedPreferences.
+  Future<DateTime?> _getLastBackupTimestamp() async {
+    final prefs = await SharedPreferences.getInstance();
+    final timestamp = prefs.getString(_lastBackupTimestampKey);
+    if (timestamp != null) {
+      return DateTime.tryParse(timestamp);
     }
     return null;
+  }
+
+  /// Save the last backup timestamp to SharedPreferences.
+  Future<void> _saveLastBackupTimestamp(DateTime timestamp) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+      _lastBackupTimestampKey,
+      timestamp.toIso8601String(),
+    );
   }
 
   /// Ensure network connectivity respecting the wifi-only setting.

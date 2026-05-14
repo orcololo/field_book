@@ -688,6 +688,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get backupNow => 'Fazer Backup Agora';
 
   @override
+  String get fullBackup => 'Backup Completo';
+
+  @override
   String get restoreFromCloud => 'Restaurar da Nuvem';
 
   @override
@@ -2676,4 +2679,11 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get identificationHistoryLabel => 'Histórico de identificação';
+
+  @override
+  String get pdfFormatSubtitle => 'Relatório formatado para impressão';
+
+  @override
+  String get pdfFormatDesc =>
+      'Relatório PDF formatado com detalhes da coleta, ideal para impressão ou compartilhamento como documento.';
 }

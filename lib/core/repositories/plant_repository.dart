@@ -133,6 +133,25 @@ class PlantRepository {
     }
   }
 
+  // Get plants modified after a given timestamp (for incremental backup)
+  Future<List<PlantRecord>> getModifiedAfter(DateTime since) async {
+    try {
+      final isar = await _isar;
+      return await isar.plantRecords
+          .filter()
+          .updatedAtGreaterThan(since)
+          .sortByUpdatedAtDesc()
+          .findAll();
+    } catch (e, stackTrace) {
+      _log.e(
+        'Error getting plants modified after $since',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
+
   // Full-text search
   Future<List<PlantRecord>> fullTextSearch(
     String query, {

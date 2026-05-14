@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../core/providers/connectivity_provider.dart';
 import '../../../core/repositories/plant_repository.dart';
 import '../../../core/services/geocoding_service.dart';
 import '../../../core/services/location_service.dart';
@@ -71,6 +72,7 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
   String? _weatherCondition;
   String? _moonPhase;
   bool _showOfflineLocationHint = false;
+  bool _showOnlineUpdateBanner = false;
   _LocationSnapshot? _lastLocationSnapshot;
 
   // GPS
@@ -351,6 +353,17 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
+    final isOnline = ref.watch(isOnlineValueProvider);
+
+    ref.listen<bool>(isOnlineValueProvider, (previous, next) {
+      if (previous == false && next == true) {
+        if (_showOfflineLocationHint && mounted) {
+          setState(() {
+            _showOnlineUpdateBanner = true;
+          });
+        }
+      }
+    });
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -374,6 +387,48 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
               SizedBox(
                 height: MediaQuery.of(context).padding.top + 64,
               ),
+              // ── Online update banner ──
+              if (_showOnlineUpdateBanner && isOnline)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.blue.shade200),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.cloud_sync, color: Colors.blue.shade700, size: 20),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Conexão restaurada. Atualizar informações online?',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.blue.shade900,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      TextButton(
+                        onPressed: () {
+                          setState(() => _showOnlineUpdateBanner = false);
+                          if (_latitude != null && _longitude != null) {
+                            _autofillLocation(_latitude!, _longitude!);
+                          }
+                        },
+                        child: const Text('Atualizar'),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close, size: 18),
+                        onPressed: () => setState(() => _showOnlineUpdateBanner = false),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                    ],
+                  ),
+                ),
               // ── Photo strip ──
               _buildPhotoSection(l10n, colorScheme),
               const SizedBox(height: FoliumTheme.space16),
@@ -800,6 +855,7 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
     final previousSnapshot = _captureLocationSnapshot();
     setState(() {
       _showOfflineLocationHint = false;
+      _showOnlineUpdateBanner = false;
       _lastLocationSnapshot = previousSnapshot;
       _localityController.text = locationData.locality ?? '';
       _municipalityController.text = locationData.municipality ?? '';
