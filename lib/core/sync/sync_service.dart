@@ -167,15 +167,20 @@ class SyncService {
           plant.syncMetadata.localModifiedAt ?? plant.updatedAt;
       final serverModifiedAt = _extractServerModifiedAt(serverData);
 
+      bool serverWins = false;
       if (serverModifiedAt != null &&
           serverModifiedAt.isAfter(localModifiedAt)) {
+        serverWins = true;
+      } else if (serverModifiedAt != null &&
+          serverModifiedAt.isAtSameMomentAs(localModifiedAt)) {
+        // Same timestamp — the more complete record wins
+        final localScore = _completenessScore(plant);
+        final remoteScore = _completenessScoreFromJson(serverData);
+        serverWins = remoteScore > localScore;
+      }
+
+      if (serverWins) {
         _applyRemoteDataToPlant(plant, serverData);
-        await _finishConflictResolution(
-          plant,
-          syncVersion: serverData['syncVersion'] as num?,
-          serverId: serverData['id'] as String?,
-        );
-        continue;
       }
 
       await _finishConflictResolution(
@@ -370,9 +375,14 @@ class SyncService {
     bool allUploaded = true;
 
     final updatedPhotoPaths = <String>[];
+    final updatedImageRefs = <String>[];
     for (final path in plant.photoPaths) {
       if (path.startsWith('http')) {
         updatedPhotoPaths.add(path);
+        final existingRef = _findExistingImageRef(plant, path);
+        if (existingRef != null) {
+          updatedImageRefs.add(existingRef);
+        }
         continue;
       }
       final file = File(path);
@@ -383,6 +393,12 @@ class SyncService {
       try {
         final result = await _mediaUpload.uploadImage(file);
         updatedPhotoPaths.add(result.originalUrl);
+        updatedImageRefs.add(jsonEncode({
+          'key': result.key,
+          'url': result.originalUrl,
+          'thumbnailKey': result.thumbnailKey ?? result.key,
+          'thumbnailUrl': result.thumbnailUrl ?? result.originalUrl,
+        }));
       } catch (e) {
         _log.w('Failed to upload image $path: $e');
         updatedPhotoPaths.add(path);
@@ -390,6 +406,7 @@ class SyncService {
       }
     }
     plant.photoPaths = updatedPhotoPaths;
+    plant.imageRefsJson = updatedImageRefs;
 
     final updatedAudioPaths = <String>[];
     for (final path in plant.audioNotePaths) {
@@ -420,6 +437,16 @@ class SyncService {
     });
 
     return allUploaded;
+  }
+
+  String? _findExistingImageRef(PlantRecord plant, String url) {
+    for (final refJson in plant.imageRefsJson) {
+      try {
+        final map = jsonDecode(refJson) as Map<String, dynamic>;
+        if (map['url'] == url) return refJson;
+      } catch (_) {}
+    }
+    return null;
   }
 
   // ── JSON Mapping ──────────────────────────────────────
@@ -483,6 +510,16 @@ class SyncService {
           )
           .toList(),
       'photoPaths': plant.photoPaths,
+      'images': plant.imageRefsJson
+          .map((ref) {
+            try {
+              return jsonDecode(ref) as Map<String, dynamic>;
+            } catch (_) {
+              return null;
+            }
+          })
+          .where((e) => e != null)
+          .toList(),
       'audioNotePaths': plant.audioNotePaths,
       'audioTranscripts': plant.audioTranscripts,
       'measurements': plant.measurements
@@ -684,6 +721,60 @@ class SyncService {
     return DateTime.tryParse(raw);
   }
 
+  int _completenessScore(PlantRecord plant) {
+    var score = 0;
+    if (plant.scientificName.isNotEmpty) score++;
+    if (plant.commonName.isNotEmpty) score++;
+    if (plant.family != null && plant.family!.isNotEmpty) score++;
+    if (plant.genus != null && plant.genus!.isNotEmpty) score++;
+    if (plant.habitat != null && plant.habitat!.isNotEmpty) score++;
+    if (plant.locality != null && plant.locality!.isNotEmpty) score++;
+    if (plant.notes != null && plant.notes!.isNotEmpty) score++;
+    if (plant.latitude != null) score++;
+    if (plant.longitude != null) score++;
+    if (plant.altitude != null) score++;
+    if (plant.collectorNumber != null && plant.collectorNumber!.isNotEmpty) score++;
+    if (plant.substrate != null && plant.substrate!.isNotEmpty) score++;
+    if (plant.associatedTaxa != null && plant.associatedTaxa!.isNotEmpty) score++;
+    if (plant.vegetationType != null && plant.vegetationType!.isNotEmpty) score++;
+    score += plant.photoPaths.length;
+    score += plant.audioNotePaths.length;
+    score += plant.determinations.length;
+    score += plant.measurements.length;
+    return score;
+  }
+
+  int _completenessScoreFromJson(Map<String, dynamic> json) {
+    var score = 0;
+    final speciesObj = _asStringDynamicMap(json['species']);
+    if (_nonEmpty(json['scientificName'] ?? speciesObj?['scientificName'])) score++;
+    if (_nonEmpty(json['commonName'] ?? speciesObj?['commonName'])) score++;
+    if (_nonEmpty(json['family'] ?? speciesObj?['family'])) score++;
+    if (_nonEmpty(json['genus'] ?? speciesObj?['genus'])) score++;
+    if (_nonEmpty(json['habitat'])) score++;
+    if (_nonEmpty(json['locality'])) score++;
+    if (_nonEmpty(json['notes'])) score++;
+    if (json['latitude'] != null) score++;
+    if (json['longitude'] != null) score++;
+    if (json['altitude'] != null) score++;
+    if (_nonEmpty(json['collectorNumber'])) score++;
+    if (_nonEmpty(json['substrate'])) score++;
+    if (_nonEmpty(json['associatedTaxa'])) score++;
+    if (_nonEmpty(json['vegetationType'])) score++;
+    final photos = json['photoPaths'] as List?;
+    if (photos != null) score += photos.length;
+    final audio = json['audioNotePaths'] as List?;
+    if (audio != null) score += audio.length;
+    final determinations = json['determinations'] as List?;
+    if (determinations != null) score += determinations.length;
+    final measurements = json['measurements'] as List?;
+    if (measurements != null) score += measurements.length;
+    return score;
+  }
+
+  bool _nonEmpty(dynamic value) =>
+      value is String && value.isNotEmpty;
+
   Future<void> _upsertPlantFromRemote(Map<String, dynamic> json) async {
     final isar = await IsarService.instance.isar;
     final uuid = json['uuid'] as String;
@@ -693,10 +784,42 @@ class SyncService {
         .uuidEqualTo(uuid)
         .findFirst();
 
-    // If local copy is newer and pending, skip (will push on next cycle)
+    // If local copy is pending, skip (will push on next cycle)
     if (existing != null &&
         existing.syncMetadata.syncStatus == SyncStatus.pending) {
       return;
+    }
+
+    // If local copy exists and is synced, compare freshness and completeness
+    if (existing != null &&
+        existing.syncMetadata.syncStatus == SyncStatus.synced) {
+      final localModifiedAt =
+          existing.syncMetadata.localModifiedAt ?? existing.updatedAt;
+      final serverModifiedAt = _extractServerModifiedAt(json);
+      final localPlant = existing;
+
+      if (serverModifiedAt != null && localModifiedAt.isAfter(serverModifiedAt)) {
+        // Local is newer — keep local and mark pending so it gets pushed
+        localPlant.syncMetadata.syncStatus = SyncStatus.pending;
+        await isar.writeTxn(() async {
+          await isar.plantRecords.put(localPlant);
+        });
+        return;
+      }
+
+      if (serverModifiedAt != null &&
+          localModifiedAt.isAtSameMomentAs(serverModifiedAt)) {
+        // Same timestamp — keep the more complete record
+        final localScore = _completenessScore(localPlant);
+        final remoteScore = _completenessScoreFromJson(json);
+        if (localScore > remoteScore) {
+          localPlant.syncMetadata.syncStatus = SyncStatus.pending;
+          await isar.writeTxn(() async {
+            await isar.plantRecords.put(localPlant);
+          });
+          return;
+        }
+      }
     }
 
     final plant = existing ?? PlantRecord();

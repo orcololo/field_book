@@ -35,6 +35,7 @@ import '../../../shared/widgets/plantnet_results_sheet.dart';
 import '../../../shared/widgets/audio/audio_recorder_widget.dart';
 import '../../../shared/widgets/audio/audio_player_widget.dart';
 import '../../../shared/widgets/rain_mode_guard.dart';
+import '../../../shared/widgets/adaptive_image.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/providers/rain_mode_provider.dart';
 import '../../../shared/widgets/modern/modern_app_bar.dart';
@@ -2210,8 +2211,8 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                         Positioned.fill(
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(8),
-                            child: Image.file(
-                              File(_photoPaths[index]),
+                            child: AdaptiveImage(
+                              path: _photoPaths[index],
                               fit: BoxFit.cover,
                             ),
                           ),

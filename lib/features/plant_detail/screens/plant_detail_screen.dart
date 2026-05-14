@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:printing/printing.dart';
-import 'dart:io';
 import 'dart:math';
 import '../../../models/determination.dart';
 import '../../../models/plant_record.dart';
@@ -16,6 +15,7 @@ import '../../../core/theme/folium_theme.dart';
 import '../../../shared/widgets/map_widget.dart';
 import '../../../shared/widgets/audio/audio_player_widget.dart';
 import '../../../shared/widgets/rain_mode_guard.dart';
+import '../../../shared/widgets/adaptive_image.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/utils/geo_utils.dart';
 import '../../plant_form/screens/plant_form_screen.dart';
@@ -292,7 +292,7 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
       );
     }
 
-    final firstPhoto = File(plant.photoPaths.first);
+    final firstPhoto = plant.photoPaths.first;
     return Hero(
       tag: 'plant_image_${plant.uuid}',
       child: Stack(
@@ -303,7 +303,7 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
             width: double.infinity,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: FileImage(firstPhoto),
+                image: adaptiveImageProvider(firstPhoto),
                 fit: BoxFit.cover,
               ),
             ),
@@ -971,8 +971,8 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
                     padding: const EdgeInsets.only(right: 8),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.file(
-                        File(plant.photoPaths[index]),
+                      child: AdaptiveImage(
+                        path: plant.photoPaths[index],
                         width: 120,
                         height: 120,
                         fit: BoxFit.cover,

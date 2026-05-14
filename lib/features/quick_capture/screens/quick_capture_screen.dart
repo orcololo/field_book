@@ -20,6 +20,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../models/plant_category.dart';
 import '../../../models/plant_record.dart';
 import '../../../shared/widgets/modern/modern_app_bar.dart';
+import '../../../shared/widgets/adaptive_image.dart';
 
 const _uuid = Uuid();
 
@@ -580,8 +581,8 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
                 borderRadius: BorderRadius.circular(FoliumTheme.radiusMedium),
                 child: Stack(
                   children: [
-                    Image.file(
-                      File(path),
+                    AdaptiveImage(
+                      path: path,
                       width: 120,
                       height: 120,
                       fit: BoxFit.cover,

@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:exif/exif.dart';
+import 'package:http/http.dart' as http;
 import '../../../core/utils/geo_utils.dart';
+import '../../../shared/widgets/adaptive_image.dart';
 import 'photo_gallery_screen.dart';
 
 class PhotoViewerScreen extends StatefulWidget {
@@ -43,11 +46,24 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
 
   Future<void> _loadExifData() async {
     setState(() => _loadingExif = true);
-    
+
     try {
-      final file = File(widget.photos[_currentIndex].path);
-      if (file.existsSync()) {
-        final bytes = await file.readAsBytes();
+      final path = widget.photos[_currentIndex].path;
+      Uint8List? bytes;
+
+      if (isNetworkPath(path)) {
+        final response = await http.get(Uri.parse(path));
+        if (response.statusCode == 200) {
+          bytes = response.bodyBytes;
+        }
+      } else {
+        final file = File(path);
+        if (file.existsSync()) {
+          bytes = await file.readAsBytes();
+        }
+      }
+
+      if (bytes != null) {
         final data = await readExifFromBytes(bytes);
         if (!mounted) return;
         setState(() {
@@ -97,7 +113,7 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
             builder: (context, index) {
               final photo = widget.photos[index];
               return PhotoViewGalleryPageOptions(
-                imageProvider: FileImage(File(photo.path)),
+                imageProvider: adaptiveImageProvider(photo.path),
                 minScale: PhotoViewComputedScale.contained,
                 maxScale: PhotoViewComputedScale.covered * 2,
                 heroAttributes: PhotoViewHeroAttributes(tag: photo.path),

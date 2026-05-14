@@ -20,7 +20,7 @@ final tokenStorageProvider = Provider<TokenStorage>.internal(
 );
 
 typedef TokenStorageRef = ProviderRef<TokenStorage>;
-String _$dioHash() => r'27a0b507e79faee46187f22f7a168ddc7c6dc1da';
+String _$dioHash() => r'46ee96727a8e4fdf6378e64380d15cd8bd383b1f';
 
 /// See also [dio].
 @ProviderFor(dio)

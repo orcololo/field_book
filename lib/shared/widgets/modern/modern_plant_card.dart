@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../../models/plant_record.dart';
 import '../../../models/plant_category.dart';
@@ -7,6 +6,7 @@ import '../../../core/theme/folium_theme.dart';
 import 'package:intl/intl.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/utils/geo_utils.dart';
+import '../adaptive_image.dart';
 
 /// Modern plant card with eco-design aesthetic
 class ModernPlantCard extends StatelessWidget {
@@ -166,8 +166,8 @@ class ModernPlantCard extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             // Image
-            Image.file(
-              File(plant.photoPaths.first),
+            AdaptiveImage(
+              path: plant.photoPaths.first,
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 return _buildImagePlaceholder(context);
@@ -223,8 +223,8 @@ class ModernPlantCard extends StatelessWidget {
       child: SizedBox(
         width: 56,
         height: 56,
-        child: Image.file(
-          File(plant.photoPaths.first),
+        child: AdaptiveImage(
+          path: plant.photoPaths.first,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
             return Container(

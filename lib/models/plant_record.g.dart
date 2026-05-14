@@ -255,198 +255,203 @@ const PlantRecordSchema = CollectionSchema(
       name: r'iNaturalistSyncedAt',
       type: IsarType.dateTime,
     ),
-    r'isDraft': PropertySchema(
+    r'imageRefsJson': PropertySchema(
       id: 47,
+      name: r'imageRefsJson',
+      type: IsarType.stringList,
+    ),
+    r'isDraft': PropertySchema(
+      id: 48,
       name: r'isDraft',
       type: IsarType.bool,
     ),
     r'latestDetermination': PropertySchema(
-      id: 48,
+      id: 49,
       name: r'latestDetermination',
       type: IsarType.object,
       target: r'Determination',
     ),
     r'latitude': PropertySchema(
-      id: 49,
+      id: 50,
       name: r'latitude',
       type: IsarType.double,
     ),
     r'locality': PropertySchema(
-      id: 50,
+      id: 51,
       name: r'locality',
       type: IsarType.string,
     ),
     r'longitude': PropertySchema(
-      id: 51,
+      id: 52,
       name: r'longitude',
       type: IsarType.double,
     ),
     r'measurements': PropertySchema(
-      id: 52,
+      id: 53,
       name: r'measurements',
       type: IsarType.objectList,
       target: r'Measurement',
     ),
     r'moonPhase': PropertySchema(
-      id: 53,
+      id: 54,
       name: r'moonPhase',
       type: IsarType.string,
     ),
     r'municipality': PropertySchema(
-      id: 54,
+      id: 55,
       name: r'municipality',
       type: IsarType.string,
     ),
     r'notes': PropertySchema(
-      id: 55,
+      id: 56,
       name: r'notes',
       type: IsarType.string,
     ),
     r'numberOfIndividuals': PropertySchema(
-      id: 56,
+      id: 57,
       name: r'numberOfIndividuals',
       type: IsarType.long,
     ),
     r'phenologicalState': PropertySchema(
-      id: 57,
+      id: 58,
       name: r'phenologicalState',
       type: IsarType.string,
       enumMap: _PlantRecordphenologicalStateEnumValueMap,
     ),
     r'phenologyFournier': PropertySchema(
-      id: 58,
+      id: 59,
       name: r'phenologyFournier',
       type: IsarType.string,
     ),
     r'photoMetadata': PropertySchema(
-      id: 59,
+      id: 60,
       name: r'photoMetadata',
       type: IsarType.objectList,
       target: r'PhotoMetadata',
     ),
     r'photoPaths': PropertySchema(
-      id: 60,
+      id: 61,
       name: r'photoPaths',
       type: IsarType.stringList,
     ),
     r'raiz': PropertySchema(
-      id: 61,
+      id: 62,
       name: r'raiz',
       type: IsarType.string,
     ),
     r'registryIdentifier': PropertySchema(
-      id: 62,
+      id: 63,
       name: r'registryIdentifier',
       type: IsarType.string,
     ),
     r'scientificAuthor': PropertySchema(
-      id: 63,
+      id: 64,
       name: r'scientificAuthor',
       type: IsarType.string,
     ),
     r'scientificName': PropertySchema(
-      id: 64,
+      id: 65,
       name: r'scientificName',
       type: IsarType.string,
     ),
     r'scientificNameFts': PropertySchema(
-      id: 65,
+      id: 66,
       name: r'scientificNameFts',
       type: IsarType.string,
     ),
     r'sementeCor': PropertySchema(
-      id: 66,
+      id: 67,
       name: r'sementeCor',
       type: IsarType.string,
     ),
     r'sementeDescricao': PropertySchema(
-      id: 67,
+      id: 68,
       name: r'sementeDescricao',
       type: IsarType.string,
     ),
     r'sementeFormato': PropertySchema(
-      id: 68,
+      id: 69,
       name: r'sementeFormato',
       type: IsarType.string,
     ),
     r'sementeTamanho': PropertySchema(
-      id: 69,
+      id: 70,
       name: r'sementeTamanho',
       type: IsarType.double,
     ),
     r'sementeTamanhoUnidade': PropertySchema(
-      id: 70,
+      id: 71,
       name: r'sementeTamanhoUnidade',
       type: IsarType.string,
     ),
     r'sessionId': PropertySchema(
-      id: 71,
+      id: 72,
       name: r'sessionId',
       type: IsarType.string,
     ),
     r'species': PropertySchema(
-      id: 72,
+      id: 73,
       name: r'species',
       type: IsarType.string,
     ),
     r'state': PropertySchema(
-      id: 73,
+      id: 74,
       name: r'state',
       type: IsarType.string,
     ),
     r'substrate': PropertySchema(
-      id: 74,
+      id: 75,
       name: r'substrate',
       type: IsarType.string,
     ),
     r'syncMetadata': PropertySchema(
-      id: 75,
+      id: 76,
       name: r'syncMetadata',
       type: IsarType.object,
       target: r'SyncMetadata',
     ),
     r'taxonStatus': PropertySchema(
-      id: 76,
+      id: 77,
       name: r'taxonStatus',
       type: IsarType.string,
     ),
     r'temperature': PropertySchema(
-      id: 77,
+      id: 78,
       name: r'temperature',
       type: IsarType.double,
     ),
     r'topography': PropertySchema(
-      id: 78,
+      id: 79,
       name: r'topography',
       type: IsarType.string,
     ),
     r'updatedAt': PropertySchema(
-      id: 79,
+      id: 80,
       name: r'updatedAt',
       type: IsarType.dateTime,
     ),
     r'uuid': PropertySchema(
-      id: 80,
+      id: 81,
       name: r'uuid',
       type: IsarType.string,
     ),
     r'vegetationType': PropertySchema(
-      id: 81,
+      id: 82,
       name: r'vegetationType',
       type: IsarType.string,
     ),
     r'weatherCondition': PropertySchema(
-      id: 82,
+      id: 83,
       name: r'weatherCondition',
       type: IsarType.string,
     ),
     r'weatherNotes': PropertySchema(
-      id: 83,
+      id: 84,
       name: r'weatherNotes',
       type: IsarType.string,
     ),
     r'windSpeed': PropertySchema(
-      id: 84,
+      id: 85,
       name: r'windSpeed',
       type: IsarType.double,
     )
@@ -861,6 +866,13 @@ int _plantRecordEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  bytesCount += 3 + object.imageRefsJson.length * 3;
+  {
+    for (var i = 0; i < object.imageRefsJson.length; i++) {
+      final value = object.imageRefsJson[i];
+      bytesCount += value.length * 3;
+    }
+  }
   {
     final value = object.latestDetermination;
     if (value != null) {
@@ -1092,64 +1104,65 @@ void _plantRecordSerialize(
   writer.writeDouble(offsets[44], object.humidity);
   writer.writeString(offsets[45], object.iNaturalistId);
   writer.writeDateTime(offsets[46], object.iNaturalistSyncedAt);
-  writer.writeBool(offsets[47], object.isDraft);
+  writer.writeStringList(offsets[47], object.imageRefsJson);
+  writer.writeBool(offsets[48], object.isDraft);
   writer.writeObject<Determination>(
-    offsets[48],
+    offsets[49],
     allOffsets,
     DeterminationSchema.serialize,
     object.latestDetermination,
   );
-  writer.writeDouble(offsets[49], object.latitude);
-  writer.writeString(offsets[50], object.locality);
-  writer.writeDouble(offsets[51], object.longitude);
+  writer.writeDouble(offsets[50], object.latitude);
+  writer.writeString(offsets[51], object.locality);
+  writer.writeDouble(offsets[52], object.longitude);
   writer.writeObjectList<Measurement>(
-    offsets[52],
+    offsets[53],
     allOffsets,
     MeasurementSchema.serialize,
     object.measurements,
   );
-  writer.writeString(offsets[53], object.moonPhase);
-  writer.writeString(offsets[54], object.municipality);
-  writer.writeString(offsets[55], object.notes);
-  writer.writeLong(offsets[56], object.numberOfIndividuals);
-  writer.writeString(offsets[57], object.phenologicalState?.name);
-  writer.writeString(offsets[58], object.phenologyFournier);
+  writer.writeString(offsets[54], object.moonPhase);
+  writer.writeString(offsets[55], object.municipality);
+  writer.writeString(offsets[56], object.notes);
+  writer.writeLong(offsets[57], object.numberOfIndividuals);
+  writer.writeString(offsets[58], object.phenologicalState?.name);
+  writer.writeString(offsets[59], object.phenologyFournier);
   writer.writeObjectList<PhotoMetadata>(
-    offsets[59],
+    offsets[60],
     allOffsets,
     PhotoMetadataSchema.serialize,
     object.photoMetadata,
   );
-  writer.writeStringList(offsets[60], object.photoPaths);
-  writer.writeString(offsets[61], object.raiz);
-  writer.writeString(offsets[62], object.registryIdentifier);
-  writer.writeString(offsets[63], object.scientificAuthor);
-  writer.writeString(offsets[64], object.scientificName);
-  writer.writeString(offsets[65], object.scientificNameFts);
-  writer.writeString(offsets[66], object.sementeCor);
-  writer.writeString(offsets[67], object.sementeDescricao);
-  writer.writeString(offsets[68], object.sementeFormato);
-  writer.writeDouble(offsets[69], object.sementeTamanho);
-  writer.writeString(offsets[70], object.sementeTamanhoUnidade);
-  writer.writeString(offsets[71], object.sessionId);
-  writer.writeString(offsets[72], object.species);
-  writer.writeString(offsets[73], object.state);
-  writer.writeString(offsets[74], object.substrate);
+  writer.writeStringList(offsets[61], object.photoPaths);
+  writer.writeString(offsets[62], object.raiz);
+  writer.writeString(offsets[63], object.registryIdentifier);
+  writer.writeString(offsets[64], object.scientificAuthor);
+  writer.writeString(offsets[65], object.scientificName);
+  writer.writeString(offsets[66], object.scientificNameFts);
+  writer.writeString(offsets[67], object.sementeCor);
+  writer.writeString(offsets[68], object.sementeDescricao);
+  writer.writeString(offsets[69], object.sementeFormato);
+  writer.writeDouble(offsets[70], object.sementeTamanho);
+  writer.writeString(offsets[71], object.sementeTamanhoUnidade);
+  writer.writeString(offsets[72], object.sessionId);
+  writer.writeString(offsets[73], object.species);
+  writer.writeString(offsets[74], object.state);
+  writer.writeString(offsets[75], object.substrate);
   writer.writeObject<SyncMetadata>(
-    offsets[75],
+    offsets[76],
     allOffsets,
     SyncMetadataSchema.serialize,
     object.syncMetadata,
   );
-  writer.writeString(offsets[76], object.taxonStatus);
-  writer.writeDouble(offsets[77], object.temperature);
-  writer.writeString(offsets[78], object.topography);
-  writer.writeDateTime(offsets[79], object.updatedAt);
-  writer.writeString(offsets[80], object.uuid);
-  writer.writeString(offsets[81], object.vegetationType);
-  writer.writeString(offsets[82], object.weatherCondition);
-  writer.writeString(offsets[83], object.weatherNotes);
-  writer.writeDouble(offsets[84], object.windSpeed);
+  writer.writeString(offsets[77], object.taxonStatus);
+  writer.writeDouble(offsets[78], object.temperature);
+  writer.writeString(offsets[79], object.topography);
+  writer.writeDateTime(offsets[80], object.updatedAt);
+  writer.writeString(offsets[81], object.uuid);
+  writer.writeString(offsets[82], object.vegetationType);
+  writer.writeString(offsets[83], object.weatherCondition);
+  writer.writeString(offsets[84], object.weatherNotes);
+  writer.writeDouble(offsets[85], object.windSpeed);
 }
 
 PlantRecord _plantRecordDeserialize(
@@ -1216,61 +1229,62 @@ PlantRecord _plantRecordDeserialize(
   object.iNaturalistId = reader.readStringOrNull(offsets[45]);
   object.iNaturalistSyncedAt = reader.readDateTimeOrNull(offsets[46]);
   object.id = id;
-  object.isDraft = reader.readBool(offsets[47]);
-  object.latitude = reader.readDoubleOrNull(offsets[49]);
-  object.locality = reader.readStringOrNull(offsets[50]);
-  object.longitude = reader.readDoubleOrNull(offsets[51]);
+  object.imageRefsJson = reader.readStringList(offsets[47]) ?? [];
+  object.isDraft = reader.readBool(offsets[48]);
+  object.latitude = reader.readDoubleOrNull(offsets[50]);
+  object.locality = reader.readStringOrNull(offsets[51]);
+  object.longitude = reader.readDoubleOrNull(offsets[52]);
   object.measurements = reader.readObjectList<Measurement>(
-        offsets[52],
+        offsets[53],
         MeasurementSchema.deserialize,
         allOffsets,
         Measurement(),
       ) ??
       [];
-  object.moonPhase = reader.readStringOrNull(offsets[53]);
-  object.municipality = reader.readStringOrNull(offsets[54]);
-  object.notes = reader.readStringOrNull(offsets[55]);
-  object.numberOfIndividuals = reader.readLongOrNull(offsets[56]);
+  object.moonPhase = reader.readStringOrNull(offsets[54]);
+  object.municipality = reader.readStringOrNull(offsets[55]);
+  object.notes = reader.readStringOrNull(offsets[56]);
+  object.numberOfIndividuals = reader.readLongOrNull(offsets[57]);
   object.phenologicalState = _PlantRecordphenologicalStateValueEnumMap[
-      reader.readStringOrNull(offsets[57])];
-  object.phenologyFournier = reader.readStringOrNull(offsets[58]);
+      reader.readStringOrNull(offsets[58])];
+  object.phenologyFournier = reader.readStringOrNull(offsets[59]);
   object.photoMetadata = reader.readObjectList<PhotoMetadata>(
-        offsets[59],
+        offsets[60],
         PhotoMetadataSchema.deserialize,
         allOffsets,
         PhotoMetadata(),
       ) ??
       [];
-  object.photoPaths = reader.readStringList(offsets[60]) ?? [];
-  object.raiz = reader.readStringOrNull(offsets[61]);
-  object.registryIdentifier = reader.readStringOrNull(offsets[62]);
-  object.scientificAuthor = reader.readStringOrNull(offsets[63]);
-  object.scientificName = reader.readString(offsets[64]);
-  object.scientificNameFts = reader.readString(offsets[65]);
-  object.sementeCor = reader.readStringOrNull(offsets[66]);
-  object.sementeDescricao = reader.readStringOrNull(offsets[67]);
-  object.sementeFormato = reader.readStringOrNull(offsets[68]);
-  object.sementeTamanho = reader.readDoubleOrNull(offsets[69]);
-  object.sementeTamanhoUnidade = reader.readStringOrNull(offsets[70]);
-  object.sessionId = reader.readStringOrNull(offsets[71]);
-  object.species = reader.readStringOrNull(offsets[72]);
-  object.state = reader.readStringOrNull(offsets[73]);
-  object.substrate = reader.readStringOrNull(offsets[74]);
+  object.photoPaths = reader.readStringList(offsets[61]) ?? [];
+  object.raiz = reader.readStringOrNull(offsets[62]);
+  object.registryIdentifier = reader.readStringOrNull(offsets[63]);
+  object.scientificAuthor = reader.readStringOrNull(offsets[64]);
+  object.scientificName = reader.readString(offsets[65]);
+  object.scientificNameFts = reader.readString(offsets[66]);
+  object.sementeCor = reader.readStringOrNull(offsets[67]);
+  object.sementeDescricao = reader.readStringOrNull(offsets[68]);
+  object.sementeFormato = reader.readStringOrNull(offsets[69]);
+  object.sementeTamanho = reader.readDoubleOrNull(offsets[70]);
+  object.sementeTamanhoUnidade = reader.readStringOrNull(offsets[71]);
+  object.sessionId = reader.readStringOrNull(offsets[72]);
+  object.species = reader.readStringOrNull(offsets[73]);
+  object.state = reader.readStringOrNull(offsets[74]);
+  object.substrate = reader.readStringOrNull(offsets[75]);
   object.syncMetadata = reader.readObjectOrNull<SyncMetadata>(
-        offsets[75],
+        offsets[76],
         SyncMetadataSchema.deserialize,
         allOffsets,
       ) ??
       SyncMetadata();
-  object.taxonStatus = reader.readStringOrNull(offsets[76]);
-  object.temperature = reader.readDoubleOrNull(offsets[77]);
-  object.topography = reader.readStringOrNull(offsets[78]);
-  object.updatedAt = reader.readDateTime(offsets[79]);
-  object.uuid = reader.readString(offsets[80]);
-  object.vegetationType = reader.readStringOrNull(offsets[81]);
-  object.weatherCondition = reader.readStringOrNull(offsets[82]);
-  object.weatherNotes = reader.readStringOrNull(offsets[83]);
-  object.windSpeed = reader.readDoubleOrNull(offsets[84]);
+  object.taxonStatus = reader.readStringOrNull(offsets[77]);
+  object.temperature = reader.readDoubleOrNull(offsets[78]);
+  object.topography = reader.readStringOrNull(offsets[79]);
+  object.updatedAt = reader.readDateTime(offsets[80]);
+  object.uuid = reader.readString(offsets[81]);
+  object.vegetationType = reader.readStringOrNull(offsets[82]);
+  object.weatherCondition = reader.readStringOrNull(offsets[83]);
+  object.weatherNotes = reader.readStringOrNull(offsets[84]);
+  object.windSpeed = reader.readDoubleOrNull(offsets[85]);
   return object;
 }
 
@@ -1385,20 +1399,22 @@ P _plantRecordDeserializeProp<P>(
     case 46:
       return (reader.readDateTimeOrNull(offset)) as P;
     case 47:
-      return (reader.readBool(offset)) as P;
+      return (reader.readStringList(offset) ?? []) as P;
     case 48:
+      return (reader.readBool(offset)) as P;
+    case 49:
       return (reader.readObjectOrNull<Determination>(
         offset,
         DeterminationSchema.deserialize,
         allOffsets,
       )) as P;
-    case 49:
-      return (reader.readDoubleOrNull(offset)) as P;
     case 50:
-      return (reader.readStringOrNull(offset)) as P;
-    case 51:
       return (reader.readDoubleOrNull(offset)) as P;
+    case 51:
+      return (reader.readStringOrNull(offset)) as P;
     case 52:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 53:
       return (reader.readObjectList<Measurement>(
             offset,
             MeasurementSchema.deserialize,
@@ -1406,20 +1422,20 @@ P _plantRecordDeserializeProp<P>(
             Measurement(),
           ) ??
           []) as P;
-    case 53:
-      return (reader.readStringOrNull(offset)) as P;
     case 54:
       return (reader.readStringOrNull(offset)) as P;
     case 55:
       return (reader.readStringOrNull(offset)) as P;
     case 56:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 57:
+      return (reader.readLongOrNull(offset)) as P;
+    case 58:
       return (_PlantRecordphenologicalStateValueEnumMap[
           reader.readStringOrNull(offset)]) as P;
-    case 58:
-      return (reader.readStringOrNull(offset)) as P;
     case 59:
+      return (reader.readStringOrNull(offset)) as P;
+    case 60:
       return (reader.readObjectList<PhotoMetadata>(
             offset,
             PhotoMetadataSchema.deserialize,
@@ -1427,28 +1443,26 @@ P _plantRecordDeserializeProp<P>(
             PhotoMetadata(),
           ) ??
           []) as P;
-    case 60:
-      return (reader.readStringList(offset) ?? []) as P;
     case 61:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readStringList(offset) ?? []) as P;
     case 62:
       return (reader.readStringOrNull(offset)) as P;
     case 63:
       return (reader.readStringOrNull(offset)) as P;
     case 64:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 65:
       return (reader.readString(offset)) as P;
     case 66:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 67:
       return (reader.readStringOrNull(offset)) as P;
     case 68:
       return (reader.readStringOrNull(offset)) as P;
     case 69:
-      return (reader.readDoubleOrNull(offset)) as P;
-    case 70:
       return (reader.readStringOrNull(offset)) as P;
+    case 70:
+      return (reader.readDoubleOrNull(offset)) as P;
     case 71:
       return (reader.readStringOrNull(offset)) as P;
     case 72:
@@ -1458,29 +1472,31 @@ P _plantRecordDeserializeProp<P>(
     case 74:
       return (reader.readStringOrNull(offset)) as P;
     case 75:
+      return (reader.readStringOrNull(offset)) as P;
+    case 76:
       return (reader.readObjectOrNull<SyncMetadata>(
             offset,
             SyncMetadataSchema.deserialize,
             allOffsets,
           ) ??
           SyncMetadata()) as P;
-    case 76:
-      return (reader.readStringOrNull(offset)) as P;
     case 77:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 78:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 79:
-      return (reader.readDateTime(offset)) as P;
-    case 80:
-      return (reader.readString(offset)) as P;
-    case 81:
       return (reader.readStringOrNull(offset)) as P;
+    case 80:
+      return (reader.readDateTime(offset)) as P;
+    case 81:
+      return (reader.readString(offset)) as P;
     case 82:
       return (reader.readStringOrNull(offset)) as P;
     case 83:
       return (reader.readStringOrNull(offset)) as P;
     case 84:
+      return (reader.readStringOrNull(offset)) as P;
+    case 85:
       return (reader.readDoubleOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -9172,6 +9188,231 @@ extension PlantRecordQueryFilter
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      imageRefsJsonElementEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'imageRefsJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      imageRefsJsonElementGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'imageRefsJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      imageRefsJsonElementLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'imageRefsJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      imageRefsJsonElementBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'imageRefsJson',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      imageRefsJsonElementStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'imageRefsJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      imageRefsJsonElementEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'imageRefsJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      imageRefsJsonElementContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'imageRefsJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      imageRefsJsonElementMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'imageRefsJson',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      imageRefsJsonElementIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'imageRefsJson',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      imageRefsJsonElementIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'imageRefsJson',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      imageRefsJsonLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'imageRefsJson',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      imageRefsJsonIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'imageRefsJson',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      imageRefsJsonIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'imageRefsJson',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      imageRefsJsonLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'imageRefsJson',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      imageRefsJsonLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'imageRefsJson',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition>
+      imageRefsJsonLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'imageRefsJson',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QAfterFilterCondition> isDraftEqualTo(
       bool value) {
     return QueryBuilder.apply(this, (query) {
@@ -16271,6 +16512,12 @@ extension PlantRecordQueryWhereDistinct
     });
   }
 
+  QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByImageRefsJson() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'imageRefsJson');
+    });
+  }
+
   QueryBuilder<PlantRecord, PlantRecord, QDistinct> distinctByIsDraft() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isDraft');
@@ -16822,6 +17069,13 @@ extension PlantRecordQueryProperty
       iNaturalistSyncedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'iNaturalistSyncedAt');
+    });
+  }
+
+  QueryBuilder<PlantRecord, List<String>, QQueryOperations>
+      imageRefsJsonProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'imageRefsJson');
     });
   }
 

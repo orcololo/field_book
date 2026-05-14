@@ -94,6 +94,7 @@ class PlantRecord {
   List<Determination> determinations = [];
   List<Measurement> measurements = [];
   List<String> photoPaths = [];
+  List<String> imageRefsJson = [];
   List<PhotoMetadata> photoMetadata = [];
   List<String> audioNotePaths = [];
   List<String> audioTranscripts = [];

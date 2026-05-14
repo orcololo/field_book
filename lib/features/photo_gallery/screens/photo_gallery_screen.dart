@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:io';
 import '../../../models/plant_record.dart';
 import '../../../core/repositories/plant_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/modern/modern_app_bar.dart';
+import '../../../shared/widgets/adaptive_image.dart';
 import '../../plant_detail/screens/plant_detail_screen.dart';
 import 'photo_viewer_screen.dart';
 
@@ -231,8 +231,6 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
   }
 
   Widget _buildPhotoTile(PhotoItem photoItem, int index) {
-    final file = File(photoItem.path);
-
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -254,15 +252,10 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          file.existsSync()
-              ? Image.file(file, fit: BoxFit.cover)
-              : Container(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  child: Icon(
-                    Icons.broken_image,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
+          AdaptiveImage(
+            path: photoItem.path,
+            fit: BoxFit.cover,
+          ),
           Positioned(
             bottom: 0,
             left: 0,

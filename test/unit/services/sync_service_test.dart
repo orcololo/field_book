@@ -817,7 +817,7 @@ void main() {
       final data = svc.buildPlantConflictLocalData(plant);
 
       expect(data['uuid'], 'plant-uuid-1');
-      expect(data['_id'], 'server-abc');
+      expect(data['id'], 'server-abc');
       expect(data['syncVersion'], 5);
       expect(data['updatedAt'], isA<String>());
     });
