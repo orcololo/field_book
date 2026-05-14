@@ -392,6 +392,12 @@ class SyncService {
       }
       try {
         final result = await _mediaUpload.uploadImage(file);
+        if (!result.originalUrl.startsWith('http')) {
+          _log.w('Upload returned non-URL path (R2_PUBLIC_URL missing?), keeping local: $path');
+          updatedPhotoPaths.add(path);
+          allUploaded = false;
+          continue;
+        }
         updatedPhotoPaths.add(result.originalUrl);
         updatedImageRefs.add(jsonEncode({
           'key': result.key,
@@ -421,6 +427,12 @@ class SyncService {
       }
       try {
         final result = await _mediaUpload.uploadAudio(file);
+        if (!result.originalUrl.startsWith('http')) {
+          _log.w('Audio upload returned non-URL path, keeping local: $path');
+          updatedAudioPaths.add(path);
+          allUploaded = false;
+          continue;
+        }
         updatedAudioPaths.add(result.originalUrl);
       } catch (e) {
         _log.w('Failed to upload audio $path: $e');
@@ -988,6 +1000,13 @@ class SyncService {
     final remoteTranscripts = json['audioTranscripts'] as List?;
     if (remoteTranscripts != null) {
       plant.audioTranscripts = remoteTranscripts.cast<String>();
+    }
+
+    final remoteImages = json['images'] as List?;
+    if (remoteImages != null) {
+      plant.imageRefsJson = remoteImages
+          .map((img) => jsonEncode(img as Map<String, dynamic>))
+          .toList();
     }
 
     plant
