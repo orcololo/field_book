@@ -30,6 +30,11 @@ jobs:
 
       - run: flutter pub get
 
+      - name: Fix legacy package attribute in plugin manifests
+        run: |
+          find "$HOME/.pub-cache/hosted/pub.dev" -path "*/android/src/main/AndroidManifest.xml" \
+            -exec grep -ql 'package=' {} \; -exec sed -i 's/ package="[^"]*"//' {} \;
+
       - run: flutter build apk --split-per-abi --release
 
       - name: Rename APKs
