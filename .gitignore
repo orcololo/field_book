@@ -43,3 +43,10 @@ app.*.map.json
 # Isar native binary (macOS — generated locally, not committed)
 libisar.dylib
 *.omc*
+
+# Build artifacts
+*.apk
+
+# AI tooling
+.agents/
+skills-lock.json
