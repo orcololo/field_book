@@ -7,6 +7,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../models/collection_session.dart';
 import '../../models/gps_point.dart';
 import '../../models/plant_record.dart';
+import '../../models/sync_metadata.dart';
 import '../database/isar_service.dart';
 import 'dart:math';
 
@@ -25,6 +26,12 @@ class SessionRepository {
   // Create or update session
   Future<void> save(CollectionSession session) async {
     final isar = await _isar;
+
+    if (session.syncMetadata.syncStatus == SyncStatus.synced) {
+      session.syncMetadata
+        ..syncStatus = SyncStatus.pending
+        ..localModifiedAt = DateTime.now();
+    }
 
     await isar.writeTxn(() async {
       await isar.collectionSessions.put(session);

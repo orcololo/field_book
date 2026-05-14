@@ -3,6 +3,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'dart:io';
 import 'package:exif/exif.dart';
+import '../../../core/utils/geo_utils.dart';
 import 'photo_gallery_screen.dart';
 
 class PhotoViewerScreen extends StatefulWidget {
@@ -179,7 +180,7 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
               if (photo.plant.latitude != null && photo.plant.longitude != null) ...[
                 const SizedBox(height: 4),
                 Text(
-                  'GPS: ${photo.plant.latitude!.toStringAsFixed(6)}, ${photo.plant.longitude!.toStringAsFixed(6)}',
+                  'GPS: ${GeoUtils.formatCoordinatesDMS(photo.plant.latitude!, photo.plant.longitude!)}',
                   style: const TextStyle(color: Colors.white70, fontSize: 12),
                 ),
               ],

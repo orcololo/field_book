@@ -77,6 +77,28 @@ class GeoUtils {
         longitude >= bounds.minLon &&
         longitude <= bounds.maxLon;
   }
+
+  /// Format a decimal coordinate as DMS (Degrees, Minutes, Seconds).
+  /// Example: -22.908333 → 22°54'30.0"S
+  static String formatDMS(double decimal, {required bool isLatitude}) {
+    final hemisphere = isLatitude
+        ? (decimal >= 0 ? 'N' : 'S')
+        : (decimal >= 0 ? 'E' : 'W');
+    final abs = decimal.abs();
+    final degrees = abs.floor();
+    final minutesDecimal = (abs - degrees) * 60;
+    final minutes = minutesDecimal.floor();
+    final seconds = (minutesDecimal - minutes) * 60;
+
+    return '$degrees°$minutes\'${seconds.toStringAsFixed(1)}"$hemisphere';
+  }
+
+  /// Format a lat/lng pair as DMS string.
+  /// Example: (-22.908333, -43.196389) → "22°54'30.0"S, 43°11'47.0"W"
+  static String formatCoordinatesDMS(double latitude, double longitude) {
+    return '${formatDMS(latitude, isLatitude: true)}, '
+        '${formatDMS(longitude, isLatitude: false)}';
+  }
 }
 
 /// Represents a geographic bounding box

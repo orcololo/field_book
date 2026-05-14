@@ -46,3 +46,4 @@ app.*.map.json
 
 # Isar native binary (macOS — generated locally, not committed)
 libisar.dylib
+*.omc*

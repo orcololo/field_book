@@ -13,6 +13,7 @@ import '../../../core/services/geocoding_service.dart';
 import '../../../core/services/location_service.dart';
 import '../../../core/services/weather_service.dart';
 import '../../../core/services/photo_service.dart';
+import '../../../core/utils/geo_utils.dart';
 import '../../../core/services/settings_service.dart';
 import '../../../core/theme/folium_theme.dart';
 import '../../../l10n/app_localizations.dart';
@@ -517,7 +518,7 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
       return ActionChip(
         avatar: Icon(Icons.gps_fixed, size: 16, color: colorScheme.secondary),
         label: Text(
-          '${_latitude!.toStringAsFixed(6)}, ${_longitude!.toStringAsFixed(6)}',
+          GeoUtils.formatCoordinatesDMS(_latitude!, _longitude!),
           style: const TextStyle(fontSize: 11),
         ),
         tooltip: l10n.gpsAcquired,

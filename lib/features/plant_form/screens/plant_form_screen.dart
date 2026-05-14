@@ -27,6 +27,7 @@ import '../../../core/services/ocr_service.dart';
 import '../../../core/services/photo_service.dart';
 import '../../../core/utils/biome_detector.dart';
 import '../../../core/utils/botanical_validator.dart';
+import '../../../core/utils/geo_utils.dart';
 import '../../../shared/widgets/map_widget.dart';
 import '../../../shared/widgets/ocr_review_dialog.dart';
 import '../../../shared/widgets/fenologia_fournier_widget.dart';
@@ -1517,12 +1518,12 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                       ListTile(
                         leading: const Icon(Icons.location_on),
                         title: Text(l10n.latitude),
-                        subtitle: Text(_latitude!.toStringAsFixed(6)),
+                        subtitle: Text(GeoUtils.formatDMS(_latitude!, isLatitude: true)),
                       ),
                       ListTile(
                         leading: const Icon(Icons.location_on),
                         title: Text(l10n.longitude),
-                        subtitle: Text(_longitude!.toStringAsFixed(6)),
+                        subtitle: Text(GeoUtils.formatDMS(_longitude!, isLatitude: false)),
                       ),
                     ],
                   )

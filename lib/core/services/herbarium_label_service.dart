@@ -6,6 +6,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:qr_flutter/qr_flutter.dart';
 
+import '../utils/geo_utils.dart';
 import '../../models/plant_record.dart';
 
 class HerbariumLabelStrings {
@@ -277,11 +278,7 @@ class HerbariumLabelService {
     final latitude = record.latitude!;
     final longitude = record.longitude!;
 
-    final latHemisphere = latitude >= 0 ? 'N' : 'S';
-    final lonHemisphere = longitude >= 0 ? 'E' : 'W';
-
-    return '${latitude.abs().toStringAsFixed(6)}°$latHemisphere, '
-        '${longitude.abs().toStringAsFixed(6)}°$lonHemisphere';
+    return GeoUtils.formatCoordinatesDMS(latitude, longitude);
   }
 
   String _formatAltitude(double? altitude) {

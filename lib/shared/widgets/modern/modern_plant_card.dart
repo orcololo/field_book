@@ -6,6 +6,7 @@ import '../../../models/sync_metadata.dart';
 import '../../../core/theme/folium_theme.dart';
 import 'package:intl/intl.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../core/utils/geo_utils.dart';
 
 /// Modern plant card with eco-design aesthetic
 class ModernPlantCard extends StatelessWidget {
@@ -193,6 +194,14 @@ class ModernPlantCard extends StatelessWidget {
               left: FoliumTheme.space12,
               child: _buildDateBadge(context),
             ),
+
+            // Photo count badge
+            if (plant.photoPaths.length > 1)
+              Positioned(
+                bottom: FoliumTheme.space12,
+                right: FoliumTheme.space12,
+                child: _buildPhotoCountBadge(context),
+              ),
           ],
         ),
       ),
@@ -257,6 +266,18 @@ class ModernPlantCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
         ),
+        // Photo count indicator (when image section not shown)
+        if (plant.photoPaths.isNotEmpty) ...[
+          const SizedBox(width: FoliumTheme.space8),
+          Icon(Icons.camera_alt, size: 14, color: colorScheme.onSurfaceVariant),
+          const SizedBox(width: 2),
+          Text(
+            '${plant.photoPaths.length}',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
         const Spacer(),
         // Location icon
         if (plant.latitude != null && plant.longitude != null) ...[
@@ -268,7 +289,7 @@ class ModernPlantCard extends StatelessWidget {
           const SizedBox(width: FoliumTheme.space4),
           Flexible(
             child: Text(
-              '${plant.latitude!.toStringAsFixed(4)}, ${plant.longitude!.toStringAsFixed(4)}',
+              GeoUtils.formatCoordinatesDMS(plant.latitude!, plant.longitude!),
               style: Theme.of(
                 context,
               ).textTheme.bodySmall?.copyWith(color: colorScheme.tertiary),
@@ -354,6 +375,33 @@ class ModernPlantCard extends StatelessWidget {
             style: Theme.of(
               context,
             ).textTheme.labelSmall?.copyWith(color: Colors.white),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPhotoCountBadge(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: FoliumTheme.space8,
+        vertical: FoliumTheme.space4,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.6),
+        borderRadius: BorderRadius.circular(FoliumTheme.radiusFull),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.camera_alt, size: 12, color: Colors.white),
+          const SizedBox(width: FoliumTheme.space4),
+          Text(
+            '${plant.photoPaths.length}',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),

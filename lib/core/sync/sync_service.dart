@@ -212,12 +212,24 @@ class SyncService {
     );
 
     // Upload media for each plant before push
+    final plantsReadyToPush = <PlantRecord>[];
     for (final plant in pendingPlants) {
-      await _uploadPlantMedia(plant);
+      final allUploaded = await _uploadPlantMedia(plant);
+      if (allUploaded) {
+        plantsReadyToPush.add(plant);
+      } else {
+        _log.w(
+          'Plant ${plant.uuid} has unuploaded media, skipping push',
+        );
+      }
+    }
+
+    if (plantsReadyToPush.isEmpty && pendingSessions.isEmpty) {
+      return const SyncResult();
     }
 
     // Build push payload
-    final registries = pendingPlants.map(_plantToSyncJson).toList();
+    final registries = plantsReadyToPush.map(_plantToSyncJson).toList();
     final sessions = pendingSessions.map(_sessionToSyncJson).toList();
 
     try {
@@ -242,10 +254,10 @@ class SyncService {
         final status = result['status'] as String;
         if (status == 'created' || status == 'updated') {
           pushed++;
-          await _markPlantSynced(pendingPlants[i], result);
+          await _markPlantSynced(plantsReadyToPush[i], result);
         } else if (status == 'conflict') {
           conflicts++;
-          await _markPlantConflict(pendingPlants[i], result);
+          await _markPlantConflict(plantsReadyToPush[i], result);
         } else {
           errors++;
           errorMessages.add(result['error']?.toString() ?? 'Unknown error');
@@ -351,7 +363,12 @@ class SyncService {
 
   // ── Media Upload ──────────────────────────────────────
 
-  Future<void> _uploadPlantMedia(PlantRecord plant) async {
+  /// Uploads local media files for a plant record. Returns true if all media
+  /// was uploaded successfully (or was already remote). Returns false if any
+  /// local file failed to upload.
+  Future<bool> _uploadPlantMedia(PlantRecord plant) async {
+    bool allUploaded = true;
+
     final updatedPhotoPaths = <String>[];
     for (final path in plant.photoPaths) {
       if (path.startsWith('http')) {
@@ -360,7 +377,7 @@ class SyncService {
       }
       final file = File(path);
       if (!file.existsSync()) {
-        updatedPhotoPaths.add(path);
+        _log.w('Photo file not found, skipping: $path');
         continue;
       }
       try {
@@ -368,7 +385,8 @@ class SyncService {
         updatedPhotoPaths.add(result.originalUrl);
       } catch (e) {
         _log.w('Failed to upload image $path: $e');
-        updatedPhotoPaths.add(path); // Keep local path
+        updatedPhotoPaths.add(path);
+        allUploaded = false;
       }
     }
     plant.photoPaths = updatedPhotoPaths;
@@ -381,7 +399,7 @@ class SyncService {
       }
       final file = File(path);
       if (!file.existsSync()) {
-        updatedAudioPaths.add(path);
+        _log.w('Audio file not found, skipping: $path');
         continue;
       }
       try {
@@ -390,9 +408,18 @@ class SyncService {
       } catch (e) {
         _log.w('Failed to upload audio $path: $e');
         updatedAudioPaths.add(path);
+        allUploaded = false;
       }
     }
     plant.audioNotePaths = updatedAudioPaths;
+
+    // Persist uploaded URLs immediately so they survive crashes
+    final isar = await IsarService.instance.isar;
+    await isar.writeTxn(() async {
+      await isar.plantRecords.put(plant);
+    });
+
+    return allUploaded;
   }
 
   // ── JSON Mapping ──────────────────────────────────────

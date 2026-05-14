@@ -17,6 +17,7 @@ import '../../../shared/widgets/map_widget.dart';
 import '../../../shared/widgets/audio/audio_player_widget.dart';
 import '../../../shared/widgets/rain_mode_guard.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../core/utils/geo_utils.dart';
 import '../../plant_form/screens/plant_form_screen.dart';
 import '../../settings/screens/inaturalist_auth_screen.dart';
 
@@ -441,7 +442,7 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
               if (plant.latitude != null && plant.longitude != null)
                 _buildStatusChip(
                   context,
-                  '${plant.latitude!.toStringAsFixed(4)}, ${plant.longitude!.toStringAsFixed(4)}',
+                  GeoUtils.formatCoordinatesDMS(plant.latitude!, plant.longitude!),
                   colorScheme.secondaryContainer,
                   colorScheme.secondary,
                   icon: Icons.location_on,
@@ -1081,7 +1082,7 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
             ListTile(
               leading: const Icon(Icons.location_on),
               title: Text(l10n.latitude),
-              subtitle: Text(plant.latitude!.toStringAsFixed(6)),
+              subtitle: Text(GeoUtils.formatDMS(plant.latitude!, isLatitude: true)),
               trailing: IconButton(
                 icon: const Icon(Icons.copy),
                 onPressed: () {
@@ -1097,7 +1098,7 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
             ListTile(
               leading: const Icon(Icons.location_on),
               title: Text(l10n.longitude),
-              subtitle: Text(plant.longitude!.toStringAsFixed(6)),
+              subtitle: Text(GeoUtils.formatDMS(plant.longitude!, isLatitude: false)),
               trailing: IconButton(
                 icon: const Icon(Icons.copy),
                 onPressed: () {

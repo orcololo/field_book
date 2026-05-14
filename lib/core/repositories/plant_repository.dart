@@ -6,6 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../models/determination.dart';
 import '../../models/plant_record.dart';
 import '../../models/plant_category.dart';
+import '../../models/sync_metadata.dart';
 import '../database/isar_service.dart';
 import '../utils/geo_utils.dart';
 
@@ -26,6 +27,13 @@ class PlantRepository {
       final isar = await _isar;
       plant.updatedAt = DateTime.now();
       plant.updateFtsFields();
+
+      // Mark as pending so the next sync cycle pushes this change
+      if (plant.syncMetadata.syncStatus == SyncStatus.synced) {
+        plant.syncMetadata
+          ..syncStatus = SyncStatus.pending
+          ..localModifiedAt = DateTime.now();
+      }
 
       await isar.writeTxn(() async {
         await isar.plantRecords.put(plant);
@@ -430,12 +438,27 @@ class PlantRepository {
               .where((uuid) => uuid != duplicate.uuid)
               .toList();
           previousOriginal.updatedAt = DateTime.now();
+          if (previousOriginal.syncMetadata.syncStatus == SyncStatus.synced) {
+            previousOriginal.syncMetadata
+              ..syncStatus = SyncStatus.pending
+              ..localModifiedAt = DateTime.now();
+          }
           await isar.plantRecords.put(previousOriginal);
         }
       }
 
       duplicate.updatedAt = DateTime.now();
       rootOriginal.updatedAt = DateTime.now();
+      if (duplicate.syncMetadata.syncStatus == SyncStatus.synced) {
+        duplicate.syncMetadata
+          ..syncStatus = SyncStatus.pending
+          ..localModifiedAt = DateTime.now();
+      }
+      if (rootOriginal.syncMetadata.syncStatus == SyncStatus.synced) {
+        rootOriginal.syncMetadata
+          ..syncStatus = SyncStatus.pending
+          ..localModifiedAt = DateTime.now();
+      }
 
       await isar.plantRecords.put(duplicate);
       await isar.plantRecords.put(rootOriginal);
