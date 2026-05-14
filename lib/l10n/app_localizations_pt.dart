@@ -2115,6 +2115,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get csvFormatSubtitle => 'Planilha simples (Excel, LibreOffice)';
 
   @override
+  String get pdfFormatSubtitle => 'Relatório visual com fotos e detalhes';
+
+  @override
   String get darwinCoreFormatSubtitle =>
       'Padrão internacional para biodiversidade';
 
@@ -2138,6 +2141,10 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get csvFormatDesc =>
       'Formato de planilha simples que pode ser aberto no Excel, LibreOffice ou Google Sheets. Contém apenas dados básicos.';
+
+  @override
+  String get pdfFormatDesc =>
+      'Formato de relatório visual com fotos, medições e detalhes de coleta. Ideal para impressão ou compartilhamento como documento.';
 
   @override
   String get darwinCoreDesc =>
@@ -2679,11 +2686,4 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get identificationHistoryLabel => 'Histórico de identificação';
-
-  @override
-  String get pdfFormatSubtitle => 'Relatório formatado para impressão';
-
-  @override
-  String get pdfFormatDesc =>
-      'Relatório PDF formatado com detalhes da coleta, ideal para impressão ou compartilhamento como documento.';
 }

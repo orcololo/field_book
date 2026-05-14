@@ -2100,6 +2100,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get csvFormatSubtitle => 'Simple spreadsheet (Excel, LibreOffice)';
 
   @override
+  String get pdfFormatSubtitle => 'Visual report with photos and details';
+
+  @override
   String get darwinCoreFormatSubtitle =>
       'International standard for biodiversity';
 
@@ -2123,6 +2126,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get csvFormatDesc =>
       'Simple spreadsheet format that can be opened in Excel, LibreOffice or Google Sheets. Contains only basic data.';
+
+  @override
+  String get pdfFormatDesc =>
+      'Visual report format with photos, measurements and collection details. Ideal for printing or sharing as a document.';
 
   @override
   String get darwinCoreDesc =>
@@ -2663,11 +2670,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get identificationHistoryLabel => 'Identification history';
-
-  @override
-  String get pdfFormatSubtitle => 'Formatted report for printing';
-
-  @override
-  String get pdfFormatDesc =>
-      'Formatted PDF report with collection details, ideal for printing or sharing as a document.';
 }

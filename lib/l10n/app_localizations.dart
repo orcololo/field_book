@@ -3928,23 +3928,17 @@ abstract class AppLocalizations {
   /// **'Simple spreadsheet (Excel, LibreOffice)'**
   String get csvFormatSubtitle;
 
+  /// No description provided for @pdfFormatSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Visual report with photos and details'**
+  String get pdfFormatSubtitle;
+
   /// No description provided for @darwinCoreFormatSubtitle.
   ///
   /// In en, this message translates to:
   /// **'International standard for biodiversity'**
   String get darwinCoreFormatSubtitle;
-
-  /// No description provided for @pdfFormatSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Formatted report for printing'**
-  String get pdfFormatSubtitle;
-
-  /// No description provided for @pdfFormatDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Formatted PDF report with collection details, ideal for printing or sharing as a document.'**
-  String get pdfFormatDesc;
 
   /// No description provided for @includeCollectionSessions.
   ///
@@ -3981,6 +3975,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Simple spreadsheet format that can be opened in Excel, LibreOffice or Google Sheets. Contains only basic data.'**
   String get csvFormatDesc;
+
+  /// No description provided for @pdfFormatDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Visual report format with photos, measurements and collection details. Ideal for printing or sharing as a document.'**
+  String get pdfFormatDesc;
 
   /// No description provided for @darwinCoreDesc.
   ///

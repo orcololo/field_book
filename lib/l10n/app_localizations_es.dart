@@ -2118,6 +2118,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get csvFormatSubtitle => 'Hoja de cálculo simple (Excel, LibreOffice)';
 
   @override
+  String get pdfFormatSubtitle => 'Informe visual con fotos y detalles';
+
+  @override
   String get darwinCoreFormatSubtitle =>
       'Estándar internacional para biodiversidad';
 
@@ -2141,6 +2144,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get csvFormatDesc =>
       'Formato de hoja de cálculo simple que se puede abrir en Excel, LibreOffice o Google Sheets. Solo contiene datos básicos.';
+
+  @override
+  String get pdfFormatDesc =>
+      'Formato de informe visual con fotos, mediciones y detalles de colecta. Ideal para impresión o compartir como documento.';
 
   @override
   String get darwinCoreDesc =>
@@ -2685,11 +2692,4 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get identificationHistoryLabel => 'Historial de identificación';
-
-  @override
-  String get pdfFormatSubtitle => 'Informe formateado para impresión';
-
-  @override
-  String get pdfFormatDesc =>
-      'Informe PDF formateado con detalles de la colección, ideal para imprimir o compartir como documento.';
 }

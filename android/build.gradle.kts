@@ -20,6 +20,9 @@ subprojects {
             project.plugins.hasPlugin("com.android.library")) {
             project.extensions.configure<com.android.build.gradle.BaseExtension> {
                 compileSdkVersion(36)
+                if (namespace == null || namespace!!.isEmpty()) {
+                    namespace = "${project.group}.${project.name}".replace("-", "_")
+                }
             }
         }
     }
