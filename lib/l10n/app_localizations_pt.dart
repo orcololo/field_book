@@ -1808,6 +1808,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get collectorNumberHint => 'Número sequencial do coletor (ex.: 1234)';
 
   @override
+  String get coCollectors => 'Co-coletores';
+
+  @override
+  String get coCollectorsHint => 'Separe nomes por vírgulas ou novas linhas';
+
+  @override
   String get numberOfIndividuals => 'Número de Indivíduos';
 
   @override

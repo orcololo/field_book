@@ -36,7 +36,7 @@ final syncServiceProvider = Provider<SyncService>.internal(
 );
 
 typedef SyncServiceRef = ProviderRef<SyncService>;
-String _$syncNotifierHash() => r'5fb98efda98fdae7f2af60b6cfed68f19fb40874';
+String _$syncNotifierHash() => r'4fee39ebb6551f3bbf07a24e3973f3fc9eba58ae';
 
 /// Notifier that drives sync and exposes status to the UI.
 ///

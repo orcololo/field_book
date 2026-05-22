@@ -266,9 +266,7 @@ class SyncService {
       if (allUploaded) {
         plantsReadyToPush.add(plant);
       } else {
-        _log.w(
-          'Plant ${plant.uuid} has unuploaded media, skipping push',
-        );
+        _log.w('Plant ${plant.uuid} has unuploaded media, skipping push');
       }
     }
 
@@ -281,14 +279,16 @@ class SyncService {
     final sessions = pendingSessions.map(_sessionToSyncJson).toList();
 
     try {
-      final data = await withRetry(() => _api.post<Map<String, dynamic>>(
-        ApiEndpoints.syncPush,
-        data: {
-          'registries': registries,
-          'sessions': sessions,
-          'deviceId': deviceId ?? '',
-        },
-      ));
+      final data = await withRetry(
+        () => _api.post<Map<String, dynamic>>(
+          ApiEndpoints.syncPush,
+          data: {
+            'registries': registries,
+            'sessions': sessions,
+            'deviceId': deviceId ?? '',
+          },
+        ),
+      );
 
       int pushed = 0;
       int conflicts = 0;
@@ -297,7 +297,11 @@ class SyncService {
 
       // Process registry results
       final regResults = data['registries'] as List? ?? [];
-      for (var i = 0; i < regResults.length && i < plantsReadyToPush.length; i++) {
+      for (
+        var i = 0;
+        i < regResults.length && i < plantsReadyToPush.length;
+        i++
+      ) {
         final result = regResults[i] as Map<String, dynamic>;
         final status = result['status'] as String;
         if (status == 'created' || status == 'updated') {
@@ -314,7 +318,11 @@ class SyncService {
 
       // Process session results
       final sesResults = data['sessions'] as List? ?? [];
-      for (var i = 0; i < sesResults.length && i < pendingSessions.length; i++) {
+      for (
+        var i = 0;
+        i < sesResults.length && i < pendingSessions.length;
+        i++
+      ) {
         final result = sesResults[i] as Map<String, dynamic>;
         final status = result['status'] as String;
         if (status == 'created' || status == 'updated') {
@@ -369,10 +377,12 @@ class SyncService {
           params['since'] = since.toIso8601String();
         }
 
-        final data = await withRetry(() => _api.get<Map<String, dynamic>>(
-          ApiEndpoints.syncPull,
-          queryParameters: params,
-        ));
+        final data = await withRetry(
+          () => _api.get<Map<String, dynamic>>(
+            ApiEndpoints.syncPull,
+            queryParameters: params,
+          ),
+        );
 
         final regList = data['registries'] as List? ?? [];
         final sesList = data['sessions'] as List? ?? [];
@@ -438,19 +448,23 @@ class SyncService {
         onUploadStatusChange?.call(path, 'uploading');
         final result = await _mediaUpload.uploadImage(file);
         if (!result.originalUrl.startsWith('http')) {
-          _log.w('Upload returned non-URL path (R2_PUBLIC_URL missing?), keeping local: $path');
+          _log.w(
+            'Upload returned non-URL path (R2_PUBLIC_URL missing?), keeping local: $path',
+          );
           updatedPhotoPaths.add(path);
           onUploadStatusChange?.call(path, 'failed');
           allUploaded = false;
           continue;
         }
         updatedPhotoPaths.add(result.originalUrl);
-        updatedImageRefs.add(jsonEncode({
-          'key': result.key,
-          'url': result.originalUrl,
-          'thumbnailKey': result.thumbnailKey ?? result.key,
-          'thumbnailUrl': result.thumbnailUrl ?? result.originalUrl,
-        }));
+        updatedImageRefs.add(
+          jsonEncode({
+            'key': result.key,
+            'url': result.originalUrl,
+            'thumbnailKey': result.thumbnailKey ?? result.key,
+            'thumbnailUrl': result.thumbnailUrl ?? result.originalUrl,
+          }),
+        );
         onUploadStatusChange?.call(path, 'completed');
       } catch (e) {
         _log.w('Failed to upload image $path: $e');
@@ -557,6 +571,7 @@ class SyncService {
       'sessionId': plant.sessionId,
       'deviceId': plant.deviceId,
       'contributorName': plant.contributorName,
+      'coCollectors': plant.coCollectors,
       'duplicateOf': plant.duplicateOf,
       'duplicateUuids': plant.duplicateUuids,
       'iNaturalistId': plant.iNaturalistId,
@@ -797,10 +812,17 @@ class SyncService {
     if (plant.latitude != null) score++;
     if (plant.longitude != null) score++;
     if (plant.altitude != null) score++;
-    if (plant.collectorNumber != null && plant.collectorNumber!.isNotEmpty) score++;
+    if (plant.collectorNumber != null && plant.collectorNumber!.isNotEmpty) {
+      score++;
+    }
+    score += plant.coCollectors.length;
     if (plant.substrate != null && plant.substrate!.isNotEmpty) score++;
-    if (plant.associatedTaxa != null && plant.associatedTaxa!.isNotEmpty) score++;
-    if (plant.vegetationType != null && plant.vegetationType!.isNotEmpty) score++;
+    if (plant.associatedTaxa != null && plant.associatedTaxa!.isNotEmpty) {
+      score++;
+    }
+    if (plant.vegetationType != null && plant.vegetationType!.isNotEmpty) {
+      score++;
+    }
     score += plant.photoPaths.length;
     score += plant.audioNotePaths.length;
     score += plant.determinations.length;
@@ -811,7 +833,9 @@ class SyncService {
   int _completenessScoreFromJson(Map<String, dynamic> json) {
     var score = 0;
     final speciesObj = _asStringDynamicMap(json['species']);
-    if (_nonEmpty(json['scientificName'] ?? speciesObj?['scientificName'])) score++;
+    if (_nonEmpty(json['scientificName'] ?? speciesObj?['scientificName'])) {
+      score++;
+    }
     if (_nonEmpty(json['commonName'] ?? speciesObj?['commonName'])) score++;
     if (_nonEmpty(json['family'] ?? speciesObj?['family'])) score++;
     if (_nonEmpty(json['genus'] ?? speciesObj?['genus'])) score++;
@@ -822,6 +846,10 @@ class SyncService {
     if (json['longitude'] != null) score++;
     if (json['altitude'] != null) score++;
     if (_nonEmpty(json['collectorNumber'])) score++;
+    final coCollectors = json['coCollectors'] as List?;
+    if (coCollectors != null) {
+      score += coCollectors.where((value) => _nonEmpty(value)).length;
+    }
     if (_nonEmpty(json['substrate'])) score++;
     if (_nonEmpty(json['associatedTaxa'])) score++;
     if (_nonEmpty(json['vegetationType'])) score++;
@@ -836,8 +864,7 @@ class SyncService {
     return score;
   }
 
-  bool _nonEmpty(dynamic value) =>
-      value is String && value.isNotEmpty;
+  bool _nonEmpty(dynamic value) => value is String && value.isNotEmpty;
 
   Future<void> _upsertPlantFromRemote(Map<String, dynamic> json) async {
     final isar = await IsarService.instance.isar;
@@ -862,7 +889,8 @@ class SyncService {
       final serverModifiedAt = _extractServerModifiedAt(json);
       final localPlant = existing;
 
-      if (serverModifiedAt != null && localModifiedAt.isAfter(serverModifiedAt)) {
+      if (serverModifiedAt != null &&
+          localModifiedAt.isAfter(serverModifiedAt)) {
         // Local is newer — keep local and mark pending so it gets pushed
         localPlant.syncMetadata.syncStatus = SyncStatus.pending;
         await isar.writeTxn(() async {
@@ -967,6 +995,11 @@ class SyncService {
     final duplicateUuids = json['duplicateUuids'] as List?;
     if (duplicateUuids != null) {
       plant.duplicateUuids = duplicateUuids.cast<String>();
+    }
+
+    final coCollectors = _stringListFromJson(json['coCollectors']);
+    if (coCollectors != null) {
+      plant.coCollectors = coCollectors;
     }
 
     final determinations = json['determinations'] as List?;
@@ -1181,6 +1214,15 @@ class SyncService {
       return value.map((key, mapValue) => MapEntry(key.toString(), mapValue));
     }
     return null;
+  }
+
+  List<String>? _stringListFromJson(dynamic value) {
+    if (value is! List) return null;
+    return value
+        .whereType<String>()
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toList();
   }
 
   double? _parseMeasurementValue(String? value) {

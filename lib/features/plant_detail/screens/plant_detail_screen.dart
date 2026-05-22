@@ -17,6 +17,7 @@ import '../../../shared/widgets/audio/audio_player_widget.dart';
 import '../../../shared/widgets/rain_mode_guard.dart';
 import '../../../shared/widgets/adaptive_image.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../core/utils/co_collectors.dart';
 import '../../../core/utils/geo_utils.dart';
 import '../../plant_form/screens/plant_form_screen.dart';
 import '../../settings/screens/inaturalist_auth_screen.dart';
@@ -35,6 +36,7 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
   bool _isSendingToInaturalist = false;
 
   PlantRecord get plant => _currentPlant;
+  String get _coCollectorsDisplay => formatCoCollectors(plant.coCollectors);
 
   @override
   void initState() {
@@ -46,7 +48,8 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final settingsAsync = ref.watch(settingsNotifierProvider);
-    final inatConfigured = settingsAsync.valueOrNull?.inatAccessToken?.trim().isNotEmpty ?? false;
+    final inatConfigured =
+        settingsAsync.valueOrNull?.inatAccessToken?.trim().isNotEmpty ?? false;
 
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -77,10 +80,10 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.3),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(Icons.edit, color: Colors.white),
+                color: Colors.black.withValues(alpha: 0.3),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.edit, color: Colors.white),
             ),
             onPressed: () async {
               final result = await Navigator.of(context).push(
@@ -163,6 +166,7 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
                   _buildLocationCard(context, l10n),
                 const SizedBox(height: FoliumTheme.space16),
                 if (plant.collectorNumber != null ||
+                    _coCollectorsDisplay.isNotEmpty ||
                     plant.numberOfIndividuals != null ||
                     plant.temperature != null ||
                     plant.humidity != null ||
@@ -286,7 +290,9 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
           child: Icon(
             Icons.eco,
             size: 100,
-            color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.5),
+            color: Theme.of(
+              context,
+            ).colorScheme.onPrimary.withValues(alpha: 0.5),
           ),
         ),
       );
@@ -442,7 +448,10 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
               if (plant.latitude != null && plant.longitude != null)
                 _buildStatusChip(
                   context,
-                  GeoUtils.formatCoordinatesDMS(plant.latitude!, plant.longitude!),
+                  GeoUtils.formatCoordinatesDMS(
+                    plant.latitude!,
+                    plant.longitude!,
+                  ),
                   colorScheme.secondaryContainer,
                   colorScheme.secondary,
                   icon: Icons.location_on,
@@ -1082,7 +1091,9 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
             ListTile(
               leading: const Icon(Icons.location_on),
               title: Text(l10n.latitude),
-              subtitle: Text(GeoUtils.formatDMS(plant.latitude!, isLatitude: true)),
+              subtitle: Text(
+                GeoUtils.formatDMS(plant.latitude!, isLatitude: true),
+              ),
               trailing: IconButton(
                 icon: const Icon(Icons.copy),
                 onPressed: () {
@@ -1098,7 +1109,9 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
             ListTile(
               leading: const Icon(Icons.location_on),
               title: Text(l10n.longitude),
-              subtitle: Text(GeoUtils.formatDMS(plant.longitude!, isLatitude: false)),
+              subtitle: Text(
+                GeoUtils.formatDMS(plant.longitude!, isLatitude: false),
+              ),
               trailing: IconButton(
                 icon: const Icon(Icons.copy),
                 onPressed: () {
@@ -1111,11 +1124,13 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
                 },
               ),
             ),
-            if (plant.locality != null) _buildInfoRow(l10n.locality, plant.locality!),
+            if (plant.locality != null)
+              _buildInfoRow(l10n.locality, plant.locality!),
             if (plant.municipality != null)
               _buildInfoRow(l10n.municipality, plant.municipality!),
             if (plant.state != null) _buildInfoRow(l10n.state, plant.state!),
-            if (plant.country != null) _buildInfoRow(l10n.country, plant.country!),
+            if (plant.country != null)
+              _buildInfoRow(l10n.country, plant.country!),
             const SizedBox(height: 12),
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
@@ -1451,6 +1466,8 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
             const Divider(),
             if (plant.collectorNumber != null)
               _buildInfoRow(l10n.collectorNumber, plant.collectorNumber!),
+            if (_coCollectorsDisplay.isNotEmpty)
+              _buildInfoRow(l10n.coCollectors, _coCollectorsDisplay),
             if (plant.numberOfIndividuals != null)
               _buildInfoRow(
                 l10n.numberOfIndividuals,
@@ -1462,7 +1479,10 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
                 plant.temperature!.toStringAsFixed(1),
               ),
             if (plant.humidity != null)
-              _buildInfoRow(l10n.humidityLabel, plant.humidity!.toStringAsFixed(0)),
+              _buildInfoRow(
+                l10n.humidityLabel,
+                plant.humidity!.toStringAsFixed(0),
+              ),
             if (plant.weatherCondition != null)
               _buildInfoRow(
                 l10n.weatherCondition,
@@ -1471,7 +1491,10 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
             if (plant.weatherNotes != null)
               _buildInfoRow(l10n.weatherNotes, plant.weatherNotes!),
             if (plant.moonPhase != null)
-              _buildInfoRow(l10n.moonPhase, _getMoonPhaseLabel(l10n, plant.moonPhase!)),
+              _buildInfoRow(
+                l10n.moonPhase,
+                _getMoonPhaseLabel(l10n, plant.moonPhase!),
+              ),
             if (plant.determinationQualifier != null)
               _buildInfoRow(
                 l10n.determinationQualifier,
@@ -1608,9 +1631,7 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.plantDeletedName(plant.scientificName)),
-          ),
+          SnackBar(content: Text(l10n.plantDeletedName(plant.scientificName))),
         );
         Navigator.of(context).pop(true);
       }
@@ -1670,10 +1691,7 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
     }
   }
 
-  Future<void> _pushToInaturalist(
-    WidgetRef ref,
-    AppLocalizations l10n,
-  ) async {
+  Future<void> _pushToInaturalist(WidgetRef ref, AppLocalizations l10n) async {
     final messenger = ScaffoldMessenger.of(context);
     final errorColor = Theme.of(context).colorScheme.error;
     final navigator = Navigator.of(context);
@@ -1696,7 +1714,9 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
 
     try {
       await service.createObservation(plant);
-      final updated = await ref.read(plantRepositoryProvider).getByUuid(plant.uuid);
+      final updated = await ref
+          .read(plantRepositoryProvider)
+          .getByUuid(plant.uuid);
       if (!mounted) return;
       if (updated != null) {
         setState(() => _currentPlant = updated);
@@ -1711,10 +1731,7 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
           ? l10n.noInternetConnection
           : l10n.inaturalistPushError(e.toString());
       messenger.showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: errorColor,
-        ),
+        SnackBar(content: Text(message), backgroundColor: errorColor),
       );
     } finally {
       if (mounted) {
@@ -2075,7 +2092,10 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.link, color: Theme.of(context).colorScheme.primary),
+                    Icon(
+                      Icons.link,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       l10n.relatedPlants,

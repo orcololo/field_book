@@ -12,6 +12,8 @@ import '../../models/plant_record.dart';
 import '../../models/measurement.dart';
 import '../../models/photo_metadata.dart';
 import '../../models/plant_category.dart';
+import '../../models/phenological_state.dart';
+import '../../models/collection_method.dart';
 import '../../models/collection_session.dart';
 import '../../models/gps_point.dart';
 import '../repositories/plant_repository.dart';
@@ -40,9 +42,12 @@ class ExportImportService {
     final List<Map<String, dynamic>> plantsJson = plants.map((plant) {
       return {
         'uuid': plant.uuid,
+        'registryIdentifier': plant.registryIdentifier,
         'scientificName': plant.scientificName,
         'commonName': plant.commonName,
         'family': plant.family,
+        'scientificAuthor': plant.scientificAuthor,
+        'taxonStatus': plant.taxonStatus,
         'genus': plant.genus,
         'species': plant.species,
         'habitat': plant.habitat,
@@ -95,6 +100,17 @@ class ExportImportService {
         'notes': plant.notes,
         'iNaturalistId': plant.iNaturalistId,
         'iNaturalistSyncedAt': plant.iNaturalistSyncedAt?.toIso8601String(),
+        'phenologicalState': plant.phenologicalState?.name,
+        'phenologyFournier': plant.phenologyFournier,
+        'collectionMethod': plant.collectionMethod?.name,
+        'collectorNumber': plant.collectorNumber,
+        'numberOfIndividuals': plant.numberOfIndividuals,
+        'substrate': plant.substrate,
+        'associatedTaxa': plant.associatedTaxa,
+        'vegetationType': plant.vegetationType,
+        'topography': plant.topography,
+        'determinationQualifier': plant.determinationQualifier,
+        'imageRefsJson': plant.imageRefsJson,
         'raiz': plant.raiz,
         'caule': plant.caule,
         'cauleTipoCasca': plant.cauleTipoCasca,
@@ -128,6 +144,7 @@ class ExportImportService {
         'sessionId': plant.sessionId,
         'deviceId': plant.deviceId,
         'contributorName': plant.contributorName,
+        'coCollectors': plant.coCollectors,
         'createdAt': plant.createdAt.toIso8601String(),
         'updatedAt': plant.updatedAt.toIso8601String(),
       };
@@ -184,7 +201,7 @@ class ExportImportService {
     buffer.writeln(
       'UUID,Nome Científico,Nome Popular,Família,Gênero,Espécie,'
       'Data Coleta,Latitude,Longitude,Localidade,Município,Estado,País,Categoria,Habitat,'
-      'Fotos,Notas Áudio,Observações,Raiz,Caule,Caule Tipo Casca,Caule Cor,Caule Tamanho,Caule Tamanho Unid,Caule Circunf,Caule Circunf Unid,Caule Seiva,Caule Descrição Seiva,Folha Descrição,Folha Bainha,Folha Pecíolo,Folha Lâmina,'
+      'Co-coletores,Fotos,Notas Áudio,Observações,Raiz,Caule,Caule Tipo Casca,Caule Cor,Caule Tamanho,Caule Tamanho Unid,Caule Circunf,Caule Circunf Unid,Caule Seiva,Caule Descrição Seiva,Folha Descrição,Folha Bainha,Folha Pecíolo,Folha Lâmina,'
       'Flor Descrição,Flor Inflorescência,Flor Cor,Flor Tamanho,Flor Tamanho Unid,'
       'Fruto Descrição,Fruto Cor,Fruto Formato,Fruto Tamanho,Fruto Tamanho Unid,'
       'Semente Descrição,Semente Cor,Semente Formato,Semente Tamanho,Semente Tamanho Unid,'
@@ -211,6 +228,7 @@ class ExportImportService {
           _escapeCsv(plant.country ?? ''),
           _getCategoryName(plant.category),
           _escapeCsv(plant.habitat ?? ''),
+          _escapeCsv(_formatCoCollectors(plant.coCollectors)),
           plant.photoPaths.length.toString(),
           plant.audioNotePaths.length.toString(),
           _escapeCsv(plant.notes ?? ''),
@@ -296,7 +314,7 @@ class ExportImportService {
           _escapeCsv(plant.vegetationType ?? ''),
           _escapeCsv(plant.associatedTaxa ?? ''),
           'HumanObservation',
-          _escapeCsv(plant.contributorName ?? ''),
+          _escapeCsv(_recordedBy(plant)),
           _escapeCsv(plant.collectorNumber ?? ''),
           plant.numberOfIndividuals?.toString() ?? '',
           plant.altitude?.toString() ?? '',
@@ -329,10 +347,7 @@ class ExportImportService {
   }
 
   // Save PDF bytes to file and share
-  Future<void> saveAndSharePdfExport(
-    List<int> bytes,
-    String filename,
-  ) async {
+  Future<void> saveAndSharePdfExport(List<int> bytes, String filename) async {
     final directory = await getTemporaryDirectory();
     final file = File('${directory.path}/$filename');
     await file.writeAsBytes(bytes);
@@ -423,7 +438,7 @@ class ExportImportService {
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
               pw.Text(
-                record.registryIdentifier ?? record.uuid.substring(0, 8),
+                record.registryIdentifier ?? _shortUuid(record.uuid),
                 style: pw.TextStyle(
                   fontWeight: pw.FontWeight.bold,
                   fontSize: 11,
@@ -438,16 +453,10 @@ class ExportImportService {
           pw.SizedBox(height: 4),
           pw.Text(
             record.scientificName,
-            style: pw.TextStyle(
-              fontStyle: pw.FontStyle.italic,
-              fontSize: 11,
-            ),
+            style: pw.TextStyle(fontStyle: pw.FontStyle.italic, fontSize: 11),
           ),
           if (record.commonName.isNotEmpty)
-            pw.Text(
-              record.commonName,
-              style: const pw.TextStyle(fontSize: 9),
-            ),
+            pw.Text(record.commonName, style: const pw.TextStyle(fontSize: 9)),
           if (record.family != null)
             pw.Text(
               'Família: ${record.family}',
@@ -464,14 +473,11 @@ class ExportImportService {
                 _pdfField('Lon', record.longitude!.toStringAsFixed(6)),
               if (record.altitude != null)
                 _pdfField('Alt', '${record.altitude!.toStringAsFixed(0)}m'),
-              if (record.locality != null)
-                _pdfField('Local', record.locality!),
+              if (record.locality != null) _pdfField('Local', record.locality!),
               if (record.municipality != null)
                 _pdfField('Município', record.municipality!),
-              if (record.state != null)
-                _pdfField('Estado', record.state!),
-              if (record.habitat != null)
-                _pdfField('Habitat', record.habitat!),
+              if (record.state != null) _pdfField('Estado', record.state!),
+              if (record.habitat != null) _pdfField('Habitat', record.habitat!),
               if (record.substrate != null)
                 _pdfField('Substrato', record.substrate!),
               if (record.phenologicalState != null)
@@ -480,6 +486,11 @@ class ExportImportService {
                 _pdfField('Método', record.collectionMethod!.name),
               if (record.collectorNumber != null)
                 _pdfField('Nº Coletor', record.collectorNumber!),
+              if (_formatCoCollectors(record.coCollectors).isNotEmpty)
+                _pdfField(
+                  'Co-coletores',
+                  _formatCoCollectors(record.coCollectors),
+                ),
             ],
           ),
           if (record.notes != null && record.notes!.isNotEmpty) ...[
@@ -501,18 +512,17 @@ class ExportImportService {
         children: [
           pw.TextSpan(
             text: '$label: ',
-            style: pw.TextStyle(
-              fontSize: 8,
-              fontWeight: pw.FontWeight.bold,
-            ),
+            style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold),
           ),
-          pw.TextSpan(
-            text: value,
-            style: const pw.TextStyle(fontSize: 8),
-          ),
+          pw.TextSpan(text: value, style: const pw.TextStyle(fontSize: 8)),
         ],
       ),
     );
+  }
+
+  String _shortUuid(String uuid) {
+    if (uuid.length <= 8) return uuid;
+    return uuid.substring(0, 8);
   }
 
   // Import plants from JSON
@@ -536,9 +546,12 @@ class ExportImportService {
             ..scientificName = plantData['scientificName'] as String
             ..commonName = plantData['commonName'] as String? ?? ''
             ..family = plantData['family'] as String?
+            ..scientificAuthor = plantData['scientificAuthor'] as String?
+            ..taxonStatus = plantData['taxonStatus'] as String?
             ..genus = plantData['genus'] as String?
             ..species = plantData['species'] as String?
             ..habitat = plantData['habitat'] as String?
+            ..registryIdentifier = plantData['registryIdentifier'] as String?
             ..dateCollected = DateTime.parse(
               plantData['dateCollected'] as String,
             )
@@ -617,6 +630,26 @@ class ExportImportService {
             ..iNaturalistSyncedAt = plantData['iNaturalistSyncedAt'] != null
                 ? DateTime.parse(plantData['iNaturalistSyncedAt'] as String)
                 : null
+            ..phenologicalState = _phenologicalStateFromJson(
+              plantData['phenologicalState'],
+            )
+            ..phenologyFournier = plantData['phenologyFournier'] as String?
+            ..collectionMethod = _collectionMethodFromJson(
+              plantData['collectionMethod'],
+            )
+            ..collectorNumber = plantData['collectorNumber'] as String?
+            ..numberOfIndividuals = (plantData['numberOfIndividuals'] as num?)
+                ?.toInt()
+            ..substrate = plantData['substrate'] as String?
+            ..associatedTaxa = plantData['associatedTaxa'] as String?
+            ..vegetationType = plantData['vegetationType'] as String?
+            ..topography = plantData['topography'] as String?
+            ..determinationQualifier =
+                plantData['determinationQualifier'] as String?
+            ..imageRefsJson = _imageRefsFromJson(
+              plantData['imageRefsJson'],
+              plantData['images'],
+            )
             ..raiz = plantData['raiz'] as String?
             ..caule = plantData['caule'] as String?
             ..cauleTipoCasca = plantData['cauleTipoCasca'] as String?
@@ -653,6 +686,7 @@ class ExportImportService {
             ..sessionId = plantData['sessionId'] as String?
             ..deviceId = plantData['deviceId'] as String
             ..contributorName = plantData['contributorName'] as String?
+            ..coCollectors = _stringListFromJson(plantData['coCollectors'])
             ..createdAt = DateTime.parse(plantData['createdAt'] as String)
             ..updatedAt = DateTime.parse(plantData['updatedAt'] as String);
 
@@ -845,6 +879,63 @@ class ExportImportService {
           return '$date - ${determination.scientificName}$family$by$basis$notes';
         })
         .join(' | ');
+  }
+
+  String _recordedBy(PlantRecord plant) {
+    return [
+      if ((plant.contributorName?.trim().isNotEmpty ?? false))
+        plant.contributorName!.trim(),
+      ...plant.coCollectors
+          .map((name) => name.trim())
+          .where((name) => name.isNotEmpty),
+    ].join(' | ');
+  }
+
+  String _formatCoCollectors(List<String> coCollectors) {
+    return coCollectors
+        .map((name) => name.trim())
+        .where((name) => name.isNotEmpty)
+        .join('; ');
+  }
+
+  List<String> _stringListFromJson(dynamic value) {
+    if (value is! List) return [];
+    return value
+        .whereType<String>()
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toList();
+  }
+
+  List<String> _imageRefsFromJson(dynamic imageRefsJson, dynamic images) {
+    if (imageRefsJson is List) {
+      return imageRefsJson.whereType<String>().toList();
+    }
+
+    if (images is List) {
+      return images
+          .whereType<Map>()
+          .map((image) => jsonEncode(Map<String, dynamic>.from(image)))
+          .toList();
+    }
+
+    return [];
+  }
+
+  PhenologicalState? _phenologicalStateFromJson(dynamic value) {
+    if (value is! String || value.isEmpty) return null;
+    return PhenologicalState.values.firstWhere(
+      (state) => state.name == value,
+      orElse: () => PhenologicalState.unknown,
+    );
+  }
+
+  CollectionMethod? _collectionMethodFromJson(dynamic value) {
+    if (value is! String || value.isEmpty) return null;
+    for (final method in CollectionMethod.values) {
+      if (method.name == value) return method;
+    }
+    return null;
   }
 
   String _getCategoryName(PlantCategory category) {

@@ -3388,6 +3388,18 @@ abstract class AppLocalizations {
   /// **'Collector\'s sequential number (e.g. 1234)'**
   String get collectorNumberHint;
 
+  /// No description provided for @coCollectors.
+  ///
+  /// In en, this message translates to:
+  /// **'Co-collectors'**
+  String get coCollectors;
+
+  /// No description provided for @coCollectorsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Separate names with commas or new lines'**
+  String get coCollectorsHint;
+
   /// No description provided for @numberOfIndividuals.
   ///
   /// In en, this message translates to:

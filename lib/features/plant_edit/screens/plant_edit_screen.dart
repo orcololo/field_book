@@ -12,6 +12,7 @@ import '../../../models/phenological_state.dart';
 import '../../../core/repositories/plant_repository.dart';
 import '../../../core/services/taxon_service.dart';
 import '../../../core/utils/botanical_validator.dart';
+import '../../../core/utils/co_collectors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/modern/modern_app_bar.dart';
 
@@ -82,6 +83,7 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
 
   // Botanical field notebook fields
   late TextEditingController _collectorNumberController;
+  late TextEditingController _coCollectorsController;
   late TextEditingController _numberOfIndividualsController;
   late TextEditingController _substrateController;
   late TextEditingController _associatedTaxaController;
@@ -233,6 +235,9 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
     _collectorNumberController = TextEditingController(
       text: widget.plant.collectorNumber ?? '',
     );
+    _coCollectorsController = TextEditingController(
+      text: formatCoCollectors(widget.plant.coCollectors),
+    );
     _numberOfIndividualsController = TextEditingController(
       text: widget.plant.numberOfIndividuals?.toString() ?? '',
     );
@@ -299,6 +304,7 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
     _humidityController.dispose();
     _windSpeedController.dispose();
     _collectorNumberController.dispose();
+    _coCollectorsController.dispose();
     _numberOfIndividualsController.dispose();
     _substrateController.dispose();
     _associatedTaxaController.dispose();
@@ -536,30 +542,33 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
       widget.plant.weatherCondition = _weatherCondition;
       widget.plant.collectorNumber =
           _collectorNumberController.text.trim().isNotEmpty
-              ? _collectorNumberController.text.trim()
-              : null;
+          ? _collectorNumberController.text.trim()
+          : null;
+      widget.plant.coCollectors = parseCoCollectorsInput(
+        _coCollectorsController.text,
+      );
       widget.plant.numberOfIndividuals =
           _numberOfIndividualsController.text.trim().isNotEmpty
-              ? int.tryParse(_numberOfIndividualsController.text.trim())
-              : null;
+          ? int.tryParse(_numberOfIndividualsController.text.trim())
+          : null;
       widget.plant.substrate = _substrateController.text.trim().isNotEmpty
           ? _substrateController.text.trim()
           : null;
       widget.plant.associatedTaxa =
           _associatedTaxaController.text.trim().isNotEmpty
-              ? _associatedTaxaController.text.trim()
-              : null;
+          ? _associatedTaxaController.text.trim()
+          : null;
       widget.plant.vegetationType =
           _vegetationTypeController.text.trim().isNotEmpty
-              ? _vegetationTypeController.text.trim()
-              : null;
+          ? _vegetationTypeController.text.trim()
+          : null;
       widget.plant.topography = _topographyController.text.trim().isNotEmpty
           ? _topographyController.text.trim()
           : null;
       widget.plant.determinationQualifier =
           _determinationQualifierController.text.trim().isNotEmpty
-              ? _determinationQualifierController.text.trim()
-              : null;
+          ? _determinationQualifierController.text.trim()
+          : null;
       widget.plant.phenologicalState = _phenologicalState;
       widget.plant.collectionMethod = _collectionMethod;
       widget.plant.updatedAt = DateTime.now();
@@ -645,10 +654,7 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
           ),
           if (hasSuggestion)
             IconButton(
-              icon: Icon(
-                Icons.lightbulb,
-                color: colorScheme.tertiary,
-              ),
+              icon: Icon(Icons.lightbulb, color: colorScheme.tertiary),
               tooltip: l10n.suggestionWithName(_suggestedFamily!),
               onPressed: () {
                 _familyController.text = _suggestedFamily!;
@@ -691,9 +697,7 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            SizedBox(
-              height: MediaQuery.of(context).padding.top + 64,
-            ),
+            SizedBox(height: MediaQuery.of(context).padding.top + 64),
             // Scientific Name
             Autocomplete<TaxonSuggestion>(
               displayStringForOption: (option) => option.name,
@@ -715,12 +719,18 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
               },
               onSelected: _applyTaxonSuggestion,
               fieldViewBuilder:
-                  (context, textEditingController, focusNode, onFieldSubmitted) {
+                  (
+                    context,
+                    textEditingController,
+                    focusNode,
+                    onFieldSubmitted,
+                  ) {
                     if (!identical(
                       textEditingController,
                       _scientificNameController,
                     )) {
-                      textEditingController.value = _scientificNameController.value;
+                      textEditingController.value =
+                          _scientificNameController.value;
                     }
 
                     return TextFormField(
@@ -915,7 +925,11 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
                 color: colorScheme.tertiaryContainer,
                 child: ListTile(
                   leading: Icon(Icons.lightbulb, color: colorScheme.tertiary),
-                  title: Text(l10n.suggestionWithName(_suggestedFamily!), maxLines: 1, overflow: TextOverflow.ellipsis),
+                  title: Text(
+                    l10n.suggestionWithName(_suggestedFamily!),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   subtitle: Text(l10n.basedOnGenus),
                   trailing: TextButton(
                     onPressed: () {
@@ -1186,6 +1200,19 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
             ),
             const SizedBox(height: 12),
             TextFormField(
+              controller: _coCollectorsController,
+              decoration: InputDecoration(
+                labelText: l10n.coCollectors,
+                border: const OutlineInputBorder(),
+                hintText: l10n.coCollectorsHint,
+                prefixIcon: const Icon(Icons.group_add_outlined),
+              ),
+              textCapitalization: TextCapitalization.words,
+              minLines: 1,
+              maxLines: 3,
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
               controller: _determinationQualifierController,
               decoration: InputDecoration(
                 labelText: l10n.determinationQualifier,
@@ -1225,10 +1252,7 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
                 prefixIcon: const Icon(Icons.science),
               ),
               items: [
-                DropdownMenuItem(
-                  value: null,
-                  child: Text(l10n.notSpecified),
-                ),
+                DropdownMenuItem(value: null, child: Text(l10n.notSpecified)),
                 ...CollectionMethod.values.map((method) {
                   return DropdownMenuItem(
                     value: method,
@@ -1612,7 +1636,9 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
   }
 
   String _getPhenologicalStateName(
-      AppLocalizations l10n, PhenologicalState state) {
+    AppLocalizations l10n,
+    PhenologicalState state,
+  ) {
     switch (state) {
       case PhenologicalState.flowering:
         return l10n.phenoFlowering;
@@ -1632,7 +1658,9 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
   }
 
   String _getCollectionMethodName(
-      AppLocalizations l10n, CollectionMethod method) {
+    AppLocalizations l10n,
+    CollectionMethod method,
+  ) {
     switch (method) {
       case CollectionMethod.voucherCollected:
         return l10n.methodVoucherCollected;

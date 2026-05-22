@@ -8,8 +8,10 @@ import 'package:field_book/core/repositories/plant_repository.dart';
 import 'package:field_book/core/repositories/session_repository.dart';
 import 'package:field_book/core/services/export_import_service.dart';
 import 'package:field_book/models/collection_session.dart';
+import 'package:field_book/models/collection_method.dart';
 import 'package:field_book/models/determination.dart';
 import 'package:field_book/models/gps_point.dart';
+import 'package:field_book/models/phenological_state.dart';
 import 'package:field_book/models/plant_category.dart';
 import 'package:field_book/models/plant_record.dart';
 
@@ -44,11 +46,16 @@ Map<String, dynamic> _plantJson({
   String uuid = 'import-uuid-1',
   String scientificName = 'Cecropia pachystachya',
   String category = 'trees',
+  String? registryIdentifier,
+  List<String> coCollectors = const [],
 }) => {
   'uuid': uuid,
+  'registryIdentifier': registryIdentifier,
   'scientificName': scientificName,
   'commonName': 'embaúba',
   'family': 'Urticaceae',
+  'scientificAuthor': 'Trécul',
+  'taxonStatus': 'accepted',
   'genus': null,
   'species': null,
   'habitat': null,
@@ -78,6 +85,19 @@ Map<String, dynamic> _plantJson({
   'notes': null,
   'iNaturalistId': null,
   'iNaturalistSyncedAt': null,
+  'phenologicalState': 'flowering',
+  'phenologyFournier': 'botão:3,flor:2',
+  'collectionMethod': 'voucherCollected',
+  'collectorNumber': 'AR-042',
+  'numberOfIndividuals': 7,
+  'substrate': 'solo argiloso',
+  'associatedTaxa': 'Miconia sp.',
+  'vegetationType': 'Mata Atlântica',
+  'topography': 'encosta',
+  'determinationQualifier': 'cf.',
+  'imageRefsJson': [
+    '{"key":"images/1.jpg","url":"https://example.com/1.jpg","thumbnailKey":"thumbs/1.jpg","thumbnailUrl":"https://example.com/t1.jpg"}',
+  ],
   'raiz': null,
   'caule': null,
   'cauleTipoCasca': null,
@@ -111,6 +131,7 @@ Map<String, dynamic> _plantJson({
   'sessionId': null,
   'deviceId': 'dev-1',
   'contributorName': null,
+  'coCollectors': coCollectors,
   'createdAt': '2025-07-01T00:00:00.000',
   'updatedAt': '2025-07-01T00:00:00.000',
 };
@@ -147,9 +168,7 @@ void main() {
     });
 
     test('encodes plant uuid and scientificName', () async {
-      final plants = [
-        _plant(uuid: 'p-001', scientificName: 'Heliconia bihai'),
-      ];
+      final plants = [_plant(uuid: 'p-001', scientificName: 'Heliconia bihai')];
       final json = await svc.exportToJson(plants: plants);
       final decoded = jsonDecode(json) as Map<String, dynamic>;
       final p = (decoded['plants'] as List).first as Map<String, dynamic>;
@@ -165,6 +184,59 @@ void main() {
       final p = (decoded['plants'] as List).first as Map<String, dynamic>;
 
       expect(p['category'], 'trees');
+    });
+
+    test('encodes co-collectors', () async {
+      final plants = [
+        _plant()..coCollectors = ['Ana Ribeiro', 'Bruno Costa'],
+      ];
+      final json = await svc.exportToJson(plants: plants);
+      final decoded = jsonDecode(json) as Map<String, dynamic>;
+      final p = (decoded['plants'] as List).first as Map<String, dynamic>;
+
+      expect(p['coCollectors'], ['Ana Ribeiro', 'Bruno Costa']);
+    });
+
+    test('encodes cross-stack registry fields', () async {
+      final plants = [
+        _plant()
+          ..registryIdentifier = 'AR-2026-0001'
+          ..scientificAuthor = 'L.'
+          ..taxonStatus = 'accepted'
+          ..phenologicalState = PhenologicalState.flowering
+          ..phenologyFournier = 'botão:3,flor:2'
+          ..collectionMethod = CollectionMethod.voucherCollected
+          ..collectorNumber = 'AR-042'
+          ..numberOfIndividuals = 7
+          ..substrate = 'solo argiloso'
+          ..associatedTaxa = 'Miconia sp.'
+          ..vegetationType = 'Mata Atlântica'
+          ..topography = 'encosta'
+          ..determinationQualifier = 'cf.'
+          ..imageRefsJson = [
+            '{"key":"images/1.jpg","url":"https://example.com/1.jpg"}',
+          ],
+      ];
+      final json = await svc.exportToJson(plants: plants);
+      final decoded = jsonDecode(json) as Map<String, dynamic>;
+      final p = (decoded['plants'] as List).first as Map<String, dynamic>;
+
+      expect(p['registryIdentifier'], 'AR-2026-0001');
+      expect(p['scientificAuthor'], 'L.');
+      expect(p['taxonStatus'], 'accepted');
+      expect(p['phenologicalState'], 'flowering');
+      expect(p['phenologyFournier'], 'botão:3,flor:2');
+      expect(p['collectionMethod'], 'voucherCollected');
+      expect(p['collectorNumber'], 'AR-042');
+      expect(p['numberOfIndividuals'], 7);
+      expect(p['substrate'], 'solo argiloso');
+      expect(p['associatedTaxa'], 'Miconia sp.');
+      expect(p['vegetationType'], 'Mata Atlântica');
+      expect(p['topography'], 'encosta');
+      expect(p['determinationQualifier'], 'cf.');
+      expect(p['imageRefsJson'], [
+        '{"key":"images/1.jpg","url":"https://example.com/1.jpg"}',
+      ]);
     });
 
     test('encodes multiple plants', () async {
@@ -207,14 +279,16 @@ void main() {
     });
 
     test('plant row starts with uuid', () async {
-      final csv = await svc.exportToCsv(plants: [_plant(uuid: 'test-csv-uuid')]);
+      final csv = await svc.exportToCsv(
+        plants: [_plant(uuid: 'test-csv-uuid')],
+      );
       expect(csv, contains('test-csv-uuid'));
     });
 
     test('plant row contains scientificName', () async {
-      final csv = await svc.exportToCsv(plants: [
-        _plant(scientificName: 'Cyperus esculentus'),
-      ]);
+      final csv = await svc.exportToCsv(
+        plants: [_plant(scientificName: 'Cyperus esculentus')],
+      );
       expect(csv, contains('Cyperus esculentus'));
     });
 
@@ -232,6 +306,14 @@ void main() {
 
       // header + 2 rows
       expect(lines.length, 3);
+    });
+
+    test('includes co-collectors column and values', () async {
+      final plant = _plant()..coCollectors = ['Ana Ribeiro', 'Bruno Costa'];
+      final csv = await svc.exportToCsv(plants: [plant]);
+
+      expect(csv.split('\n').first, contains('Co-coletores'));
+      expect(csv, contains('Ana Ribeiro; Bruno Costa'));
     });
   });
 
@@ -280,6 +362,32 @@ void main() {
 
       expect(csv, contains('-3.100000'));
       expect(csv, contains('-60.000000'));
+    });
+
+    test('recordedBy includes primary collector and co-collectors', () async {
+      final plant = _plant()
+        ..contributorName = 'Maria Souza'
+        ..coCollectors = ['Ana Ribeiro', 'Bruno Costa'];
+      final csv = await svc.exportToDarwinCore(plants: [plant]);
+
+      expect(csv, contains('Maria Souza | Ana Ribeiro | Bruno Costa'));
+    });
+  });
+
+  // ── exportToPdf ───────────────────────────────────────────────────────────
+
+  group('exportToPdf', () {
+    late ExportImportService svc;
+
+    setUp(() {
+      svc = ExportImportService(PlantRepository(), SessionRepository());
+    });
+
+    test('exports records with co-collectors', () async {
+      final plant = _plant()..coCollectors = ['Ana Ribeiro', 'Bruno Costa'];
+      final bytes = await svc.exportToPdfReport(plants: [plant]);
+
+      expect(bytes, isNotEmpty);
     });
   });
 
@@ -351,6 +459,45 @@ void main() {
       expect(saved?.category, PlantCategory.herbs);
     });
 
+    test('imports co-collectors', () async {
+      final json = _wrapPlants([
+        _plantJson(coCollectors: ['Ana Ribeiro', 'Bruno Costa']),
+      ]);
+      final result = await svc.importFromJson(json);
+
+      expect(result.imported, 1);
+
+      final saved = await PlantRepository().getByUuid('import-uuid-1');
+      expect(saved?.coCollectors, ['Ana Ribeiro', 'Bruno Costa']);
+    });
+
+    test('imports cross-stack registry fields', () async {
+      final json = _wrapPlants([
+        _plantJson(registryIdentifier: 'AR-2026-0001'),
+      ]);
+      final result = await svc.importFromJson(json);
+
+      expect(result.imported, 1);
+
+      final saved = await PlantRepository().getByUuid('import-uuid-1');
+      expect(saved?.registryIdentifier, 'AR-2026-0001');
+      expect(saved?.scientificAuthor, 'Trécul');
+      expect(saved?.taxonStatus, 'accepted');
+      expect(saved?.phenologicalState, PhenologicalState.flowering);
+      expect(saved?.phenologyFournier, 'botão:3,flor:2');
+      expect(saved?.collectionMethod, CollectionMethod.voucherCollected);
+      expect(saved?.collectorNumber, 'AR-042');
+      expect(saved?.numberOfIndividuals, 7);
+      expect(saved?.substrate, 'solo argiloso');
+      expect(saved?.associatedTaxa, 'Miconia sp.');
+      expect(saved?.vegetationType, 'Mata Atlântica');
+      expect(saved?.topography, 'encosta');
+      expect(saved?.determinationQualifier, 'cf.');
+      expect(saved?.imageRefsJson, [
+        '{"key":"images/1.jpg","url":"https://example.com/1.jpg","thumbnailKey":"thumbs/1.jpg","thumbnailUrl":"https://example.com/t1.jpg"}',
+      ]);
+    });
+
     test('invalid JSON returns error result without throwing', () async {
       final result = await svc.importFromJson('this is not json');
 
@@ -379,10 +526,25 @@ void main() {
     test('JSON round-trip preserves uuid and scientificName', () async {
       // Export a single PlantRecord to JSON, then import it back and verify the
       // plant is retrievable from Isar with the original values.
-      final original = _plant(
-        uuid: 'round-trip-uuid-1',
-        scientificName: 'Heliconia bihai',
-      );
+      final original =
+          _plant(uuid: 'round-trip-uuid-1', scientificName: 'Heliconia bihai')
+            ..registryIdentifier = 'AR-2026-0001'
+            ..scientificAuthor = 'L.'
+            ..taxonStatus = 'accepted'
+            ..phenologicalState = PhenologicalState.flowering
+            ..phenologyFournier = 'botão:3,flor:2'
+            ..collectionMethod = CollectionMethod.voucherCollected
+            ..collectorNumber = 'AR-042'
+            ..numberOfIndividuals = 7
+            ..substrate = 'solo argiloso'
+            ..associatedTaxa = 'Miconia sp.'
+            ..vegetationType = 'Mata Atlântica'
+            ..topography = 'encosta'
+            ..determinationQualifier = 'cf.'
+            ..imageRefsJson = [
+              '{"key":"images/1.jpg","url":"https://example.com/1.jpg"}',
+            ]
+            ..coCollectors = ['Ana Ribeiro', 'Bruno Costa'];
       final jsonStr = await svc.exportToJson(plants: [original]);
       final result = await svc.importFromJson(jsonStr);
 
@@ -392,6 +554,23 @@ void main() {
       final saved = await PlantRepository().getByUuid('round-trip-uuid-1');
       expect(saved, isNotNull);
       expect(saved!.scientificName, 'Heliconia bihai');
+      expect(saved.registryIdentifier, 'AR-2026-0001');
+      expect(saved.scientificAuthor, 'L.');
+      expect(saved.taxonStatus, 'accepted');
+      expect(saved.phenologicalState, PhenologicalState.flowering);
+      expect(saved.phenologyFournier, 'botão:3,flor:2');
+      expect(saved.collectionMethod, CollectionMethod.voucherCollected);
+      expect(saved.collectorNumber, 'AR-042');
+      expect(saved.numberOfIndividuals, 7);
+      expect(saved.substrate, 'solo argiloso');
+      expect(saved.associatedTaxa, 'Miconia sp.');
+      expect(saved.vegetationType, 'Mata Atlântica');
+      expect(saved.topography, 'encosta');
+      expect(saved.determinationQualifier, 'cf.');
+      expect(saved.imageRefsJson, [
+        '{"key":"images/1.jpg","url":"https://example.com/1.jpg"}',
+      ]);
+      expect(saved.coCollectors, ['Ana Ribeiro', 'Bruno Costa']);
     });
   });
 
@@ -464,37 +643,40 @@ void main() {
       expect((sessions.first as Map)['tripName'], 'Expedition Alpha');
     });
 
-    test('_buildTrackGeoJson returns LineString for session with track', () async {
-      final session = CollectionSession()
-        ..uuid = 'ses-geo-1'
-        ..tripName = 'Track Trip'
-        ..startDate = DateTime(2025, 6, 1)
-        ..track = [
-          GpsPoint()
-            ..latitude = -3.1
-            ..longitude = -60.0
-            ..altitude = 80.0
-            ..timestamp = DateTime(2025, 6, 1),
-          GpsPoint()
-            ..latitude = -3.2
-            ..longitude = -60.1
-            ..altitude = null
-            ..timestamp = DateTime(2025, 6, 1, 1),
-        ]
-        ..createdAt = DateTime(2025, 6, 1);
-      await isar.writeTxn(() => isar.collectionSessions.put(session));
+    test(
+      '_buildTrackGeoJson returns LineString for session with track',
+      () async {
+        final session = CollectionSession()
+          ..uuid = 'ses-geo-1'
+          ..tripName = 'Track Trip'
+          ..startDate = DateTime(2025, 6, 1)
+          ..track = [
+            GpsPoint()
+              ..latitude = -3.1
+              ..longitude = -60.0
+              ..altitude = 80.0
+              ..timestamp = DateTime(2025, 6, 1),
+            GpsPoint()
+              ..latitude = -3.2
+              ..longitude = -60.1
+              ..altitude = null
+              ..timestamp = DateTime(2025, 6, 1, 1),
+          ]
+          ..createdAt = DateTime(2025, 6, 1);
+        await isar.writeTxn(() => isar.collectionSessions.put(session));
 
-      final json = await svc.exportToJson(plants: [], includeSessions: true);
-      final decoded = jsonDecode(json) as Map<String, dynamic>;
-      final s = (decoded['sessions'] as List).first as Map<String, dynamic>;
-      final geoJson = s['trackGeoJson'] as Map<String, dynamic>;
+        final json = await svc.exportToJson(plants: [], includeSessions: true);
+        final decoded = jsonDecode(json) as Map<String, dynamic>;
+        final s = (decoded['sessions'] as List).first as Map<String, dynamic>;
+        final geoJson = s['trackGeoJson'] as Map<String, dynamic>;
 
-      expect(geoJson['type'], 'LineString');
-      expect((geoJson['coordinates'] as List).length, 2);
-      // First point has altitude → 3 coords; second has no altitude → 2 coords
-      expect((geoJson['coordinates'] as List).first, hasLength(3));
-      expect((geoJson['coordinates'] as List).last, hasLength(2));
-    });
+        expect(geoJson['type'], 'LineString');
+        expect((geoJson['coordinates'] as List).length, 2);
+        // First point has altitude → 3 coords; second has no altitude → 2 coords
+        expect((geoJson['coordinates'] as List).first, hasLength(3));
+        expect((geoJson['coordinates'] as List).last, hasLength(2));
+      },
+    );
 
     test('session with empty track has null trackGeoJson', () async {
       final session = CollectionSession()

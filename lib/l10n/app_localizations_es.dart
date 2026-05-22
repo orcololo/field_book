@@ -1812,6 +1812,12 @@ class AppLocalizationsEs extends AppLocalizations {
       'Número secuencial del colector (ej.: 1234)';
 
   @override
+  String get coCollectors => 'Colectores adicionales';
+
+  @override
+  String get coCollectorsHint => 'Separa nombres con comas o nuevas líneas';
+
+  @override
   String get numberOfIndividuals => 'Número de Individuos';
 
   @override

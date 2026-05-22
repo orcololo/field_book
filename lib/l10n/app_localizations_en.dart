@@ -1795,6 +1795,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'Collector\'s sequential number (e.g. 1234)';
 
   @override
+  String get coCollectors => 'Co-collectors';
+
+  @override
+  String get coCollectorsHint => 'Separate names with commas or new lines';
+
+  @override
   String get numberOfIndividuals => 'Number of Individuals';
 
   @override

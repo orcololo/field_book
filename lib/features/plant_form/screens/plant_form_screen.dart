@@ -28,6 +28,7 @@ import '../../../core/services/ocr_service.dart';
 import '../../../core/services/photo_service.dart';
 import '../../../core/utils/biome_detector.dart';
 import '../../../core/utils/botanical_validator.dart';
+import '../../../core/utils/co_collectors.dart';
 import '../../../core/utils/geo_utils.dart';
 import '../../../shared/widgets/map_widget.dart';
 import '../../../shared/widgets/ocr_review_dialog.dart';
@@ -155,6 +156,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
   // Botanical field notebook fields
   final _collectorNumberController = TextEditingController();
   final _collectorNameController = TextEditingController();
+  final _coCollectorsController = TextEditingController();
   final _numberOfIndividualsController = TextEditingController();
   final _substrateController = TextEditingController();
   final _associatedTaxaController = TextEditingController();
@@ -318,6 +320,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
       // Botanical field notebook fields
       _collectorNameController.text = plant.contributorName ?? '';
       _collectorNumberController.text = plant.collectorNumber ?? '';
+      _coCollectorsController.text = formatCoCollectors(plant.coCollectors);
       _numberOfIndividualsController.text =
           plant.numberOfIndividuals?.toString() ?? '';
       _substrateController.text = plant.substrate ?? '';
@@ -448,6 +451,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     _windSpeedController.dispose();
     _collectorNameController.dispose();
     _collectorNumberController.dispose();
+    _coCollectorsController.dispose();
     _numberOfIndividualsController.dispose();
     _substrateController.dispose();
     _associatedTaxaController.dispose();
@@ -698,6 +702,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
       ..collectorNumber = _collectorNumberController.text.trim().isNotEmpty
           ? _collectorNumberController.text.trim()
           : null
+      ..coCollectors = parseCoCollectorsInput(_coCollectorsController.text)
       ..numberOfIndividuals =
           _numberOfIndividualsController.text.trim().isNotEmpty
           ? int.tryParse(_numberOfIndividualsController.text.trim())
@@ -938,9 +943,8 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
           child: Column(
             children: [
               SizedBox(
-                height: MediaQuery.of(context).padding.top +
-                    64 +
-                    kTextTabBarHeight,
+                height:
+                    MediaQuery.of(context).padding.top + 64 + kTextTabBarHeight,
               ),
               Expanded(
                 child: TabBarView(
@@ -1205,7 +1209,11 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                 Icons.lightbulb,
                 color: Theme.of(context).colorScheme.tertiary,
               ),
-              title: Text(l10n.suggestionWithName(_suggestedFamily!), maxLines: 1, overflow: TextOverflow.ellipsis),
+              title: Text(
+                l10n.suggestionWithName(_suggestedFamily!),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
               subtitle: Text(l10n.basedOnGenus),
               trailing: TextButton(
                 onPressed: () {
@@ -1497,7 +1505,11 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
             ...sessions.map((session) {
               return DropdownMenuItem(
                 value: session.uuid,
-                child: Text(session.tripName, maxLines: 1, overflow: TextOverflow.ellipsis),
+                child: Text(
+                  session.tripName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               );
             }),
           ],
@@ -1531,10 +1543,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                 Expanded(
                   child: Text(
                     'Conexão restaurada. Atualizar informações online?',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.blue.shade900,
-                    ),
+                    style: TextStyle(fontSize: 13, color: Colors.blue.shade900),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -1549,7 +1558,8 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                 ),
                 IconButton(
                   icon: const Icon(Icons.close, size: 18),
-                  onPressed: () => setState(() => _showOnlineUpdateBanner = false),
+                  onPressed: () =>
+                      setState(() => _showOnlineUpdateBanner = false),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                 ),
@@ -1573,12 +1583,16 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                       ListTile(
                         leading: const Icon(Icons.location_on),
                         title: Text(l10n.latitude),
-                        subtitle: Text(GeoUtils.formatDMS(_latitude!, isLatitude: true)),
+                        subtitle: Text(
+                          GeoUtils.formatDMS(_latitude!, isLatitude: true),
+                        ),
                       ),
                       ListTile(
                         leading: const Icon(Icons.location_on),
                         title: Text(l10n.longitude),
-                        subtitle: Text(GeoUtils.formatDMS(_longitude!, isLatitude: false)),
+                        subtitle: Text(
+                          GeoUtils.formatDMS(_longitude!, isLatitude: false),
+                        ),
                       ),
                     ],
                   )
@@ -1708,7 +1722,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                     Text(l10n.locationMap),
                     const Spacer(),
                     if (_latitude != null && _longitude != null)
-                        TextButton.icon(
+                      TextButton.icon(
                         onPressed: () {
                           _mapWidgetKey.currentState?.recenter();
                         },
@@ -2063,6 +2077,20 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         ),
         const SizedBox(height: 12),
         TextFormField(
+          controller: _coCollectorsController,
+          decoration: InputDecoration(
+            labelText: l10n.coCollectors,
+            border: const OutlineInputBorder(),
+            hintText: l10n.coCollectorsHint,
+            prefixIcon: const Icon(Icons.group_add_outlined, size: 20),
+            isDense: true,
+          ),
+          textCapitalization: TextCapitalization.words,
+          minLines: 1,
+          maxLines: 3,
+        ),
+        const SizedBox(height: 12),
+        TextFormField(
           controller: _determinationQualifierController,
           decoration: InputDecoration(
             labelText: l10n.determinationQualifier,
@@ -2324,13 +2352,15 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                                 ? null
                                 : _identifyWithPlantNet,
                             icon: isIdentifying
-                                 ? SizedBox(
-                                      width: 18,
-                                      height: 18,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Theme.of(context).colorScheme.onPrimary,
-                                     ),
+                                ? SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimary,
+                                    ),
                                   )
                                 : const Icon(Icons.auto_awesome),
                             label: Text(
@@ -2510,9 +2540,9 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         const SizedBox(height: 8),
         Text(
           'Grave notas de voz durante a coleta',
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: 24),
 
@@ -2540,7 +2570,11 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
           Center(
             child: Column(
               children: [
-                Icon(Icons.audiotrack, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                Icon(
+                  Icons.audiotrack,
+                  size: 48,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
                 const SizedBox(height: 8),
                 Text(
                   'Nenhuma nota de áudio gravada',
@@ -2638,10 +2672,12 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
       }
 
       // Use the new file-based transcription
-      final transcript = await ref.read(audioTranscriptionServiceProvider).transcribeFile(
-        audioPath: audioPath,
-        localeId: settings.transcriptionLocale,
-      );
+      final transcript = await ref
+          .read(audioTranscriptionServiceProvider)
+          .transcribeFile(
+            audioPath: audioPath,
+            localeId: settings.transcriptionLocale,
+          );
 
       if (!mounted) return;
 
@@ -3147,6 +3183,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     'moonPhase': _moonPhase,
     'collectorName': _collectorNameController.text,
     'collectorNumber': _collectorNumberController.text,
+    'coCollectors': _coCollectorsController.text,
     'numberOfIndividuals': _numberOfIndividualsController.text,
     'substrate': _substrateController.text,
     'associatedTaxa': _associatedTaxaController.text,
@@ -3196,20 +3233,17 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     _cauleTemSeiva = (data['cauleTemSeiva'] as bool?) ?? false;
     _cauleDescricaoSeivaController.text =
         (data['cauleDescricaoSeiva'] as String?) ?? '';
-    _folhaDescricaoController.text =
-        (data['folhaDescricao'] as String?) ?? '';
+    _folhaDescricaoController.text = (data['folhaDescricao'] as String?) ?? '';
     _folhaBainhaController.text = (data['folhaBainha'] as String?) ?? '';
     _folhaPecioloController.text = (data['folhaPeciolo'] as String?) ?? '';
     _folhaLaminaController.text = (data['folhaLamina'] as String?) ?? '';
-    _florDescricaoController.text =
-        (data['florDescricao'] as String?) ?? '';
+    _florDescricaoController.text = (data['florDescricao'] as String?) ?? '';
     _florInflorescenciaController.text =
         (data['florInflorescencia'] as String?) ?? '';
     _florCorController.text = (data['florCor'] as String?) ?? '';
     _florTamanhoController.text = (data['florTamanho'] as String?) ?? '';
     _florTamanhoUnidade = (data['florTamanhoUnidade'] as String?) ?? 'cm';
-    _frutoDescricaoController.text =
-        (data['frutoDescricao'] as String?) ?? '';
+    _frutoDescricaoController.text = (data['frutoDescricao'] as String?) ?? '';
     _frutoCorController.text = (data['frutoCor'] as String?) ?? '';
     _frutoFormatoController.text = (data['frutoFormato'] as String?) ?? '';
     _frutoTamanhoController.text = (data['frutoTamanho'] as String?) ?? '';
@@ -3217,10 +3251,8 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     _sementeDescricaoController.text =
         (data['sementeDescricao'] as String?) ?? '';
     _sementeCorController.text = (data['sementeCor'] as String?) ?? '';
-    _sementeFormatoController.text =
-        (data['sementeFormato'] as String?) ?? '';
-    _sementeTamanhoController.text =
-        (data['sementeTamanho'] as String?) ?? '';
+    _sementeFormatoController.text = (data['sementeFormato'] as String?) ?? '';
+    _sementeTamanhoController.text = (data['sementeTamanho'] as String?) ?? '';
     _sementeTamanhoUnidade = (data['sementeTamanhoUnidade'] as String?) ?? 'mm';
     _altitudeController.text = (data['altitude'] as String?) ?? '';
     _temperatureController.text = (data['temperature'] as String?) ?? '';
@@ -3232,13 +3264,12 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     _collectorNameController.text = (data['collectorName'] as String?) ?? '';
     _collectorNumberController.text =
         (data['collectorNumber'] as String?) ?? '';
+    _coCollectorsController.text = (data['coCollectors'] as String?) ?? '';
     _numberOfIndividualsController.text =
         (data['numberOfIndividuals'] as String?) ?? '';
     _substrateController.text = (data['substrate'] as String?) ?? '';
-    _associatedTaxaController.text =
-        (data['associatedTaxa'] as String?) ?? '';
-    _vegetationTypeController.text =
-        (data['vegetationType'] as String?) ?? '';
+    _associatedTaxaController.text = (data['associatedTaxa'] as String?) ?? '';
+    _vegetationTypeController.text = (data['vegetationType'] as String?) ?? '';
     _topographyController.text = (data['topography'] as String?) ?? '';
     _determinationQualifierController.text =
         (data['determinationQualifier'] as String?) ?? '';
@@ -3280,10 +3311,12 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     }
 
     _photoPaths = List<String>.from((data['photoPaths'] as List?) ?? []);
-    _audioNotePaths =
-        List<String>.from((data['audioNotePaths'] as List?) ?? []);
-    _audioTranscripts =
-        List<String>.from((data['audioTranscripts'] as List?) ?? []);
+    _audioNotePaths = List<String>.from(
+      (data['audioNotePaths'] as List?) ?? [],
+    );
+    _audioTranscripts = List<String>.from(
+      (data['audioTranscripts'] as List?) ?? [],
+    );
 
     final measurementsRaw = data['measurements'] as List?;
     if (measurementsRaw != null) {

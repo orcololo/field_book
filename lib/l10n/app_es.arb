@@ -1,13 +1,10 @@
 {
   "@@locale": "es",
-  
   "appTitle": "Cuaderno de Campo",
-  
   "plants": "Plantas",
   "sessions": "Sesiones",
   "statistics": "Estadísticas",
   "settings": "Configuración",
-
   "scientificName": "Nombre Científico",
   "scientificNameBinomialHint": "Género especie",
   "commonName": "Nombre Común",
@@ -27,7 +24,6 @@
   "measurements": "Mediciones",
   "photos": "Fotos",
   "audioNotes": "Notas de Audio",
-
   "categoryTrees": "Árboles",
   "categoryShrubs": "Arbustos",
   "categoryHerbs": "Hierbas",
@@ -36,7 +32,6 @@
   "categoryVines": "Enredaderas",
   "categoryCacti": "Cactus",
   "categoryAquatic": "Acuáticas",
-
   "save": "Guardar",
   "cancel": "Cancelar",
   "delete": "Eliminar",
@@ -47,12 +42,10 @@
   "search": "Buscar",
   "filter": "Filtrar",
   "sort": "Ordenar",
-
   "saveDraft": "Guardar como Borrador",
   "markComplete": "Marcar como Completo",
   "draft": "Borrador",
   "complete": "Completo",
-
   "newPlant": "Nueva Planta",
   "newPlantSubtitle": "Formulario completo con todos los campos",
   "plantDetails": "Detalles de la Planta",
@@ -64,7 +57,6 @@
   "notesHint": "Observaciones o notas adicionales...",
   "measurementsInfo": "Mediciones",
   "photosInfo": "Fotos",
-
   "takePhoto": "Tomar Foto",
   "chooseFromGallery": "Elegir de la Galería",
   "recordAudio": "Grabar Audio",
@@ -72,67 +64,54 @@
   "stopRecording": "Detener Grabación",
   "pauseRecording": "Pausar Grabación",
   "resumeRecording": "Reanudar Grabación",
-
   "sessionName": "Nombre de la Sesión",
   "newSession": "Nueva Sesión",
   "joinSession": "Unirse a Sesión",
   "shareSession": "Compartir Sesión",
   "scanQRCode": "Escanear Código QR",
-
   "backup": "Copia de Seguridad",
   "restore": "Restaurar",
   "cloudBackup": "Copia en la Nube",
   "localBackup": "Copia Local",
   "lastBackup": "Última Copia",
-
   "googleDrive": "Google Drive",
   "dropbox": "Dropbox",
-
   "advancedSearch": "Búsqueda Avanzada",
   "savedSearches": "Búsquedas Guardadas",
   "searchRadius": "Radio de Búsqueda",
   "dateRange": "Rango de Fechas",
-
   "language": "Idioma",
   "english": "Inglés",
   "portuguese": "Portugués",
   "spanish": "Español",
-
   "errorOccurred": "Ocurrió un error",
   "errorDatabase": "Error de base de datos",
   "errorNetwork": "Error de red",
   "errorPermission": "Permiso denegado",
   "errorFileSystem": "Error del sistema de archivos",
-
   "permissionCamera": "Permiso de cámara requerido",
   "permissionLocation": "Permiso de ubicación requerido",
   "permissionMicrophone": "Permiso de micrófono requerido",
   "permissionStorage": "Permiso de almacenamiento requerido",
-
   "loading": "Cargando...",
   "saving": "Guardando...",
   "syncing": "Sincronizando...",
   "exporting": "Exportando...",
   "importing": "Importando...",
-
   "noDataAvailable": "No hay datos disponibles",
   "noPlants": "No hay plantas registradas",
   "noSessions": "No hay sesiones",
   "noPhotos": "No hay fotos",
-
   "confirmDelete": "¿Está seguro de que desea eliminar?",
   "confirmDeletePlant": "¿Eliminar este registro de planta?",
   "confirmDeleteSession": "¿Eliminar esta sesión?",
-
   "success": "Éxito",
   "failed": "Falló",
   "completed": "Completado",
-
   "totalPlants": "Total de Plantas",
   "totalSessions": "Total de Sesiones",
   "totalPhotos": "Total de Fotos",
   "storageUsed": "Almacenamiento Usado",
-
   "editPlant": "Editar Planta",
   "collectionDate": "Fecha de Recolección",
   "gpsCoordinates": "Coordenadas GPS",
@@ -152,17 +131,35 @@
   "dichotomousKeyHowToUse": "Cómo usar",
   "dichotomousKeyGeneralBranch": "Clave general",
   "dichotomousKeyCurrentBranch": "Rama actual: {family}",
-  "@dichotomousKeyCurrentBranch": { "placeholders": { "family": { "type": "String" } } },
+  "@dichotomousKeyCurrentBranch": {
+    "placeholders": {
+      "family": {
+        "type": "String"
+      }
+    }
+  },
   "dichotomousKeyTrail": "Ruta de decisión",
   "dichotomousKeyBackStep": "Volver un paso",
   "dichotomousKeyRestart": "Reiniciar clave",
   "dichotomousKeySuggestedFamily": "Familia sugerida",
   "dichotomousKeyUseFamily": "Usar esta familia",
   "dichotomousKeyQuestionCounter": "Paso {step}",
-  "@dichotomousKeyQuestionCounter": { "placeholders": { "step": { "type": "int" } } },
+  "@dichotomousKeyQuestionCounter": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      }
+    }
+  },
   "dichotomousKeyResultHelp": "Use la sugerencia siguiente para completar el campo de familia del registro actual.",
   "dichotomousKeyLoadError": "Error al cargar la clave dicotómica: {error}",
-  "@dichotomousKeyLoadError": { "placeholders": { "error": { "type": "String" } } },
+  "@dichotomousKeyLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "dichotomousKeyEmpty": "No hay claves dicotómicas disponibles.",
   "suggestion": "Sugerencia",
   "basedOnGenus": "Basado en el género reportado",
@@ -173,28 +170,82 @@
   "openSettings": "Abrir Configuración",
   "locationPermissionRequired": "Permiso de Ubicación Requerido",
   "identifierGenerated": "Identificador generado: {identifier}",
-  "@identifierGenerated": { "placeholders": { "identifier": { "type": "String" } } },
+  "@identifierGenerated": {
+    "placeholders": {
+      "identifier": {
+        "type": "String"
+      }
+    }
+  },
   "errorGeneratingIdentifier": "Error al generar identificador: {error}",
-  "@errorGeneratingIdentifier": { "placeholders": { "error": { "type": "String" } } },
+  "@errorGeneratingIdentifier": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "errorSavingPlant": "Error al guardar planta: {error}",
-  "@errorSavingPlant": { "placeholders": { "error": { "type": "String" } } },
+  "@errorSavingPlant": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "errorUpdatingPlant": "Error al actualizar planta: {error}",
-  "@errorUpdatingPlant": { "placeholders": { "error": { "type": "String" } } },
+  "@errorUpdatingPlant": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "plantUpdatedSuccessfully": "Planta actualizada exitosamente",
   "errorObtainingLocation": "Error al obtener ubicación: {error}",
-  "@errorObtainingLocation": { "placeholders": { "error": { "type": "String" } } },
+  "@errorObtainingLocation": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "errorTakingPhoto": "Error al tomar foto: {error}",
-  "@errorTakingPhoto": { "placeholders": { "error": { "type": "String" } } },
+  "@errorTakingPhoto": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "errorChoosingPhotos": "Error al elegir fotos: {error}",
-  "@errorChoosingPhotos": { "placeholders": { "error": { "type": "String" } } },
+  "@errorChoosingPhotos": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "transcriptionDisabled": "Transcripción desactivada en la configuración",
   "audioFileNotFound": "Archivo de audio no encontrado",
   "errorTranscribing": "Error al transcribir: {error}",
-  "@errorTranscribing": { "placeholders": { "error": { "type": "String" } } },
+  "@errorTranscribing": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "imageNotFound": "Imagen no encontrada",
   "copiedToClipboard": "Copiado al portapapeles",
   "errorDeletingPlant": "Error al eliminar planta: {error}",
-  "@errorDeletingPlant": { "placeholders": { "error": { "type": "String" } } },
+  "@errorDeletingPlant": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "deleteSession": "Eliminar Sesión",
   "close": "Cerrar",
   "archived": "Archivado",
@@ -203,7 +254,13 @@
   "startDate": "Fecha de Inicio *",
   "endDate": "Fecha de Fin",
   "errorSavingSession": "Error al guardar sesión: {error}",
-  "@errorSavingSession": { "placeholders": { "error": { "type": "String" } } },
+  "@errorSavingSession": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "confirm": "Confirmar",
   "selectAtLeastOnePlant": "Seleccione al menos una planta",
   "confirmAssignment": "Confirmar Asignación",
@@ -214,19 +271,42 @@
   "allPlantsHaveIdentifiers": "Todas las plantas tienen identificadores",
   "noPlantsWithoutIdentifiers": "No hay plantas sin identificadores en este momento.",
   "plantsWithoutIdentifier": "{count} planta(s) sin identificador",
-  "@plantsWithoutIdentifier": { "placeholders": { "count": { "type": "int" } } },
+  "@plantsWithoutIdentifier": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "assignCount": "Asignar ({count})",
-  "@assignCount": { "placeholders": { "count": { "type": "int" } } },
+  "@assignCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "identifiersAssigned": "{count} identificador(es) asignado(s) exitosamente",
-  "@identifiersAssigned": { "placeholders": { "count": { "type": "int" } } },
+  "@identifiersAssigned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "microphonePermissionDenied": "Permiso de micrófono denegado",
   "errorStartingRecording": "Error al iniciar grabación: {error}",
-  "@errorStartingRecording": { "placeholders": { "error": { "type": "String" } } },
+  "@errorStartingRecording": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "startRecordingLabel": "Iniciar Grabación",
   "pause": "Pausar",
   "resume": "Reanudar",
   "stop": "Detener",
-
   "onboardingWelcomeTitle": "Bienvenido a Folium",
   "onboardingWelcomeBody": "Tu cuaderno de campo botánico para documentar y organizar colecciones de plantas en el campo.",
   "onboardingSessionsTitle": "Sesiones de Colecta",
@@ -245,25 +325,54 @@
   "onboardingLastNumberLabel": "Último Número Usado",
   "onboardingLastNumberHint": "0 si empiezas desde cero",
   "onboardingIdentifierPreview": "Próximo identificador: {identifier}",
-  "@onboardingIdentifierPreview": { "placeholders": { "identifier": { "type": "String" } } },
+  "@onboardingIdentifierPreview": {
+    "placeholders": {
+      "identifier": {
+        "type": "String"
+      }
+    }
+  },
   "showTutorial": "Mostrar Tutorial",
   "showTutorialSubtitle": "Reproducir la presentación introductoria",
-
   "backupNow": "Hacer Backup Ahora",
   "fullBackup": "Backup Completo",
   "restoreFromCloud": "Restaurar de la Nube",
   "backupInProgress": "Backup en progreso...",
   "backupSuccess": "Backup completado exitosamente",
   "backupFailed": "Error en el backup: {error}",
-  "@backupFailed": { "placeholders": { "error": { "type": "String" } } },
+  "@backupFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "restoreConfirmTitle": "¿Restaurar de la Nube?",
   "restoreConfirmBody": "Los datos de la nube se fusionarán con tus datos locales. Los registros existentes serán actualizados.",
   "restoreSuccess": "Restauración completada exitosamente",
   "restoreInProgress": "Restaurando datos...",
   "restoreResult": "Importados: {imported}, Actualizados: {updated}, Omitidos: {skipped}",
-  "@restoreResult": { "placeholders": { "imported": { "type": "int" }, "updated": { "type": "int" }, "skipped": { "type": "int" } } },
+  "@restoreResult": {
+    "placeholders": {
+      "imported": {
+        "type": "int"
+      },
+      "updated": {
+        "type": "int"
+      },
+      "skipped": {
+        "type": "int"
+      }
+    }
+  },
   "signedInAs": "Conectado como {email}",
-  "@signedInAs": { "placeholders": { "email": { "type": "String" } } },
+  "@signedInAs": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
   "signOut": "Cerrar Sesión",
   "signIn": "Iniciar Sesión",
   "wifiRequired": "Se requiere conexión Wi-Fi para el backup",
@@ -287,22 +396,55 @@
   "inaturalistCredentialsSaved": "Credenciales de iNaturalist guardadas",
   "inaturalistCredentialsCleared": "Credenciales de iNaturalist eliminadas",
   "inaturalistConfigured": "Configurado para @{username}",
-  "@inaturalistConfigured": { "placeholders": { "username": { "type": "String" } } },
+  "@inaturalistConfigured": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
   "inaturalistNotConfigured": "No configurado",
   "sendToInaturalist": "Enviar a iNaturalist",
   "sendSelectedToInaturalist": "Enviar registros seleccionados a iNaturalist",
   "inaturalistAlreadySent": "Ya enviada a iNaturalist",
   "inaturalistObservationId": "ID de observación: {id}",
-  "@inaturalistObservationId": { "placeholders": { "id": { "type": "String" } } },
+  "@inaturalistObservationId": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "inaturalistSyncBadge": "📤 iNat",
   "inaturalistPushSuccess": "Observación enviada a iNaturalist",
   "inaturalistBulkSuccess": "{count} registro(s) enviados a iNaturalist",
-  "@inaturalistBulkSuccess": { "placeholders": { "count": { "type": "int" } } },
+  "@inaturalistBulkSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "inaturalistPushError": "Error al enviar a iNaturalist: {error}",
-  "@inaturalistPushError": { "placeholders": { "error": { "type": "String" } } },
+  "@inaturalistPushError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "inaturalistRequiresToken": "Configura tu token de iNaturalist en Ajustes antes de enviar registros.",
   "inaturalistProgress": "Enviando {current} de {total}",
-  "@inaturalistProgress": { "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } } },
+  "@inaturalistProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "cloudBackup": "Backup en la Nube",
   "syncAutomatically": "Sincronizar datos automáticamente",
   "backupProvider": "Proveedor de Backup",
@@ -314,7 +456,6 @@
   "aboutApp": "Acerca de la aplicación",
   "deviceId": "ID del Dispositivo",
   "performance": "Rendimiento",
-
   "map": "Mapa",
   "email": "Email",
   "password": "Contraseña",
@@ -322,7 +463,13 @@
   "loginError": "Error al iniciar sesión",
   "signInWithGoogle": "Iniciar sesión con Google",
   "googleSignInError": "Error al iniciar sesión con Google: {error}",
-  "@googleSignInError": { "placeholders": { "error": { "type": "String" } } },
+  "@googleSignInError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "botanicalFieldBook": "Cuaderno de campo botánico",
   "enterEmail": "Ingrese su email",
   "invalidEmail": "Email inválido",
@@ -370,28 +517,38 @@
   "useCollectionTemplateBody": "Encontramos la plantilla \"{templateName}\" para el bioma {biomeName}. ¿Desea autocompletar el formulario?",
   "@useCollectionTemplateBody": {
     "placeholders": {
-      "templateName": { "type": "String" },
-      "biomeName": { "type": "String" }
+      "templateName": {
+        "type": "String"
+      },
+      "biomeName": {
+        "type": "String"
+      }
     }
   },
   "useCollectionTemplateAction": "Usar plantilla",
   "collectionTemplateApplied": "Plantilla \"{templateName}\" aplicada",
   "@collectionTemplateApplied": {
     "placeholders": {
-      "templateName": { "type": "String" }
+      "templateName": {
+        "type": "String"
+      }
     }
   },
   "deleteCollectionTemplateTitle": "Eliminar plantilla",
   "deleteCollectionTemplateBody": "¿Desea eliminar la plantilla \"{templateName}\"?",
   "@deleteCollectionTemplateBody": {
     "placeholders": {
-      "templateName": { "type": "String" }
+      "templateName": {
+        "type": "String"
+      }
     }
   },
   "templateCopyName": "Copia de {name}",
   "@templateCopyName": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "biomeCerrado": "Cerrado",
@@ -413,13 +570,25 @@
   "createSessionMsg": "Cree una sesión para organizar sus colectas de campo",
   "noResultsFound": "Ningún resultado encontrado",
   "noResultsForQuery": "No se encontraron resultados para \"{query}\"",
-  "@noResultsForQuery": { "placeholders": { "query": { "type": "String" } } },
+  "@noResultsForQuery": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
   "adjustFilters": "Intente ajustar los filtros de búsqueda",
   "addPhotosMsg": "Agregue fotos para documentar esta planta",
   "noMeasurementsTitle": "Sin mediciones",
   "recordMeasurementsMsg": "Registre mediciones para análisis científico",
   "errorLoadingPlants": "Error al cargar plantas: {error}",
-  "@errorLoadingPlants": { "placeholders": { "error": { "type": "String" } } },
+  "@errorLoadingPlants": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "aboutAppDescription": "Una aplicación para registro y documentación de plantas en campo.",
   "searchTooltip": "Buscar plantas",
   "savedAsDraft": "Guardado como borrador",
@@ -429,7 +598,13 @@
   "plantNetSelectSuggestion": "Seleccione una sugerencia para completar los campos automáticamente",
   "plantNetNoResults": "No se encontraron sugerencias para estas fotos",
   "plantNetConfidence": "Confianza: {score}%",
-  "@plantNetConfidence": { "placeholders": { "score": { "type": "String" } } },
+  "@plantNetConfidence": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      }
+    }
+  },
   "plantNetApiKeyTitle": "PlantNet API Key",
   "plantNetApiKeyLabel": "API key de PlantNet",
   "plantNetApiKeyHint": "Pegue su API key aquí",
@@ -442,7 +617,13 @@
   "plantNetInvalidResponse": "PlantNet devolvió una respuesta inesperada. Por favor, inténtelo de nuevo.",
   "plantNetIdentifying": "Identificando especie...",
   "plantNetIdentificationFailed": "Error al identificar la especie: {error}",
-  "@plantNetIdentificationFailed": { "placeholders": { "error": { "type": "String" } } },
+  "@plantNetIdentificationFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "plantNetSuggestionApplied": "Sugerencia de PlantNet aplicada",
   "ocrScanLabel": "Digitalización de etiqueta",
   "ocrScanButton": "Escanear etiqueta",
@@ -458,7 +639,13 @@
   "categoryRequired": "Categoría es obligatoria",
   "possibleDuplicates": "Posibles duplicados:",
   "collectedOn": "Recolectada el {date}",
-  "@collectedOn": { "placeholders": { "date": { "type": "String" } } },
+  "@collectedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "morphology": "Morfología",
   "root": "Raíz",
   "stem": "Tallo",
@@ -502,14 +689,26 @@
   "sortDateAsc": "Fecha (Más antigua)",
   "sortByPlantName": "Nombre de la planta",
   "activeFilters": "Filtros activos: {filters}",
-  "@activeFilters": { "placeholders": { "filters": { "type": "String" } } },
+  "@activeFilters": {
+    "placeholders": {
+      "filters": {
+        "type": "String"
+      }
+    }
+  },
   "clearFilters": "Limpiar",
   "filters": "Filtros",
   "allCategories": "Todas",
   "categoryLabel": "Categoría",
   "observations": "Observaciones",
   "suggestionWithName": "Sugerencia: {name}",
-  "@suggestionWithName": { "placeholders": { "name": { "type": "String" } } },
+  "@suggestionWithName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "rootDescriptionHint": "Describa la raíz...",
   "stemDescriptionHint": "Describa el tallo...",
   "leafDescriptionHint": "Descripción general de la hoja...",
@@ -540,15 +739,38 @@
   "yes": "Sí",
   "no": "No",
   "nPhotos": "{count} {count, plural, =1{foto} other{fotos}}",
-  "@nPhotos": { "placeholders": { "count": { "type": "int" } } },
+  "@nPhotos": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "nMeasurements": "{count} {count, plural, =1{medición} other{mediciones}}",
-  "@nMeasurements": { "placeholders": { "count": { "type": "int" } } },
+  "@nMeasurements": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "plantDeletedName": "{name} eliminada",
-  "@plantDeletedName": { "placeholders": { "name": { "type": "String" } } },
+  "@plantDeletedName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "errorLoadingPhotos": "Error al cargar fotos: {error}",
-  "@errorLoadingPhotos": { "placeholders": { "error": { "type": "String" } } },
+  "@errorLoadingPhotos": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "dateFilter": "Fecha",
-
   "quickCapture": "Captura Rápida",
   "quickCaptureSubtitle": "Registro rápido en campo",
   "takePhoto": "Tomar Foto",
@@ -559,7 +781,6 @@
   "savedAsDraftSuccess": "Guardado como borrador",
   "quickNotes": "Notas rápidas",
   "quickNotesHint": "Observaciones de campo...",
-
   "environmentalData": "Datos Ambientales",
   "altitude": "Altitud (m)",
   "altitudeHint": "Metros sobre el nivel del mar",
@@ -593,10 +814,22 @@
   "gpsTrackActive": "Track activo",
   "gpsTrackPaused": "Track pausado",
   "gpsTrackPoints": "{count} puntos registrados",
-  "@gpsTrackPoints": { "placeholders": { "count": { "type": "int" } } },
+  "@gpsTrackPoints": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "coordsValidationTitle": "Validación de coordenadas",
   "coordsValidationWarning": "⚠️ Las coordenadas pueden estar fuera de {municipality}. ¿Desea continuar?",
-  "@coordsValidationWarning": { "placeholders": { "municipality": { "type": "String" } } },
+  "@coordsValidationWarning": {
+    "placeholders": {
+      "municipality": {
+        "type": "String"
+      }
+    }
+  },
   "continueAction": "Continuar",
   "rainModeTitle": "Modo lluvia",
   "rainModeSubtitle": "Exige confirmación para acciones destructivas",
@@ -617,7 +850,13 @@
   "rainModeExitWithoutSavingMessage": "¿Descartar los cambios actuales y salir de esta pantalla?",
   "rainModeDiscardChanges": "Descartar cambios",
   "rainModeCountdownLabel": "Disponible en {seconds}s",
-  "@rainModeCountdownLabel": { "placeholders": { "seconds": { "type": "int" } } },
+  "@rainModeCountdownLabel": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "undo": "Deshacer",
   "locationAutoFilled": "Localidad completada automáticamente",
   "noConnectionManualFill": "Sin conexión — complete manualmente",
@@ -628,30 +867,53 @@
   "sunriseLabel": "Amanecer",
   "sunsetLabel": "Atardecer",
   "weatherCode": "Código WMO {code}",
-  "@weatherCode": { "placeholders": { "code": { "type": "int" } } },
-
+  "@weatherCode": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      }
+    }
+  },
   "selectMode": "Seleccionar",
   "selectAll": "Seleccionar Todos",
   "deselectAll": "Deseleccionar Todos",
   "nSelected": "{count} seleccionado(s)",
-  "@nSelected": { "placeholders": { "count": { "type": "int" } } },
+  "@nSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "deleteSelected": "Eliminar Seleccionados",
   "exportSelected": "Exportar Seleccionados",
   "confirmDeleteCount": "¿Eliminar {count} planta(s)?",
-  "@confirmDeleteCount": { "placeholders": { "count": { "type": "int" } } },
+  "@confirmDeleteCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "nPlantsDeleted": "{count} planta(s) eliminada(s)",
-  "@nPlantsDeleted": { "placeholders": { "count": { "type": "int" } } },
-
+  "@nPlantsDeleted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "collectionInfo": "Información de Colecta",
   "notSpecified": "No especificado",
   "collectorNumber": "Número de Colector",
   "collectorNumber": "Número de Colector",
   "collectorNumberHint": "Número secuencial del colector (ej.: 1234)",
+  "coCollectors": "Colectores adicionales",
+  "coCollectorsHint": "Separa nombres con comas o nuevas líneas",
   "numberOfIndividuals": "Número de Individuos",
   "numberOfIndividualsHint": "Cuántos especímenes observados",
   "determinationQualifier": "Certeza Taxonómica",
   "determinationQualifierHint": "ej.: cf., aff., ?",
-
   "habitatDetails": "Detalles del Hábitat",
   "substrate": "Sustrato / Suelo",
   "substrateHint": "ej.: suelo arcilloso, roca, epífita, arena",
@@ -661,7 +923,6 @@
   "topographyHint": "ej.: ladera, valle, cima, ribereño, meseta",
   "associatedTaxa": "Especies Asociadas",
   "associatedTaxaHint": "Otras especies encontradas cerca (separadas por coma)",
-
   "phenologicalState": "Estado Fenológico",
   "phenoFlowering": "Floración",
   "phenoFruiting": "Fructificación",
@@ -670,22 +931,44 @@
   "phenoVegetative": "Vegetativo",
   "phenoSterile": "Estéril",
   "phenoUnknown": "Desconocido",
-
   "collectionMethod": "Método de Colecta",
   "methodVoucherCollected": "Voucher Colectado",
   "methodPhotoOnly": "Solo Foto",
   "methodSterileMaterial": "Material Estéril",
   "methodLivingMaterial": "Material Vivo",
-
   "confirmAssignTitle": "Confirmar Asignación",
   "confirmAssignBody": "Se asignarán {count} identificador(es):",
-  "@confirmAssignBody": { "placeholders": { "count": { "type": "int" } } },
+  "@confirmAssignBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "errorLoadingPlants2": "Error al cargar plantas: {error}",
-  "@errorLoadingPlants2": { "placeholders": { "error": { "type": "String" } } },
+  "@errorLoadingPlants2": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "errorGeneratingPreview": "Error al generar vista previa: {error}",
-  "@errorGeneratingPreview": { "placeholders": { "error": { "type": "String" } } },
+  "@errorGeneratingPreview": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "errorAssigningIdentifiers": "Error al asignar identificadores: {error}",
-  "@errorAssigningIdentifiers": { "placeholders": { "error": { "type": "String" } } },
+  "@errorAssigningIdentifiers": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "exportIdentifiersTitle": "Exportar Identificadores",
   "exportFormatJson": "JSON",
   "exportFormatJsonSubtitle": "Formato estructurado, completo",
@@ -695,12 +978,30 @@
   "exportFormatExcelSubtitle": "Hoja de cálculo Excel con formato",
   "exportCompletedSuccess": "Exportación completada",
   "errorExporting": "Error al exportar: {error}",
-  "@errorExporting": { "placeholders": { "error": { "type": "String" } } },
+  "@errorExporting": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "errorImporting2": "Error al importar: {error}",
-  "@errorImporting2": { "placeholders": { "error": { "type": "String" } } },
+  "@errorImporting2": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "manageIdentifiersTitle": "Gestionar Identificadores",
   "assignIdentifiers": "Asignar ({count})",
-  "@assignIdentifiers": { "placeholders": { "count": { "type": "int" } } },
+  "@assignIdentifiers": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "assignSubtitle": "Asignar identificadores a plantas existentes",
   "syncErrorTitle": "Error de Sincronización",
   "deleteSessionTitle": "Eliminar Sesión",
@@ -708,23 +1009,77 @@
   "exportImportTitle": "Exportar e Importar",
   "exportSuccessMsg": "¡Exportación completada con éxito!",
   "errorExportMsg": "Error al exportar: {error}",
-  "@errorExportMsg": { "placeholders": { "error": { "type": "String" } } },
+  "@errorExportMsg": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "errorImportMsg": "Error al importar: {error}",
-  "@errorImportMsg": { "placeholders": { "error": { "type": "String" } } },
+  "@errorImportMsg": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "errorTranscribeMsg": "Error al transcribir: {error}",
-  "@errorTranscribeMsg": { "placeholders": { "error": { "type": "String" } } },
+  "@errorTranscribeMsg": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "errorLocationMsg": "Error al obtener ubicación: {error}",
-  "@errorLocationMsg": { "placeholders": { "error": { "type": "String" } } },
+  "@errorLocationMsg": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "errorPhotoMsg": "Error al tomar foto: {error}",
-  "@errorPhotoMsg": { "placeholders": { "error": { "type": "String" } } },
+  "@errorPhotoMsg": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "errorPickPhotoMsg": "Error al elegir fotos: {error}",
-  "@errorPickPhotoMsg": { "placeholders": { "error": { "type": "String" } } },
+  "@errorPickPhotoMsg": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "errorSearchMsg": "Error en la búsqueda: {error}",
-  "@errorSearchMsg": { "placeholders": { "error": { "type": "String" } } },
+  "@errorSearchMsg": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "errorDownloadMapMsg": "Error al descargar: {error}",
-  "@errorDownloadMapMsg": { "placeholders": { "error": { "type": "String" } } },
+  "@errorDownloadMapMsg": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "errorClearCacheMsg": "Error al limpiar caché: {error}",
-  "@errorClearCacheMsg": { "placeholders": { "error": { "type": "String" } } },
+  "@errorClearCacheMsg": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "downloadOfflineArea": "Descargar Área Sin Conexión",
   "download": "Descargar",
   "clearCacheTitle": "Limpiar Caché",
@@ -786,7 +1141,13 @@
   "numberHint": "Ej: 0, 40, 1000",
   "numberBetweenError": "El número debe estar entre 0 y 999999",
   "nextRegistryWillUse": "El siguiente registro usará: {next}",
-  "@nextRegistryWillUse": { "placeholders": { "next": { "type": "int" } } },
+  "@nextRegistryWillUse": {
+    "placeholders": {
+      "next": {
+        "type": "int"
+      }
+    }
+  },
   "changeNumberWarning": "Cambiar este número afectará los próximos registros creados.",
   "enterLastRegistryNumber": "Ingresa el último número de registro",
   "digitsOnly": "Ingresa solo dígitos",
@@ -794,7 +1155,13 @@
   "syncErrorTitle": "Error de sincronización",
   "loginToSync": "Inicia sesión para sincronizar",
   "lastSync": "Última: {date}",
-  "@lastSync": { "placeholders": { "date": { "type": "String" } } },
+  "@lastSync": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "neverSynced": "Nunca sincronizado",
   "initialsCannotBeEmpty": "Las iniciales no pueden estar vacías",
   "initialsFormatError": "Usa 1-4 letras mayúsculas",
@@ -809,9 +1176,21 @@
   "autoSaveInterval": "Intervalo de Autoguardado",
   "disabled": "Desactivado",
   "nSeconds": "{n} segundos",
-  "@nSeconds": { "placeholders": { "n": { "type": "int" } } },
+  "@nSeconds": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "nMinutes": "{n} minuto(s)",
-  "@nMinutes": { "placeholders": { "n": { "type": "int" } } },
+  "@nMinutes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "compressionQuality": "Calidad de Compresión",
   "preserveExifTitle": "Conservar Metadatos EXIF",
   "preserveExifSubtitle": "Mantener información de GPS y cámara",
@@ -826,22 +1205,55 @@
   "audioQualityHighShort": "Alta",
   "paginationSize": "Elementos por Página",
   "nItems": "{n} elementos",
-  "@nItems": { "placeholders": { "n": { "type": "int" } } },
+  "@nItems": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "thumbnailCacheTitle": "Caché de Miniaturas",
   "thumbnailCacheSubtitle": "Mejorar rendimiento de listas",
   "autoGenerateTitle": "Generar Automáticamente",
   "autoGenerateSubtitle": "Crear identificador al guardar registro",
   "manageIdentifiersSubtitle": "Asignar identificadores a plantas existentes",
   "nextLabel": "Siguiente: {id}",
-  "@nextLabel": { "placeholders": { "id": { "type": "String" } } },
+  "@nextLabel": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "lastSyncResult": "Último resultado",
   "autoCache": "Caché Automática",
   "syncResultSummary": "{pushed} enviados, {pulled} recibidos",
-  "@syncResultSummary": { "placeholders": { "pushed": { "type": "int" }, "pulled": { "type": "int" } } },
+  "@syncResultSummary": {
+    "placeholders": {
+      "pushed": {
+        "type": "int"
+      },
+      "pulled": {
+        "type": "int"
+      }
+    }
+  },
   "syncResultConflicts": ", {conflicts} conflictos",
-  "@syncResultConflicts": { "placeholders": { "conflicts": { "type": "int" } } },
+  "@syncResultConflicts": {
+    "placeholders": {
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  },
   "exportingNPlants": "Exportando {n} planta(s) seleccionada(s)",
-  "@exportingNPlants": { "placeholders": { "n": { "type": "int" } } },
+  "@exportingNPlants": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "editSessionTitle": "Editar Sesión",
   "sessionTripNameLabel": "Nombre del Viaje *",
   "sessionTripNameHint": "Ej: Colecta en Serra do Mar",
@@ -853,29 +1265,77 @@
   "sessionNotesHint": "Información adicional sobre la colecta...",
   "saveSessionLabel": "Guardar Sesión",
   "sessionStartDateValue": "Inicio: {date}",
-  "@sessionStartDateValue": { "placeholders": { "date": { "type": "String" } } },
+  "@sessionStartDateValue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "sessionEndDateValue": "Fin: {date}",
-  "@sessionEndDateValue": { "placeholders": { "date": { "type": "String" } } },
+  "@sessionEndDateValue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "sessionCollaborators": "{count} colaboradores",
-  "@sessionCollaborators": { "placeholders": { "count": { "type": "int" } } },
+  "@sessionCollaborators": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "sessionTeamCount": "Equipo ({count})",
-  "@sessionTeamCount": { "placeholders": { "count": { "type": "int" } } },
+  "@sessionTeamCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "sessionCollectedPlantsTitle": "Plantas Recolectadas",
   "noPlantsCollectedInSession": "No se recolectaron plantas en esta sesión",
   "statusLabel": "Estado",
   "allLabel": "Todos",
   "completedLabel": "Completos",
   "mapPlantsCount": "{count} plantas en el mapa",
-  "@mapPlantsCount": { "placeholders": { "count": { "type": "int" } } },
+  "@mapPlantsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "mapPlantsTitle": "Mapa de Plantas",
   "legendLabel": "Leyenda",
   "plantsCount": "{count} plantas",
-  "@plantsCount": { "placeholders": { "count": { "type": "int" } } },
+  "@plantsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "tapMapToDefineArea": "Toque el mapa para definir el área de descarga",
   "offlineRegionName": "Región {date}",
-  "@offlineRegionName": { "placeholders": { "date": { "type": "String" } } },
+  "@offlineRegionName": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "downloadingRegion": "Descargando {region}",
-  "@downloadingRegion": { "placeholders": { "region": { "type": "String" } } },
+  "@downloadingRegion": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
   "selectFirstAreaCorner": "1. Toque la primera esquina del área",
   "selectOppositeAreaCorner": "2. Toque la esquina opuesta del área",
   "mapCacheTitle": "Caché de Mapas",
@@ -897,7 +1357,13 @@
   "rainModeUnlockHold": "Mantenga presionada la gota durante 2 segundos",
   "rainModeUnlockTap": "o toque la gota 3 veces",
   "rainModeCountdownLabel": "Acción disponible en {seconds}s",
-  "@rainModeCountdownLabel": { "placeholders": { "seconds": { "type": "int" } } },
+  "@rainModeCountdownLabel": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "rainModeDeleteConfirmTitle": "Confirmar acción destructiva",
   "rainModeArchiveConfirmTitle": "¿Archivar sesión?",
   "rainModeArchiveConfirmMessage": "Archivar oculta esta sesión del trabajo activo, pero mantiene los datos guardados.",
@@ -921,14 +1387,32 @@
   "locality": "Localidad",
   "morphologicalNotes": "Notas morfológicas",
   "errorExportingLabelPdf": "Error al exportar etiqueta PDF: {error}",
-  "@errorExportingLabelPdf": { "placeholders": { "error": { "type": "String" } } },
+  "@errorExportingLabelPdf": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "conflictResolutionTitle": "Resolver conflictos",
   "syncConflictBadge": "Conflicto",
   "syncConflictBannerMessage": "{count} conflicto(s) de sincronización necesitan revisión.",
-  "@syncConflictBannerMessage": { "placeholders": { "count": { "type": "int" } } },
+  "@syncConflictBannerMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "resolveConflicts": "Resolver conflictos",
   "pendingConflictsCount": "{count} conflicto(s) pendiente(s)",
-  "@pendingConflictsCount": { "placeholders": { "count": { "type": "int" } } },
+  "@pendingConflictsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "conflictResolutionHelper": "Compare los valores locales y del servidor, luego decida campo por campo o resuelva todo el registro de una vez.",
   "resolveAllKeepMostRecent": "Resolver todos → mantener el más reciente",
   "conflictsResolvedMostRecent": "Conflictos resueltos usando la versión más reciente.",
@@ -937,9 +1421,21 @@
   "keepLocalField": "Mantener campo local",
   "acceptServerField": "Aceptar campo del servidor",
   "fieldResolvedKeepingLocal": "Campo \"{field}\" resuelto manteniendo el valor local.",
-  "@fieldResolvedKeepingLocal": { "placeholders": { "field": { "type": "String" } } },
+  "@fieldResolvedKeepingLocal": {
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
   "fieldResolvedKeepingServer": "Campo \"{field}\" resuelto aceptando el valor del servidor.",
-  "@fieldResolvedKeepingServer": { "placeholders": { "field": { "type": "String" } } },
+  "@fieldResolvedKeepingServer": {
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
   "keepLocalRecord": "Mantener registro local",
   "acceptServerRecord": "Aceptar registro del servidor",
   "conflictResolvedKeepingLocal": "Conflicto resuelto manteniendo el registro local.",
@@ -959,7 +1455,13 @@
   "duplicatesTitle": "Duplicados",
   "markAsDuplicate": "Marcar como duplicado",
   "duplicateOfLabel": "Duplicado de #{identifier}",
-  "@duplicateOfLabel": { "placeholders": { "identifier": { "type": "String" } } },
+  "@duplicateOfLabel": {
+    "placeholders": {
+      "identifier": {
+        "type": "String"
+      }
+    }
+  },
   "noDuplicatesLinked": "No hay duplicados vinculados",
   "searchCollectorNumber": "Buscar por número de colecta",
   "searchCollectorNumberHint": "p. ej. 42 o RC000042",

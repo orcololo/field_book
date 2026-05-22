@@ -206,6 +206,7 @@ void main() {
     test('pushes pending plant and returns pushed: 1', () async {
       // Save a pending plant to Isar
       final plant = _minimalPlant(uuid: 'pending-push-1');
+      plant.coCollectors = ['Ana Ribeiro', 'Bruno Costa'];
       plant.syncMetadata.syncStatus = SyncStatus.pending;
       await isar.writeTxn(() => isar.plantRecords.put(plant));
 
@@ -250,6 +251,19 @@ void main() {
 
       expect(result.pushed, 1);
       expect(result.errors, 0);
+
+      final capturedPush =
+          verify(
+                () => mockDio.post<Map<String, dynamic>>(
+                  ApiEndpoints.syncPush,
+                  data: captureAny(named: 'data'),
+                ),
+              ).captured.single
+              as Map<String, dynamic>;
+      expect(capturedPush['registries'][0]['coCollectors'], [
+        'Ana Ribeiro',
+        'Bruno Costa',
+      ]);
     });
 
     test('pull with one remote plant returns pulled: 1', () async {
@@ -334,7 +348,10 @@ void main() {
               'registries': [
                 {
                   'status': 'conflict',
-                  'serverData': {'uuid': 'conflict-push-1', 'scientificName': 'Remote Name'},
+                  'serverData': {
+                    'uuid': 'conflict-push-1',
+                    'scientificName': 'Remote Name',
+                  },
                 },
               ],
               'sessions': [],
@@ -404,6 +421,7 @@ void main() {
                 'uuid': 'existing-plant-uuid',
                 'scientificName': 'Updated Name',
                 'commonName': 'updated common',
+                'coCollectors': ['Dra. Helena', 'Paulo Dias'],
                 'category': 'shrubs',
                 'dateCollected': '2025-06-01T00:00:00.000',
                 'deviceId': 'server-device',
@@ -440,11 +458,7 @@ void main() {
                     'color': 'yellow',
                     'size': '2.0cm',
                   },
-                  'fruit': {
-                    'color': 'red',
-                    'format': 'drupe',
-                    'size': '1.5cm',
-                  },
+                  'fruit': {'color': 'red', 'format': 'drupe', 'size': '1.5cm'},
                   'seed': {'format': 'round', 'size': '0.5cm'},
                 },
               },
@@ -466,6 +480,7 @@ void main() {
           .uuidEqualTo('existing-plant-uuid')
           .findFirst();
       expect(updated?.scientificName, 'Updated Name');
+      expect(updated?.coCollectors, ['Dra. Helena', 'Paulo Dias']);
     });
 
     test('partial batch: one created, one error → pushed:1 errors:1', () async {
@@ -522,60 +537,67 @@ void main() {
       expect(result.errors, 1);
     });
 
-    test('idempotency: second sync does not push already-synced plant', () async {
-      final plant = _minimalPlant(uuid: 'idem-1');
-      plant.syncMetadata.syncStatus = SyncStatus.pending;
-      await isar.writeTxn(() => isar.plantRecords.put(plant));
+    test(
+      'idempotency: second sync does not push already-synced plant',
+      () async {
+        final plant = _minimalPlant(uuid: 'idem-1');
+        plant.syncMetadata.syncStatus = SyncStatus.pending;
+        await isar.writeTxn(() => isar.plantRecords.put(plant));
 
-      // Mock POST for the first (and only expected) push.
-      when(
-        () => mockDio.post<Map<String, dynamic>>(
-          ApiEndpoints.syncPush,
-          data: any(named: 'data'),
-        ),
-      ).thenAnswer(
-        (_) async => Response<Map<String, dynamic>>(
-          data: {
-            'data': {
-              'registries': [
-                {'status': 'created', 'serverId': 'srv-idem-1', 'syncVersion': 1},
-              ],
-              'sessions': [],
+        // Mock POST for the first (and only expected) push.
+        when(
+          () => mockDio.post<Map<String, dynamic>>(
+            ApiEndpoints.syncPush,
+            data: any(named: 'data'),
+          ),
+        ).thenAnswer(
+          (_) async => Response<Map<String, dynamic>>(
+            data: {
+              'data': {
+                'registries': [
+                  {
+                    'status': 'created',
+                    'serverId': 'srv-idem-1',
+                    'syncVersion': 1,
+                  },
+                ],
+                'sessions': [],
+              },
             },
-          },
-          statusCode: 200,
-          requestOptions: RequestOptions(path: ''),
-        ),
-      );
+            statusCode: 200,
+            requestOptions: RequestOptions(path: ''),
+          ),
+        );
 
-      when(
-        () => mockDio.get<Map<String, dynamic>>(
-          ApiEndpoints.syncPull,
-          queryParameters: any(named: 'queryParameters'),
-        ),
-      ).thenAnswer(
-        (_) async => _dioResponse({
-          'data': {'registries': [], 'sessions': [], 'hasMore': false},
-        }),
-      );
+        when(
+          () => mockDio.get<Map<String, dynamic>>(
+            ApiEndpoints.syncPull,
+            queryParameters: any(named: 'queryParameters'),
+          ),
+        ).thenAnswer(
+          (_) async => _dioResponse({
+            'data': {'registries': [], 'sessions': [], 'hasMore': false},
+          }),
+        );
 
-      // First sync — plant is pending, should be pushed.
-      final first = await svc.sync(deviceId: 'test-device');
-      expect(first.pushed, 1);
+        // First sync — plant is pending, should be pushed.
+        final first = await svc.sync(deviceId: 'test-device');
+        expect(first.pushed, 1);
 
-      // Second sync — plant is now synced, nothing to push.
-      final second = await svc.sync(deviceId: 'test-device');
-      expect(second.pushed, 0);
-      expect(second.errors, 0);
+        // Second sync — plant is now synced, nothing to push.
+        final second = await svc.sync(deviceId: 'test-device');
+        expect(second.pushed, 0);
+        expect(second.errors, 0);
 
-      // POST was called exactly once across both syncs.
-      verify(
-        () => mockDio.post<Map<String, dynamic>>(
-          ApiEndpoints.syncPush,
-          data: any(named: 'data'),
-        ),
-      ).called(1);
-    });
+        // POST was called exactly once across both syncs.
+        verify(
+          () => mockDio.post<Map<String, dynamic>>(
+            ApiEndpoints.syncPush,
+            data: any(named: 'data'),
+          ),
+        ).called(1);
+      },
+    );
 
     test('401 response counts as error with no refresh/retry', () async {
       // FIXME: this is wrong but matches current implementation. See "Deferred follow-ups" in 2026-05-08-phase3-test-foundation.md
@@ -698,17 +720,20 @@ void main() {
       expect(updated?.syncMetadata.conflictData, isNull);
     });
 
-    test('keepLocalConflict with conflict data preserves syncVersion', () async {
-      final conflictData = '{"_id":"srv-x","syncVersion":7}';
-      final plant = conflictPlant(conflictData: conflictData);
-      await isar.writeTxn(() => isar.plantRecords.put(plant));
+    test(
+      'keepLocalConflict with conflict data preserves syncVersion',
+      () async {
+        final conflictData = '{"_id":"srv-x","syncVersion":7}';
+        final plant = conflictPlant(conflictData: conflictData);
+        await isar.writeTxn(() => isar.plantRecords.put(plant));
 
-      await svc.keepLocalConflict(plant);
+        await svc.keepLocalConflict(plant);
 
-      final updated = await isar.plantRecords.get(plant.id);
-      expect(updated?.syncMetadata.syncStatus, SyncStatus.synced);
-      expect(updated?.syncMetadata.syncVersion, 7);
-    });
+        final updated = await isar.plantRecords.get(plant.id);
+        expect(updated?.syncMetadata.syncStatus, SyncStatus.synced);
+        expect(updated?.syncMetadata.syncVersion, 7);
+      },
+    );
 
     test('keepLocalConflict is no-op when plant not found', () async {
       final plant = _minimalPlant();
@@ -716,18 +741,22 @@ void main() {
       await svc.keepLocalConflict(plant); // should not throw
     });
 
-    test('acceptServerConflict with empty conflictData falls back to keepLocal', () async {
-      final plant = conflictPlant(conflictData: null);
-      await isar.writeTxn(() => isar.plantRecords.put(plant));
+    test(
+      'acceptServerConflict with empty conflictData falls back to keepLocal',
+      () async {
+        final plant = conflictPlant(conflictData: null);
+        await isar.writeTxn(() => isar.plantRecords.put(plant));
 
-      await svc.acceptServerConflict(plant);
+        await svc.acceptServerConflict(plant);
 
-      final updated = await isar.plantRecords.get(plant.id);
-      expect(updated?.syncMetadata.syncStatus, SyncStatus.synced);
-    });
+        final updated = await isar.plantRecords.get(plant.id);
+        expect(updated?.syncMetadata.syncStatus, SyncStatus.synced);
+      },
+    );
 
     test('acceptServerConflict applies remote scientificName', () async {
-      final conflictData = '{"_id":"srv-y","syncVersion":4,'
+      final conflictData =
+          '{"_id":"srv-y","syncVersion":4,'
           '"uuid":"conflict-plant-1","scientificName":"Remote Species",'
           '"dateCollected":"2025-06-01T00:00:00.000","deviceId":"srv-dev",'
           '"isDraft":false}';
@@ -742,7 +771,9 @@ void main() {
     });
 
     test('resolveAllConflictsKeepMostRecent resolves conflict plant', () async {
-      final plant = conflictPlant(conflictData: '{"_id":"srv-z","syncVersion":2}');
+      final plant = conflictPlant(
+        conflictData: '{"_id":"srv-z","syncVersion":2}',
+      );
       await isar.writeTxn(() => isar.plantRecords.put(plant));
 
       await svc.resolveAllConflictsKeepMostRecent();
@@ -826,6 +857,15 @@ void main() {
       final plant = _minimalPlant(scientificName: 'Cecropia pachystachya');
       final data = svc.buildPlantConflictLocalData(plant);
       expect(data['scientificName'], 'Cecropia pachystachya');
+    });
+
+    test('includes co-collectors from plant', () {
+      final plant = _minimalPlant();
+      plant.coCollectors = ['Ana Ribeiro', 'Bruno Costa'];
+
+      final data = svc.buildPlantConflictLocalData(plant);
+
+      expect(data['coCollectors'], ['Ana Ribeiro', 'Bruno Costa']);
     });
 
     test('localModifiedAt falls back to updatedAt when not set', () {

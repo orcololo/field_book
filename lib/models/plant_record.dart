@@ -145,6 +145,7 @@ class PlantRecord {
 
   late String deviceId;
   String? contributorName;
+  List<String> coCollectors = [];
 
   @Index()
   late DateTime createdAt;
