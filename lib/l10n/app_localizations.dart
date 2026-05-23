@@ -292,6 +292,84 @@ abstract class AppLocalizations {
   /// **'Aquatic'**
   String get categoryAquatic;
 
+  /// No description provided for @categorySamambaia.
+  ///
+  /// In en, this message translates to:
+  /// **'Fern'**
+  String get categorySamambaia;
+
+  /// No description provided for @categoryErva.
+  ///
+  /// In en, this message translates to:
+  /// **'Herb'**
+  String get categoryErva;
+
+  /// No description provided for @categorySemiArbusto.
+  ///
+  /// In en, this message translates to:
+  /// **'Subshrub'**
+  String get categorySemiArbusto;
+
+  /// No description provided for @categoryArbusto.
+  ///
+  /// In en, this message translates to:
+  /// **'Shrub'**
+  String get categoryArbusto;
+
+  /// No description provided for @categoryArvore.
+  ///
+  /// In en, this message translates to:
+  /// **'Tree'**
+  String get categoryArvore;
+
+  /// No description provided for @categoryErvaTrepadeira.
+  ///
+  /// In en, this message translates to:
+  /// **'Climbing herb'**
+  String get categoryErvaTrepadeira;
+
+  /// No description provided for @categoryErvaEpifita.
+  ///
+  /// In en, this message translates to:
+  /// **'Epiphytic herb'**
+  String get categoryErvaEpifita;
+
+  /// No description provided for @categoryHemiepifita.
+  ///
+  /// In en, this message translates to:
+  /// **'Hemiepiphyte'**
+  String get categoryHemiepifita;
+
+  /// No description provided for @categoryProstrada.
+  ///
+  /// In en, this message translates to:
+  /// **'Prostrate'**
+  String get categoryProstrada;
+
+  /// No description provided for @categoryRastejante.
+  ///
+  /// In en, this message translates to:
+  /// **'Creeping'**
+  String get categoryRastejante;
+
+  /// No description provided for @categoryPlantaRupicola.
+  ///
+  /// In en, this message translates to:
+  /// **'Rupicolous plant'**
+  String get categoryPlantaRupicola;
+
+  /// No description provided for @categoryCiofila.
+  ///
+  /// In en, this message translates to:
+  /// **'Sciophilous'**
+  String get categoryCiofila;
+
+  /// No description provided for @categoryEpilitica.
+  ///
+  /// In en, this message translates to:
+  /// **'Epilithic'**
+  String get categoryEpilitica;
+
   /// No description provided for @save.
   ///
   /// In en, this message translates to:
@@ -2175,6 +2253,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An app for recording and documenting plants in the field.'**
   String get aboutAppDescription;
+
+  /// No description provided for @appUpdateAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'New version available: {version}'**
+  String appUpdateAvailable(String version);
+
+  /// No description provided for @appUpdateDownloadAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get appUpdateDownloadAction;
+
+  /// No description provided for @appUpdateDismissAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get appUpdateDismissAction;
+
+  /// No description provided for @checkForUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Check for updates'**
+  String get checkForUpdates;
+
+  /// No description provided for @checkForUpdatesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Look for a new Android APK on GitHub'**
+  String get checkForUpdatesSubtitle;
+
+  /// No description provided for @noUpdatesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'You are using the latest version.'**
+  String get noUpdatesAvailable;
+
+  /// No description provided for @updateCheckFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not check for updates.'**
+  String get updateCheckFailed;
+
+  /// No description provided for @currentVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Current version: {version}'**
+  String currentVersion(String version);
 
   /// No description provided for @searchTooltip.
   ///

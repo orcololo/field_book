@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../models/plant_record.dart';
-import '../../../models/plant_category.dart';
 import '../../../models/sync_metadata.dart';
 import '../../../core/theme/folium_theme.dart';
 import 'package:intl/intl.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/utils/geo_utils.dart';
+import '../../utils/plant_category_presentation.dart';
 import '../adaptive_image.dart';
 
 /// Modern plant card with eco-design aesthetic
@@ -60,10 +60,11 @@ class ModernPlantCard extends StatelessWidget {
                       // Scientific name
                       Text(
                         plant.scientificName,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -73,9 +74,12 @@ class ModernPlantCard extends StatelessWidget {
                         const SizedBox(height: FoliumTheme.space4),
                         Text(
                           plant.commonName,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -260,7 +264,7 @@ class ModernPlantCard extends StatelessWidget {
         const SizedBox(width: FoliumTheme.space4),
         Flexible(
           child: Text(
-            _getCategoryLabel(),
+            _getCategoryLabel(context),
             style: Theme.of(context).textTheme.bodySmall,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -281,11 +285,7 @@ class ModernPlantCard extends StatelessWidget {
         const Spacer(),
         // Location icon
         if (plant.latitude != null && plant.longitude != null) ...[
-          Icon(
-            Icons.location_on,
-            size: 16,
-            color: colorScheme.tertiary,
-          ),
+          Icon(Icons.location_on, size: 16, color: colorScheme.tertiary),
           const SizedBox(width: FoliumTheme.space4),
           Flexible(
             child: Text(
@@ -300,11 +300,7 @@ class ModernPlantCard extends StatelessWidget {
           const SizedBox(width: FoliumTheme.space8),
         ],
         if (plant.iNaturalistId?.isNotEmpty ?? false) ...[
-          Icon(
-            Icons.outbox_outlined,
-            size: 16,
-            color: colorScheme.primary,
-          ),
+          Icon(Icons.outbox_outlined, size: 16, color: colorScheme.primary),
           const SizedBox(width: FoliumTheme.space4),
           Flexible(
             child: Text(
@@ -340,7 +336,7 @@ class ModernPlantCard extends StatelessWidget {
           Icon(_getCategoryIcon(), size: 14, color: colorScheme.primary),
           const SizedBox(width: FoliumTheme.space4),
           Text(
-            _getCategoryLabel(),
+            _getCategoryLabel(context),
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               color: colorScheme.onSurface,
               fontWeight: FontWeight.w600,
@@ -481,44 +477,10 @@ class ModernPlantCard extends StatelessWidget {
   }
 
   IconData _getCategoryIcon() {
-    switch (plant.category) {
-      case PlantCategory.trees:
-        return Icons.park;
-      case PlantCategory.shrubs:
-        return Icons.forest;
-      case PlantCategory.herbs:
-        return Icons.grass;
-      case PlantCategory.vines:
-        return Icons.commit;
-      case PlantCategory.ferns:
-        return Icons.yard;
-      case PlantCategory.grasses:
-        return Icons.grass;
-      case PlantCategory.cacti:
-        return Icons.eco;
-      case PlantCategory.aquatic:
-        return Icons.water;
-    }
+    return plant.category.icon;
   }
 
-  String _getCategoryLabel() {
-    switch (plant.category) {
-      case PlantCategory.trees:
-        return 'Árvore';
-      case PlantCategory.shrubs:
-        return 'Arbusto';
-      case PlantCategory.herbs:
-        return 'Erva';
-      case PlantCategory.vines:
-        return 'Trepadeira';
-      case PlantCategory.ferns:
-        return 'Samambaia';
-      case PlantCategory.grasses:
-        return 'Gramínea';
-      case PlantCategory.cacti:
-        return 'Cacto';
-      case PlantCategory.aquatic:
-        return 'Aquática';
-    }
+  String _getCategoryLabel(BuildContext context) {
+    return plant.category.localizedLabel(AppLocalizations.of(context)!);
   }
 }

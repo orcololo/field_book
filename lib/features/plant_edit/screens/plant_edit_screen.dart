@@ -14,6 +14,7 @@ import '../../../core/services/taxon_service.dart';
 import '../../../core/utils/botanical_validator.dart';
 import '../../../core/utils/co_collectors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/utils/plant_category_presentation.dart';
 import '../../../shared/widgets/modern/modern_app_bar.dart';
 
 class PlantEditScreen extends ConsumerStatefulWidget {
@@ -952,7 +953,9 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
                 border: const OutlineInputBorder(),
                 prefixIcon: const Icon(Icons.category_outlined),
               ),
-              items: PlantCategory.values.map((category) {
+              items: PlantCategory.optionsFor(_selectedCategory).map((
+                category,
+              ) {
                 return DropdownMenuItem(
                   value: category,
                   child: Text(_getCategoryName(category)),
@@ -1615,24 +1618,7 @@ class _PlantEditScreenState extends ConsumerState<PlantEditScreen> {
 
   String _getCategoryName(PlantCategory category) {
     final l10n = AppLocalizations.of(context)!;
-    switch (category) {
-      case PlantCategory.trees:
-        return l10n.categoryTrees;
-      case PlantCategory.shrubs:
-        return l10n.categoryShrubs;
-      case PlantCategory.herbs:
-        return l10n.categoryHerbs;
-      case PlantCategory.vines:
-        return l10n.categoryVines;
-      case PlantCategory.ferns:
-        return l10n.categoryFerns;
-      case PlantCategory.grasses:
-        return l10n.categoryGrasses;
-      case PlantCategory.cacti:
-        return l10n.categoryCacti;
-      case PlantCategory.aquatic:
-        return l10n.categoryAquatic;
-    }
+    return category.localizedLabel(l10n);
   }
 
   String _getPhenologicalStateName(

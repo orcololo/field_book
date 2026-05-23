@@ -9,6 +9,7 @@ import '../../../core/repositories/plant_repository.dart';
 import '../../../core/services/map_service.dart';
 import '../../plant_detail/screens/plant_detail_screen.dart';
 import 'offline_maps_screen.dart';
+import '../../../shared/utils/plant_category_presentation.dart';
 import '../../../shared/widgets/modern/modern_app_bar.dart';
 
 class MapViewScreen extends ConsumerStatefulWidget {
@@ -40,14 +41,14 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
   Future<void> _loadPlants() async {
     if (!mounted) return;
     setState(() => _isLoading = true);
-    
+
     try {
       final plants = await _plantRepo.getPaginated(limit: 100000);
       // Filter only plants with coordinates
-      final plantsWithCoords = plants.where((p) => 
-        p.latitude != null && p.longitude != null
-      ).toList();
-      
+      final plantsWithCoords = plants
+          .where((p) => p.latitude != null && p.longitude != null)
+          .toList();
+
       if (!mounted) return;
       setState(() {
         _plants = plantsWithCoords;
@@ -95,16 +96,13 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
       if (plant.longitude! > maxLng) maxLng = plant.longitude!;
     }
 
-    final center = LatLng(
-      (minLat + maxLat) / 2,
-      (minLng + maxLng) / 2,
-    );
+    final center = LatLng((minLat + maxLat) / 2, (minLng + maxLng) / 2);
 
     // Calculate appropriate zoom level
     final latDiff = maxLat - minLat;
     final lngDiff = maxLng - minLng;
     final maxDiff = latDiff > lngDiff ? latDiff : lngDiff;
-    
+
     double zoom = 15.0;
     if (maxDiff > 0.1) zoom = 10.0;
     if (maxDiff > 1.0) zoom = 8.0;
@@ -121,129 +119,129 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
           final l10n = AppLocalizations.of(context)!;
 
           return Container(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    l10n.filters,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      l10n.filters,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      setModalState(() {
-                        _filterCategory = null;
-                        _showDraftsOnly = false;
-                        _showCompletedOnly = false;
-                      });
-                      setState(() => _applyFilters());
-                    },
-                    child: Text(l10n.clearFilters),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              
-              // Category filter
-              Text(
-                l10n.categoryLabel,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  FilterChip(
-                    label: Text(l10n.allCategories),
-                    selected: _filterCategory == null,
-                    onSelected: (selected) {
-                      setModalState(() => _filterCategory = null);
-                      setState(() => _applyFilters());
-                    },
-                  ),
-                  ...PlantCategory.values.map((category) {
-                    return FilterChip(
-                      label: Text(_getCategoryName(category)),
-                      selected: _filterCategory == category,
-                      onSelected: (selected) {
+                    TextButton(
+                      onPressed: () {
                         setModalState(() {
-                          _filterCategory = selected ? category : null;
+                          _filterCategory = null;
+                          _showDraftsOnly = false;
+                          _showCompletedOnly = false;
                         });
                         setState(() => _applyFilters());
                       },
-                    );
-                  }),
-                ],
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Status filter
-              Text(
-                l10n.statusLabel,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                children: [
-                  FilterChip(
-                    label: Text(l10n.allLabel),
-                    selected: !_showDraftsOnly && !_showCompletedOnly,
-                    onSelected: (selected) {
-                      setModalState(() {
-                        _showDraftsOnly = false;
-                        _showCompletedOnly = false;
-                      });
-                      setState(() => _applyFilters());
-                    },
-                  ),
-                  FilterChip(
-                    label: Text(l10n.drafts),
-                    selected: _showDraftsOnly,
-                    onSelected: (selected) {
-                      setModalState(() {
-                        _showDraftsOnly = selected;
-                        _showCompletedOnly = false;
-                      });
-                      setState(() => _applyFilters());
-                    },
-                  ),
-                  FilterChip(
-                    label: Text(l10n.completedLabel),
-                    selected: _showCompletedOnly,
-                    onSelected: (selected) {
-                      setModalState(() {
-                        _showCompletedOnly = selected;
-                        _showDraftsOnly = false;
-                      });
-                      setState(() => _applyFilters());
-                    },
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Results count
-              Text(
-                l10n.mapPlantsCount(_filteredPlants.length),
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontSize: 12,
+                      child: Text(l10n.clearFilters),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        );
+                const SizedBox(height: 16),
+
+                // Category filter
+                Text(
+                  l10n.categoryLabel,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    FilterChip(
+                      label: Text(l10n.allCategories),
+                      selected: _filterCategory == null,
+                      onSelected: (selected) {
+                        setModalState(() => _filterCategory = null);
+                        setState(() => _applyFilters());
+                      },
+                    ),
+                    ...PlantCategory.currentValues.map((category) {
+                      return FilterChip(
+                        label: Text(_getCategoryName(category)),
+                        selected: _filterCategory == category,
+                        onSelected: (selected) {
+                          setModalState(() {
+                            _filterCategory = selected ? category : null;
+                          });
+                          setState(() => _applyFilters());
+                        },
+                      );
+                    }),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+
+                // Status filter
+                Text(
+                  l10n.statusLabel,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  children: [
+                    FilterChip(
+                      label: Text(l10n.allLabel),
+                      selected: !_showDraftsOnly && !_showCompletedOnly,
+                      onSelected: (selected) {
+                        setModalState(() {
+                          _showDraftsOnly = false;
+                          _showCompletedOnly = false;
+                        });
+                        setState(() => _applyFilters());
+                      },
+                    ),
+                    FilterChip(
+                      label: Text(l10n.drafts),
+                      selected: _showDraftsOnly,
+                      onSelected: (selected) {
+                        setModalState(() {
+                          _showDraftsOnly = selected;
+                          _showCompletedOnly = false;
+                        });
+                        setState(() => _applyFilters());
+                      },
+                    ),
+                    FilterChip(
+                      label: Text(l10n.completedLabel),
+                      selected: _showCompletedOnly,
+                      onSelected: (selected) {
+                        setModalState(() {
+                          _showCompletedOnly = selected;
+                          _showDraftsOnly = false;
+                        });
+                        setState(() => _applyFilters());
+                      },
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+
+                // Results count
+                Text(
+                  l10n.mapPlantsCount(_filteredPlants.length),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          );
         },
       ),
     );
@@ -251,67 +249,15 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
 
   String _getCategoryName(PlantCategory category) {
     final l10n = AppLocalizations.of(context)!;
-
-    switch (category) {
-      case PlantCategory.trees:
-        return l10n.categoryTrees;
-      case PlantCategory.shrubs:
-        return l10n.categoryShrubs;
-      case PlantCategory.herbs:
-        return l10n.categoryHerbs;
-      case PlantCategory.vines:
-        return l10n.categoryVines;
-      case PlantCategory.ferns:
-        return l10n.categoryFerns;
-      case PlantCategory.grasses:
-        return l10n.categoryGrasses;
-      case PlantCategory.cacti:
-        return l10n.categoryCacti;
-      case PlantCategory.aquatic:
-        return l10n.categoryAquatic;
-    }
+    return category.localizedLabel(l10n);
   }
 
   IconData _getCategoryIcon(PlantCategory category) {
-    switch (category) {
-      case PlantCategory.trees:
-        return Icons.park;
-      case PlantCategory.shrubs:
-        return Icons.forest;
-      case PlantCategory.herbs:
-        return Icons.grass;
-      case PlantCategory.vines:
-        return Icons.account_tree;
-      case PlantCategory.ferns:
-        return Icons.eco;
-      case PlantCategory.grasses:
-        return Icons.waves;
-      case PlantCategory.cacti:
-        return Icons.filter_vintage;
-      case PlantCategory.aquatic:
-        return Icons.water;
-    }
+    return category.icon;
   }
 
   Color _getCategoryColor(PlantCategory category) {
-    switch (category) {
-      case PlantCategory.trees:
-        return Colors.green.shade700;
-      case PlantCategory.shrubs:
-        return Colors.green;
-      case PlantCategory.herbs:
-        return Colors.lightGreen;
-      case PlantCategory.vines:
-        return Colors.brown;
-      case PlantCategory.ferns:
-        return Colors.teal;
-      case PlantCategory.grasses:
-        return Colors.lime;
-      case PlantCategory.cacti:
-        return Colors.orange;
-      case PlantCategory.aquatic:
-        return Colors.blue;
-    }
+    return category.chartColor;
   }
 
   @override
@@ -353,198 +299,217 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _plants.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.map_outlined, size: 64, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                      const SizedBox(height: 16),
-                       Text(
-                         l10n.noLocationSet,
-                         style: TextStyle(
-                           color: Theme.of(context).colorScheme.onSurfaceVariant,
-                         ),
-                       ),
-                    ],
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.map_outlined,
+                    size: 64,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
-                )
-              : Stack(
-                  children: [
-                    FlutterMap(
-                      mapController: _mapController,
-                      options: MapOptions(
-                        initialCenter: const LatLng(-15.7801, -47.9292), // Brasília
-                        initialZoom: 4.0,
-                        minZoom: 2.0,
-                        maxZoom: 18.0,
-                      ),
-                      children: [
-                        TileLayer(
-                          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                          userAgentPackageName: 'com.example.field_book',
-                          tileProvider: MapService.getTileProvider(),
-                        ),
-                        MarkerLayer(
-                          markers: _filteredPlants.map((plant) {
-                            return Marker(
-                              point: LatLng(plant.latitude!, plant.longitude!),
-                              width: 40,
-                              height: 40,
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedPlant = _selectedPlant?.id == plant.id ? null : plant;
-                                  });
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: _getCategoryColor(plant.category),
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: _selectedPlant?.id == plant.id
-                                          ? Colors.yellow
-                                          : Colors.white,
-                                      width: _selectedPlant?.id == plant.id ? 3 : 2,
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.3),
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Icon(
-                                    _getCategoryIcon(plant.category),
-                                    color: _getCategoryColor(plant.category).computeLuminance() > 0.4
-                                        ? Colors.black87
-                                        : Colors.white,
-                                    size: 20,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ],
+                  const SizedBox(height: 16),
+                  Text(
+                    l10n.noLocationSet,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
-                    
-                    // Plant info popup
-                    if (_selectedPlant != null)
-                      Positioned(
-                        top: MediaQuery.of(context).padding.top + 64,
-                        left: 16,
-                        right: 16,
-                        child: Card(
-                          elevation: 8,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(12),
-                            onTap: () async {
-                              final fullPlant = await _plantRepo.getById(_selectedPlant!.id);
-                              if (fullPlant != null && context.mounted) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PlantDetailScreen(
-                                      plant: fullPlant,
-                                    ),
-                                  ),
-                                );
-                              }
+                  ),
+                ],
+              ),
+            )
+          : Stack(
+              children: [
+                FlutterMap(
+                  mapController: _mapController,
+                  options: MapOptions(
+                    initialCenter: const LatLng(-15.7801, -47.9292), // Brasília
+                    initialZoom: 4.0,
+                    minZoom: 2.0,
+                    maxZoom: 18.0,
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate:
+                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      userAgentPackageName: 'com.example.field_book',
+                      tileProvider: MapService.getTileProvider(),
+                    ),
+                    MarkerLayer(
+                      markers: _filteredPlants.map((plant) {
+                        return Marker(
+                          point: LatLng(plant.latitude!, plant.longitude!),
+                          width: 40,
+                          height: 40,
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedPlant = _selectedPlant?.id == plant.id
+                                    ? null
+                                    : plant;
+                              });
                             },
-                            child: Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: _getCategoryColor(_selectedPlant!.category),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      _getCategoryIcon(_selectedPlant!.category),
-                                      color: Colors.white,
-                                      size: 20,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          _selectedPlant!.scientificName,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontStyle: FontStyle.italic,
-                                            fontSize: 14,
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        if (_selectedPlant!.registryIdentifier != null)
-                                          Text(
-                                            _selectedPlant!.registryIdentifier!,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.chevron_right,
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.close, size: 18),
-                                    onPressed: () {
-                                      setState(() => _selectedPlant = null);
-                                    },
-                                    padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: _getCategoryColor(plant.category),
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: _selectedPlant?.id == plant.id
+                                      ? Colors.yellow
+                                      : Colors.white,
+                                  width: _selectedPlant?.id == plant.id ? 3 : 2,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.3),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
                                   ),
                                 ],
                               ),
+                              child: Icon(
+                                _getCategoryIcon(plant.category),
+                                color:
+                                    _getCategoryColor(
+                                          plant.category,
+                                        ).computeLuminance() >
+                                        0.4
+                                    ? Colors.black87
+                                    : Colors.white,
+                                size: 20,
+                              ),
                             ),
                           ),
-                        ),
-                      ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
 
-                    // Legend
-                    Positioned(
-                      bottom: 16,
-                      left: 16,
-                      child: Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                l10n.legendLabel,
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                // Plant info popup
+                if (_selectedPlant != null)
+                  Positioned(
+                    top: MediaQuery.of(context).padding.top + 64,
+                    left: 16,
+                    right: 16,
+                    child: Card(
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () async {
+                          final fullPlant = await _plantRepo.getById(
+                            _selectedPlant!.id,
+                          );
+                          if (fullPlant != null && context.mounted) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    PlantDetailScreen(plant: fullPlant),
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                l10n.plantsCount(_filteredPlants.length),
-                                style: const TextStyle(fontSize: 12),
+                            );
+                          }
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: _getCategoryColor(
+                                    _selectedPlant!.category,
+                                  ),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  _getCategoryIcon(_selectedPlant!.category),
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      _selectedPlant!.scientificName,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontStyle: FontStyle.italic,
+                                        fontSize: 14,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    if (_selectedPlant!.registryIdentifier !=
+                                        null)
+                                      Text(
+                                        _selectedPlant!.registryIdentifier!,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              Icon(
+                                Icons.chevron_right,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.close, size: 18),
+                                onPressed: () {
+                                  setState(() => _selectedPlant = null);
+                                },
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
                               ),
                             ],
                           ),
                         ),
                       ),
                     ),
-                  ],
+                  ),
+
+                // Legend
+                Positioned(
+                  bottom: 16,
+                  left: 16,
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            l10n.legendLabel,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            l10n.plantsCount(_filteredPlants.length),
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
+              ],
+            ),
     );
   }
 }

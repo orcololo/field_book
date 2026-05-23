@@ -38,6 +38,7 @@ import '../../../shared/widgets/audio/audio_recorder_widget.dart';
 import '../../../shared/widgets/audio/audio_player_widget.dart';
 import '../../../shared/widgets/rain_mode_guard.dart';
 import '../../../shared/widgets/adaptive_image.dart';
+import '../../../shared/utils/plant_category_presentation.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/providers/rain_mode_provider.dart';
 import '../../../shared/widgets/modern/modern_app_bar.dart';
@@ -668,7 +669,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
       ..sementeTamanhoUnidade = _sementeTamanhoController.text.trim().isNotEmpty
           ? _sementeTamanhoUnidade
           : null
-      ..category = _selectedCategory ?? PlantCategory.herbs
+      ..category = _selectedCategory ?? PlantCategory.erva
       ..dateCollected = _dateCollected
       ..latitude = _latitude
       ..longitude = _longitude
@@ -1128,7 +1129,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
             border: const OutlineInputBorder(),
             prefixIcon: const Icon(Icons.category),
           ),
-          items: PlantCategory.values.map((category) {
+          items: PlantCategory.optionsFor(_selectedCategory).map((category) {
             return DropdownMenuItem(
               value: category,
               child: Text(_getCategoryName(l10n, category)),
@@ -2745,24 +2746,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
   }
 
   String _getCategoryName(AppLocalizations l10n, PlantCategory category) {
-    switch (category) {
-      case PlantCategory.trees:
-        return l10n.categoryTrees;
-      case PlantCategory.shrubs:
-        return l10n.categoryShrubs;
-      case PlantCategory.herbs:
-        return l10n.categoryHerbs;
-      case PlantCategory.ferns:
-        return l10n.categoryFerns;
-      case PlantCategory.grasses:
-        return l10n.categoryGrasses;
-      case PlantCategory.vines:
-        return l10n.categoryVines;
-      case PlantCategory.cacti:
-        return l10n.categoryCacti;
-      case PlantCategory.aquatic:
-        return l10n.categoryAquatic;
-    }
+    return category.localizedLabel(l10n);
   }
 
   String _getPhenologicalStateName(
@@ -3277,9 +3261,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
 
     final categoryName = data['selectedCategory'] as String?;
     if (categoryName != null) {
-      try {
-        _selectedCategory = PlantCategory.values.byName(categoryName);
-      } catch (_) {}
+      _selectedCategory = PlantCategory.fromName(categoryName);
     }
     final phenoName = data['phenologicalState'] as String?;
     if (phenoName != null) {

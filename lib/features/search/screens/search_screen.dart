@@ -4,6 +4,7 @@ import '../../../core/repositories/plant_repository.dart';
 import '../../../core/theme/folium_theme.dart';
 import '../../../models/plant_record.dart';
 import '../../../models/plant_category.dart';
+import '../../../shared/utils/plant_category_presentation.dart';
 import '../../../shared/widgets/modern/modern_plant_card.dart';
 import '../../../shared/widgets/modern/modern_app_bar.dart';
 import '../../../shared/widgets/modern/glass_app_bar.dart';
@@ -22,10 +23,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   List<PlantRecord> _searchResults = [];
   bool _isSearching = false;
   bool _showFilters = false;
-  
+
   // Search mode: 'name' or 'identifier'
   String _searchMode = 'name';
-  
+
   // Filter options
   PlantCategory? _selectedCategory;
   bool? _isDraft;
@@ -40,7 +41,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   Future<void> _performSearch() async {
     final query = _searchController.text.trim();
-    
+
     if (query.isEmpty && _selectedCategory == null && _startDate == null) {
       setState(() {
         _searchResults = [];
@@ -60,16 +61,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       if (query.isNotEmpty) {
         if (_searchMode == 'identifier') {
           // Identifier search
-          results = await plantRepo.searchByIdentifier(
-            query,
-            limit: 100,
-          );
+          results = await plantRepo.searchByIdentifier(query, limit: 100);
         } else {
           // Text search (name)
-          results = await plantRepo.fullTextSearch(
-            query,
-            limit: 100,
-          );
+          results = await plantRepo.fullTextSearch(query, limit: 100);
         }
       } else {
         results = await plantRepo.getPaginated(limit: 100);
@@ -77,7 +72,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
       // Apply filters
       if (_selectedCategory != null) {
-        results = results.where((p) => p.category == _selectedCategory).toList();
+        results = results
+            .where((p) => p.category == _selectedCategory)
+            .toList();
       }
 
       if (_isDraft != null) {
@@ -85,11 +82,15 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       }
 
       if (_startDate != null) {
-        results = results.where((p) => p.dateCollected.isAfter(_startDate!)).toList();
+        results = results
+            .where((p) => p.dateCollected.isAfter(_startDate!))
+            .toList();
       }
 
       if (_endDate != null) {
-        results = results.where((p) => p.dateCollected.isBefore(_endDate!)).toList();
+        results = results
+            .where((p) => p.dateCollected.isBefore(_endDate!))
+            .toList();
       }
 
       if (!mounted) return;
@@ -125,8 +126,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: isStartDate 
-          ? (_startDate ?? DateTime.now()) 
+      initialDate: isStartDate
+          ? (_startDate ?? DateTime.now())
           : (_endDate ?? DateTime.now()),
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
@@ -153,18 +154,15 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       extendBodyBehindAppBar: true,
-      appBar: GlassAppBarFrosted(
-        title: l10n.search,
-        showBackButton: true,
-      ),
+      appBar: GlassAppBarFrosted(title: l10n.search, showBackButton: true),
       body: Column(
         children: [
           // Top spacing for glass app bar
           SizedBox(height: MediaQuery.of(context).padding.top + 64),
-          
+
           // Search Bar
           ModernSearchBar(
-            hintText: _searchMode == 'identifier' 
+            hintText: _searchMode == 'identifier'
                 ? l10n.searchByIdentifierHint
                 : l10n.searchPlantsHint,
             controller: _searchController,
@@ -182,7 +180,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               IconButton(
                 icon: Icon(
                   _showFilters ? Icons.filter_alt : Icons.filter_alt_outlined,
-                  color: _showFilters ? colorScheme.primary : colorScheme.onSurfaceVariant,
+                  color: _showFilters
+                      ? colorScheme.primary
+                      : colorScheme.onSurfaceVariant,
                 ),
                 onPressed: () {
                   setState(() {
@@ -192,7 +192,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               ),
             ],
           ),
-          
+
           // Search Mode Selector with animated chips
           Padding(
             padding: const EdgeInsets.symmetric(
@@ -207,9 +207,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 Text(
                   l10n.searchByLabel,
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    color: colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 ChoiceChip(
                   label: const Text('Nome'),
@@ -254,9 +254,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     children: [
                       Text(
                         'Filtros',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const Spacer(),
                       TextButton.icon(
@@ -269,7 +268,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   const SizedBox(height: 12),
 
                   // Category Filter
-                  const Text('Categoria', style: TextStyle(fontWeight: FontWeight.w500)),
+                  const Text(
+                    'Categoria',
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -285,9 +287,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                           _performSearch();
                         },
                       ),
-                      ...PlantCategory.values.map((category) {
+                      ...PlantCategory.currentValues.map((category) {
                         return FilterChip(
-                          label: Text(category.name.toUpperCase()),
+                          label: Text(category.localizedLabel(l10n)),
                           selected: _selectedCategory == category,
                           onSelected: (selected) {
                             setState(() {
@@ -302,7 +304,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   const SizedBox(height: 16),
 
                   // Status Filter
-                  const Text('Status', style: TextStyle(fontWeight: FontWeight.w500)),
+                  const Text(
+                    'Status',
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -342,7 +347,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   const SizedBox(height: 16),
 
                   // Date Range Filter
-                  const Text('Período', style: TextStyle(fontWeight: FontWeight.w500)),
+                  const Text(
+                    'Período',
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
@@ -385,56 +393,56 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             child: _isSearching
                 ? const Center(child: CircularProgressIndicator())
                 : _searchResults.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              _searchController.text.isEmpty
-                                  ? Icons.search
-                                  : Icons.search_off,
-                              size: 64,
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              _searchController.text.isEmpty
-                                  ? 'Digite para buscar plantas'
-                                  : _searchController.text.length < 2
-                                      ? 'Digite pelo menos 2 caracteres para buscar'
-                                      : 'Nenhuma planta encontrada',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                            if (_searchController.text.isNotEmpty) ...[
-                              const SizedBox(height: FoliumTheme.space16),
-                              ElevatedButton(
-                                onPressed: _clearFilters,
-                                child: Text(l10n.clearFilters),
-                              ),
-                            ],
-                          ],
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          _searchController.text.isEmpty
+                              ? Icons.search
+                              : Icons.search_off,
+                          size: 64,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
-                      )
-                    : ListView.builder(
-                        itemCount: _searchResults.length,
-                        padding: const EdgeInsets.all(0),
-                        itemBuilder: (context, index) {
-                          final plant = _searchResults[index];
-                          return ModernPlantCard(
-                            plant: plant,
-                            compact: true,
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => PlantDetailScreen(plant: plant),
-                                ),
-                              );
-                            },
+                        const SizedBox(height: 16),
+                        Text(
+                          _searchController.text.isEmpty
+                              ? 'Digite para buscar plantas'
+                              : _searchController.text.length < 2
+                              ? 'Digite pelo menos 2 caracteres para buscar'
+                              : 'Nenhuma planta encontrada',
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(color: colorScheme.onSurfaceVariant),
+                        ),
+                        if (_searchController.text.isNotEmpty) ...[
+                          const SizedBox(height: FoliumTheme.space16),
+                          ElevatedButton(
+                            onPressed: _clearFilters,
+                            child: Text(l10n.clearFilters),
+                          ),
+                        ],
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: _searchResults.length,
+                    padding: const EdgeInsets.all(0),
+                    itemBuilder: (context, index) {
+                      final plant = _searchResults[index];
+                      return ModernPlantCard(
+                        plant: plant,
+                        compact: true,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  PlantDetailScreen(plant: plant),
+                            ),
                           );
                         },
-                      ),
+                      );
+                    },
+                  ),
           ),
         ],
       ),

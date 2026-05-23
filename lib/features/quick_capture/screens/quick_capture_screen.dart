@@ -20,6 +20,7 @@ import '../../../core/theme/folium_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/plant_category.dart';
 import '../../../models/plant_record.dart';
+import '../../../shared/utils/plant_category_presentation.dart';
 import '../../../shared/widgets/modern/modern_app_bar.dart';
 import '../../../shared/widgets/adaptive_image.dart';
 
@@ -68,7 +69,7 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
   final _humidityController = TextEditingController();
   final _weatherNotesController = TextEditingController();
 
-  PlantCategory _category = PlantCategory.herbs;
+  PlantCategory _category = PlantCategory.erva;
   String? _weatherCondition;
   String? _moonPhase;
   bool _showOfflineLocationHint = false;
@@ -220,7 +221,8 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
       final data = jsonDecode(raw) as Map<String, dynamic>;
       if (!mounted) return;
       setState(() {
-        _scientificNameController.text = data['scientificName'] as String? ?? '';
+        _scientificNameController.text =
+            data['scientificName'] as String? ?? '';
         _commonNameController.text = data['commonName'] as String? ?? '';
         _notesController.text = data['notes'] as String? ?? '';
         _localityController.text = data['locality'] as String? ?? '';
@@ -240,16 +242,12 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
         }
         final categoryName = data['category'] as String?;
         if (categoryName != null) {
-          _category = PlantCategory.values.firstWhere(
-            (c) => c.name == categoryName,
-            orElse: () => PlantCategory.herbs,
-          );
+          _category =
+              PlantCategory.fromName(categoryName) ?? PlantCategory.erva;
         }
         _weatherCondition = data['weatherCondition'] as String?;
         _moonPhase = data['moonPhase'] as String?;
-        _photoPaths.addAll(
-          (data['photoPaths'] as List?)?.cast<String>() ?? [],
-        );
+        _photoPaths.addAll((data['photoPaths'] as List?)?.cast<String>() ?? []);
       });
     } catch (e) {
       // Corrupt or stale snapshot — key already removed above.
@@ -384,14 +382,15 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
           child: ListView(
             padding: const EdgeInsets.all(FoliumTheme.space16),
             children: [
-              SizedBox(
-                height: MediaQuery.of(context).padding.top + 64,
-              ),
+              SizedBox(height: MediaQuery.of(context).padding.top + 64),
               // ── Online update banner ──
               if (_showOnlineUpdateBanner && isOnline)
                 Container(
                   margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.blue.shade50,
                     borderRadius: BorderRadius.circular(12),
@@ -399,7 +398,11 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.cloud_sync, color: Colors.blue.shade700, size: 20),
+                      Icon(
+                        Icons.cloud_sync,
+                        color: Colors.blue.shade700,
+                        size: 20,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
@@ -422,7 +425,8 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.close, size: 18),
-                        onPressed: () => setState(() => _showOnlineUpdateBanner = false),
+                        onPressed: () =>
+                            setState(() => _showOnlineUpdateBanner = false),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       ),
@@ -678,26 +682,15 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
 
   // ── Category chips ──
   Widget _buildCategoryChips(AppLocalizations l10n, ColorScheme colorScheme) {
-    final categories = {
-      PlantCategory.trees: l10n.categoryTrees,
-      PlantCategory.shrubs: l10n.categoryShrubs,
-      PlantCategory.herbs: l10n.categoryHerbs,
-      PlantCategory.ferns: l10n.categoryFerns,
-      PlantCategory.grasses: l10n.categoryGrasses,
-      PlantCategory.vines: l10n.categoryVines,
-      PlantCategory.cacti: l10n.categoryCacti,
-      PlantCategory.aquatic: l10n.categoryAquatic,
-    };
-
     return Wrap(
       spacing: 8,
       runSpacing: 4,
-      children: categories.entries.map((e) {
-        final selected = _category == e.key;
+      children: PlantCategory.currentValues.map((category) {
+        final selected = _category == category;
         return ChoiceChip(
-          label: Text(e.value),
+          label: Text(category.localizedLabel(l10n)),
           selected: selected,
-          onSelected: (_) => setState(() => _category = e.key),
+          onSelected: (_) => setState(() => _category = category),
           selectedColor: colorScheme.primaryContainer,
           labelStyle: TextStyle(
             color: selected ? colorScheme.primary : colorScheme.onSurface,
@@ -817,8 +810,9 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
               const SizedBox(height: FoliumTheme.space12),
               TextFormField(
                 key: ValueKey(_moonPhase),
-                initialValue:
-                    _moonPhase == null ? '' : _getMoonPhaseLabel(l10n, _moonPhase!),
+                initialValue: _moonPhase == null
+                    ? ''
+                    : _getMoonPhaseLabel(l10n, _moonPhase!),
                 decoration: InputDecoration(
                   labelText: l10n.moonPhase,
                   isDense: true,
@@ -894,7 +888,9 @@ class _QuickCaptureScreenState extends ConsumerState<QuickCaptureScreen> {
     final l10n = AppLocalizations.of(context)!;
     setState(() {
       if (weatherData.temperature != null) {
-        _temperatureController.text = weatherData.temperature!.toStringAsFixed(1);
+        _temperatureController.text = weatherData.temperature!.toStringAsFixed(
+          1,
+        );
       }
       if (weatherData.humidity != null) {
         _humidityController.text = weatherData.humidity!.toString();

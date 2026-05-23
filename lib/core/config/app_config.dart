@@ -16,4 +16,24 @@ class AppConfig {
 
   static bool get isProduction => environment == 'production';
   static bool get isDevelopment => environment == 'development';
+
+  static const String githubApiBaseUrl = String.fromEnvironment(
+    'GITHUB_API_BASE_URL',
+    defaultValue: 'https://api.github.com',
+  );
+
+  static const String githubReleaseOwner = String.fromEnvironment(
+    'GITHUB_RELEASE_OWNER',
+    defaultValue: 'orcololo',
+  );
+
+  static const String githubReleaseRepo = String.fromEnvironment(
+    'GITHUB_RELEASE_REPO',
+    defaultValue: 'field_book',
+  );
+
+  static const int updateCheckThrottleHours = int.fromEnvironment(
+    'UPDATE_CHECK_THROTTLE_HOURS',
+    defaultValue: 24,
+  );
 }

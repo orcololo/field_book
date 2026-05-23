@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import '../../../core/providers/app_update_provider.dart';
 import '../../../core/services/settings_service.dart';
 import '../../../core/theme/folium_theme.dart';
 import '../../../models/settings.dart';
@@ -37,7 +40,9 @@ class SettingsScreen extends ConsumerWidget {
             right: FoliumTheme.space16,
           ),
           itemBuilder: (context, index) {
-            return ShimmerLoading(child: ShimmerPlaceholders.listItem(context: context));
+            return ShimmerLoading(
+              child: ShimmerPlaceholders.listItem(context: context),
+            );
           },
         ),
         error: (error, stack) {
@@ -145,16 +150,16 @@ class SettingsScreen extends ConsumerWidget {
                   const SizedBox(height: FoliumTheme.space24),
                   _buildSectionHeader(context, l10n.photos),
                   const SizedBox(height: FoliumTheme.space8),
-                   _buildModernCard(
-                     context,
-                     children: [
-                       _PhotoQualityTile(settings: settings),
-                       const Divider(height: 1),
-                       _PreserveExifTile(settings: settings),
-                       const Divider(height: 1),
-                       _PlantNetApiKeyTile(settings: settings),
-                     ],
-                   ),
+                  _buildModernCard(
+                    context,
+                    children: [
+                      _PhotoQualityTile(settings: settings),
+                      const Divider(height: 1),
+                      _PreserveExifTile(settings: settings),
+                      const Divider(height: 1),
+                      _PlantNetApiKeyTile(settings: settings),
+                    ],
+                  ),
 
                   const SizedBox(height: FoliumTheme.space24),
                   _buildSectionHeader(context, l10n.audioSection),
@@ -212,7 +217,9 @@ class SettingsScreen extends ConsumerWidget {
                         leading: Container(
                           padding: const EdgeInsets.all(FoliumTheme.space8),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primaryContainer,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primaryContainer,
                             borderRadius: BorderRadius.circular(
                               FoliumTheme.radiusSmall,
                             ),
@@ -226,7 +233,8 @@ class SettingsScreen extends ConsumerWidget {
                         subtitle: Text(
                           settings.inatAccessToken?.trim().isNotEmpty ?? false
                               ? l10n.inaturalistConfigured(
-                                  settings.inatUsername?.trim().isNotEmpty ?? false
+                                  settings.inatUsername?.trim().isNotEmpty ??
+                                          false
                                       ? settings.inatUsername!.trim()
                                       : l10n.inaturalist,
                                 )
@@ -372,22 +380,99 @@ class SettingsScreen extends ConsumerWidget {
                           Icons.chevron_right,
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
-                        onTap: () {
+                        onTap: () async {
+                          final packageInfo = await PackageInfo.fromPlatform();
+                          if (!context.mounted) return;
                           showAboutDialog(
                             context: context,
                             applicationName: l10n.appTitle,
-                            applicationVersion: '1.8.0',
+                            applicationVersion:
+                                '${packageInfo.version}+${packageInfo.buildNumber}',
                             applicationLegalese: '© 2026 Folium',
                             children: [
                               const SizedBox(height: 16),
-                              const Text(
-                                'Um aplicativo para registro e documentação de plantas em campo.',
-                              ),
+                              Text(l10n.aboutAppDescription),
                             ],
                           );
                         },
                       ),
                       const Divider(height: 1),
+                      if (defaultTargetPlatform == TargetPlatform.android) ...[
+                        Consumer(
+                          builder: (context, ref, _) {
+                            final updateState = ref.watch(
+                              appUpdateNotifierProvider,
+                            );
+                            return ListTile(
+                              leading: Container(
+                                padding: const EdgeInsets.all(
+                                  FoliumTheme.space8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.primaryContainer,
+                                  borderRadius: BorderRadius.circular(
+                                    FoliumTheme.radiusSmall,
+                                  ),
+                                ),
+                                child: Icon(
+                                  Icons.system_update_alt,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                              title: Text(l10n.checkForUpdates),
+                              subtitle: Text(l10n.checkForUpdatesSubtitle),
+                              trailing: updateState.isChecking
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : Icon(
+                                      Icons.chevron_right,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                    ),
+                              onTap: updateState.isChecking
+                                  ? null
+                                  : () async {
+                                      await ref
+                                          .read(
+                                            appUpdateNotifierProvider.notifier,
+                                          )
+                                          .checkForUpdates(force: true);
+                                      if (!context.mounted) return;
+                                      final freshState = ref.read(
+                                        appUpdateNotifierProvider,
+                                      );
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            freshState.hasUpdate
+                                                ? l10n.appUpdateAvailable(
+                                                    freshState
+                                                        .availableRelease!
+                                                        .versionLabel,
+                                                  )
+                                                : freshState.errorMessage ==
+                                                      null
+                                                ? l10n.noUpdatesAvailable
+                                                : l10n.updateCheckFailed,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                            );
+                          },
+                        ),
+                        const Divider(height: 1),
+                      ],
                       ListTile(
                         leading: Container(
                           padding: const EdgeInsets.all(FoliumTheme.space8),
@@ -1143,10 +1228,7 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
         // Signed-in status
         if (backupService.isSignedIn && backupService.currentUserEmail != null)
           ListTile(
-            leading: Icon(
-              Icons.account_circle,
-              color: colorScheme.primary,
-            ),
+            leading: Icon(Icons.account_circle, color: colorScheme.primary),
             title: Text(
               l10n.signedInAs(backupService.currentUserEmail!),
               maxLines: 1,
@@ -1172,7 +1254,7 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
             child: ElevatedButton.icon(
               onPressed: _isBackingUp
                   ? null
-                   : () async {
+                  : () async {
                       final messenger = ScaffoldMessenger.of(context);
                       setState(() => _isBackingUp = true);
                       try {
@@ -1378,7 +1460,10 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
       if (mounted) {
         final errorMsg = _localizeError(e.toString(), l10n);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMsg), backgroundColor: Theme.of(context).colorScheme.error),
+          SnackBar(
+            content: Text(errorMsg),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
         );
       }
     } finally {
@@ -1485,10 +1570,7 @@ class _UserInitialsTile extends ConsumerWidget {
       ),
       title: Text(l10n.userInitialsTitle),
       subtitle: Text(settings.userInitials),
-      trailing: Icon(
-        Icons.chevron_right,
-        color: colorScheme.onSurfaceVariant,
-      ),
+      trailing: Icon(Icons.chevron_right, color: colorScheme.onSurfaceVariant),
       onTap: () async {
         final result = await showDialog<String>(
           context: context,
@@ -1527,7 +1609,9 @@ class _LastRegistryNumberTile extends ConsumerWidget {
         child: Icon(Icons.tag, color: Theme.of(context).colorScheme.secondary),
       ),
       title: Text(l10n.lastRegistryNumberTitle),
-      subtitle: Text('${settings.lastRegistryNumber} • ${l10n.nextLabel(nextId)}'),
+      subtitle: Text(
+        '${settings.lastRegistryNumber} • ${l10n.nextLabel(nextId)}',
+      ),
       trailing: Icon(
         Icons.chevron_right,
         color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -1723,7 +1807,7 @@ class _RegistryNumberDialogState extends State<_RegistryNumberDialog> {
   }
 
   @override
-          Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
       title: Text(l10n.lastRegistryNumberTitle),
@@ -1817,9 +1901,7 @@ class _PlantNetApiKeyDialogState extends State<_PlantNetApiKeyDialog> {
                 _obscureText = !_obscureText;
               });
             },
-            icon: Icon(
-              _obscureText ? Icons.visibility : Icons.visibility_off,
-            ),
+            icon: Icon(_obscureText ? Icons.visibility : Icons.visibility_off),
           ),
         ),
       ),
@@ -1852,17 +1934,11 @@ class _IdentifierManagementTile extends StatelessWidget {
           color: colorScheme.tertiaryContainer,
           borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
         ),
-        child: Icon(
-          Icons.playlist_add_check,
-          color: colorScheme.tertiary,
-        ),
+        child: Icon(Icons.playlist_add_check, color: colorScheme.tertiary),
       ),
       title: Text(l10n.manageIdentifiers),
       subtitle: Text(l10n.manageIdentifiersSubtitle),
-      trailing: Icon(
-        Icons.chevron_right,
-        color: colorScheme.onSurfaceVariant,
-      ),
+      trailing: Icon(Icons.chevron_right, color: colorScheme.onSurfaceVariant),
       onTap: () {
         Navigator.push(
           context,
@@ -1894,10 +1970,7 @@ class _CollectionTemplatesTile extends StatelessWidget {
       ),
       title: Text(l10n.collectionTemplatesTitle),
       subtitle: Text(l10n.collectionTemplatesSubtitle),
-      trailing: Icon(
-        Icons.chevron_right,
-        color: colorScheme.onSurfaceVariant,
-      ),
+      trailing: Icon(Icons.chevron_right, color: colorScheme.onSurfaceVariant),
       onTap: () {
         Navigator.push(
           context,
@@ -2034,9 +2107,7 @@ class _SyncSection extends ConsumerWidget {
                           : colorScheme.onSurfaceVariant,
                     ),
             ),
-            title: Text(
-              syncState.isSyncing ? l10n.syncing2 : l10n.syncNow,
-            ),
+            title: Text(syncState.isSyncing ? l10n.syncing2 : l10n.syncNow),
             subtitle: Text(
               !isAuthenticated
                   ? l10n.loginToSync
@@ -2045,10 +2116,7 @@ class _SyncSection extends ConsumerWidget {
                   : l10n.neverSynced,
             ),
             trailing: isAuthenticated && !syncState.isSyncing
-                ? Icon(
-                    Icons.chevron_right,
-                    color: colorScheme.onSurfaceVariant,
-                  )
+                ? Icon(Icons.chevron_right, color: colorScheme.onSurfaceVariant)
                 : null,
             onTap: isAuthenticated && !syncState.isSyncing
                 ? () {
@@ -2086,20 +2154,19 @@ class _SyncSection extends ConsumerWidget {
                   color: colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
                 ),
-                child: Icon(
-                  Icons.info_outline,
-                  color: colorScheme.primary,
-                ),
+                child: Icon(Icons.info_outline, color: colorScheme.primary),
               ),
               title: Text(l10n.lastSyncResult),
               subtitle: Text(
                 l10n.syncResultSummary(
-                  syncState.lastResult!.pushed,
-                  syncState.lastResult!.pulled,
-                ) +
-                (syncState.lastResult!.conflicts > 0
-                    ? l10n.syncResultConflicts(syncState.lastResult!.conflicts)
-                    : ''),
+                      syncState.lastResult!.pushed,
+                      syncState.lastResult!.pulled,
+                    ) +
+                    (syncState.lastResult!.conflicts > 0
+                        ? l10n.syncResultConflicts(
+                            syncState.lastResult!.conflicts,
+                          )
+                        : ''),
               ),
             ),
           ],

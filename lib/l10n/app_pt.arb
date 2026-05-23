@@ -32,6 +32,19 @@
   "categoryVines": "Trepadeiras",
   "categoryCacti": "Cactos",
   "categoryAquatic": "Aquáticas",
+  "categorySamambaia": "Samambaia",
+  "categoryErva": "Erva",
+  "categorySemiArbusto": "Semi arbusto",
+  "categoryArbusto": "Arbusto",
+  "categoryArvore": "Árvore",
+  "categoryErvaTrepadeira": "Erva trepadeira",
+  "categoryErvaEpifita": "Erva epífita",
+  "categoryHemiepifita": "Hemiepífita",
+  "categoryProstrada": "Prostrada",
+  "categoryRastejante": "Rastejante",
+  "categoryPlantaRupicola": "Planta rupícola",
+  "categoryCiofila": "Ciófila",
+  "categoryEpilitica": "Epilítica",
   "save": "Salvar",
   "cancel": "Cancelar",
   "delete": "Excluir",
@@ -590,6 +603,28 @@
     }
   },
   "aboutAppDescription": "Um aplicativo para registro e documentação de plantas em campo.",
+  "appUpdateAvailable": "Nova versão disponível: {version}",
+  "@appUpdateAvailable": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "appUpdateDownloadAction": "Baixar",
+  "appUpdateDismissAction": "Depois",
+  "checkForUpdates": "Verificar atualizações",
+  "checkForUpdatesSubtitle": "Procurar um novo APK Android no GitHub",
+  "noUpdatesAvailable": "Você já está usando a versão mais recente.",
+  "updateCheckFailed": "Não foi possível verificar atualizações.",
+  "currentVersion": "Versão atual: {version}",
+  "@currentVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
   "searchTooltip": "Buscar plantas",
   "savedAsDraft": "Salvo como rascunho",
   "plantRecordSaved": "Registro de planta salvo",

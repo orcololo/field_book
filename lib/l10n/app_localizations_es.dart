@@ -106,6 +106,45 @@ class AppLocalizationsEs extends AppLocalizations {
   String get categoryAquatic => 'Acuáticas';
 
   @override
+  String get categorySamambaia => 'Helecho';
+
+  @override
+  String get categoryErva => 'Hierba';
+
+  @override
+  String get categorySemiArbusto => 'Subarbusto';
+
+  @override
+  String get categoryArbusto => 'Arbusto';
+
+  @override
+  String get categoryArvore => 'Árbol';
+
+  @override
+  String get categoryErvaTrepadeira => 'Hierba trepadora';
+
+  @override
+  String get categoryErvaEpifita => 'Hierba epífita';
+
+  @override
+  String get categoryHemiepifita => 'Hemiepífita';
+
+  @override
+  String get categoryProstrada => 'Postrada';
+
+  @override
+  String get categoryRastejante => 'Rastrera';
+
+  @override
+  String get categoryPlantaRupicola => 'Planta rupícola';
+
+  @override
+  String get categoryCiofila => 'Esciófila';
+
+  @override
+  String get categoryEpilitica => 'Epilítica';
+
+  @override
   String get save => 'Guardar';
 
   @override
@@ -1143,6 +1182,35 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get aboutAppDescription =>
       'Una aplicación para registro y documentación de plantas en campo.';
+
+  @override
+  String appUpdateAvailable(String version) {
+    return 'Nueva versión disponible: $version';
+  }
+
+  @override
+  String get appUpdateDownloadAction => 'Descargar';
+
+  @override
+  String get appUpdateDismissAction => 'Luego';
+
+  @override
+  String get checkForUpdates => 'Buscar actualizaciones';
+
+  @override
+  String get checkForUpdatesSubtitle =>
+      'Buscar un nuevo APK de Android en GitHub';
+
+  @override
+  String get noUpdatesAvailable => 'Ya estás usando la versión más reciente.';
+
+  @override
+  String get updateCheckFailed => 'No se pudieron buscar actualizaciones.';
+
+  @override
+  String currentVersion(String version) {
+    return 'Versión actual: $version';
+  }
 
   @override
   String get searchTooltip => 'Buscar plantas';

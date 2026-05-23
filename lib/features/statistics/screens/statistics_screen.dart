@@ -8,6 +8,7 @@ import '../../../core/theme/folium_theme.dart';
 import '../../../models/plant_record.dart';
 import '../../../models/plant_category.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/utils/plant_category_presentation.dart';
 
 class StatisticsScreen extends ConsumerWidget {
   const StatisticsScreen({super.key});
@@ -20,10 +21,14 @@ class StatisticsScreen extends ConsumerWidget {
 
     return ListView(
       padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + 64, // safe area + glass app bar
+        top:
+            MediaQuery.of(context).padding.top +
+            64, // safe area + glass app bar
         left: 16,
         right: 16,
-        bottom: MediaQuery.of(context).padding.bottom + 80, // safe area + bottom nav
+        bottom:
+            MediaQuery.of(context).padding.bottom +
+            80, // safe area + bottom nav
       ),
       children: [
         // Overview Cards
@@ -333,7 +338,11 @@ class StatisticsScreen extends ConsumerWidget {
                       backgroundColor: _getCategoryColor(plant.category),
                       child: Icon(
                         Icons.eco,
-                        color: _getCategoryColor(plant.category).computeLuminance() > 0.4
+                        color:
+                            _getCategoryColor(
+                                  plant.category,
+                                ).computeLuminance() >
+                                0.4
                             ? Colors.black87
                             : Colors.white,
                         size: 20,
@@ -439,7 +448,9 @@ class StatisticsScreen extends ConsumerWidget {
         titleStyle: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: sectionColor.computeLuminance() > 0.4 ? Colors.black87 : Colors.white,
+          color: sectionColor.computeLuminance() > 0.4
+              ? Colors.black87
+              : Colors.white,
         ),
       );
     }).toList();
@@ -465,46 +476,12 @@ class StatisticsScreen extends ConsumerWidget {
   }
 
   Color _getCategoryColor(PlantCategory category) {
-    switch (category) {
-      case PlantCategory.trees:
-        return Colors.brown;
-      case PlantCategory.shrubs:
-        return Colors.green;
-      case PlantCategory.herbs:
-        return Colors.lightGreen;
-      case PlantCategory.ferns:
-        return Colors.teal;
-      case PlantCategory.grasses:
-        return Colors.lime;
-      case PlantCategory.vines:
-        return Colors.deepOrange;
-      case PlantCategory.cacti:
-        return Colors.amber;
-      case PlantCategory.aquatic:
-        return Colors.blue;
-    }
+    return category.chartColor;
   }
 
   String _getCategoryName(BuildContext context, PlantCategory category) {
     final l10n = AppLocalizations.of(context)!;
-    switch (category) {
-      case PlantCategory.trees:
-        return l10n.categoryTrees;
-      case PlantCategory.shrubs:
-        return l10n.categoryShrubs;
-      case PlantCategory.herbs:
-        return l10n.categoryHerbs;
-      case PlantCategory.ferns:
-        return l10n.categoryFerns;
-      case PlantCategory.grasses:
-        return l10n.categoryGrasses;
-      case PlantCategory.vines:
-        return l10n.categoryVines;
-      case PlantCategory.cacti:
-        return l10n.categoryCacti;
-      case PlantCategory.aquatic:
-        return l10n.categoryAquatic;
-    }
+    return category.localizedLabel(l10n);
   }
 }
 

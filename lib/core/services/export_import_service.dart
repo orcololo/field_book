@@ -568,10 +568,9 @@ class ExportImportService {
             ..weatherNotes = plantData['weatherNotes'] as String?
             ..moonPhase = plantData['moonPhase'] as String?
             ..windSpeed = (plantData['windSpeed'] as num?)?.toDouble()
-            ..category = PlantCategory.values.firstWhere(
-              (c) => c.name == plantData['category'],
-              orElse: () => PlantCategory.herbs,
-            )
+            ..category =
+                PlantCategory.fromName(plantData['category'] as String?) ??
+                PlantCategory.erva
             ..determinations =
                 (plantData['determinations'] as List<dynamic>?)
                     ?.map(
@@ -940,16 +939,42 @@ class ExportImportService {
 
   String _getCategoryName(PlantCategory category) {
     switch (category) {
+      case PlantCategory.samambaia:
+        return 'Samambaia';
+      case PlantCategory.erva:
+        return 'Erva';
+      case PlantCategory.semi_arbusto:
+        return 'Semi arbusto';
+      case PlantCategory.arbusto:
+        return 'Arbusto';
+      case PlantCategory.arvore:
+        return 'Árvore';
+      case PlantCategory.erva_trepadeira:
+        return 'Erva trepadeira';
+      case PlantCategory.erva_epifita:
+        return 'Erva epífita';
+      case PlantCategory.hemiepifita:
+        return 'Hemiepífita';
+      case PlantCategory.prostrada:
+        return 'Prostrada';
+      case PlantCategory.rastejante:
+        return 'Rastejante';
+      case PlantCategory.planta_rupicola:
+        return 'Planta rupícola';
+      case PlantCategory.ciofila:
+        return 'Ciófila';
+      case PlantCategory.epilitica:
+        return 'Epilítica';
       case PlantCategory.trees:
-        return 'Árvores';
+        return 'Árvore';
       case PlantCategory.shrubs:
-        return 'Arbustos';
+        return 'Arbusto';
       case PlantCategory.herbs:
-        return 'Ervas';
+        return 'Erva';
       case PlantCategory.vines:
-        return 'Trepadeiras';
+        return 'Erva trepadeira';
       case PlantCategory.ferns:
-        return 'Samambaias';
+        return 'Samambaia';
       case PlantCategory.grasses:
         return 'Gramíneas';
       case PlantCategory.cacti:

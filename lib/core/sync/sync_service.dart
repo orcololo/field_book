@@ -1040,10 +1040,8 @@ class SyncService {
         json['category'] as String? ??
         _asStringDynamicMap(json['species'])?['category'] as String?;
     if (categoryRaw != null) {
-      plant.category = PlantCategory.values.firstWhere(
-        (e) => e.name == categoryRaw,
-        orElse: () => PlantCategory.herbs,
-      );
+      plant.category =
+          PlantCategory.fromName(categoryRaw) ?? PlantCategory.erva;
     }
 
     final measurements = json['measurements'] as List?;

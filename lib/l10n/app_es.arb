@@ -32,6 +32,19 @@
   "categoryVines": "Enredaderas",
   "categoryCacti": "Cactus",
   "categoryAquatic": "Acuáticas",
+  "categorySamambaia": "Helecho",
+  "categoryErva": "Hierba",
+  "categorySemiArbusto": "Subarbusto",
+  "categoryArbusto": "Arbusto",
+  "categoryArvore": "Árbol",
+  "categoryErvaTrepadeira": "Hierba trepadora",
+  "categoryErvaEpifita": "Hierba epífita",
+  "categoryHemiepifita": "Hemiepífita",
+  "categoryProstrada": "Postrada",
+  "categoryRastejante": "Rastrera",
+  "categoryPlantaRupicola": "Planta rupícola",
+  "categoryCiofila": "Esciófila",
+  "categoryEpilitica": "Epilítica",
   "save": "Guardar",
   "cancel": "Cancelar",
   "delete": "Eliminar",
@@ -590,6 +603,28 @@
     }
   },
   "aboutAppDescription": "Una aplicación para registro y documentación de plantas en campo.",
+  "appUpdateAvailable": "Nueva versión disponible: {version}",
+  "@appUpdateAvailable": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "appUpdateDownloadAction": "Descargar",
+  "appUpdateDismissAction": "Luego",
+  "checkForUpdates": "Buscar actualizaciones",
+  "checkForUpdatesSubtitle": "Buscar un nuevo APK de Android en GitHub",
+  "noUpdatesAvailable": "Ya estás usando la versión más reciente.",
+  "updateCheckFailed": "No se pudieron buscar actualizaciones.",
+  "currentVersion": "Versión actual: {version}",
+  "@currentVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
   "searchTooltip": "Buscar plantas",
   "savedAsDraft": "Guardado como borrador",
   "plantRecordSaved": "Registro de planta guardado",

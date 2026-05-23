@@ -89,7 +89,7 @@ class PlantRecord {
 
   @Enumerated(EnumType.name)
   @Index()
-  late PlantCategory category;
+  PlantCategory category = PlantCategory.erva;
 
   List<Determination> determinations = [];
   List<Measurement> measurements = [];

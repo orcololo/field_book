@@ -448,15 +448,15 @@ void main() {
       expect(result.skipped, 2);
     });
 
-    test('unknown category falls back to herbs', () async {
+    test('unknown category falls back to erva', () async {
       final json = _wrapPlants([_plantJson(category: 'totally_unknown')]);
       final result = await svc.importFromJson(json);
 
       expect(result.imported, 1);
 
-      // Verify category was stored as herbs
+      // Verify category was stored as the current herb category.
       final saved = await PlantRepository().getByUuid('import-uuid-1');
-      expect(saved?.category, PlantCategory.herbs);
+      expect(saved?.category, PlantCategory.erva);
     });
 
     test('imports co-collectors', () async {

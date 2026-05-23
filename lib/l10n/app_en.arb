@@ -35,6 +35,19 @@
   "categoryVines": "Vines",
   "categoryCacti": "Cacti",
   "categoryAquatic": "Aquatic",
+  "categorySamambaia": "Fern",
+  "categoryErva": "Herb",
+  "categorySemiArbusto": "Subshrub",
+  "categoryArbusto": "Shrub",
+  "categoryArvore": "Tree",
+  "categoryErvaTrepadeira": "Climbing herb",
+  "categoryErvaEpifita": "Epiphytic herb",
+  "categoryHemiepifita": "Hemiepiphyte",
+  "categoryProstrada": "Prostrate",
+  "categoryRastejante": "Creeping",
+  "categoryPlantaRupicola": "Rupicolous plant",
+  "categoryCiofila": "Sciophilous",
+  "categoryEpilitica": "Epilithic",
   "save": "Save",
   "cancel": "Cancel",
   "delete": "Delete",
@@ -593,6 +606,28 @@
     }
   },
   "aboutAppDescription": "An app for recording and documenting plants in the field.",
+  "appUpdateAvailable": "New version available: {version}",
+  "@appUpdateAvailable": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "appUpdateDownloadAction": "Download",
+  "appUpdateDismissAction": "Later",
+  "checkForUpdates": "Check for updates",
+  "checkForUpdatesSubtitle": "Look for a new Android APK on GitHub",
+  "noUpdatesAvailable": "You are using the latest version.",
+  "updateCheckFailed": "Could not check for updates.",
+  "currentVersion": "Current version: {version}",
+  "@currentVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
   "searchTooltip": "Search plants",
   "savedAsDraft": "Saved as draft",
   "plantRecordSaved": "Plant record saved",

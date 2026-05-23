@@ -5,6 +5,7 @@ import 'package:printing/printing.dart';
 import 'dart:math';
 import '../../../models/determination.dart';
 import '../../../models/plant_record.dart';
+import '../../../models/plant_category.dart';
 import '../../../models/collection_method.dart';
 import '../../../models/phenological_state.dart';
 import '../../../core/services/herbarium_label_service.dart';
@@ -16,6 +17,7 @@ import '../../../shared/widgets/map_widget.dart';
 import '../../../shared/widgets/audio/audio_player_widget.dart';
 import '../../../shared/widgets/rain_mode_guard.dart';
 import '../../../shared/widgets/adaptive_image.dart';
+import '../../../shared/utils/plant_category_presentation.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/utils/co_collectors.dart';
 import '../../../core/utils/geo_utils.dart';
@@ -1602,26 +1604,8 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
   String _getCategoryName(BuildContext context, dynamic category) {
     final l10n = AppLocalizations.of(context)!;
     final categoryStr = category.toString().split('.').last;
-    switch (categoryStr) {
-      case 'trees':
-        return l10n.categoryTrees;
-      case 'shrubs':
-        return l10n.categoryShrubs;
-      case 'herbs':
-        return l10n.categoryHerbs;
-      case 'ferns':
-        return l10n.categoryFerns;
-      case 'grasses':
-        return l10n.categoryGrasses;
-      case 'vines':
-        return l10n.categoryVines;
-      case 'cacti':
-        return l10n.categoryCacti;
-      case 'aquatic':
-        return l10n.categoryAquatic;
-      default:
-        return categoryStr;
-    }
+    return PlantCategory.fromName(categoryStr)?.localizedLabel(l10n) ??
+        categoryStr;
   }
 
   Future<void> _deletePlant(BuildContext context, AppLocalizations l10n) async {

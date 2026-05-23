@@ -1191,7 +1191,7 @@ PlantRecord _plantRecordDeserialize(
   object.audioTranscripts = reader.readStringList(offsets[3]) ?? [];
   object.category =
       _PlantRecordcategoryValueEnumMap[reader.readStringOrNull(offsets[4])] ??
-          PlantCategory.trees;
+          PlantCategory.erva;
   object.caule = reader.readStringOrNull(offsets[5]);
   object.cauleCircunferencia = reader.readDoubleOrNull(offsets[6]);
   object.cauleCircunferenciaUnidade = reader.readStringOrNull(offsets[7]);
@@ -1320,7 +1320,7 @@ P _plantRecordDeserializeProp<P>(
     case 4:
       return (_PlantRecordcategoryValueEnumMap[
               reader.readStringOrNull(offset)] ??
-          PlantCategory.trees) as P;
+          PlantCategory.erva) as P;
     case 5:
       return (reader.readStringOrNull(offset)) as P;
     case 6:
@@ -1520,6 +1520,19 @@ P _plantRecordDeserializeProp<P>(
 }
 
 const _PlantRecordcategoryEnumValueMap = {
+  r'erva': r'erva',
+  r'samambaia': r'samambaia',
+  r'semi_arbusto': r'semi_arbusto',
+  r'arbusto': r'arbusto',
+  r'arvore': r'arvore',
+  r'erva_trepadeira': r'erva_trepadeira',
+  r'erva_epifita': r'erva_epifita',
+  r'hemiepifita': r'hemiepifita',
+  r'prostrada': r'prostrada',
+  r'rastejante': r'rastejante',
+  r'planta_rupicola': r'planta_rupicola',
+  r'ciofila': r'ciofila',
+  r'epilitica': r'epilitica',
   r'trees': r'trees',
   r'shrubs': r'shrubs',
   r'herbs': r'herbs',
@@ -1530,6 +1543,19 @@ const _PlantRecordcategoryEnumValueMap = {
   r'aquatic': r'aquatic',
 };
 const _PlantRecordcategoryValueEnumMap = {
+  r'erva': PlantCategory.erva,
+  r'samambaia': PlantCategory.samambaia,
+  r'semi_arbusto': PlantCategory.semi_arbusto,
+  r'arbusto': PlantCategory.arbusto,
+  r'arvore': PlantCategory.arvore,
+  r'erva_trepadeira': PlantCategory.erva_trepadeira,
+  r'erva_epifita': PlantCategory.erva_epifita,
+  r'hemiepifita': PlantCategory.hemiepifita,
+  r'prostrada': PlantCategory.prostrada,
+  r'rastejante': PlantCategory.rastejante,
+  r'planta_rupicola': PlantCategory.planta_rupicola,
+  r'ciofila': PlantCategory.ciofila,
+  r'epilitica': PlantCategory.epilitica,
   r'trees': PlantCategory.trees,
   r'shrubs': PlantCategory.shrubs,
   r'herbs': PlantCategory.herbs,
