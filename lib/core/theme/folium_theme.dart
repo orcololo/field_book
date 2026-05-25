@@ -43,13 +43,86 @@ class FoliumTheme {
   static const Color outline = Color(0xFFDDDDDD);
   static const Color outlineVariant = Color(0xFFE8E8E8);
 
-  // Semantic Colors
+  // Semantic Colors (light mode tokens)
   static const Color success = Color(0xFF4CAF50);
   static const Color successContainer = Color(0xFFE8F5E9);
+  static const Color onSuccessContainer = Color(0xFF1B5E20);
   static const Color warning = Color(0xFFFF9800);
   static const Color warningContainer = Color(0xFFFFF3E0);
+  static const Color onWarningContainer = Color(0xFF6B3D00);
   static const Color error = Color(0xFFE53935);
+  static const Color onErrorContainer = Color(0xFF7F1D1D);
   static const Color info = Color(0xFF2196F3);
+  static const Color infoContainer = Color(0xFFE3F2FD);
+  static const Color onInfoContainer = Color(0xFF0D47A1);
+
+  // Semantic Colors (dark mode tokens) \u2014 deep tinted containers with light
+  // foreground text, satisfying WCAG 4.5:1 against the dark scaffold.
+  static const Color darkSuccess = Color(0xFF7BD89A);
+  static const Color darkSuccessContainer = Color(0xFF1F4D2C);
+  static const Color darkOnSuccessContainer = Color(0xFFB7F5C8);
+  static const Color darkWarning = Color(0xFFFFB95C);
+  static const Color darkWarningContainer = Color(0xFF5A3A10);
+  static const Color darkOnWarningContainer = Color(0xFFFFE0B5);
+  static const Color darkError = Color(0xFFFF8A85);
+  static const Color darkErrorContainer = Color(0xFF5C1A1A);
+  static const Color darkOnErrorContainer = Color(0xFFFFD6D3);
+  static const Color darkInfo = Color(0xFF7BC7FF);
+  static const Color darkInfoContainer = Color(0xFF0E3A66);
+  static const Color darkOnInfoContainer = Color(0xFFCCE6FF);
+
+  // ========== SEMANTIC COLOR HELPERS ==========
+  /// Returns the brightness-appropriate success container background.
+  static Color successContainerOf(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? darkSuccessContainer
+          : successContainer;
+
+  /// Returns the brightness-appropriate foreground colour for content placed
+  /// on top of [successContainerOf].
+  static Color onSuccessContainerOf(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? darkOnSuccessContainer
+          : onSuccessContainer;
+
+  /// Returns the brightness-appropriate warning container background.
+  static Color warningContainerOf(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? darkWarningContainer
+          : warningContainer;
+
+  /// Returns the brightness-appropriate foreground colour for content placed
+  /// on top of [warningContainerOf].
+  static Color onWarningContainerOf(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? darkOnWarningContainer
+          : onWarningContainer;
+
+  /// Returns the brightness-appropriate info container background.
+  static Color infoContainerOf(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? darkInfoContainer
+          : infoContainer;
+
+  /// Returns the brightness-appropriate foreground colour for content placed
+  /// on top of [infoContainerOf].
+  static Color onInfoContainerOf(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? darkOnInfoContainer
+          : onInfoContainer;
+
+  /// Returns the brightness-appropriate error container background.
+  static Color errorContainerOf(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? darkErrorContainer
+          : Color.alphaBlend(error.withValues(alpha: 0.12), Colors.white);
+
+  /// Returns the brightness-appropriate foreground colour for content placed
+  /// on top of [errorContainerOf].
+  static Color onErrorContainerOf(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? darkOnErrorContainer
+          : onErrorContainer;
 
   // ========== SPACING ==========
   static const double space4 = 4.0;
@@ -350,25 +423,41 @@ class FoliumTheme {
   }
 
   // ========== DARK THEME COLORS ==========
-  static const Color darkSurface = Color(0xFF121212);
-  static const Color darkSurfaceContainer = Color(0xFF1E1E1E);
-  static const Color darkSurfaceContainerHighest = Color(0xFF2C2C2C);
-  static const Color darkOnSurface = Color(0xFFE6E1E5);
-  static const Color darkOnSurfaceVariant = Color(0xFFCAC4D0);
-  static const Color darkOutline = Color(0xFF3C3C3C);
-  static const Color darkOutlineVariant = Color(0xFF2C2C2C);
-  static const Color darkPrimaryMain = Color(0xFF6ECF8E);
+  // Surfaces — tinted near-black with botanical green undertone to create a
+  // perceivable hierarchy between scaffold / card / elevated card. Previous
+  // palette (#121212 / #1E1E1E / #2C2C2C) was almost monochromatic.
+  static const Color darkSurface = Color(0xFF101713);
+  static const Color darkSurfaceContainerLowest = Color(0xFF0A0F0C);
+  static const Color darkSurfaceContainerLow = Color(0xFF161E18);
+  static const Color darkSurfaceContainer = Color(0xFF1B2620);
+  static const Color darkSurfaceContainerHigh = Color(0xFF22302A);
+  static const Color darkSurfaceContainerHighest = Color(0xFF2A3A33);
+  // Foreground — high-contrast warm whites and a sage-tinted variant that
+  // harmonises with the botanical green primary (replaces the M3 default
+  // purple-grey #CAC4D0 which clashed with the brand).
+  static const Color darkOnSurface = Color(0xFFECEDE9);
+  static const Color darkOnSurfaceVariant = Color(0xFFC2CFC6);
+  // Outlines — bright enough to meet WCAG 3:1 against darkSurface. Previous
+  // outlineVariant (#2C2C2C) was identical to surfaceContainerHighest, making
+  // input borders and dividers literally invisible.
+  static const Color darkOutline = Color(0xFF7A8C82);
+  static const Color darkOutlineVariant = Color(0xFF455048);
+  // Primary — vivid leaf green for dark backgrounds.
+  static const Color darkPrimaryMain = Color(0xFF7BD89A);
   static const Color darkOnPrimary = Color(0xFF003919);
-  static const Color darkPrimaryContainer = Color(0xFF1A5C30);
-  static const Color darkOnPrimaryContainer = Color(0xFFA8F5BA);
-  static const Color darkSecondaryMain = Color(0xFFD7C4B8);
+  static const Color darkPrimaryContainer = Color(0xFF1F6638);
+  static const Color darkOnPrimaryContainer = Color(0xFFB7F5C8);
+  // Secondary — warm sand/earth, tuned darker so it doesn't compete with
+  // primary for attention.
+  static const Color darkSecondaryMain = Color(0xFFCBB89C);
   static const Color darkOnSecondary = Color(0xFF3B2D22);
-  static const Color darkSecondaryContainer = Color(0xFF4E3E32);
-  static const Color darkOnSecondaryContainer = Color(0xFFF5E8DC);
-  static const Color darkTertiaryMain = Color(0xFF80D8FF);
+  static const Color darkSecondaryContainer = Color(0xFF504030);
+  static const Color darkOnSecondaryContainer = Color(0xFFF2E6D4);
+  // Tertiary — sky blue accent.
+  static const Color darkTertiaryMain = Color(0xFF8BD8FF);
   static const Color darkOnTertiary = Color(0xFF003549);
-  static const Color darkTertiaryContainer = Color(0xFF004D66);
-  static const Color darkOnTertiaryContainer = Color(0xFFB8EAFF);
+  static const Color darkTertiaryContainer = Color(0xFF005571);
+  static const Color darkOnTertiaryContainer = Color(0xFFC0EBFF);
 
   // ========== DARK THEME DATA ==========
   static ThemeData get darkTheme => getDarkTheme();
@@ -408,6 +497,10 @@ class FoliumTheme {
         onError: onPrimary,
         surface: schemeSurface,
         onSurface: schemeOnSurface,
+        surfaceContainerLowest: highContrast ? Colors.black : darkSurfaceContainerLowest,
+        surfaceContainerLow: highContrast ? Colors.black : darkSurfaceContainerLow,
+        surfaceContainer: highContrast ? Colors.black : darkSurfaceContainer,
+        surfaceContainerHigh: highContrast ? Colors.grey[900]! : darkSurfaceContainerHigh,
         surfaceContainerHighest: highContrast ? Colors.grey[900]! : darkSurfaceContainerHighest,
         onSurfaceVariant: highContrast ? Colors.white : darkOnSurfaceVariant,
         outline: schemeOutline,
@@ -431,12 +524,15 @@ class FoliumTheme {
         surfaceTintColor: Colors.transparent,
       ),
 
-      // Card
+      // Card — in dark mode a subtle outline replaces the (invisible)
+      // drop-shadow so cards detach from the scaffold.
       cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusMedium),
-          side: highContrast ? const BorderSide(color: Colors.white, width: 2) : BorderSide.none,
+          side: highContrast
+              ? const BorderSide(color: Colors.white, width: 2)
+              : BorderSide(color: darkOutlineVariant, width: 1),
         ),
         color: schemeSurfaceContainer,
         shadowColor: Colors.black.withValues(alpha: highContrast ? 0.6 : 0.3),
@@ -503,17 +599,21 @@ class FoliumTheme {
         ),
       ),
 
-      // Input Decoration
+      // Input Decoration \u2014 visible 1px outline in dark mode so fields are\n      // discernible against the scaffold (previous BorderSide.none made inputs\n      // blend into the background).
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: schemeSurfaceContainerHighest,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMedium),
-          borderSide: highContrast ? const BorderSide(color: Colors.white, width: 2) : BorderSide.none,
+          borderSide: highContrast
+              ? const BorderSide(color: Colors.white, width: 2)
+              : BorderSide(color: darkOutline, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMedium),
-          borderSide: highContrast ? const BorderSide(color: Colors.white, width: 2) : BorderSide.none,
+          borderSide: highContrast
+              ? const BorderSide(color: Colors.white, width: 2)
+              : BorderSide(color: darkOutline, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMedium),
@@ -529,7 +629,7 @@ class FoliumTheme {
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         hintStyle: textTheme.bodyMedium?.copyWith(
-          color: schemeOnSurface.withValues(alpha: highContrast ? 1.0 : 0.6),
+          color: schemeOnSurface.withValues(alpha: highContrast ? 1.0 : 0.78),
         ),
       ),
 

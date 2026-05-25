@@ -506,7 +506,7 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: FoliumTheme.warningContainer,
+                      color: FoliumTheme.warningContainerOf(context),
                       border: Border.all(color: FoliumTheme.warning),
                       borderRadius: BorderRadius.circular(8),
                     ),

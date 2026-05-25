@@ -1645,7 +1645,7 @@ class _AutoGenerateIdentifierTile extends ConsumerWidget {
       secondary: Container(
         padding: const EdgeInsets.all(FoliumTheme.space8),
         decoration: BoxDecoration(
-          color: FoliumTheme.warningContainer,
+          color: FoliumTheme.warningContainerOf(context),
           borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
         ),
         child: const Icon(Icons.auto_awesome, color: FoliumTheme.warning),
@@ -2001,7 +2001,7 @@ class _AccountSection extends ConsumerWidget {
               leading: Container(
                 padding: const EdgeInsets.all(FoliumTheme.space8),
                 decoration: BoxDecoration(
-                  color: FoliumTheme.successContainer,
+                  color: FoliumTheme.successContainerOf(context),
                   borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
                 ),
                 child: const Icon(Icons.person, color: FoliumTheme.success),
@@ -2090,7 +2090,7 @@ class _SyncSection extends ConsumerWidget {
                 color: syncState.isSyncing
                     ? colorScheme.primaryContainer
                     : isAuthenticated
-                    ? FoliumTheme.successContainer
+                    ? FoliumTheme.successContainerOf(context)
                     : colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
               ),
