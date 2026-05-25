@@ -1507,5 +1507,19 @@
   "determinationSavedSuccess": "Determinação salva com sucesso",
   "fillDeterminationRequiredFields": "Preencha os campos obrigatórios da determinação",
   "noMatchingRecords": "Nenhum registro correspondente encontrado",
-  "identificationHistoryLabel": "Histórico de identificação"
+  "identificationHistoryLabel": "Histórico de identificação",
+  "prepareExsiccatae": "Preparar exsicatas",
+  "selectTemplate": "Modelo de etiqueta",
+  "selectedCount": "{selected} de {total} selecionados",
+  "@selectedCount": {
+    "placeholders": {
+      "selected": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "generatePdf": "Gerar PDF",
+  "noRecordsToExport": "Nenhum registro para exportar",
+  "labelTemplateStandard": "Padrão (A4, 4 por página)",
+  "labelTemplateCompact": "Compacto (A4, 8 por página)",
+  "labelTemplateLarge": "Grande (A4, 1 por página)"
 }

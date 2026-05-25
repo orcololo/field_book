@@ -5073,6 +5073,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Identification history'**
   String get identificationHistoryLabel;
+
+  /// No description provided for @prepareExsiccatae.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare exsiccatae'**
+  String get prepareExsiccatae;
+
+  /// No description provided for @selectTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Label template'**
+  String get selectTemplate;
+
+  /// No description provided for @selectedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{selected} of {total} selected'**
+  String selectedCount(int selected, int total);
+
+  /// No description provided for @generatePdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate PDF'**
+  String get generatePdf;
+
+  /// No description provided for @noRecordsToExport.
+  ///
+  /// In en, this message translates to:
+  /// **'No records to export'**
+  String get noRecordsToExport;
+
+  /// No description provided for @labelTemplateStandard.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard (A4, 4 per page)'**
+  String get labelTemplateStandard;
+
+  /// No description provided for @labelTemplateCompact.
+  ///
+  /// In en, this message translates to:
+  /// **'Compact (A4, 8 per page)'**
+  String get labelTemplateCompact;
+
+  /// No description provided for @labelTemplateLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Large (A4, 1 per page)'**
+  String get labelTemplateLarge;
 }
 
 class _AppLocalizationsDelegate

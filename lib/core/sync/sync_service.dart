@@ -21,6 +21,7 @@ import '../database/isar_service.dart';
 import '../network/api_client.dart';
 import '../network/api_endpoints.dart';
 import '../services/media_upload_service.dart';
+import 'sync_protocol.dart';
 
 final _log = Logger(printer: PrettyPrinter(methodCount: 0));
 
@@ -287,6 +288,11 @@ class SyncService {
             'sessions': sessions,
             'deviceId': deviceId ?? '',
           },
+          options: Options(
+            headers: {
+              kSyncProtocolVersionHeader: kCurrentSyncProtocolVersion,
+            },
+          ),
         ),
       );
 
@@ -381,6 +387,11 @@ class SyncService {
           () => _api.get<Map<String, dynamic>>(
             ApiEndpoints.syncPull,
             queryParameters: params,
+            options: Options(
+              headers: {
+                kSyncProtocolVersionHeader: kCurrentSyncProtocolVersion,
+              },
+            ),
           ),
         );
 

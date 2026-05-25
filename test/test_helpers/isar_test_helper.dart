@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:field_book/models/plant_record.dart';
 import 'package:field_book/models/collection_session.dart';
+import 'package:field_book/models/label_template.dart';
 import 'package:field_book/models/saved_search.dart';
 import 'package:field_book/models/settings.dart';
 import 'package:field_book/models/collection_template.dart';
@@ -34,6 +35,7 @@ Future<(Isar, Directory)> openTestIsar() async {
     [
       PlantRecordSchema,
       CollectionSessionSchema,
+      LabelTemplateSchema,
       SavedSearchSchema,
       SettingsSchema,
       CollectionTemplateSchema,

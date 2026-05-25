@@ -35,7 +35,7 @@ final appUpdateServiceProvider = Provider<AppUpdateService>.internal(
 );
 
 typedef AppUpdateServiceRef = ProviderRef<AppUpdateService>;
-String _$appUpdateNotifierHash() => r'9be1d1f9ffb65283fe2f7121e39128a872b04bd0';
+String _$appUpdateNotifierHash() => r'd18ffac772f9a9a4c6cb65454bcaa82ec0f18879';
 
 /// See also [AppUpdateNotifier].
 @ProviderFor(AppUpdateNotifier)

@@ -2760,4 +2760,30 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get identificationHistoryLabel => 'Histórico de identificação';
+
+  @override
+  String get prepareExsiccatae => 'Preparar exsicatas';
+
+  @override
+  String get selectTemplate => 'Modelo de etiqueta';
+
+  @override
+  String selectedCount(int selected, int total) {
+    return '$selected de $total selecionados';
+  }
+
+  @override
+  String get generatePdf => 'Gerar PDF';
+
+  @override
+  String get noRecordsToExport => 'Nenhum registro para exportar';
+
+  @override
+  String get labelTemplateStandard => 'Padrão (A4, 4 por página)';
+
+  @override
+  String get labelTemplateCompact => 'Compacto (A4, 8 por página)';
+
+  @override
+  String get labelTemplateLarge => 'Grande (A4, 1 por página)';
 }

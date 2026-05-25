@@ -3,6 +3,7 @@ import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../models/collection_session.dart';
 import '../../../models/collection_template.dart';
+import '../../../models/label_template.dart';
 import '../../../models/municipality_bounding_box_cache.dart';
 import '../../../models/plant_record.dart';
 import '../../../models/saved_search.dart';
@@ -36,6 +37,7 @@ class IsarService extends IsarServiceInterface {
       [
         CollectionSessionSchema,
         CollectionTemplateSchema,
+        LabelTemplateSchema,
         MunicipalityBoundingBoxCacheSchema,
         PlantRecordSchema,
         SavedSearchSchema,

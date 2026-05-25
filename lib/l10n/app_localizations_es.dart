@@ -2766,4 +2766,30 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get identificationHistoryLabel => 'Historial de identificación';
+
+  @override
+  String get prepareExsiccatae => 'Preparar exsicatas';
+
+  @override
+  String get selectTemplate => 'Plantilla de etiqueta';
+
+  @override
+  String selectedCount(int selected, int total) {
+    return '$selected de $total seleccionados';
+  }
+
+  @override
+  String get generatePdf => 'Generar PDF';
+
+  @override
+  String get noRecordsToExport => 'No hay registros para exportar';
+
+  @override
+  String get labelTemplateStandard => 'Estándar (A4, 4 por página)';
+
+  @override
+  String get labelTemplateCompact => 'Compacto (A4, 8 por página)';
+
+  @override
+  String get labelTemplateLarge => 'Grande (A4, 1 por página)';
 }

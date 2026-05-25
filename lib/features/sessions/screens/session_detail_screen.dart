@@ -12,6 +12,7 @@ import '../../../core/providers/rain_mode_provider.dart';
 import '../../../shared/widgets/modern/modern_app_bar.dart';
 import 'session_form_screen.dart';
 import '../../plant_detail/screens/plant_detail_screen.dart';
+import '../../herbarium/screens/prepare_exsiccatae_screen.dart';
 
 class SessionDetailScreen extends ConsumerStatefulWidget {
   final CollectionSession session;
@@ -170,6 +171,14 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
     await _refreshSession();
   }
 
+  void _openPrepareExsiccatae() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => PrepareExsiccataeScreen(session: _session),
+      ),
+    );
+  }
+
   Future<void> _generateShareCode() async {
     final sessionRepo = ref.read(sessionRepositoryProvider);
 
@@ -243,6 +252,9 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                 case 'archive':
                   _toggleArchive();
                   break;
+                case 'exsiccatae':
+                  _openPrepareExsiccatae();
+                  break;
                 case 'delete':
                   _deleteSession();
                   break;
@@ -268,6 +280,16 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                     Icon(_session.isArchived ? Icons.unarchive : Icons.archive),
                     const SizedBox(width: 8),
                     Text(_session.isArchived ? l10n.unarchive : l10n.archive),
+                  ],
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'exsiccatae',
+                child: Row(
+                  children: [
+                    const Icon(Icons.local_florist),
+                    const SizedBox(width: 8),
+                    Text(l10n.prepareExsiccatae),
                   ],
                 ),
               ),

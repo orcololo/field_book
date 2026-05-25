@@ -69,10 +69,12 @@ class ApiClient {
   Future<T> get<T>(
     String path, {
     Map<String, dynamic>? queryParameters,
+    Options? options,
   }) async {
     final response = await _dio.get<Map<String, dynamic>>(
       path,
       queryParameters: queryParameters,
+      options: options,
     );
     return response.data!['data'] as T;
   }
@@ -91,10 +93,12 @@ class ApiClient {
   Future<T> post<T>(
     String path, {
     Object? data,
+    Options? options,
   }) async {
     final response = await _dio.post<Map<String, dynamic>>(
       path,
       data: data,
+      options: options,
     );
     return response.data!['data'] as T;
   }

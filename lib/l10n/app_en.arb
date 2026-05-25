@@ -1509,5 +1509,19 @@
   "determinationSavedSuccess": "Determination saved successfully",
   "fillDeterminationRequiredFields": "Fill in the required determination fields",
   "noMatchingRecords": "No matching records found",
-  "identificationHistoryLabel": "Identification history"
+  "identificationHistoryLabel": "Identification history",
+  "prepareExsiccatae": "Prepare exsiccatae",
+  "selectTemplate": "Label template",
+  "selectedCount": "{selected} of {total} selected",
+  "@selectedCount": {
+    "placeholders": {
+      "selected": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "generatePdf": "Generate PDF",
+  "noRecordsToExport": "No records to export",
+  "labelTemplateStandard": "Standard (A4, 4 per page)",
+  "labelTemplateCompact": "Compact (A4, 8 per page)",
+  "labelTemplateLarge": "Large (A4, 1 per page)"
 }
