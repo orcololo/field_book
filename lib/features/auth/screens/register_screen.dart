@@ -90,6 +90,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 ),
                 const SizedBox(height: FoliumTheme.space24),
                 TextFormField(
+                  key: const Key('register_name_field'),
                   controller: _nameController,
                   textInputAction: TextInputAction.next,
                   textCapitalization: TextCapitalization.words,
@@ -107,6 +108,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 ),
                 const SizedBox(height: FoliumTheme.space16),
                 TextFormField(
+                  key: const Key('register_email_field'),
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
@@ -133,6 +135,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 ),
                 const SizedBox(height: FoliumTheme.space16),
                 TextFormField(
+                  key: const Key('register_password_field'),
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   textInputAction: TextInputAction.next,
@@ -164,6 +167,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 ),
                 const SizedBox(height: FoliumTheme.space16),
                 TextFormField(
+                  key: const Key('register_confirm_password_field'),
                   controller: _confirmController,
                   obscureText: _obscureConfirm,
                   textInputAction: TextInputAction.done,
@@ -195,6 +199,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 ),
                 const SizedBox(height: FoliumTheme.space32),
                 FilledButton(
+                  key: const Key('register_submit_button'),
                   onPressed: _isLoading ? null : _handleRegister,
                   style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(

@@ -118,6 +118,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: Column(
                     children: [
                       TextFormField(
+                        key: const Key('login_email_field'),
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
@@ -144,6 +145,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                       const SizedBox(height: FoliumTheme.space16),
                       TextFormField(
+                        key: const Key('login_password_field'),
                         controller: _passwordController,
                         obscureText: _obscurePassword,
                         textInputAction: TextInputAction.done,
@@ -181,6 +183,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                 // Login button
                 FilledButton(
+                  key: const Key('login_submit_button'),
                   onPressed: _isLoading ? null : _handleLogin,
                   style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(

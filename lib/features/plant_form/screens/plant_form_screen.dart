@@ -1012,6 +1012,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
             final autoGenerate = settings?.autoGenerateIdentifier ?? true;
 
             return TextFormField(
+              key: const Key('plant_form_identifier_field'),
               controller: _identifierController,
               decoration: InputDecoration(
                 labelText: l10n.identifierLabel,
@@ -1104,6 +1105,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
 
         const SizedBox(height: 16),
         TextFormField(
+          key: const Key('plant_form_common_name_field'),
           controller: _commonNameController,
           decoration: InputDecoration(
             labelText: l10n.commonName,
@@ -1114,6 +1116,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         ),
         const SizedBox(height: 16),
         TextFormField(
+          key: const Key('plant_form_collector_field'),
           controller: _collectorNameController,
           decoration: InputDecoration(
             labelText: l10n.collector,
@@ -1124,6 +1127,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         ),
         const SizedBox(height: 16),
         DropdownButtonFormField<PlantCategory>(
+          key: const Key('plant_form_category_dropdown'),
           initialValue: _selectedCategory,
           decoration: InputDecoration(
             labelText: l10n.category,

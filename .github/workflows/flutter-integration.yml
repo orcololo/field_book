@@ -1,0 +1,56 @@
+name: Flutter Integration Tests
+
+# Runs the end-to-end integration_test/ suite on a macOS runner.
+# Each scenario boots the real app (and on the plant flow, a real Isar DB),
+# so we run them in SEPARATE invocations to keep state isolated per process.
+on:
+  pull_request:
+    paths:
+      - 'field_book/lib/**'
+      - 'field_book/integration_test/**'
+      - 'field_book/pubspec.yaml'
+      - 'field_book/.github/workflows/flutter-integration.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'field_book/lib/**'
+      - 'field_book/integration_test/**'
+      - 'field_book/pubspec.yaml'
+
+jobs:
+  integration:
+    name: Integration (macOS)
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: field_book
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.32.0'
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Enable macOS desktop
+        run: flutter config --enable-macos-desktop
+
+      - name: Integration test — app boot
+        run: flutter test integration_test/app_boot_test.dart -d macos
+
+      - name: Integration test — account registration
+        run: flutter test integration_test/account_register_flow_test.dart -d macos
+
+      - name: Integration test — plant draft create
+        run: flutter test integration_test/plant_create_flow_test.dart -d macos
+
+      - name: Integration test — sync flow
+        run: flutter test integration_test/sync_flow_test.dart -d macos
