@@ -173,7 +173,7 @@ void main() {
         when(
           () => mockDio.get<Map<String, dynamic>>(
             ApiEndpoints.syncPull,
-            queryParameters: any(named: 'queryParameters'),
+            queryParameters: any(named: 'queryParameters'), options: any(named: 'options'),
           ),
         ).thenAnswer(
           (_) async => _dioResponse({
@@ -193,7 +193,7 @@ void main() {
       when(
         () => mockDio.get<Map<String, dynamic>>(
           ApiEndpoints.syncPull,
-          queryParameters: any(named: 'queryParameters'),
+          queryParameters: any(named: 'queryParameters'), options: any(named: 'options'),
         ),
       ).thenThrow(Exception('network error'));
 
@@ -214,7 +214,7 @@ void main() {
       when(
         () => mockDio.post<Map<String, dynamic>>(
           ApiEndpoints.syncPush,
-          data: any(named: 'data'),
+          data: any(named: 'data'), options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) async => Response<Map<String, dynamic>>(
@@ -239,7 +239,7 @@ void main() {
       when(
         () => mockDio.get<Map<String, dynamic>>(
           ApiEndpoints.syncPull,
-          queryParameters: any(named: 'queryParameters'),
+          queryParameters: any(named: 'queryParameters'), options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) async => _dioResponse({
@@ -257,6 +257,7 @@ void main() {
                 () => mockDio.post<Map<String, dynamic>>(
                   ApiEndpoints.syncPush,
                   data: captureAny(named: 'data'),
+                  options: any(named: 'options'),
                 ),
               ).captured.single
               as Map<String, dynamic>;
@@ -270,7 +271,7 @@ void main() {
       when(
         () => mockDio.get<Map<String, dynamic>>(
           ApiEndpoints.syncPull,
-          queryParameters: any(named: 'queryParameters'),
+          queryParameters: any(named: 'queryParameters'), options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) async => _dioResponse({
@@ -303,7 +304,7 @@ void main() {
       when(
         () => mockDio.get<Map<String, dynamic>>(
           ApiEndpoints.syncPull,
-          queryParameters: any(named: 'queryParameters'),
+          queryParameters: any(named: 'queryParameters'), options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) async => _dioResponse({
@@ -339,7 +340,7 @@ void main() {
       when(
         () => mockDio.post<Map<String, dynamic>>(
           ApiEndpoints.syncPush,
-          data: any(named: 'data'),
+          data: any(named: 'data'), options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) async => Response<Map<String, dynamic>>(
@@ -365,7 +366,7 @@ void main() {
       when(
         () => mockDio.get<Map<String, dynamic>>(
           ApiEndpoints.syncPull,
-          queryParameters: any(named: 'queryParameters'),
+          queryParameters: any(named: 'queryParameters'), options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) async => _dioResponse({
@@ -384,7 +385,7 @@ void main() {
       when(
         () => mockDio.get<Map<String, dynamic>>(
           ApiEndpoints.syncPull,
-          queryParameters: any(named: 'queryParameters'),
+          queryParameters: any(named: 'queryParameters'), options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) async => _dioResponse({
@@ -410,7 +411,7 @@ void main() {
       when(
         () => mockDio.get<Map<String, dynamic>>(
           ApiEndpoints.syncPull,
-          queryParameters: any(named: 'queryParameters'),
+          queryParameters: any(named: 'queryParameters'), options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) async => _dioResponse({
@@ -502,7 +503,7 @@ void main() {
       when(
         () => mockDio.post<Map<String, dynamic>>(
           ApiEndpoints.syncPush,
-          data: any(named: 'data'),
+          data: any(named: 'data'), options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) async => Response<Map<String, dynamic>>(
@@ -523,7 +524,7 @@ void main() {
       when(
         () => mockDio.get<Map<String, dynamic>>(
           ApiEndpoints.syncPull,
-          queryParameters: any(named: 'queryParameters'),
+          queryParameters: any(named: 'queryParameters'), options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) async => _dioResponse({
@@ -548,7 +549,7 @@ void main() {
         when(
           () => mockDio.post<Map<String, dynamic>>(
             ApiEndpoints.syncPush,
-            data: any(named: 'data'),
+            data: any(named: 'data'), options: any(named: 'options'),
           ),
         ).thenAnswer(
           (_) async => Response<Map<String, dynamic>>(
@@ -572,7 +573,7 @@ void main() {
         when(
           () => mockDio.get<Map<String, dynamic>>(
             ApiEndpoints.syncPull,
-            queryParameters: any(named: 'queryParameters'),
+            queryParameters: any(named: 'queryParameters'), options: any(named: 'options'),
           ),
         ).thenAnswer(
           (_) async => _dioResponse({
@@ -593,7 +594,7 @@ void main() {
         verify(
           () => mockDio.post<Map<String, dynamic>>(
             ApiEndpoints.syncPush,
-            data: any(named: 'data'),
+            data: any(named: 'data'), options: any(named: 'options'),
           ),
         ).called(1);
       },
@@ -612,7 +613,7 @@ void main() {
       when(
         () => mockDio.post<Map<String, dynamic>>(
           ApiEndpoints.syncPush,
-          data: any(named: 'data'),
+          data: any(named: 'data'), options: any(named: 'options'),
         ),
       ).thenThrow(
         DioException(
@@ -628,7 +629,7 @@ void main() {
       when(
         () => mockDio.get<Map<String, dynamic>>(
           ApiEndpoints.syncPull,
-          queryParameters: any(named: 'queryParameters'),
+          queryParameters: any(named: 'queryParameters'), options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) async => _dioResponse({
@@ -649,7 +650,7 @@ void main() {
       when(
         () => mockDio.post<Map<String, dynamic>>(
           ApiEndpoints.syncPush,
-          data: any(named: 'data'),
+          data: any(named: 'data'), options: any(named: 'options'),
         ),
       ).thenThrow(
         DioException(
@@ -661,7 +662,7 @@ void main() {
       when(
         () => mockDio.get<Map<String, dynamic>>(
           ApiEndpoints.syncPull,
-          queryParameters: any(named: 'queryParameters'),
+          queryParameters: any(named: 'queryParameters'), options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) async => _dioResponse({
