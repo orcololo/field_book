@@ -533,7 +533,10 @@ class SyncService {
       try {
         final map = jsonDecode(refJson) as Map<String, dynamic>;
         if (map['url'] == url) return refJson;
-      } catch (_) {}
+      } catch (e) {
+        // Corrupt entry from older app version — skip, but record for diagnosis.
+        _log.d('Skipping malformed imageRefsJson entry: $e');
+      }
     }
     return null;
   }
@@ -599,18 +602,25 @@ class SyncService {
             },
           )
           .toList(),
-      'photoPaths': plant.photoPaths,
+      // Defence in depth: the upstream `_uploadPlantMedia` gate already skips
+      // pushes whose media did not fully upload, so by invariant all entries
+      // here should be remote URLs. Filtering again guarantees no device-local
+      // filesystem path ever leaks to the server even if that invariant is
+      // accidentally broken by a future refactor.
+      'photoPaths': plant.photoPaths.where((p) => p.startsWith('http')).toList(),
       'images': plant.imageRefsJson
           .map((ref) {
             try {
               return jsonDecode(ref) as Map<String, dynamic>;
-            } catch (_) {
+            } catch (e) {
+              _log.d('Skipping malformed imageRefsJson during push: $e');
               return null;
             }
           })
           .where((e) => e != null)
           .toList(),
-      'audioNotePaths': plant.audioNotePaths,
+      'audioNotePaths':
+          plant.audioNotePaths.where((p) => p.startsWith('http')).toList(),
       'audioTranscripts': plant.audioTranscripts,
       'measurements': plant.measurements
           .map((m) => {'label': m.label, 'value': m.value, 'unit': m.unit})

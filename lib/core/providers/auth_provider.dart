@@ -77,7 +77,16 @@ class AuthNotifier extends _$AuthNotifier {
     }
     try {
       final api = ref.read(apiClientProvider);
-      final data = await api.get<Map<String, dynamic>>(ApiEndpoints.userProfile);
+      // Short timeout: this runs on app startup and must not block the splash
+      // indefinitely if the backend is reachable but slow. On timeout we fall
+      // through to the cached-profile path below, preserving offline UX.
+      final data = await api.get<Map<String, dynamic>>(
+        ApiEndpoints.userProfile,
+        options: Options(
+          sendTimeout: const Duration(seconds: 5),
+          receiveTimeout: const Duration(seconds: 5),
+        ),
+      );
       if (_sessionCheckId != checkId) return;
       final profile = UserProfile.fromJson(data);
       // Keep the local cache fresh for future offline restarts.

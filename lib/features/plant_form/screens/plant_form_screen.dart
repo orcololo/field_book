@@ -3267,13 +3267,18 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
     if (phenoName != null) {
       try {
         _phenologicalState = PhenologicalState.values.byName(phenoName);
-      } catch (_) {}
+      } catch (e) {
+        // Snapshot may have been written by an older build with different enum names.
+        debugPrint('PlantForm: unknown phenologicalState "$phenoName" in snapshot ($e)');
+      }
     }
     final methodName = data['collectionMethod'] as String?;
     if (methodName != null) {
       try {
         _collectionMethod = CollectionMethod.values.byName(methodName);
-      } catch (_) {}
+      } catch (e) {
+        debugPrint('PlantForm: unknown collectionMethod "$methodName" in snapshot ($e)');
+      }
     }
 
     _selectedSessionId = data['selectedSessionId'] as String?;
@@ -3350,7 +3355,9 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
       try {
         final prefs = await SharedPreferences.getInstance();
         await prefs.remove(_kPlantFormSnapshotKey);
-      } catch (_) {}
+      } catch (cleanupError) {
+        debugPrint('PlantForm: failed to clear corrupt snapshot: $cleanupError');
+      }
       return false;
     }
   }

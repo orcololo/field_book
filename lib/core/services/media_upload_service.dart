@@ -78,7 +78,10 @@ class MediaUploadService {
       if (fileToUpload.path != file.path) {
         try {
           await fileToUpload.delete();
-        } catch (_) {}
+        } catch (e) {
+          // Best-effort cleanup; OS will reclaim temp dir eventually.
+          _log.d('Failed to delete temp compressed file ${fileToUpload.path}: $e');
+        }
       }
     }
   }
