@@ -1045,6 +1045,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
         ),
         const SizedBox(height: 16),
         TextFormField(
+          key: const Key('plant_form_scientific_name_field'),
           controller: _scientificNameController,
           decoration: InputDecoration(
             labelText: l10n.scientificName,
@@ -2726,6 +2727,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
           children: [
             Expanded(
               child: TextButton.icon(
+                key: const Key('plant_form_save_draft_button'),
                 onPressed: () => _savePlant(asDraft: true),
                 icon: const Icon(Icons.save, size: 18),
                 label: Text(l10n.saveDraft, overflow: TextOverflow.ellipsis),
@@ -2734,6 +2736,7 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
             const SizedBox(width: 8),
             Expanded(
               child: FilledButton.icon(
+                key: const Key('plant_form_save_complete_button'),
                 onPressed: () => _savePlant(asDraft: false),
                 icon: const Icon(Icons.check, size: 18),
                 label: Text(l10n.markComplete, overflow: TextOverflow.ellipsis),

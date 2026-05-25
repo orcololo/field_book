@@ -334,6 +334,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
                 const SizedBox(height: FoliumTheme.space12),
                 FloatingActionButton.extended(
+                  key: const Key('home_new_plant_fab'),
                   heroTag: 'new_plant_fab',
                   onPressed: () => _showNewPlantOptions(context, l10n),
                   icon: const Icon(Icons.add),
@@ -450,6 +451,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
+                key: const Key('new_plant_full_option'),
                 leading: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
