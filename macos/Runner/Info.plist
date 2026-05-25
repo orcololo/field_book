@@ -28,5 +28,19 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSCameraUsageDescription</key>
+	<string>O Folium usa a câmera para fotografar plantas em campo durante o cadastro.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>O Folium grava notas de áudio sobre plantas e sessões de coleta.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>O Folium registra a localização geográfica dos espécimes coletados.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>O Folium registra a localização geográfica dos espécimes coletados.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>O Folium importa imagens da biblioteca de fotos para anexar a registros de plantas.</string>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>O Folium exporta CSV, JSON e PDF dos seus dados de coleta para a pasta de Documentos.</string>
+	<key>NSDownloadsFolderUsageDescription</key>
+	<string>O Folium permite salvar exportações na pasta Downloads.</string>
 </dict>
 </plist>

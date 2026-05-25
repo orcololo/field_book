@@ -38,5 +38,11 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_macos_build_settings(target)
+    target.build_configurations.each do |config|
+      # Match Runner deployment target; silences MACOSX_DEPLOYMENT_TARGET
+      # warnings from Pods that pin older minimums (geolocator_apple,
+      # GTMAppAuth, AppAuth, GTMSessionFetcher, PromisesObjC, etc.).
+      config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '11.0'
+    end
   end
 end
