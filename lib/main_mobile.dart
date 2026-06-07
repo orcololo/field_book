@@ -8,9 +8,21 @@ import 'core/services/map_service.dart';
 import 'core/theme/folium_theme.dart';
 import 'features/home/screens/home_screen.dart';
 import 'features/onboarding/screens/onboarding_screen.dart';
+import 'models/theme_mode.dart';
 import 'shared/widgets/app_update_banner.dart';
 import 'shared/widgets/connectivity_banner.dart';
 import 'shared/widgets/upload_progress_indicator.dart';
+
+ThemeMode _getThemeMode(AppThemeMode appThemeMode) {
+  switch (appThemeMode) {
+    case AppThemeMode.system:
+      return ThemeMode.system;
+    case AppThemeMode.light:
+      return ThemeMode.light;
+    case AppThemeMode.dark:
+      return ThemeMode.dark;
+  }
+}
 
 const _defaultLocale = Locale('pt');
 
@@ -84,16 +96,21 @@ class MyApp extends ConsumerWidget {
             fontScale: settings.fontScale,
             highContrast: settings.highContrastMode,
           ),
+          themeMode: _getThemeMode(settings.themeMode),
 
           // Connectivity banner visible on all screens
           builder: (context, child) {
-            return Column(
-              children: [
-                const ConnectivityBanner(),
-                const AppUpdateBanner(),
-                const UploadProgressIndicator(),
-                Expanded(child: child ?? const SizedBox.shrink()),
-              ],
+            return AnimatedTheme(
+              data: Theme.of(context),
+              duration: const Duration(milliseconds: 300),
+              child: Column(
+                children: [
+                  const ConnectivityBanner(),
+                  const AppUpdateBanner(),
+                  const UploadProgressIndicator(),
+                  Expanded(child: child ?? const SizedBox.shrink()),
+                ],
+              ),
             );
           },
 

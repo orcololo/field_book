@@ -61,8 +61,8 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Icon with breathing animation
-            AnimatedBuilder(
-              animation: _scaleAnimation,
+            ListenableBuilder(
+              listenable: _controller,
               builder: (context, child) {
                 return Transform.scale(
                   scale: _scaleAnimation.value,
@@ -179,7 +179,9 @@ class EmptyStates {
       message: query != null
           ? l10n.noResultsForQuery(query)
           : l10n.adjustFilters,
-      iconColor: FoliumTheme.warning,
+      iconColor: Theme.of(context).brightness == Brightness.dark
+          ? FoliumTheme.darkWarning
+          : FoliumTheme.warning,
     );
   }
 

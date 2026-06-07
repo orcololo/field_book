@@ -348,6 +348,7 @@ class ModernPlantCard extends StatelessWidget {
   }
 
   Widget _buildDateBadge(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final dateStr = DateFormat(
       'dd MMM yyyy',
       'pt_BR',
@@ -364,13 +365,13 @@ class ModernPlantCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.calendar_today, size: 12, color: Colors.white),
+          Icon(Icons.calendar_today, size: 12, color: colorScheme.surface),
           const SizedBox(width: FoliumTheme.space4),
           Text(
             dateStr,
             style: Theme.of(
               context,
-            ).textTheme.labelSmall?.copyWith(color: Colors.white),
+            ).textTheme.labelSmall?.copyWith(color: colorScheme.surface),
           ),
         ],
       ),
@@ -378,6 +379,7 @@ class ModernPlantCard extends StatelessWidget {
   }
 
   Widget _buildPhotoCountBadge(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: FoliumTheme.space8,
@@ -390,12 +392,12 @@ class ModernPlantCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.camera_alt, size: 12, color: Colors.white),
+          Icon(Icons.camera_alt, size: 12, color: colorScheme.surface),
           const SizedBox(width: FoliumTheme.space4),
           Text(
             '${plant.photoPaths.length}',
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: Colors.white,
+              color: colorScheme.surface,
               fontWeight: FontWeight.w600,
             ),
           ),

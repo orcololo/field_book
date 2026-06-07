@@ -7,6 +7,7 @@ import '../../../core/providers/app_update_provider.dart';
 import '../../../core/services/settings_service.dart';
 import '../../../core/theme/folium_theme.dart';
 import '../../../models/settings.dart';
+import '../../../models/theme_mode.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/modern/shimmer_loading.dart';
 import '../../../shared/widgets/rain_mode_guard.dart';
@@ -102,6 +103,16 @@ class SettingsScreen extends ConsumerWidget {
                       _HighContrastTile(settings: settings),
                       const Divider(height: 1),
                       _FontScaleTile(settings: settings),
+                    ],
+                  ),
+
+                  const SizedBox(height: FoliumTheme.space24),
+                  _buildSectionHeader(context, l10n.themeTitle),
+                  const SizedBox(height: FoliumTheme.space8),
+                  _buildModernCard(
+                    context,
+                    children: [
+                      _ThemeTile(settings: settings),
                     ],
                   ),
 
@@ -1256,14 +1267,19 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
                   ? null
                   : () async {
                       final messenger = ScaffoldMessenger.of(context);
+                      final successBg = FoliumTheme.successContainerOf(context);
+                      final successFg = FoliumTheme.onSuccessContainerOf(context);
                       setState(() => _isBackingUp = true);
                       try {
                         await backupService.backup();
                         if (mounted) {
                           messenger.showSnackBar(
                             SnackBar(
-                              content: Text(l10n.backupSuccess),
-                              backgroundColor: FoliumTheme.success,
+                              content: Text(
+                                l10n.backupSuccess,
+                                style: TextStyle(color: successFg),
+                              ),
+                              backgroundColor: successBg,
                             ),
                           );
                           // Refresh to show updated lastCloudBackup
@@ -1320,14 +1336,19 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
                   ? null
                   : () async {
                       final messenger = ScaffoldMessenger.of(context);
+                      final successBg = FoliumTheme.successContainerOf(context);
+                      final successFg = FoliumTheme.onSuccessContainerOf(context);
                       setState(() => _isBackingUp = true);
                       try {
                         await backupService.fullBackup();
                         if (mounted) {
                           messenger.showSnackBar(
                             SnackBar(
-                              content: Text(l10n.backupSuccess),
-                              backgroundColor: FoliumTheme.success,
+                              content: Text(
+                                l10n.backupSuccess,
+                                style: TextStyle(color: successFg),
+                              ),
+                              backgroundColor: successBg,
                             ),
                           );
                           ref.invalidate(settingsNotifierProvider);
@@ -1439,6 +1460,8 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
     if (confirmed != true || !mounted) return;
 
     setState(() => _isRestoring = true);
+    final successBg = FoliumTheme.successContainerOf(context);
+    final successFg = FoliumTheme.onSuccessContainerOf(context);
     try {
       final result = await backupService.restore();
       if (mounted) {
@@ -1450,8 +1473,9 @@ class _BackupActionButtonsState extends ConsumerState<_BackupActionButtons> {
                 result.updated,
                 result.skipped,
               ),
+              style: TextStyle(color: successFg),
             ),
-            backgroundColor: FoliumTheme.success,
+            backgroundColor: successBg,
             duration: const Duration(seconds: 4),
           ),
         );
@@ -1648,7 +1672,7 @@ class _AutoGenerateIdentifierTile extends ConsumerWidget {
           color: FoliumTheme.warningContainerOf(context),
           borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
         ),
-        child: const Icon(Icons.auto_awesome, color: FoliumTheme.warning),
+        child: Icon(Icons.auto_awesome, color: Theme.of(context).colorScheme.tertiary),
       ),
       title: Text(l10n.autoGenerateTitle),
       subtitle: Text(l10n.autoGenerateSubtitle),
@@ -1833,7 +1857,7 @@ class _RegistryNumberDialogState extends State<_RegistryNumberDialog> {
           const SizedBox(height: 16),
           Text(
             l10n.changeNumberWarning,
-            style: const TextStyle(fontSize: 12, color: FoliumTheme.warning),
+            style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.tertiary),
           ),
         ],
       ),
@@ -2004,7 +2028,7 @@ class _AccountSection extends ConsumerWidget {
                   color: FoliumTheme.successContainerOf(context),
                   borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
                 ),
-                child: const Icon(Icons.person, color: FoliumTheme.success),
+                child: Icon(Icons.person, color: Theme.of(context).colorScheme.primary),
               ),
               title: Text(
                 authState.user.name.isNotEmpty
@@ -2103,7 +2127,7 @@ class _SyncSection extends ConsumerWidget {
                   : Icon(
                       Icons.sync,
                       color: isAuthenticated
-                          ? FoliumTheme.success
+                          ? Theme.of(context).colorScheme.primary
                           : colorScheme.onSurfaceVariant,
                     ),
             ),
@@ -2253,5 +2277,87 @@ class _FontScaleTile extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+class _ThemeTile extends ConsumerWidget {
+  final Settings settings;
+
+  const _ThemeTile({required this.settings});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final notifier = ref.read(settingsNotifierProvider.notifier);
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(FoliumTheme.space8),
+        decoration: BoxDecoration(
+          color: colorScheme.primaryContainer,
+          borderRadius: BorderRadius.circular(FoliumTheme.radiusSmall),
+        ),
+        child: Icon(
+          _getThemeIcon(settings.themeMode),
+          color: colorScheme.primary,
+        ),
+      ),
+      title: Text(l10n.themeTitle),
+      subtitle: Text(_getThemeName(l10n, settings.themeMode)),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: () async {
+        final selected = await showDialog<AppThemeMode>(
+          context: context,
+          builder: (context) {
+            final dl10n = AppLocalizations.of(context)!;
+            return SimpleDialog(
+              title: Text(dl10n.selectTheme),
+              children: AppThemeMode.values.map((mode) {
+                return SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context, mode),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Row(
+                      children: [
+                        Icon(_getThemeIcon(mode), size: 20),
+                        const SizedBox(width: 12),
+                        Text(_getThemeName(dl10n, mode)),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            );
+          },
+        );
+
+        if (selected != null && selected != settings.themeMode) {
+          await notifier.setThemeMode(selected);
+        }
+      },
+    );
+  }
+
+  IconData _getThemeIcon(AppThemeMode mode) {
+    switch (mode) {
+      case AppThemeMode.system:
+        return Icons.brightness_auto;
+      case AppThemeMode.light:
+        return Icons.light_mode;
+      case AppThemeMode.dark:
+        return Icons.dark_mode;
+    }
+  }
+
+  String _getThemeName(AppLocalizations l10n, AppThemeMode mode) {
+    switch (mode) {
+      case AppThemeMode.system:
+        return l10n.themeSystem;
+      case AppThemeMode.light:
+        return l10n.themeLight;
+      case AppThemeMode.dark:
+        return l10n.themeDark;
+    }
   }
 }

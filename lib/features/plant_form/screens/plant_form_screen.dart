@@ -2310,13 +2310,15 @@ class _PlantFormScreenState extends ConsumerState<PlantFormScreen>
                           right: 4,
                           child: CircleAvatar(
                             radius: 16,
-                            backgroundColor: Colors.black54,
+                            backgroundColor: Theme.of(context).brightness == Brightness.dark
+                                ? Theme.of(context).colorScheme.surface.withValues(alpha: 0.8)
+                                : Colors.black54,
                             child: IconButton(
                               padding: EdgeInsets.zero,
                               iconSize: 20,
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.close,
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                               onPressed: () => _removePhoto(index),
                             ),

@@ -2769,4 +2769,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get labelTemplateLarge => 'Large (A4, 1 per page)';
+
+  @override
+  String get themeTitle => 'Theme';
+
+  @override
+  String get selectTheme => 'Select Theme';
+
+  @override
+  String get themeSystem => 'System';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
 }

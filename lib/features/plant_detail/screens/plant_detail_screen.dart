@@ -66,7 +66,10 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.3),
+              color: (Theme.of(context).brightness == Brightness.dark
+                      ? Colors.black
+                      : Colors.white)
+                  .withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.7 : 0.3),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -82,7 +85,10 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.3),
+                color: (Theme.of(context).brightness == Brightness.dark
+                        ? Colors.black
+                        : Colors.white)
+                    .withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.7 : 0.3),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.edit, color: Colors.white),
@@ -119,7 +125,10 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.3),
+                    color: (Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black
+                            : Colors.white)
+                        .withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.7 : 0.3),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.delete, color: Colors.white),
@@ -346,7 +355,7 @@ class _PlantDetailScreenState extends ConsumerState<PlantDetailScreen> {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     fontWeight: FontWeight.bold,
                     shadows: [
                       Shadow(

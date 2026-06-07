@@ -175,18 +175,24 @@ const SettingsSchema = CollectionSchema(
       name: r'rainModeEnabled',
       type: IsarType.bool,
     ),
-    r'transcriptionEnabled': PropertySchema(
+    r'themeMode': PropertySchema(
       id: 31,
+      name: r'themeMode',
+      type: IsarType.string,
+      enumMap: _SettingsthemeModeEnumValueMap,
+    ),
+    r'transcriptionEnabled': PropertySchema(
+      id: 32,
       name: r'transcriptionEnabled',
       type: IsarType.bool,
     ),
     r'transcriptionLocale': PropertySchema(
-      id: 32,
+      id: 33,
       name: r'transcriptionLocale',
       type: IsarType.string,
     ),
     r'userInitials': PropertySchema(
-      id: 33,
+      id: 34,
       name: r'userInitials',
       type: IsarType.string,
     )
@@ -244,6 +250,7 @@ int _settingsEstimateSize(
     }
   }
   bytesCount += 3 + object.plantnetApiKey.length * 3;
+  bytesCount += 3 + object.themeMode.name.length * 3;
   bytesCount += 3 + object.transcriptionLocale.length * 3;
   bytesCount += 3 + object.userInitials.length * 3;
   return bytesCount;
@@ -286,9 +293,10 @@ void _settingsSerialize(
   writer.writeString(offsets[28], object.plantnetApiKey);
   writer.writeBool(offsets[29], object.preserveExif);
   writer.writeBool(offsets[30], object.rainModeEnabled);
-  writer.writeBool(offsets[31], object.transcriptionEnabled);
-  writer.writeString(offsets[32], object.transcriptionLocale);
-  writer.writeString(offsets[33], object.userInitials);
+  writer.writeString(offsets[31], object.themeMode.name);
+  writer.writeBool(offsets[32], object.transcriptionEnabled);
+  writer.writeString(offsets[33], object.transcriptionLocale);
+  writer.writeString(offsets[34], object.userInitials);
 }
 
 Settings _settingsDeserialize(
@@ -335,9 +343,12 @@ Settings _settingsDeserialize(
   object.plantnetApiKey = reader.readString(offsets[28]);
   object.preserveExif = reader.readBool(offsets[29]);
   object.rainModeEnabled = reader.readBool(offsets[30]);
-  object.transcriptionEnabled = reader.readBool(offsets[31]);
-  object.transcriptionLocale = reader.readString(offsets[32]);
-  object.userInitials = reader.readString(offsets[33]);
+  object.themeMode =
+      _SettingsthemeModeValueEnumMap[reader.readStringOrNull(offsets[31])] ??
+          AppThemeMode.system;
+  object.transcriptionEnabled = reader.readBool(offsets[32]);
+  object.transcriptionLocale = reader.readString(offsets[33]);
+  object.userInitials = reader.readString(offsets[34]);
   return object;
 }
 
@@ -416,10 +427,13 @@ P _settingsDeserializeProp<P>(
     case 30:
       return (reader.readBool(offset)) as P;
     case 31:
-      return (reader.readBool(offset)) as P;
+      return (_SettingsthemeModeValueEnumMap[reader.readStringOrNull(offset)] ??
+          AppThemeMode.system) as P;
     case 32:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 33:
+      return (reader.readString(offset)) as P;
+    case 34:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -491,6 +505,16 @@ const _SettingsmapProviderValueEnumMap = {
   r'openStreetMap': MapProvider.openStreetMap,
   r'mapboxStreets': MapProvider.mapboxStreets,
   r'mapboxSatellite': MapProvider.mapboxSatellite,
+};
+const _SettingsthemeModeEnumValueMap = {
+  r'system': r'system',
+  r'light': r'light',
+  r'dark': r'dark',
+};
+const _SettingsthemeModeValueEnumMap = {
+  r'system': AppThemeMode.system,
+  r'light': AppThemeMode.light,
+  r'dark': AppThemeMode.dark,
 };
 
 Id _settingsGetId(Settings object) {
@@ -3083,6 +3107,137 @@ extension SettingsQueryFilter
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> themeModeEqualTo(
+    AppThemeMode value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'themeMode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> themeModeGreaterThan(
+    AppThemeMode value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'themeMode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> themeModeLessThan(
+    AppThemeMode value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'themeMode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> themeModeBetween(
+    AppThemeMode lower,
+    AppThemeMode upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'themeMode',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> themeModeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'themeMode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> themeModeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'themeMode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> themeModeContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'themeMode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> themeModeMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'themeMode',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> themeModeIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'themeMode',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      themeModeIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'themeMode',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterFilterCondition>
       transcriptionEnabledEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
@@ -3755,6 +3910,18 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByThemeMode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'themeMode', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByThemeModeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'themeMode', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByTranscriptionEnabled() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'transcriptionEnabled', Sort.asc);
@@ -4192,6 +4359,18 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByThemeMode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'themeMode', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByThemeModeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'themeMode', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByTranscriptionEnabled() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'transcriptionEnabled', Sort.asc);
@@ -4441,6 +4620,13 @@ extension SettingsQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Settings, Settings, QDistinct> distinctByThemeMode(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'themeMode', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QDistinct> distinctByTranscriptionEnabled() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'transcriptionEnabled');
@@ -4663,6 +4849,12 @@ extension SettingsQueryProperty
   QueryBuilder<Settings, bool, QQueryOperations> rainModeEnabledProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'rainModeEnabled');
+    });
+  }
+
+  QueryBuilder<Settings, AppThemeMode, QQueryOperations> themeModeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'themeMode');
     });
   }
 

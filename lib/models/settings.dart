@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 import 'plant_category.dart';
+import 'theme_mode.dart';
 
 part 'settings.g.dart';
 
@@ -23,6 +24,10 @@ class Settings {
   double fontScale = 1.0;
   bool highContrastMode = false;
   bool rainModeEnabled = false;
+
+  // Theme settings
+  @Enumerated(EnumType.name)
+  AppThemeMode themeMode = AppThemeMode.system;
 
   // Map settings
   @Enumerated(EnumType.name)

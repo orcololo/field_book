@@ -1521,5 +1521,10 @@
   "noRecordsToExport": "No hay registros para exportar",
   "labelTemplateStandard": "Estándar (A4, 4 por página)",
   "labelTemplateCompact": "Compacto (A4, 8 por página)",
-  "labelTemplateLarge": "Grande (A4, 1 por página)"
+  "labelTemplateLarge": "Grande (A4, 1 por página)",
+  "themeTitle": "Tema",
+  "selectTheme": "Seleccionar Tema",
+  "themeSystem": "Sistema",
+  "themeLight": "Claro",
+  "themeDark": "Oscuro"
 }

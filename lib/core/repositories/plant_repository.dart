@@ -8,6 +8,7 @@ import '../../models/plant_record.dart';
 import '../../models/plant_category.dart';
 import '../../models/sync_metadata.dart';
 import '../database/isar_service.dart';
+import '../services/audit_service.dart';
 import '../utils/geo_utils.dart';
 
 part 'plant_repository.g.dart';
@@ -19,12 +20,17 @@ PlantRepository plantRepository(PlantRepositoryRef ref) {
 
 class PlantRepository {
   static final _log = Logger(printer: PrettyPrinter(methodCount: 2));
+  final AuditService _auditService;
   Future<Isar> get _isar => IsarService.instance.isar;
+
+  PlantRepository({AuditService? auditService})
+      : _auditService = auditService ?? AuditService();
 
   // Create or update plant record
   Future<void> save(PlantRecord plant) async {
     try {
       final isar = await _isar;
+      final isNew = plant.id == 0;
       plant.updatedAt = DateTime.now();
       plant.updateFtsFields();
 
@@ -38,6 +44,22 @@ class PlantRepository {
       await isar.writeTxn(() async {
         await isar.plantRecords.put(plant);
       });
+
+      // Audit log
+      const userId = 'local';
+      if (isNew) {
+        _auditService.logCreate(
+          userId: userId,
+          resourceType: 'PlantRecord',
+          resourceId: plant.uuid,
+        );
+      } else {
+        _auditService.logUpdate(
+          userId: userId,
+          resourceType: 'PlantRecord',
+          resourceId: plant.uuid,
+        );
+      }
     } catch (e, stackTrace) {
       _log.e('Error saving plant', error: e, stackTrace: stackTrace);
       rethrow;
@@ -70,9 +92,18 @@ class PlantRepository {
   Future<void> delete(int id) async {
     try {
       final isar = await _isar;
+      final plant = await isar.plantRecords.get(id);
       await isar.writeTxn(() async {
         await isar.plantRecords.delete(id);
       });
+      if (plant != null) {
+        const userId = 'local';
+        _auditService.logDelete(
+          userId: userId,
+          resourceType: 'PlantRecord',
+          resourceId: plant.uuid,
+        );
+      }
     } catch (e, stackTrace) {
       _log.e('Error deleting plant', error: e, stackTrace: stackTrace);
       rethrow;

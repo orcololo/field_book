@@ -20,7 +20,7 @@ final settingsSyncProvider = AutoDisposeProvider<Settings?>.internal(
 );
 
 typedef SettingsSyncRef = AutoDisposeProviderRef<Settings?>;
-String _$settingsNotifierHash() => r'c3365a0c4aad8a35d9d3db9d557bc8da66a74ab3';
+String _$settingsNotifierHash() => r'bbf1ff5dfd1af1cbcb391b7a922d0d79bd26b914';
 
 /// See also [SettingsNotifier].
 @ProviderFor(SettingsNotifier)

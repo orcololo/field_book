@@ -356,7 +356,7 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
                                 border: Border.all(
                                   color: _selectedPlant?.id == plant.id
                                       ? Colors.yellow
-                                      : Colors.white,
+                                      : Theme.of(context).colorScheme.surface,
                                   width: _selectedPlant?.id == plant.id ? 3 : 2,
                                 ),
                                 boxShadow: [
@@ -428,7 +428,7 @@ class _MapViewScreenState extends ConsumerState<MapViewScreen> {
                                 ),
                                 child: Icon(
                                   _getCategoryIcon(_selectedPlant!.category),
-                                  color: Colors.white,
+                                  color: Theme.of(context).colorScheme.surface,
                                   size: 20,
                                 ),
                               ),

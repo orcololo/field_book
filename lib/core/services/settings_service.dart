@@ -3,6 +3,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 import '../../models/settings.dart';
+import '../../models/theme_mode.dart';
 import '../database/isar_service.dart';
 
 part 'settings_service.g.dart';
@@ -118,6 +119,12 @@ class SettingsNotifier extends _$SettingsNotifier {
     settings.inatUsername = username?.trim().isEmpty ?? true
         ? null
         : username!.trim();
+    await updateSettings(settings);
+  }
+
+  Future<void> setThemeMode(AppThemeMode mode) async {
+    final settings = await future;
+    settings.themeMode = mode;
     await updateSettings(settings);
   }
 }
